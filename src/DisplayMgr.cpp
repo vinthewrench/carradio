@@ -367,12 +367,12 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	if(redraw)
 		_vfd.clearScreen();
 	
-	TRY(_vfd.setCursor(14,40));
+	TRY(_vfd.setCursor(10,10));
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.write("Starting Up..."));
 	
 	if(radio->getDeviceInfo(info)){
-		TRY(_vfd.setCursor(0,64));
+		TRY(_vfd.setCursor(0,18));
 		TRY(_vfd.write(info.name));
 	}
 	

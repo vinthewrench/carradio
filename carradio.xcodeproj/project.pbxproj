@@ -1,0 +1,424 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
+		2E62A8612807375300F5066B /* I2C.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A85B2807375300F5066B /* I2C.cpp */; };
+		2E62A8622807375300F5066B /* TMP117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A85D2807375300F5066B /* TMP117.cpp */; };
+		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
+		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
+		2E62A86E280778E300F5066B /* INA219.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A86C2807766C00F5066B /* INA219.cpp */; };
+		2E62A8712807908900F5066B /* QwiicTwist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */; };
+		2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */; };
+		2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8E92817008500F5066B /* DisplayMgr.cpp */; };
+		2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F02822E16900F5066B /* RadioMgr.cpp */; };
+		2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */; };
+		2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F928244E5F00F5066B /* RtlSdr.cpp */; };
+		2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */; };
+		2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2E62A84C280735DA00F5066B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2E62A85B2807375300F5066B /* I2C.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = I2C.cpp; sourceTree = "<group>"; };
+		2E62A85C2807375300F5066B /* I2C.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = I2C.hpp; sourceTree = "<group>"; };
+		2E62A85D2807375300F5066B /* TMP117.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMP117.cpp; sourceTree = "<group>"; };
+		2E62A85E2807375300F5066B /* TMP117.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TMP117.hpp; sourceTree = "<group>"; };
+		2E62A8642807383700F5066B /* ErrorMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorMgr.cpp; sourceTree = "<group>"; };
+		2E62A8652807383700F5066B /* ErrorMgr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ErrorMgr.hpp; sourceTree = "<group>"; };
+		2E62A868280738BA00F5066B /* VFD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VFD.cpp; sourceTree = "<group>"; };
+		2E62A869280738BA00F5066B /* VFD.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VFD.hpp; sourceTree = "<group>"; };
+		2E62A86B28073C4300F5066B /* CommonDefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CommonDefs.hpp; sourceTree = "<group>"; };
+		2E62A86C2807766C00F5066B /* INA219.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = INA219.cpp; sourceTree = "<group>"; };
+		2E62A86D2807766C00F5066B /* INA219.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = INA219.hpp; sourceTree = "<group>"; };
+		2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QwiicTwist.cpp; sourceTree = "<group>"; };
+		2E62A87028078D9F00F5066B /* QwiicTwist.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QwiicTwist.hpp; sourceTree = "<group>"; };
+		2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MicroNMEA.cpp; sourceTree = "<group>"; };
+		2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MicroNMEA.hpp; sourceTree = "<group>"; };
+		2E62A8E92817008500F5066B /* DisplayMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayMgr.cpp; sourceTree = "<group>"; };
+		2E62A8EA2817008500F5066B /* DisplayMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DisplayMgr.hpp; sourceTree = "<group>"; };
+		2E62A8F02822E16900F5066B /* RadioMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RadioMgr.cpp; sourceTree = "<group>"; };
+		2E62A8F12822E16900F5066B /* RadioMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RadioMgr.hpp; sourceTree = "<group>"; };
+		2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RadioDataSource.cpp; sourceTree = "<group>"; };
+		2E62A8F628244B8B00F5066B /* RadioDataSource.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RadioDataSource.hpp; path = ../../../../../../../../Desktop/RasberryPi/carradio/src/RadioDataSource.hpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E62A8F828244E5F00F5066B /* RtlSdr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RtlSdr.hpp; sourceTree = "<group>"; };
+		2E62A8F928244E5F00F5066B /* RtlSdr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtlSdr.cpp; sourceTree = "<group>"; };
+		2E62A8FB28244E7D00F5066B /* IQSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQSample.h; sourceTree = "<group>"; };
+		2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libusb-1.0.0.dylib"; path = "macstuff/macincludes/libusb-1.0.0.dylib"; sourceTree = "<group>"; };
+		2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librtlsdr.0.6git.dylib; path = macstuff/macincludes/librtlsdr.0.6git.dylib; sourceTree = "<group>"; };
+		2E62A9022824597800F5066B /* rtl-sdr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "rtl-sdr.h"; sourceTree = "<group>"; };
+		2E62A9032824597800F5066B /* libusb-1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = "libusb-1.0.0.dylib"; sourceTree = "<group>"; };
+		2E62A9042824597800F5066B /* librtlsdr.0.6git.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = librtlsdr.0.6git.dylib; sourceTree = "<group>"; };
+		2E62A9052824597900F5066B /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
+		2E62A9062824597900F5066B /* rtl-sdr_export.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "rtl-sdr_export.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2E62A84B280735DA00F5066B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */,
+				2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2E62A845280735DA00F5066B = {
+			isa = PBXGroup;
+			children = (
+				2E62A8582807364400F5066B /* Build Stuff */,
+				2E62A850280735DA00F5066B /* src */,
+				2E62A84F280735DA00F5066B /* Products */,
+				2E62A8FC28244F4100F5066B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2E62A84F280735DA00F5066B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2E62A84E280735DA00F5066B /* carradio */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2E62A850280735DA00F5066B /* src */ = {
+			isa = PBXGroup;
+			children = (
+				2E62A851280735DA00F5066B /* main.cpp */,
+				2E62A8E92817008500F5066B /* DisplayMgr.cpp */,
+				2E62A8EA2817008500F5066B /* DisplayMgr.hpp */,
+				2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */,
+				2E62A8F628244B8B00F5066B /* RadioDataSource.hpp */,
+				2E62A8F02822E16900F5066B /* RadioMgr.cpp */,
+				2E62A8F12822E16900F5066B /* RadioMgr.hpp */,
+				2E62A8F928244E5F00F5066B /* RtlSdr.cpp */,
+				2E62A8F828244E5F00F5066B /* RtlSdr.hpp */,
+				2E62A8FB28244E7D00F5066B /* IQSample.h */,
+				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
+				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
+				2E62A85B2807375300F5066B /* I2C.cpp */,
+				2E62A85C2807375300F5066B /* I2C.hpp */,
+				2E62A85D2807375300F5066B /* TMP117.cpp */,
+				2E62A85E2807375300F5066B /* TMP117.hpp */,
+				2E62A868280738BA00F5066B /* VFD.cpp */,
+				2E62A869280738BA00F5066B /* VFD.hpp */,
+				2E62A86C2807766C00F5066B /* INA219.cpp */,
+				2E62A86D2807766C00F5066B /* INA219.hpp */,
+				2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */,
+				2E62A87028078D9F00F5066B /* QwiicTwist.hpp */,
+				2E62A86B28073C4300F5066B /* CommonDefs.hpp */,
+				2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */,
+				2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		2E62A8582807364400F5066B /* Build Stuff */ = {
+			isa = PBXGroup;
+			children = (
+				2E62A8592807364F00F5066B /* CMakeLists.txt */,
+				2E62A9012824597800F5066B /* macincludes */,
+			);
+			name = "Build Stuff";
+			sourceTree = "<group>";
+		};
+		2E62A8FC28244F4100F5066B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */,
+				2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2E62A9012824597800F5066B /* macincludes */ = {
+			isa = PBXGroup;
+			children = (
+				2E62A9022824597800F5066B /* rtl-sdr.h */,
+				2E62A9032824597800F5066B /* libusb-1.0.0.dylib */,
+				2E62A9042824597800F5066B /* librtlsdr.0.6git.dylib */,
+				2E62A9052824597900F5066B /* libusb.h */,
+				2E62A9062824597900F5066B /* rtl-sdr_export.h */,
+			);
+			name = macincludes;
+			path = macstuff/macincludes;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2E62A84D280735DA00F5066B /* carradio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2E62A855280735DA00F5066B /* Build configuration list for PBXNativeTarget "carradio" */;
+			buildPhases = (
+				2E62A84A280735DA00F5066B /* Sources */,
+				2E62A84B280735DA00F5066B /* Frameworks */,
+				2E62A84C280735DA00F5066B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = carradio;
+			productName = carradio;
+			productReference = 2E62A84E280735DA00F5066B /* carradio */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2E62A846280735DA00F5066B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					2E62A84D280735DA00F5066B = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+				};
+			};
+			buildConfigurationList = 2E62A849280735DA00F5066B /* Build configuration list for PBXProject "carradio" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2E62A845280735DA00F5066B;
+			productRefGroup = 2E62A84F280735DA00F5066B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2E62A84D280735DA00F5066B /* carradio */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2E62A84A280735DA00F5066B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E62A86A280738BA00F5066B /* VFD.cpp in Sources */,
+				2E62A8622807375300F5066B /* TMP117.cpp in Sources */,
+				2E62A86E280778E300F5066B /* INA219.cpp in Sources */,
+				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
+				2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */,
+				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
+				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
+				2E62A8612807375300F5066B /* I2C.cpp in Sources */,
+				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
+				2E62A852280735DA00F5066B /* main.cpp in Sources */,
+				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
+				2E62A8712807908900F5066B /* QwiicTwist.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2E62A853280735DA00F5066B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2E62A854280735DA00F5066B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2E62A856280735DA00F5066B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = macstuff/rtl.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PDXWT4JFG9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/macstuff/macincludes";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib/,
+					"/usr/local/Cellar/libusb-compat/0.1.5_1/lib",
+					/usr/local/Cellar/libusb/1.0.26/lib,
+					"$(PROJECT_DIR)/macstuff/macincludes",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2E62A857280735DA00F5066B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = macstuff/rtl.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PDXWT4JFG9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/macstuff/macincludes";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib/,
+					"/usr/local/Cellar/libusb-compat/0.1.5_1/lib",
+					/usr/local/Cellar/libusb/1.0.26/lib,
+					"$(PROJECT_DIR)/macstuff/macincludes",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2E62A849280735DA00F5066B /* Build configuration list for PBXProject "carradio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E62A853280735DA00F5066B /* Debug */,
+				2E62A854280735DA00F5066B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2E62A855280735DA00F5066B /* Build configuration list for PBXNativeTarget "carradio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E62A856280735DA00F5066B /* Debug */,
+				2E62A857280735DA00F5066B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2E62A846280735DA00F5066B /* Project object */;
+}

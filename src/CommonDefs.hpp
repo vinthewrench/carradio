@@ -14,6 +14,8 @@
 #include <vector>
 #include <string>
 #include <exception>
+#include <stdexcept>
+
 
 class Exception: virtual public std::runtime_error {
 	

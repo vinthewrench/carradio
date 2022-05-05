@@ -50,6 +50,7 @@ set(SOURCES
 	src/DisplayMgr.cpp
 	src/RadioMgr.cpp
 	src/RadioDataSource.cpp
+	src/AudioOutput.cpp
 	src/RtlSdr.cpp
 #	src/MicroNMEA.cpp
 	)

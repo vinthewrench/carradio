@@ -21,6 +21,7 @@
 		2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F928244E5F00F5066B /* RtlSdr.cpp */; };
 		2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */; };
 		2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */; };
+		2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A907282465B500F5066B /* AudioOutput.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -70,6 +71,8 @@
 		2E62A9042824597800F5066B /* librtlsdr.0.6git.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = librtlsdr.0.6git.dylib; sourceTree = "<group>"; };
 		2E62A9052824597900F5066B /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
 		2E62A9062824597900F5066B /* rtl-sdr_export.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "rtl-sdr_export.h"; sourceTree = "<group>"; };
+		2E62A907282465B500F5066B /* AudioOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioOutput.cpp; sourceTree = "<group>"; };
+		2E62A908282465B500F5066B /* AudioOutput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AudioOutput.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +119,8 @@
 				2E62A8F928244E5F00F5066B /* RtlSdr.cpp */,
 				2E62A8F828244E5F00F5066B /* RtlSdr.hpp */,
 				2E62A8FB28244E7D00F5066B /* IQSample.h */,
+				2E62A907282465B500F5066B /* AudioOutput.cpp */,
+				2E62A908282465B500F5066B /* AudioOutput.hpp */,
 				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
 				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 				2E62A85B2807375300F5066B /* I2C.cpp */,
@@ -229,6 +234,7 @@
 				2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
 				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
+				2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */,
 				2E62A8612807375300F5066B /* I2C.cpp in Sources */,
 				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,

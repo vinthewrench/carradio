@@ -83,11 +83,12 @@ link_directories(
     )
 
 target_link_libraries(carradio
+	 PRIVATE
 	 ${CMAKE_THREAD_LIBS_INIT}
     ${RTLSDR_LIBRARIES}
     ${ALSA_LIBRARIES}
     ${EXTRA_LIBS}
- 	PRIVATE Threads::Threads
+ 	 Threads::Threads
  	)
 
 target_include_directories(carradio

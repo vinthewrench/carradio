@@ -367,7 +367,7 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	if(redraw)
 		_vfd.clearScreen();
 	
-	TRY(_vfd.setCursor(10,10));
+	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.write("Starting Up..."));
 	

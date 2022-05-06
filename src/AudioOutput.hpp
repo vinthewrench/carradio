@@ -47,9 +47,12 @@ public:
  
 	bool write(const SampleVector& samples);
 	
-	bool 	setVolume(double );
+	bool 	setVolume(double );		// 0.0 - 1.0  % of max
 	double volume();
-  
+
+	bool 	setBalance(double );		// -1.0  - 1.0
+	double balance();
+
 	
 	private:
  
@@ -59,6 +62,8 @@ public:
 	
 	snd_mixer_t* 			_mixer;
 	snd_mixer_elem_t* 	_elem;
+	
+	double					_balance;
 	
 	vector<uint8_t>  		_bytebuf;
  

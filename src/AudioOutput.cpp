@@ -9,6 +9,7 @@ AudioOutput *AudioOutput::sharedInstance = NULL;
 
 AudioOutput::AudioOutput(){
 	_isSetup = false;
+	_balance = 0;
 	_pcm = NULL;
  
 }
@@ -286,18 +287,44 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 		  return set_dB[ctl_dir](elem, channel, value, dir);
 }
 
-bool 	AudioOutput::setVolume(double volume){
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, volume ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, volume ,0, PLAYBACK);
+bool 	AudioOutput::setVolume(double volIn){
+	if(volIn > 1) volIn = 1.0;				// pin volume
+	else if (volIn < 0) volIn = 0.0;
+	
+	double left =  volIn;
+	double right  =  volIn;
+ 
+	if( _balance > 0) {
+		left -= _balance;
+	}else if( _balance < 0) {
+		right -= _balance;
+	}
+	
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
 
 	return true;
 }
 
 double AudioOutput::volume() {
-	
 	double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
 	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
-	return (left+right) / 2.0;
+	
+	return fmax(left, right);
  }
+
+
+bool 	AudioOutput::setBalance(double newBal) {
+	if(newBal > 1) newBal = 1.0;				// pin volume
+	else if (newBal < -1.0) newBal = -1.0;
+
+	_balance = newBal;
+	setVolume(volume());
+}
+
+
+double balance() {
+	return _balance;
+}
 
 #endif

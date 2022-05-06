@@ -96,6 +96,7 @@ int main(int argc, const char * argv[]) {
 				
 				if(twist.getDiff(twistCount, true)) {
 #if 0
+					// controls channel
 					auto newfreq = radio->nextFrequency(twistCount > 0);
 					
 					if(( radio->radioMode() != RadioMgr::RADIO_OFF)
@@ -103,6 +104,7 @@ int main(int argc, const char * argv[]) {
 						display->showRadioChange();
 					}
 #else
+					// controls volume
 					auto volume = audio->volume();
 					
 					if(twistCount > 0) {

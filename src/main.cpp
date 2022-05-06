@@ -71,8 +71,8 @@ int main(int argc, const char * argv[]) {
 			throw Exception("failed to setup Audio ");
 	
 		audio->setVolume(.75);
-		audio->volume();
-	
+		audio->setBalance(.1);
+			
 		if(!radio->begin(devices[0].index))
 			throw Exception("failed to setup Radio ");
 		

@@ -288,18 +288,19 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 }
 
 bool 	AudioOutput::setVolume(double volIn){
-	if(volIn > 1) volIn = 1.0;				// pin volume
-	else if (volIn < 0) volIn = 0.0;
+
+	volIn = fmax(0, fmin(1, volIn));  // pin volume
 	
 	double left =  volIn;
 	double right  =  volIn;
  
+	double adjusted =  volIn * (1 - fabs(_balance));
+
 	if( _balance > 0) {
-		left -= _balance;
+		left = adjusted;
 	}else if( _balance < 0) {
-		right -= _balance;
+		right = adjusted;
 	}
-	
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
 
@@ -314,9 +315,9 @@ double AudioOutput::volume() {
  }
 
 
-bool 	AudioOutput::setBalance(double newBal) {
-	if(newBal > 1) newBal = 1.0;				// pin volume
-	else if (newBal < -1.0) newBal = -1.0;
+bool AudioOutput::setBalance(double newBal) {
+
+	newBal = fmax(-1, fmin(1, newBal));  // pin balance
 
 	_balance = newBal;
 	return setVolume(volume());

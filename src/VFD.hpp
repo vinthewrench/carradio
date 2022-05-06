@@ -51,7 +51,7 @@ public:
 	bool setCursor(uint8_t x, uint8_t y);
 	bool setFont(font_t font);
 
-	inline int width() {
+	inline uint16_t width() {
 #if GU126x64F
 	 		return 126;
 #elif GU128x64D
@@ -59,7 +59,7 @@ public:
 #endif
  	};
 	
-	inline int height() {
+	inline uint16_t height() {
 #if GU126x64F
 			return 64;
 #elif GU128x64D

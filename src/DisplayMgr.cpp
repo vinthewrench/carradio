@@ -374,6 +374,7 @@ static constexpr uint8_t VFD_OUTLINE = 0x14;
 static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
 static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
+static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 
 void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
@@ -430,13 +431,19 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 		
 }
 
+
 void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	
-	constexpr uint8_t rightbox 	= 13;
-	constexpr uint8_t leftbox 		= 112;
-	constexpr uint8_t topbox 		= 34;
-	constexpr uint8_t bottombox 	= 44;
-	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+		
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
+
 	try{
 		if(redraw){
 			_vfd.clearScreen();
@@ -444,30 +451,45 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 			// draw centered heading
 			_vfd.setFont(VFD::FONT_5x7);
 			string str = "Volume";
-			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), 29);
+			_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
 			_vfd.write(str);
-			
+	
 			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox};
+			uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
-		}
-		
-		float vol = 0;
-		if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_VOLUME, vol)){
-			
-			uint8_t rndVol =  (int) round(vol * 100);
-			uint8_t midBox =  ((uint8_t) round((leftbox - rightbox) * vol)) + rightbox - 1;
-			
-			// fill volume area box
-			uint8_t buff3[] = {VFD_SET_AREA,rightbox,topbox+1,midBox,bottombox-1};
-			_vfd.writePacket(buff3, sizeof(buff3), 0);
-			
-			// clear rest of inside of box
-			if(rndVol < 100){
-				uint8_t buff2[] = {VFD_CLEAR_AREA, static_cast<uint8_t>(midBox+1),topbox+1,leftbox-1,bottombox-1};
-				_vfd.writePacket(buff2, sizeof(buff2), 0);
 			}
+		
+		float volume = 0;
+		if(_dataSource
+			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_VOLUME, volume)){
+			
+			uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
+
+			// clear rest of inside of box
+			if(volume < 1){
+				uint8_t buff2[] = {VFD_CLEAR_AREA,
+					static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+					static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+				_vfd.writePacket(buff2, sizeof(buff2), 20);
+			 }
+	
+		usleep(200000);
+		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
+			// fill volume area box
+			uint8_t buff3[] = {VFD_SET_AREA,
+				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
+			 _vfd.writePacket(buff3, sizeof(buff3), 20);
+			
+		 usleep(200000);
+			
+			// TRY(_vfd.setCursor(10, 55));
+			// TRY(_vfd.setFont(VFD::FONT_5x7));
+			// char buffer[16] = {0};
+			// sprintf(buffer, "Volume: %.2f  ", volume);
+			// TRY(_vfd.write(buffer));
+ 
+			
 		}
 	} catch (...) {
 		// ignore fail
@@ -482,8 +504,8 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	uint8_t midX = width/2;
 	uint8_t midY = height/2;
 		
-	uint8_t rightbox 	= 20;
-	uint8_t leftbox 	= width - 20;
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
@@ -495,45 +517,46 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			// draw centered heading
 			_vfd.setFont(VFD::FONT_5x7);
 			string str = "Balance";
-			_vfd.setCursor( midX - ((str.size()*6) /2 ), topbox - 5);
+			_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
 			_vfd.write(str);
 			
 			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox,
-									VFD_SET_CURSOR, midX, bottombox, '|' };
+			uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
 			
-		 
-			
-			_vfd.setCursor(rightbox - 10, bottombox -1 );
+			_vfd.setCursor(leftbox - 10, bottombox -1 );
 			_vfd.write("L");
-			_vfd.setCursor(leftbox + 5, bottombox -1 );
+			_vfd.setCursor(rightbox + 5, bottombox -1 );
 			_vfd.write("R");
- 		}
+		}
 		
 		float balance = 0;
 		if(_dataSource
 			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_BALANCE, balance)){
 			
+			uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
+			itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+			itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+	
+			// clear inside of box
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+						static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+						static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+						VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			// draw marker
+						VFD_SET_WRITEMODE, 0x03, 	// XOR
+						VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+						VFD_SET_WRITEMODE, 0x00,};	// Normal
+						 
+			_vfd.writePacket(buff2, sizeof(buff2), 0);
+ 
+
 			TRY(_vfd.setCursor(10, 55));
 			TRY(_vfd.setFont(VFD::FONT_5x7));
-			
 			char buffer[16] = {0};
 			sprintf(buffer, "Balance: %.2f  ", balance);
 			TRY(_vfd.write(buffer));
  
-//			uint8_t rndVol =  (int) round(vol * 100);
-//			uint8_t midBox =  ((uint8_t) round((leftbox - rightbox) * vol)) + rightbox - 1;
-//
-//			// fill volume area box
-//			uint8_t buff3[] = {VFD_SET_AREA,rightbox,topbox+1,midBox,bottombox-1};
-//			_vfd.writePacket(buff3, sizeof(buff3), 0);
-//
-//			// clear rest of inside of box
-//			if(rndVol < 100){
-//				uint8_t buff2[] = {VFD_CLEAR_AREA, static_cast<uint8_t>(midBox+1),topbox+1,leftbox-1,bottombox-1};
-//				_vfd.writePacket(buff2, sizeof(buff2), 0);
-//			}
 		}
 	} catch (...) {
 		// ignore fail

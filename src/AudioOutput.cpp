@@ -77,10 +77,10 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			
 			 
-			double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
-			double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
-			printf("L: %f R: %f\n", left*100, right*100);
-		
+//			double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
+//			double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
+//			printf("L: %f R: %f\n", left*100, right*100);
+//		
 			_isSetup = true;
 			success = true;
 		}

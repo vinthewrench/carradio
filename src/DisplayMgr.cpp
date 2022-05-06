@@ -370,6 +370,11 @@ void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
 	}
 }
 
+static constexpr uint8_t VFD_OUTLINE = 0x14;
+static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
+static constexpr uint8_t VFD_SET_AREA = 0x11;
+static constexpr uint8_t VFD_SET_CURSOR = 0x10;
+
 
 void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	
@@ -432,10 +437,6 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	constexpr uint8_t topbox 		= 34;
 	constexpr uint8_t bottombox 	= 44;
 	
-	constexpr uint8_t VFD_OUTLINE = 0x14;
-	constexpr uint8_t VFD_CLEAR_AREA = 0x12;
-	constexpr uint8_t VFD_SET_AREA = 0x11;
-	
 	try{
 		if(redraw){
 			_vfd.clearScreen();
@@ -478,15 +479,13 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
+	uint8_t midX  = height/2;
 	uint8_t rightbox 	= 20;
 	uint8_t leftbox 	= width - 20;
-	uint8_t topbox 	= (height/2) -5 ;
-	uint8_t bottombox = (height/2) + 5 ;
+	uint8_t topbox 	= midX -5 ;
+	uint8_t bottombox = midX + 5 ;
 	
-	constexpr uint8_t VFD_OUTLINE = 0x14;
-	constexpr uint8_t VFD_CLEAR_AREA = 0x12;
-	constexpr uint8_t VFD_SET_AREA = 0x11;
-	
+ 
 	try{
 		if(redraw){
 			_vfd.clearScreen();
@@ -498,12 +497,14 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			_vfd.write(str);
 			
 			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox};
+			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox, VFD_SET_CURSOR, midX, bottombox, '|' };
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
 			
-			_vfd.setCursor(rightbox - 10, bottombox -2 );
+		 
+			
+			_vfd.setCursor(rightbox - 10, bottombox -1 );
 			_vfd.write("L");
-			_vfd.setCursor(leftbox + 5, bottombox -2 );
+			_vfd.setCursor(leftbox + 5, bottombox -1 );
 			_vfd.write("R");
  		}
 		

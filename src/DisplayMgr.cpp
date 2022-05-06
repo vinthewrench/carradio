@@ -477,10 +477,11 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
 	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
 	uint8_t rightbox 	= 20;
 	uint8_t leftbox 	= width - 20;
-	uint8_t topbox 	= 34;
-	uint8_t bottombox = 44;
+	uint8_t topbox 	= (height/2) -5 ;
+	uint8_t bottombox = (height/2) + 5 ;
 	
 	constexpr uint8_t VFD_OUTLINE = 0x14;
 	constexpr uint8_t VFD_CLEAR_AREA = 0x12;
@@ -493,7 +494,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			// draw centered heading
 			_vfd.setFont(VFD::FONT_5x7);
 			string str = "Balance";
-			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), 29);
+			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), topbox - 10);
 			_vfd.write(str);
 			
 			//draw box outline
@@ -502,7 +503,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			
 			_vfd.setCursor(rightbox - 10, bottombox);
 			_vfd.write("L");
-			_vfd.setCursor(leftbox + 10, bottombox);
+			_vfd.setCursor(leftbox + 5, bottombox);
 			_vfd.write("R");
  		}
 		

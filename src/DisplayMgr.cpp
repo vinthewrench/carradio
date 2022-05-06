@@ -479,11 +479,13 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
-	uint8_t midX  = height/2;
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+		
 	uint8_t rightbox 	= 20;
 	uint8_t leftbox 	= width - 20;
-	uint8_t topbox 	= midX -5 ;
-	uint8_t bottombox = midX + 5 ;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
 	
  
 	try{
@@ -497,7 +499,8 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			_vfd.write(str);
 			
 			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox, VFD_SET_CURSOR, midX, bottombox, '|' };
+			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox,
+									VFD_SET_CURSOR, midX, bottombox, '|' };
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
 			
 		 

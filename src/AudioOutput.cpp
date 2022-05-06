@@ -1,6 +1,8 @@
 
 #include "AudioOutput.hpp"
 #include "ErrorMgr.hpp"
+#include <math.h>
+#include <stdbool.h>
 
 
 AudioOutput *AudioOutput::sharedInstance = NULL;
@@ -161,6 +163,9 @@ bool AudioOutput::write(const SampleVector& samples)
 
 
 
+// MARK: -  Mixer Volume
+#if defined(__APPLE__)
+
 bool 	AudioOutput::setVolume(double newVol){
 	
 	return true;
@@ -170,3 +175,138 @@ double AudioOutput::volume() {
 	return 50. ;
 }
 
+#else
+
+#define MAX_LINEAR_DB_SCALE     24
+
+static inline bool use_linear_dB_scale(long dBmin, long dBmax)
+{
+		  return dBmax - dBmin <= MAX_LINEAR_DB_SCALE * 100;
+}
+
+static long lrint_dir(double x, int dir)
+{
+		  if (dir > 0)
+					 return lrint(ceil(x));
+		  else if (dir < 0)
+					 return lrint(floor(x));
+		  else
+					 return lrint(x);
+}
+
+enum ctl_dir { PLAYBACK, CAPTURE };
+
+static int (* const get_dB_range[2])(snd_mixer_elem_t *, long *, long *) = {
+		  snd_mixer_selem_get_playback_dB_range,
+		  snd_mixer_selem_get_capture_dB_range,
+};
+static int (* const get_raw_range[2])(snd_mixer_elem_t *, long *, long *) = {
+		  snd_mixer_selem_get_playback_volume_range,
+		  snd_mixer_selem_get_capture_volume_range,
+};
+static int (* const get_dB[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t, long *) = {
+		  snd_mixer_selem_get_playback_dB,
+		  snd_mixer_selem_get_capture_dB,
+};
+static int (* const get_raw[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t, long *) = {
+		  snd_mixer_selem_get_playback_volume,
+		  snd_mixer_selem_get_capture_volume,
+};
+static int (* const set_dB[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t, long, int) = {
+		  snd_mixer_selem_set_playback_dB,
+		  snd_mixer_selem_set_capture_dB,
+};
+static int (* const set_raw[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t, long) = {
+		  snd_mixer_selem_set_playback_volume,
+		  snd_mixer_selem_set_capture_volume,
+};
+
+static double get_normalized_volume(snd_mixer_elem_t *elem,
+												snd_mixer_selem_channel_id_t channel,
+												enum ctl_dir ctl_dir)
+{
+		  long min, max, value;
+		  double normalized, min_norm;
+		  int err;
+
+		  err = get_dB_range[ctl_dir](elem, &min, &max);
+		  if (err < 0 || min >= max) {
+					 err = get_raw_range[ctl_dir](elem, &min, &max);
+					 if (err < 0 || min == max)
+								return 0;
+
+					 err = get_raw[ctl_dir](elem, channel, &value);
+					 if (err < 0)
+								return 0;
+
+					 return (value - min) / (double)(max - min);
+		  }
+
+		  err = get_dB[ctl_dir](elem, channel, &value);
+		  if (err < 0)
+					 return 0;
+
+		  if (use_linear_dB_scale(min, max))
+					 return (value - min) / (double)(max - min);
+
+		  normalized = pow(10, (value - max) / 6000.0);
+		  if (min != SND_CTL_TLV_DB_GAIN_MUTE) {
+					 min_norm = pow(10, (min - max) / 6000.0);
+					 normalized = (normalized - min_norm) / (1 - min_norm);
+		  }
+
+		  return normalized;
+}
+
+static int set_normalized_volume(snd_mixer_elem_t *elem,
+											snd_mixer_selem_channel_id_t channel,
+											double volume,
+											int dir,
+											enum ctl_dir ctl_dir)
+{
+		  long min, max, value;
+		  double min_norm;
+		  int err;
+
+		  err = get_dB_range[ctl_dir](elem, &min, &max);
+		  if (err < 0 || min >= max) {
+					 err = get_raw_range[ctl_dir](elem, &min, &max);
+					 if (err < 0)
+								return err;
+
+					 value = lrint_dir(volume * (max - min), dir) + min;
+					 return set_raw[ctl_dir](elem, channel, value);
+		  }
+
+		  if (use_linear_dB_scale(min, max)) {
+					 value = lrint_dir(volume * (max - min), dir) + min;
+					 return set_dB[ctl_dir](elem, channel, value, dir);
+		  }
+
+		  if (min != SND_CTL_TLV_DB_GAIN_MUTE) {
+					 min_norm = pow(10, (min - max) / 6000.0);
+					 volume = volume * (1 - min_norm) + min_norm;
+		  }
+		  value = lrint_dir(6000.0 * log10(volume), dir) + max;
+		  return set_dB[ctl_dir](elem, channel, value, dir);
+}
+
+bool 	AudioOutput::setVolume(double volume){
+	
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, volume ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, volume ,0, PLAYBACK);
+
+	return true;
+}
+
+double AudioOutput::volume() {
+	
+	double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
+	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
+	printf("L: %f R: %f\n", left*100, right*100);
+  
+	
+	return 50. ;
+}
+
+#endif

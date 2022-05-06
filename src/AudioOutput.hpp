@@ -49,8 +49,8 @@ public:
 	unsigned int         _nchannels;
 	struct _snd_pcm *   	_pcm;
 	
-	struct _snd_mixer* 			_mixer;
-	struct snd_mixer_elem_t* 	_elem;
+	void * 					_mixer;
+	void * 					_elem;
 	
 	vector<uint8_t>  		_bytebuf;
  

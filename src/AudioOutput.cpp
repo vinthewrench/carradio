@@ -175,7 +175,7 @@ bool AudioOutput::write(const SampleVector& samples)
 	}
  	return true;
 }
-
+/*
 void AudioOutput::test(char* fname){
 #if defined(__APPLE__)
 
@@ -200,13 +200,13 @@ void AudioOutput::test(char* fname){
 		
 	 lseek(fd,44, SEEK_SET);
  
-	/* Allocate parameters object and fill it with default values*/
+//Allocate parameters object and fill it with default values
 	snd_pcm_hw_params_alloca(&params);
 
 	snd_pcm_hw_params_any(_pcm, params);
 
  
-	/* Set parameters */
+ 
 	if (pcm = snd_pcm_hw_params_set_access(_pcm, params,
 					SND_PCM_ACCESS_RW_INTERLEAVED) < 0)
 		printf("ERROR: Can't set interleaved mode. %s\n", snd_strerror(pcm));
@@ -221,12 +221,11 @@ void AudioOutput::test(char* fname){
 	if (pcm = snd_pcm_hw_params_set_rate_near(_pcm, params, &rate, 0) < 0)
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 
-	/* Write parameters */
+ 
 	if (pcm = snd_pcm_hw_params(_pcm, params) < 0)
 		printf("ERROR: Can't set harware parameters. %s\n", snd_strerror(pcm));
 
-	/* Resume information */
-	printf("PCM name: '%s'\n", snd_pcm_name(_pcm));
+ 	printf("PCM name: '%s'\n", snd_pcm_name(_pcm));
 
 	printf("PCM state: %s\n", snd_pcm_state_name(snd_pcm_state(_pcm)));
 
@@ -243,10 +242,9 @@ void AudioOutput::test(char* fname){
 
 	printf("seconds: %d\n", seconds);
 
-	/* Allocate buffer to hold single period */
-	snd_pcm_hw_params_get_period_size(params, &frames, 0);
+ 	snd_pcm_hw_params_get_period_size(params, &frames, 0);
 
-	buff_size = frames * channels * 2 /* 2 -> sample size */;
+	buff_size = frames * channels * 2;  // 2 -> sample size * 
 	buff = (char *) malloc(buff_size);
 
 	snd_pcm_hw_params_get_period_time(params, &tmp, NULL);
@@ -279,7 +277,7 @@ void AudioOutput::test(char* fname){
 #endif
 }
 
-
+*/
 
 
 // MARK: -  Mixer Volume

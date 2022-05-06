@@ -85,10 +85,7 @@ int main(int argc, const char * argv[]) {
 	//	radio->setRadioMode(RadioMgr::RADIO_OFF);
 		radio->setRadioMode(RadioMgr::BROADCAST_FM);
 		
-		
-	//	audio->test( (char*) "just.wav");
-		
-		// dim button down
+ 		// dim button down
 		twist.setColor(0, 8, 0);
 		
 		while(true){

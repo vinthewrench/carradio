@@ -494,16 +494,16 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			// draw centered heading
 			_vfd.setFont(VFD::FONT_5x7);
 			string str = "Balance";
-			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), topbox - 10);
+			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), topbox - 5);
 			_vfd.write(str);
 			
 			//draw box outline
 			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox};
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
 			
-			_vfd.setCursor(rightbox - 10, bottombox);
+			_vfd.setCursor(rightbox - 10, bottombox -2 );
 			_vfd.write("L");
-			_vfd.setCursor(leftbox + 5, bottombox);
+			_vfd.setCursor(leftbox + 5, bottombox -2 );
 			_vfd.write("R");
  		}
 		

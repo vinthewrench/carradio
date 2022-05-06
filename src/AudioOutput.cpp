@@ -288,6 +288,8 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 
 bool 	AudioOutput::setVolume(double volume){
 	
+	printf("setVolume( %f )\n", volume);
+
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, volume ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, volume ,0, PLAYBACK);
 

@@ -53,6 +53,7 @@ public:
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 
+	void test(char* path);
 	
 	private:
  

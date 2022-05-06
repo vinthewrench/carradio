@@ -4,6 +4,25 @@
 #include <math.h>
 #include <stdbool.h>
 
+#include <stdio.h>
+#include <fcntl.h>
+#include <libgen.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/uio.h>
 
 AudioOutput *AudioOutput::sharedInstance = NULL;
 
@@ -28,15 +47,15 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 	
 	bool success = false;
 	
-	
+	_pcm = NULL;
+	_nchannels = stereo ? 2 : 1;
+
 #if defined(__APPLE__)
 	_isSetup = true;
 	success = true;
 #else
 	int r;
-	_pcm = NULL;
-	_nchannels = stereo ? 2 : 1;
-
+ 
 	r = snd_pcm_open(&_pcm, devname.c_str(),
 								SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 	if( r < 0){
@@ -156,6 +175,38 @@ bool AudioOutput::write(const SampleVector& samples)
 	}
  	return true;
 }
+
+void AudioOutput::test(char* fname){
+	bool done = false;
+	int fd = open(fname, O_RDONLY);   ///added
+	if (fd <= 0) {
+		printf("unable to open file '%s'!\n", fname);
+		return;
+	}
+	
+	unsigned int framesize = 2 * _nchannels;
+ 	char*  buffer  = (char *) malloc(framesize);
+	
+
+	while (!done) {
+		if (int rc = read(fd, buffer, framesize) == 0) {   ///changed to fd from 0
+			done = true;
+			continue;
+		}
+#if defined(__APPLE__)
+#else
+		int k = snd_pcm_writei(_pcm, buffer, framesize);
+		snd_pcm_drain(_pcm);
+	 
+#endif
+			
+	}
+
+	free(buffer);
+	close(fd);
+ 
+}
+
 
 
 

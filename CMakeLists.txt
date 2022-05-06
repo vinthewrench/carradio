@@ -99,3 +99,9 @@ target_include_directories(carradio
 
 set(CMAKE_BINARY_DIR "bin")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+add_custom_target(copy_assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Assets ${CMAKE_BINARY_DIR}
+)
+
+add_dependencies(carradio copy_assets)

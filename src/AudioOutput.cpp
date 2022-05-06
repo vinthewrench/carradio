@@ -323,7 +323,7 @@ bool 	AudioOutput::setBalance(double newBal) {
 }
 
 
-double balance() {
+double AudioOutput::balance() {
 	return _balance;
 }
 

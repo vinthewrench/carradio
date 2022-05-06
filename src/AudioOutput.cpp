@@ -66,15 +66,10 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
-			snd_mixer_selem_id_set_name(sid, "Headphone");
+			snd_mixer_selem_id_set_name(sid, devname.c_str());
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			
-			 
-//			double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
-//			double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
-//			printf("L: %f R: %f\n", left*100, right*100);
-//		
 			_isSetup = true;
 			success = true;
 		}

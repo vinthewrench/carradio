@@ -315,6 +315,9 @@ double AudioOutput::volume() {
  }
 
 
+
+#endif
+
 bool AudioOutput::setBalance(double newBal) {
 
 	newBal = fmax(-1, fmin(1, newBal));  // pin balance
@@ -328,4 +331,3 @@ double AudioOutput::balance() {
 	return _balance;
 }
 
-#endif

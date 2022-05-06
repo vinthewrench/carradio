@@ -103,7 +103,7 @@ int main(int argc, const char * argv[]) {
 						&& radio->setFrequency(newfreq)){
 						display->showRadioChange();
 					}
-#else
+#elif 0
 					// controls volume
 					auto volume = audio->volume();
 					
@@ -124,6 +124,29 @@ int main(int argc, const char * argv[]) {
 					}
 					
 					display->showVolumeChange();
+#else
+		
+					// controls balance
+					auto balance = audio->balance();
+					
+					if(twistCount > 0) {
+						
+						if(balance < 1) {						// twist up
+							balance +=.04;
+							if(balance > 1) balance = 1.0;	// pin volume
+							audio->setBalance(balance);
+						}
+					}
+					else {
+						if(balance > -1) {							// twist down
+							balance -=.04;
+							if(balance < -1) balance = -1.;		// twist down
+							audio->setBalance(balance);
+						}
+					}
+					
+					display->showBalanceChange();
+
 #endif
 				}
 			}

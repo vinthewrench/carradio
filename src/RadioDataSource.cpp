@@ -96,12 +96,19 @@ bool RadioDataSource::getFloatForKey(string_view key,  float &result){
 			return  true;
 		}
 	}
-	else if(key == DS_KEY_RADIO_VOLUME){
+	else if(key == DS_KEY_AUDIO_VOLUME){
 		
 		AudioOutput* 	audio 	= AudioOutput::shared();
 		result = audio->volume() ;
 		return true;
 	}
+	else if(key == DS_KEY_AUDIO_BALANCE){
+		
+		AudioOutput* 	audio 	= AudioOutput::shared();
+		result = audio->balance() ;
+		return true;
+	}
+
 	else if(key == DS_KEY_CPU_TEMP){
 		float temp = 0;
 		if(getCPUTemp(temp)) {

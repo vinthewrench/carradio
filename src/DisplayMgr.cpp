@@ -105,6 +105,11 @@ void DisplayMgr::showVolumeChange(){
 	setEvent(DISPLAY_EVENT_VOLUME);
 }
 
+
+void DisplayMgr::showBalanceChange(){
+	setEvent(DISPLAY_EVENT_BALANCE);
+}
+
 void DisplayMgr::showRadioChange(){
 	setEvent(DISPLAY_EVENT_RADIO);
  }
@@ -118,22 +123,23 @@ void DisplayMgr::setEvent(uint16_t evt){
 }
 
 // MARK: -  mode utils
-
-string DisplayMgr::modeString(){
-	
-	switch (_current_mode) {
-		case MODE_UNKNOWN: return("MODE_UNKNOWN");
-		case MODE_STARTUP: return("MODE_STARTUP");
-		case MODE_TIME: return("MODE_TIME");
-		case MODE_VOLUME: return("MODE_VOLUME");
-		case MODE_RADIO: return("MODE_RADIO");
-		case MODE_DIAG: return("MODE_DIAG");
-		case MODE_SHUTDOWN: return("MODE_SHUTDOWN");
-			
-	}
-	return "";
-}
-
+//
+//string DisplayMgr::modeString(){
+//
+//	switch (_current_mode) {
+//		case MODE_UNKNOWN: return("MODE_UNKNOWN");
+//		case MODE_STARTUP: return("MODE_STARTUP");
+//		case MODE_TIME: return("MODE_TIME");
+//		case MODE_VOLUME: return("MODE_VOLUME");
+//		case MODE_BALANCE: return("MODE_BALANCE");
+//		case MODE_RADIO: return("MODE_RADIO");
+//		case MODE_DIAG: return("MODE_DIAG");
+//		case MODE_SHUTDOWN: return("MODE_SHUTDOWN");
+//
+//	}
+//	return "";
+//}
+//
 
 bool DisplayMgr::isStickyMode(mode_state_t md){
 	bool isSticky = false;
@@ -211,6 +217,10 @@ void DisplayMgr::DisplayUpdate(){
 		else if((_event & DISPLAY_EVENT_VOLUME ) != 0){
 			newMode = MODE_VOLUME;
 			_event &= ~DISPLAY_EVENT_VOLUME;
+		}
+		else if((_event & DISPLAY_EVENT_BALANCE ) != 0){
+				newMode = MODE_BALANCE;
+				_event &= ~DISPLAY_EVENT_BALANCE;
 		}
 		else if((_event & DISPLAY_EVENT_RADIO ) != 0){
 			newMode = handleRadioEvent();
@@ -331,7 +341,11 @@ void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
 			case MODE_VOLUME:
 				drawVolumeScreen(redraw,event);
 				break;
-				
+
+			case MODE_BALANCE:
+				drawBalanceScreen(redraw,event);
+				break;
+
 			case MODE_RADIO:
 				drawRadioScreen(redraw,event);
 				break;
@@ -439,7 +453,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 		
 		float vol = 0;
 		if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_RADIO_VOLUME, vol)){
+			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_VOLUME, vol)){
 			
 			uint8_t rndVol =  (int) round(vol * 100);
 			uint8_t midBox =  ((uint8_t) round((leftbox - rightbox) * vol)) + rightbox - 1;
@@ -460,6 +474,61 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
  }
 
 
+void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
+	constexpr uint8_t rightbox 	= 13;
+	constexpr uint8_t leftbox 		= 112;
+	constexpr uint8_t topbox 		= 34;
+	constexpr uint8_t bottombox 	= 44;
+	
+	constexpr uint8_t VFD_OUTLINE = 0x14;
+	constexpr uint8_t VFD_CLEAR_AREA = 0x12;
+	constexpr uint8_t VFD_SET_AREA = 0x11;
+	
+	try{
+		if(redraw){
+			_vfd.clearScreen();
+			
+			// draw centered heading
+			_vfd.setFont(VFD::FONT_5x7);
+			string str = "Balance";
+			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), 29);
+			_vfd.write(str);
+			
+			//draw box outline
+			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox};
+			_vfd.writePacket(buff1, sizeof(buff1), 0);
+		}
+		
+		float balance = 0;
+		if(_dataSource
+			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_BALANCE, balance)){
+			
+			TRY(_vfd.setCursor(10, 55));
+			TRY(_vfd.setFont(VFD::FONT_5x7));
+			
+			char buffer[16] = {0};
+			sprintf(buffer, "Balance: %.2f  ", balance);
+			TRY(_vfd.write(buffer));
+ 
+//			uint8_t rndVol =  (int) round(vol * 100);
+//			uint8_t midBox =  ((uint8_t) round((leftbox - rightbox) * vol)) + rightbox - 1;
+//
+//			// fill volume area box
+//			uint8_t buff3[] = {VFD_SET_AREA,rightbox,topbox+1,midBox,bottombox-1};
+//			_vfd.writePacket(buff3, sizeof(buff3), 0);
+//
+//			// clear rest of inside of box
+//			if(rndVol < 100){
+//				uint8_t buff2[] = {VFD_CLEAR_AREA, static_cast<uint8_t>(midBox+1),topbox+1,leftbox-1,bottombox-1};
+//				_vfd.writePacket(buff2, sizeof(buff2), 0);
+//			}
+		}
+	} catch (...) {
+		// ignore fail
+	}
+ }
+
+	
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 //	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 

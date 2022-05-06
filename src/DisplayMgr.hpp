@@ -24,8 +24,9 @@ using namespace std;
 constexpr string_view DS_KEY_OUTSIDE_TEMP	= "temp1";
 constexpr string_view DS_KEY_CPU_TEMP		= "tempcpu";
 
-constexpr string_view DS_KEY_RADIO_VOLUME		= "vol";
-constexpr string_view DS_KEY_RADIO_FREQ			= "freq";
+constexpr string_view DS_KEY_AUDIO_VOLUME		= "vol";
+constexpr string_view DS_KEY_AUDIO_BALANCE	= "bal";
+constexpr string_view DS_KEY_RADIO_FREQ		= "freq";
 constexpr string_view DS_KEY_MODULATION_MODE	= "mode";
 constexpr string_view DS_KEY_MODULATION_MUX	=	 "mux";
 
@@ -50,6 +51,7 @@ class DisplayMgr {
 		MODE_STARTUP,
 		MODE_TIME,
 		MODE_VOLUME,
+		MODE_BALANCE,
 		MODE_RADIO,
 		MODE_DIAG,
 		MODE_SHUTDOWN,		// shutdown
@@ -83,6 +85,7 @@ public:
 
 	void showStartup();
 	void showVolumeChange();
+	void showBalanceChange();
 	void showRadioChange();
 
 	void drawCurrentMode(bool redraw, uint16_t event);
@@ -92,6 +95,7 @@ private:
 	void drawStartupScreen(bool redraw, uint16_t event);
 	void drawTimeScreen(bool redraw, uint16_t event);
 	void drawVolumeScreen(bool redraw, uint16_t event);
+	void drawBalanceScreen(bool redraw, uint16_t event);
 	void drawRadioScreen(bool redraw, uint16_t event);
 	void drawDiagScreen(bool redraw, uint16_t event);
 	void drawInternalError(bool redraw, uint16_t event);
@@ -112,12 +116,17 @@ private:
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);
 
-#define DISPLAY_EVENT_STARTUP	0x0002
-#define DISPLAY_EVENT_EXIT 	0x0004
-#define DISPLAY_EVENT_TIME 	0x0008
+#define DISPLAY_EVENT_STARTUP	0x0001
+#define DISPLAY_EVENT_EXIT 	0x0002
+#define DISPLAY_EVENT_TIME 	0x0004
+
+//#define DISPLAY_EVENT_SPARE 	0x0008
+	
 #define DISPLAY_EVENT_VOLUME 	0x0010
-#define DISPLAY_EVENT_RADIO 	0x0020
-#define DISPLAY_EVENT_DIAG 	0x0040
+#define DISPLAY_EVENT_BALANCE 0x0020
+#define DISPLAY_EVENT_RADIO 	0x0040
+	
+#define DISPLAY_EVENT_DIAG 	0x0100
 
 	uint16_t				_event = 0;
 	 
@@ -133,7 +142,7 @@ private:
 	DisplayDataSource	*_dataSource;
 	// debug stuff
 	
-	string modeString();
+//	string modeString();
 
 };
 

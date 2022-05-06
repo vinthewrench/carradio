@@ -15,7 +15,7 @@
 #include <string>
  
  
- #define ELOG_MESSAGE( _msg_, ...)  \
+#define ELOG_MESSAGE( _msg_, ...)  \
 		ErrorMgr::shared()->logError(ErrorMgr::LEV_MESSAGE,  ErrorMgr::UNKNOWN, 0 ,0, _msg_, ##__VA_ARGS__)
 
 #define ELOG_ERROR(_fac_, _dev_, _errnum_, _msg_, ...)  \
@@ -42,7 +42,9 @@ public:
 		FAC_GPIO,
 		FAC_POWER,
 		FAC_SENSOR,
-		FAC_DEVICE
+		FAC_DEVICE,
+		FAC_AUDIO,
+		FAC_RTL,
 	 	}facility_t;
 	
 	

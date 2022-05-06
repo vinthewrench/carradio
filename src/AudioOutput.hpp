@@ -37,15 +37,17 @@ public:
 	bool begin(string devname, unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
  
-	 
+	bool write(const SampleVector& samples);
 	
 	private:
  
 	bool						_isSetup;
 	unsigned int         _nchannels;
 	struct _snd_pcm *   	_pcm;
-
+	vector<uint8_t>  		_bytebuf;
+ 
 	static AudioOutput *sharedInstance;
  
+	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);
 };
 

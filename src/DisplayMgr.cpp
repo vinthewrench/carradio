@@ -495,7 +495,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			// draw centered heading
 			_vfd.setFont(VFD::FONT_5x7);
 			string str = "Balance";
-			_vfd.setCursor(( (126 - (str.size()*6)) /2 ), topbox - 5);
+			_vfd.setCursor( midX - ((str.size()*6) /2 ), topbox - 5);
 			_vfd.write(str);
 			
 			//draw box outline

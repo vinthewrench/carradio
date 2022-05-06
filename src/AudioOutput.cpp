@@ -3,6 +3,8 @@
 #if defined(__APPLE__)
 #else
 #include <alsa/asoundlib.h>
+#include <alsa/mixer.h>
+
 #endif
 
 #include "AudioOutput.hpp"
@@ -60,6 +62,25 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 		if( r < 0){
 			error = r;
 		} 	else {
+			
+			snd_mixer_open(&_mixer , SND_MIXER_ELEM_SIMPLE);
+			snd_mixer_attach(_mixer, "hw:0");
+			snd_mixer_selem_register(_mixer, NULL, NULL);
+			snd_mixer_load(_mixer);
+			snd_mixer_handle_events(_mixer);
+
+			snd_mixer_selem_id_t *sid;
+			snd_mixer_selem_id_alloca(&sid);
+			snd_mixer_selem_id_set_index(sid, 0);
+			snd_mixer_selem_id_set_name(sid, "Headphone");
+		 
+			_elem = snd_mixer_find_selem(_mixer, sid);
+			
+			 
+			double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
+			double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
+			printf("L: %f R: %f\n", left*100, right*100);
+		
 			_isSetup = true;
 			success = true;
 		}
@@ -81,6 +102,10 @@ void AudioOutput::stop(){
 	 if (_pcm != NULL) {
 		  snd_pcm_close(_pcm);
 	 }
+		
+		snd_mixer_detach(_mixer, "hw:0");
+		snd_mixer_close(_mixer);
+
 #endif
 
 	};
@@ -121,6 +146,8 @@ bool AudioOutput::write(const SampleVector& samples)
 	while (p < n) {
 	
 #if defined(__APPLE__)
+		
+		framesize = framesize;
 #else
 	 int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
 		
@@ -139,3 +166,15 @@ bool AudioOutput::write(const SampleVector& samples)
 	}
  	return true;
 }
+
+
+
+bool 	AudioOutput::setVolume(double newVol){
+	
+	return true;
+}
+
+double AudioOutput::volume() {
+	return 50. ;
+}
+

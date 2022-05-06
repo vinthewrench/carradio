@@ -17,11 +17,9 @@ RadioMgr::RadioMgr(){
 	_mux = MUX_MONO;
 
  }
-
-
+ 
 RadioMgr::~RadioMgr(){
  }
-
  
 
 bool RadioMgr::begin(uint32_t deviceIndex){
@@ -178,3 +176,4 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 	
 	return string(buffer);
 }
+

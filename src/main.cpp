@@ -31,10 +31,14 @@
 
 int main(int argc, const char * argv[]) {
 	
-	DisplayMgr*	display 	= DisplayMgr::shared();
-	RadioMgr*	radio 	= RadioMgr::shared();
-	AudioOutput* audio 	= AudioOutput::shared();
-	int     		pcmrate = 48000;
+	string dev_display  = "/dev/ttyUSB0";
+	string dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
+
+	
+	DisplayMgr*		display 	= DisplayMgr::shared();
+	RadioMgr*		radio 	= RadioMgr::shared();
+	AudioOutput* 	audio 	= AudioOutput::shared();
+	constexpr int  pcmrate = 48000;
 
 	TMP117 		tmp117;
 	QwiicTwist	twist;
@@ -46,7 +50,7 @@ int main(int argc, const char * argv[]) {
 	
 	try {
 		
-		if(!display->begin("/dev/ttyUSB0",B9600))
+		if(!display->begin(dev_display,B9600))
 			throw Exception("failed to setup Display ");
 		
 		// these could fail.
@@ -63,15 +67,14 @@ int main(int argc, const char * argv[]) {
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
 		
-		if(!audio->begin("default",pcmrate, true ))
+		if(!audio->begin(dev_audio ,pcmrate, true ))
 			throw Exception("failed to setup Audio ");
 	
 		if(!radio->begin(devices[0].index))
 			throw Exception("failed to setup Radio ");
 		
 		display->showStartup();
-		
-		
+ 
 		//	radio->setFrequency(1440e3);
 		//	radio->setFrequency(88.1e6);
 		radio->setFrequency(155.610e6);

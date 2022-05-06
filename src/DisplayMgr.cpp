@@ -500,9 +500,9 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 			uint8_t buff1[] = {VFD_OUTLINE,rightbox,topbox,leftbox,bottombox};
 			_vfd.writePacket(buff1, sizeof(buff1), 0);
 			
-			_vfd.setCursor(bottombox, rightbox - 10);
+			_vfd.setCursor(rightbox - 10, bottombox);
 			_vfd.write("L");
-			_vfd.setCursor(bottombox, leftbox + 10);
+			_vfd.setCursor(leftbox + 10, bottombox);
 			_vfd.write("R");
  		}
 		

@@ -32,7 +32,8 @@
 int main(int argc, const char * argv[]) {
 	
 	string dev_display  = "/dev/ttyUSB0";
-	string dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
+	//string dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
+		string dev_audio  = "default";
 
 	
 	DisplayMgr*		display 	= DisplayMgr::shared();
@@ -85,7 +86,7 @@ int main(int argc, const char * argv[]) {
 		radio->setRadioMode(RadioMgr::BROADCAST_FM);
 		
 		
-		audio->test( (char*) "just.wav");
+	//	audio->test( (char*) "just.wav");
 		
 		// dim button down
 		twist.setColor(0, 8, 0);
@@ -98,7 +99,7 @@ int main(int argc, const char * argv[]) {
 				int16_t twistCount = 0;
 				
 				if(twist.getDiff(twistCount, true)) {
-#if 0
+#if 1
 					// controls channel
 					auto newfreq = radio->nextFrequency(twistCount > 0);
 					

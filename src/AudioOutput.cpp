@@ -319,7 +319,7 @@ bool 	AudioOutput::setBalance(double newBal) {
 	else if (newBal < -1.0) newBal = -1.0;
 
 	_balance = newBal;
-	setVolume(volume());
+	return setVolume(volume());
 }
 
 

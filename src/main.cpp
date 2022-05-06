@@ -103,6 +103,22 @@ int main(int argc, const char * argv[]) {
 						display->showRadioChange();
 					}
 #else
+					auto volume = audio->volume();
+	
+		 
+						if(twistCount > 0) {
+							if(volume < 1) {
+								volume +=.05;
+								audio->setVolume(volume);
+							}
+						}
+						else {
+							if(volume > 1) {
+								volume -=.05;
+								audio->setVolume(volume);
+							}
+						}
+	 
 					display->showVolumeChange();
 #endif
 				}

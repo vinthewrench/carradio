@@ -300,8 +300,7 @@ double AudioOutput::volume() {
 	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
 	printf("L: %f R: %f\n", left*100, right*100);
   
-	
-	return 50. ;
-}
+	return (left+right) / 2.0
+ }
 
 #endif

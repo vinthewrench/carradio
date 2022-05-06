@@ -46,7 +46,7 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 		
 		snd_pcm_nonblock(_pcm, 0);
 		
-		r = snd_pcm_set_params(m_pcm,
+		r = snd_pcm_set_params(_pcm,
 									  SND_PCM_FORMAT_S16_LE,
 									  SND_PCM_ACCESS_RW_INTERLEAVED,
 									  _nchannels,

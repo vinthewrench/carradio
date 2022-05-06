@@ -70,6 +70,7 @@ int main(int argc, const char * argv[]) {
 		if(!audio->begin(dev_audio ,pcmrate, true ))
 			throw Exception("failed to setup Audio ");
 	
+		audio->setVolume(75.0);
 		audio->volume();
 	
 		if(!radio->begin(devices[0].index))

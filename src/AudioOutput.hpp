@@ -18,9 +18,9 @@
 #include "CommonDefs.hpp"
 
 using namespace std;
+
 #if defined(__APPLE__)
-#else
-typedef struct _snd_mixer snd_mixer_t
+typedef struct _snd_mixer snd_mixer_t;
 typedef struct _snd_mixer_elem snd_mixer_elem_t;
 #endif
 
@@ -53,8 +53,8 @@ public:
 	unsigned int         _nchannels;
 	struct _snd_pcm *   	_pcm;
 	
-	struct snd_mixer_t* 			_mixer;
-	struct snd_mixer_elem_t* 	_elem;
+	snd_mixer_t* 			_mixer;
+	snd_mixer_elem_t* 	_elem;
 	
 	vector<uint8_t>  		_bytebuf;
  

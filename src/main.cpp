@@ -104,21 +104,23 @@ int main(int argc, const char * argv[]) {
 					}
 #else
 					auto volume = audio->volume();
-	
-		 
-						if(twistCount > 0) {
-							if(volume < 1) {
-								volume +=.05;
-								audio->setVolume(volume);
-							}
+					
+					if(twistCount > 0) {
+						
+						if(volume < 1) {						// twist up
+							volume +=.04;
+							if(volume > 1) volume = 1.0;	// pin volume
+							audio->setVolume(volume);
 						}
-						else {
-							if(volume > 1) {
-								volume -=.05;
-								audio->setVolume(volume);
-							}
+					}
+					else {
+						if(volume > 0) {							// twist down
+							volume -=.04;
+							if(volume < 0) volume = 0.0;		// twist down
+							audio->setVolume(volume);
 						}
-	 
+					}
+					
 					display->showVolumeChange();
 #endif
 				}

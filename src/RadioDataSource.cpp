@@ -99,25 +99,8 @@ bool RadioDataSource::getFloatForKey(string_view key,  float &result){
 	else if(key == DS_KEY_RADIO_VOLUME){
 		
 		AudioOutput* 	audio 	= AudioOutput::shared();
-
-		result = audio->volume() * 20;
+		result = audio->volume() ;
 		return true;
-		
-//		int16_t twistCount = 0;
-//		
-//		static int16_t current_volume = 0;
-//		
-//		if(_vol->getDiff(twistCount, true)) {
-//			
-//			int newLevel = current_volume + twistCount;
-//			if(newLevel > 20) newLevel = 20;
-//			if(newLevel < 0) newLevel = 0;
-//			current_volume = newLevel;
-//			
-//			result =  current_volume /20.0;
-//			
-//			return  true;
-//		}
 	}
 	else if(key == DS_KEY_CPU_TEMP){
 		float temp = 0;
@@ -126,6 +109,6 @@ bool RadioDataSource::getFloatForKey(string_view key,  float &result){
 			return  true;
 		}
 	}
- 
+	
 	return false;
 }

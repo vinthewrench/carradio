@@ -14,7 +14,7 @@
 #include <bitset>
 #include <sys/time.h>
 #include "RtlSdr.hpp"
-
+ 
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 
@@ -74,7 +74,7 @@ public:
 	private:
 	bool					_isSetup;
 	RtlSdr				_sdr;
-
+ 
 	radio_mode_t 		_mode;
 	double				_frequency;
 	radio_mux_t 		_mux;

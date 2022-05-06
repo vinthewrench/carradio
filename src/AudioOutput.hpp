@@ -22,6 +22,10 @@ using namespace std;
 #if defined(__APPLE__)
 typedef struct _snd_mixer snd_mixer_t;
 typedef struct _snd_mixer_elem snd_mixer_elem_t;
+#else
+#include <alsa/asoundlib.h>
+#include <alsa/mixer.h>
+
 #endif
 
 class AudioOutput {

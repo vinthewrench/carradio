@@ -1,12 +1,4 @@
 
-
-#if defined(__APPLE__)
-#else
-#include <alsa/asoundlib.h>
-#include <alsa/mixer.h>
-
-#endif
-
 #include "AudioOutput.hpp"
 #include "ErrorMgr.hpp"
 

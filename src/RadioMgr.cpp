@@ -147,7 +147,7 @@ string  RadioMgr::freqSuffixString(double hz){
 
 double RadioMgr::nextFrequency(bool up){
 	
-	double newfreq = frequency;
+	double newfreq = _frequency;
 	
 	switch (_mode) {
 		case BROADCAST_AM:

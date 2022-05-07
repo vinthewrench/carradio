@@ -170,8 +170,11 @@ double RadioMgr::nextFrequency(bool up){
 			else {
 				newfreq-=200.e3;
 			}
-			if(newfreq > 108.1e6) newfreq = 108.1e6;
-			else if(newfreq < 88.1e6) newfreq =88.1e6;
+			
+			newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
+
+//			if(newfreq > 107.9e6) newfreq = 107.9e6;
+//			else if(newfreq < 87.9e6) newfreq =87.9e6;
 		break;
 
 		default:

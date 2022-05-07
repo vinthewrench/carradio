@@ -158,9 +158,8 @@ double RadioMgr::nextFrequency(bool up){
 			else {
 				newfreq-=10.e3;
 			}
-			if(newfreq > 1710e3) newfreq =1710e3;
-			else if(newfreq < 530e3) newfreq =530e3;
-		break;
+			newfreq = fmax(530e3, fmin(1710e3, newfreq));  //  pin freq
+			break;
 	
 		case BROADCAST_FM:
 			// AM steps are 200khz
@@ -170,12 +169,8 @@ double RadioMgr::nextFrequency(bool up){
 			else {
 				newfreq-=200.e3;
 			}
-			
 			newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
-
-//			if(newfreq > 107.9e6) newfreq = 107.9e6;
-//			else if(newfreq < 87.9e6) newfreq =87.9e6;
-		break;
+			break;
 
 		default:
 			if(up) {

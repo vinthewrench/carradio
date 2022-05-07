@@ -25,15 +25,12 @@ bool getCPUTemp(float & tempOut) {
 		std::ifstream   ifs;
 		ifs.open("/sys/class/thermal/thermal_zone0/temp", ios::in);
 		if( ifs.is_open()){
-			
-			if(tempOut){
-				string val;
-				ifs >> val;
-				ifs.close();
-				float temp = std::stof(val);
-				temp = temp /1000.0;
-				tempOut = temp;
-			}
+			string val;
+			ifs >> val;
+			ifs.close();
+			float temp = std::stof(val);
+			temp = temp /1000.0;
+			tempOut = temp;
 			didSucceed = true;
 		}
 		

@@ -9,6 +9,7 @@
 #include "RtlSdr.hpp"
 
 #include <cmath>
+#include <limits.h>
 
 RadioMgr *RadioMgr::sharedInstance = NULL;
 

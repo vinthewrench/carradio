@@ -435,7 +435,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 		
 			TRY(_vfd.setCursor(40, 55));
 			TRY(_vfd.setFont(VFD::FONT_5x7));
-			sprintf(buffer, "CPU: %3dC", (int) round(temp) );
+			sprintf(buffer, "CPU:%dC  ", (int) round(temp) );
 			TRY(_vfd.write(buffer));
 	}
 

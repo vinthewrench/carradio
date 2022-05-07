@@ -81,6 +81,8 @@ bool RadioMgr::setFrequency(double newFreq){
 		if(! _sdr.setFrequency(tuner_freq))
 			return false;
 		
+		_frequency = newFreq;
+		
 		return true;
 	}
 	return false;
@@ -88,10 +90,8 @@ bool RadioMgr::setFrequency(double newFreq){
  
 
 double RadioMgr::frequency(){
-	return _sdr.getFrequency();
-	
-
-}
+	return _frequency;
+ }
 
 string RadioMgr::modeString(radio_mode_t mode){
  
@@ -147,7 +147,7 @@ string  RadioMgr::freqSuffixString(double hz){
 
 double RadioMgr::nextFrequency(bool up){
 	
-	double newfreq = frequency();
+	double newfreq = frequency;
 	
 	switch (_mode) {
 		case BROADCAST_AM:

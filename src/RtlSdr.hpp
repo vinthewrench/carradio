@@ -52,7 +52,6 @@ public:
  
 	/** Return current center frequency in Hz. */
 	uint32_t getFrequency();
-
 	
 	//Set the sample rate for the device, also selects the baseband filters
 	// according to the requested sample rate for tuners where this is possible.

@@ -424,10 +424,21 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 		
 			TRY(_vfd.setCursor(10, 55));
 			TRY(_vfd.setFont(VFD::FONT_5x7));
-			sprintf(buffer, "%3d\xA0\x46", (int) round(temp) );
+			sprintf(buffer, "%3dF", (int) round(temp) );
 			TRY(_vfd.write(buffer));
 	}
+
+	if(_dataSource
+			&& _dataSource->getFloatForKey(DS_KEY_CPU_TEMP, temp)){
 		
+		char buffer[64] = {0};
+		
+			TRY(_vfd.setCursor(40, 55));
+			TRY(_vfd.setFont(VFD::FONT_5x7));
+			sprintf(buffer, "CPU: %3dC", (int) round(temp) );
+			TRY(_vfd.write(buffer));
+	}
+
 		
 }
 

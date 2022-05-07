@@ -66,7 +66,7 @@ public:
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 	
-	double frequency() {return _frequency;};
+	double frequency();
 	bool setFrequency(double );
 	
 	double nextFrequency(bool up);

@@ -92,6 +92,126 @@ vector<int> RtlSdr::getTunerGains()
 	 return gains;
 }
 
+// set tuner gain in units of 0.1 dB.
+bool RtlSdr::setTunerGain(int tuner_gain){
+	
+	bool success = false;
+	int r;
+ 
+	if (!_isSetup ||  !_dev)
+		return false;
+	
+	if (tuner_gain == INT_MIN) {  // auto gain
+		r = rtlsdr_set_tuner_gain_mode(_dev, 0);
+		if (r < 0) {
+			throw Exception("rtlsdr_set_tuner_gain_mode could not set automatic gain");
+			return false;
+		}
+		success = true;
+	}
+	else  {
+		// is it in the list of supported gains.
+		vector<int> gains = getTunerGains();
+		if (find(gains.begin(), gains.end(), tuner_gain) == gains.end()) {
+			return false;
+		};
+		
+		r = rtlsdr_set_tuner_gain_mode(_dev, 1);
+		if (r < 0) {
+			throw Exception("rtlsdr_set_tuner_gain_mode could not set manual gain");
+			return false;
+		}
+		
+		r = rtlsdr_set_tuner_gain(_dev, tuner_gain);
+		if (r < 0) {
+			throw Exception("rtlsdr_set_tuner_gain failed");
+			return false;
+		}
+		
+		success = true;
+	}
+	
+	return success;
+}
+
+// set RTL AGC mode
+bool RtlSdr::setACGMode(bool agcmode) {
+	
+	bool success = false;
+	int r;
+	
+  	if (!_isSetup ||  !_dev)
+		 return false;
+
+	// set RTL AGC mode
+	r = rtlsdr_set_agc_mode(_dev, int(agcmode));
+	if (r < 0) {
+		throw Exception("rtlsdr_set_agc_mode failed");
+ 	}
+
+	success = true;
+	
+	return success;
+}
+
+
+ 
+bool RtlSdr::setFrequency(uint32_t frequency) {
+	
+	bool success = false;
+	int r;
+	
+	if (!_isSetup ||  !_dev)
+		 return false;
+
+	// set RTL AGC mode
+	r = rtlsdr_set_center_freq(_dev, frequency);
+	if (r < 0) {
+		throw Exception("rtlsdr_set_center_freq failed");
+	}
+
+	success = true;
+	return success;
+}
+
+bool RtlSdr::setSampleRate(uint32_t sample_rate) {
+	
+	bool success = false;
+	int r;
+	
+	if (!_isSetup ||  !_dev)
+		 return false;
+
+ 	r = rtlsdr_set_sample_rate(_dev, sample_rate);
+	if (r < 0) {
+		throw Exception("rtlsdr_set_sample_rate failed ");
+		return false;
+	}
+
+	success = true;
+	return success;
+}
+
+bool RtlSdr::resetBuffer() {
+	
+	bool success = false;
+	int r;
+	
+	if (!_isSetup ||  !_dev)
+		 return false;
+
+	r = rtlsdr_reset_buffer(_dev);
+	if (r < 0) {
+		throw Exception("rtlsdr_reset_buffer failed ");
+		return false;
+	}
+ 
+	success = true;
+	return success;
+}
+
+
+ 
 
 // Fetch a bunch of samples from the device.
 bool RtlSdr::getSamples(IQSampleVector& samples)
@@ -126,70 +246,72 @@ bool RtlSdr::getSamples(IQSampleVector& samples)
 }
 
 
-bool RtlSdr::configure(uint32_t sample_rate,
-							  uint32_t frequency,
-							  int tuner_gain,
-							  int block_length,
-							  bool agcmode){
-	int r;
-	
-	
-	if (!_isSetup ||  !_dev)
-		return false;
-	
-	r = rtlsdr_set_sample_rate(_dev, sample_rate);
-	if (r < 0) {
-		throw Exception("rtlsdr_set_sample_rate failed ");
-		return false;
-	}
-	
-	r = rtlsdr_set_center_freq(_dev, frequency);
-	if (r < 0) {
-		throw Exception("rtlsdr_set_center_freq failed ");
-		return false;
-	}
-	
-	if (tuner_gain == INT_MIN) {
-		r = rtlsdr_set_tuner_gain_mode(_dev, 0);
-		if (r < 0) {
-			throw Exception("rtlsdr_set_tuner_gain_mode could not set automatic gain");
-			return false;
-		}
-	} else {
-		r = rtlsdr_set_tuner_gain_mode(_dev, 1);
-		if (r < 0) {
-			throw Exception("rtlsdr_set_tuner_gain_mode could not set manual gain");
-			return false;
-		}
-		
-		r = rtlsdr_set_tuner_gain(_dev, tuner_gain);
-		if (r < 0) {
-			throw Exception("rtlsdr_set_tuner_gain failed");
-			return false;
-		}
-	}
-	
-	// set RTL AGC mode
-	r = rtlsdr_set_agc_mode(_dev, int(agcmode));
-	if (r < 0) {
-		throw Exception("rtlsdr_set_agc_mode failed");
-		return false;
-	}
-	
-	// set block length
-	_blockLength = (block_length < 4096) ? 4096 :
-	(block_length > 1024 * 1024) ? 1024 * 1024 :
-	block_length;
-	_blockLength -= _blockLength % 4096;
-	
-	// reset buffer to start streaming
-	if (rtlsdr_reset_buffer(_dev) < 0) {
-		throw Exception("rtlsdr_reset_buffer failed");
-		return false;
-	}
-	
-	return true;
-}
+
+//
+//bool RtlSdr::configure(uint32_t sample_rate,
+//							  uint32_t frequency,
+//							  int tuner_gain,
+//							  int block_length,
+//							  bool agcmode){
+//	int r;
+//	
+//	
+//	if (!_isSetup ||  !_dev)
+//		return false;
+//	
+//	r = rtlsdr_set_sample_rate(_dev, sample_rate);
+//	if (r < 0) {
+//		throw Exception("rtlsdr_set_sample_rate failed ");
+//		return false;
+//	}
+//	
+////	r = rtlsdr_set_center_freq(_dev, frequency);
+////	if (r < 0) {
+////		throw Exception("rtlsdr_set_center_freq failed ");
+////		return false;
+////	}
+////
+////	if (tuner_gain == INT_MIN) {
+////		r = rtlsdr_set_tuner_gain_mode(_dev, 0);
+////		if (r < 0) {
+////			throw Exception("rtlsdr_set_tuner_gain_mode could not set automatic gain");
+////			return false;
+////		}
+////	} else {
+////		r = rtlsdr_set_tuner_gain_mode(_dev, 1);
+////		if (r < 0) {
+////			throw Exception("rtlsdr_set_tuner_gain_mode could not set manual gain");
+////			return false;
+////		}
+////
+////		r = rtlsdr_set_tuner_gain(_dev, tuner_gain);
+////		if (r < 0) {
+////			throw Exception("rtlsdr_set_tuner_gain failed");
+////			return false;
+////		}
+////	}
+//	
+////	// set RTL AGC mode
+////	r = rtlsdr_set_agc_mode(_dev, int(agcmode));
+////	if (r < 0) {
+////		throw Exception("rtlsdr_set_agc_mode failed");
+////		return false;
+////	}
+////
+////	// set block length
+////	_blockLength = (block_length < 4096) ? 4096 :
+////	(block_length > 1024 * 1024) ? 1024 * 1024 :
+////	block_length;
+////	_blockLength -= _blockLength % 4096;
+//	
+//	// reset buffer to start streaming
+//	if (rtlsdr_reset_buffer(_dev) < 0) {
+//		throw Exception("rtlsdr_reset_buffer failed");
+//		return false;
+//	}
+//	
+//	return true;
+//}
 
 bool RtlSdr::getDeviceInfo(device_info_t& info){
 	

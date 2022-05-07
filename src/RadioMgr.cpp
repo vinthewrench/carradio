@@ -32,11 +32,24 @@ bool RadioMgr::begin(uint32_t deviceIndex,  int &error){
 	
 	_isSetup = false;
 	
-	if( _sdr.begin(deviceIndex,error )) {
-		_isSetup = true;
-	}
+	if(! _sdr.begin(deviceIndex,error ) )
+		return false;
+
+	// tSet Sample rate
+	if(! _sdr.setSampleRate(RtlSdr::default_sampleRate))
+		return false;
+	
+	// start with auto gain
+	if(! _sdr.setTunerGain( INT_MIN ))
+		return false;
+	
+	// turn of ACG
+	if(! _sdr.setACGMode(false))
+		return false;
+
+	_isSetup = true;
  
- 	return _isSetup;
+ 	return true;
 }
 
 void RadioMgr::stop(){
@@ -60,17 +73,25 @@ bool RadioMgr::setRadioMode(radio_mode_t newMode){
 
 bool RadioMgr::setFrequency(double newFreq){
 	if(newFreq != _frequency){
-		_frequency = newFreq;
-
-		// DEBUG
-		_mux = (_frequency == 103.5e6)? MUX_STEREO: MUX_MONO;
-		//DEBUG
-
+		
+		// Intentionally tune at a higher frequency to avoid DC offset.
+		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+ 
+		if(! _sdr.setFrequency(tuner_freq))
+			return false;
+		
 		return true;
 	}
 	return false;
 }
  
+
+double RadioMgr::frequency(){
+	return _sdr.getFrequency();
+	
+
+}
+
 string RadioMgr::modeString(radio_mode_t mode){
  
 	string str = "   ";
@@ -125,7 +146,7 @@ string  RadioMgr::freqSuffixString(double hz){
 
 double RadioMgr::nextFrequency(bool up){
 	
-	double newfreq = _frequency;
+	double newfreq = frequency();
 	
 	switch (_mode) {
 		case BROADCAST_AM:

@@ -79,11 +79,12 @@ int main(int argc, const char * argv[]) {
 		
 		display->showStartup();
  
+		radio->setRadioMode(RadioMgr::BROADCAST_FM);
+		
 		//	radio->setFrequency(1440e3);
 		//	radio->setFrequency(88.1e6);
-		radio->setFrequency(155.610e6);
+		radio->setFrequency(101.900e6);
 	//	radio->setRadioMode(RadioMgr::RADIO_OFF);
-		radio->setRadioMode(RadioMgr::BROADCAST_FM);
 		
  		// dim button down
 		twist.setColor(0, 8, 0);

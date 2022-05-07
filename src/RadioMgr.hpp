@@ -78,8 +78,7 @@ private:
 	radio_mode_t 		_mode;
 	double				_frequency;
 	radio_mux_t 		_mux;
-	
-	
+	 
 	static RadioMgr *sharedInstance;
 	
 };

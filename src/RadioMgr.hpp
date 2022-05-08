@@ -12,14 +12,20 @@
 #include <stdlib.h>
 #include <mutex>
 #include <bitset>
+#include <time.h>
+#include <unistd.h>
+
+
 #include <sys/time.h>
 #include "RtlSdr.hpp"
- 
+
+#include "DataBuffer.hpp"
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
+#include "FmDecode.hpp"
 
 using namespace std;
- 
+
 
 class RadioMgr {
 	
@@ -49,8 +55,8 @@ public:
 	RadioMgr();
 	~RadioMgr();
 	
-	bool begin(uint32_t deviceIndex  = 0);
-	bool begin(uint32_t deviceIndex,  int &error);
+	bool begin(uint32_t deviceIndex  = 0, int  pcmrate = 48000);
+	bool begin(uint32_t deviceIndex, int  pcmrate,  int &error);
 	void stop();
 	
 	
@@ -61,25 +67,59 @@ public:
 	static string modeString(radio_mode_t);
 	static string muxstring(radio_mux_t);
 	
+	 
+	bool setFrequencyandMode(radio_mode_t, double freq = 0 );
 	radio_mode_t radioMode() {return _mode;};
-	bool setRadioMode(radio_mode_t );
+	double frequency();
 	
 	radio_mux_t radioMuxMode() {return _mux;};
-	
-	double frequency();
-	bool setFrequency(double );
-	
+
 	double nextFrequency(bool up);
 	
 private:
 	bool					_isSetup;
 	RtlSdr				_sdr;
+	int					_pcmrate;
 	
 	radio_mode_t 		_mode;
 	double				_frequency;
 	radio_mux_t 		_mux;
 	 
+	// Create source data queue.
+	DataBuffer<IQSample> _source_buffer;
+	
+	// output data queue
+	DataBuffer<Sample>   _output_buffer;
+
 	static RadioMgr *sharedInstance;
 	
+	mutable std::mutex _mutex;		// when changing frequencies and modes.
+	FmDecoder*			_fmDecoder;
+	
+	// SDR Reader thread
+	bool					 _shouldQuit;
+	bool					 _shouldRead;
+
+	pthread_t			_sdrReaderTID;
+	pthread_t			_sdrProcessorTID;
+	pthread_t			_outputProcessorTID;
+	
+	void SDRReader();		// C++ version of thread
+	// C wrappers for SDRReader;
+	static void* SDRReaderThread(void *context);
+	static void SDRReaderThreadCleanup(void *context);
+
+	
+	void SDRProcessor();		// C++ version of thread
+	// C wrappers for SDRReader;
+	static void* SDRProcessorThread(void *context);
+	static void SDRProcessorThreadCleanup(void *context);
+
+	
+	void OutputProcessor();		// C++ version of thread
+	// C wrappers for SDRReader;
+	static void* OutputProcessorThread(void *context);
+	static void OutputProcessorThreadCleanup(void *context);
+
 };
 

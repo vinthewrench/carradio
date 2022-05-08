@@ -147,33 +147,36 @@ bool AudioOutput::write(const SampleVector& samples)
 {
 	// Convert samples to bytes.
 	samplesToInt16(samples, _bytebuf);
-
+	
+	
+#if defined(__APPLE__)
+	
+	fprintf(stderr,"Output %ld samples\n", samples.size());
+#else
 	// Write data.
 	unsigned int p = 0;
 	unsigned int n =  (unsigned int) samples.size() / _nchannels;
 	unsigned int framesize = 2 * _nchannels;
-	while (p < n) {
-	
-#if defined(__APPLE__)
-		
-		framesize = framesize;
-#else
-	 int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
-		
-		 if (k < 0) {
-				 ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
-			 // After an underrun, ALSA keeps returning error codes until we
-			  // explicitly fix the stream.
-			  snd_pcm_recover(_pcm, k, 0);
-			  return false;
-			 
-		 } else {
-			  p += k;
-		 }
-#endif
 
+	while (p < n) {
+		framesize = framesize;
+		int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
+		
+		if (k < 0) {
+			ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+			// After an underrun, ALSA keeps returning error codes until we
+			// explicitly fix the stream.
+			snd_pcm_recover(_pcm, k, 0);
+			return false;
+			
+		} else {
+			p += k;
+		}
 	}
- 	return true;
+#endif
+	
+	
+	return true;
 }
 /*
 void AudioOutput::test(char* fname){

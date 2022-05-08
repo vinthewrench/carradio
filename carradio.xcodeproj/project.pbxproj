@@ -22,6 +22,8 @@
 		2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */; };
 		2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */; };
 		2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A907282465B500F5066B /* AudioOutput.cpp */; };
+		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
+		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -73,6 +75,11 @@
 		2E62A9062824597900F5066B /* rtl-sdr_export.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "rtl-sdr_export.h"; sourceTree = "<group>"; };
 		2E62A907282465B500F5066B /* AudioOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioOutput.cpp; sourceTree = "<group>"; };
 		2E62A908282465B500F5066B /* AudioOutput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AudioOutput.hpp; sourceTree = "<group>"; };
+		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
+		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
+		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
+		2E9F9E9C282727D200E12F5D /* Filter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Filter.hpp; sourceTree = "<group>"; };
+		2E9F9E9D282727D200E12F5D /* FmDecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FmDecode.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +126,11 @@
 				2E62A8F12822E16900F5066B /* RadioMgr.hpp */,
 				2E62A8F928244E5F00F5066B /* RtlSdr.cpp */,
 				2E62A8F828244E5F00F5066B /* RtlSdr.hpp */,
+				2E9F9E9B282727D200E12F5D /* Filter.cpp */,
+				2E9F9E9C282727D200E12F5D /* Filter.hpp */,
+				2E9F9E9D282727D200E12F5D /* FmDecode.cpp */,
+				2E9F9E9A282727D200E12F5D /* FmDecode.hpp */,
+				2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */,
 				2E62A8FB28244E7D00F5066B /* IQSample.h */,
 				2E62A907282465B500F5066B /* AudioOutput.cpp */,
 				2E62A908282465B500F5066B /* AudioOutput.hpp */,
@@ -238,6 +250,7 @@
 				2E62A86A280738BA00F5066B /* VFD.cpp in Sources */,
 				2E62A8622807375300F5066B /* TMP117.cpp in Sources */,
 				2E62A86E280778E300F5066B /* INA219.cpp in Sources */,
+				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
@@ -246,6 +259,7 @@
 				2E62A8612807375300F5066B /* I2C.cpp in Sources */,
 				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,
+				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
 				2E62A8712807908900F5066B /* QwiicTwist.cpp in Sources */,
 			);
@@ -376,6 +390,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PDXWT4JFG9;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/macstuff/macincludes";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -399,6 +414,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PDXWT4JFG9;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/macstuff/macincludes";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

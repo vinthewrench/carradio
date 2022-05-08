@@ -35,19 +35,22 @@ int main(int argc, const char * argv[]) {
 	//string dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 		string dev_audio  = "default";
 
-	
+	constexpr int  pcmrate = 48000;
+
 	DisplayMgr*		display 	= DisplayMgr::shared();
 	RadioMgr*		radio 	= RadioMgr::shared();
 	AudioOutput* 	audio 	= AudioOutput::shared();
-	constexpr int  pcmrate = 48000;
 
 	TMP117 		tmp117;
 	QwiicTwist	twist;
 	
 	RadioDataSource source(&tmp117, &twist);
+
+	double savedFreq = 101.900e6;
 	
+
 	// annoying log messages in librtlsdr
-	freopen( "/dev/null", "w", stderr );
+//	freopen( "/dev/null", "w", stderr );
 	
 	try {
 		
@@ -74,17 +77,14 @@ int main(int argc, const char * argv[]) {
 		audio->setVolume(.75);
 		audio->setBalance(.1);
 			
-		if(!radio->begin(devices[0].index))
+		if(!radio->begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
 		
 		display->showStartup();
- 
-		radio->setRadioMode(RadioMgr::BROADCAST_FM);
+  
+		radio->setFrequencyandMode(RadioMgr::BROADCAST_FM, savedFreq);
 		
-		//	radio->setFrequency(1440e3);
-		//	radio->setFrequency(88.1e6);
-		radio->setFrequency(101.900e6);
-	//	radio->setRadioMode(RadioMgr::RADIO_OFF);
+	//	radio->setFrequencyandMode(RadioMgr::RADIO_OFF);
 		
  		// dim button down
 		twist.setColor(0, 8, 0);
@@ -93,6 +93,7 @@ int main(int argc, const char * argv[]) {
 			bool clicked = false;
 			bool moved = false;
 			
+			
 			if(twist.isMoved(moved) && moved){
 				int16_t twistCount = 0;
 				
@@ -100,10 +101,11 @@ int main(int argc, const char * argv[]) {
 #if 1
 					// controls channel
 					auto newfreq = radio->nextFrequency(twistCount > 0);
+					auto mode = radio->radioMode();
 					
-					if(( radio->radioMode() != RadioMgr::RADIO_OFF)
-						&& radio->setFrequency(newfreq)){
-						display->showRadioChange();
+					if(( mode != RadioMgr::RADIO_OFF)
+		 				&& radio->setFrequencyandMode(mode, newfreq)){
+						savedFreq = newfreq;
 					}
 #elif 0
 					// controls volume
@@ -156,10 +158,10 @@ int main(int argc, const char * argv[]) {
 			if(twist.isClicked(clicked) && clicked) {
 				
 				if(radio->radioMode() != RadioMgr::RADIO_OFF){
-					radio->setRadioMode(RadioMgr::RADIO_OFF);
+					radio->setFrequencyandMode(RadioMgr::RADIO_OFF);
 				}
 				else {
-					radio->setRadioMode(RadioMgr::BROADCAST_FM);
+					radio->setFrequencyandMode(RadioMgr::BROADCAST_FM,savedFreq);
 				}
 				display->showRadioChange();
 				

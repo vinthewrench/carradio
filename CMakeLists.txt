@@ -49,6 +49,8 @@ set(SOURCES
 	src/VFD.cpp
 	src/DisplayMgr.cpp
 	src/RadioMgr.cpp
+	src/FmDecode.cpp
+	src/Filter.cpp
 	src/RadioDataSource.cpp
 	src/AudioOutput.cpp
 	src/RtlSdr.cpp

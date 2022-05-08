@@ -225,13 +225,13 @@ bool RtlSdr::getSamples(IQSampleVector& samples)
 
 	 r = rtlsdr_read_sync(_dev, buf.data(), 2 * _blockLength, &n_read);
 	 if (r < 0) {
-//		  m_error = "rtlsdr_read_sync failed";
-		  return false;
+		 fprintf(stderr, "rtlsdr_read_sync failed\n");
+ 		  return false;
 	 }
 
 	 if (n_read != 2 * _blockLength) {
-//		  m_error = "short read, samples lost";
-		  return false;
+		 fprintf(stderr, "rtlsdr_read_sync short read, samples lost\n");
+ 		  return false;
 	 }
 
 	 samples.resize(_blockLength);

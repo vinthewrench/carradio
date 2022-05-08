@@ -310,7 +310,7 @@ void RadioMgr::SDRReader(){
 		}
 		 
 		if (!_sdr.getSamples(iqsamples)) {
-			 fprintf(stderr, "ERROR: getSamples\n");
+//			 fprintf(stderr, "ERROR: getSamples\n");
 			continue;
 	 		}
 		
@@ -404,7 +404,7 @@ void RadioMgr::SDRProcessor(){
 			_mux = _fmDecoder->stereo_detected()? MUX_STEREO:MUX_MONO;
 	
 			// Show statistics.
-			fprintf(stderr, "blk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB \n",
+			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
 					  block,
 					  _frequency *  1.0e-6,
 					  //					  (tuner_freq + _fmDecoder->get_tuning_offset()) * 1.0e-6,

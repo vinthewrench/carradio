@@ -159,7 +159,6 @@ bool AudioOutput::write(const SampleVector& samples)
 	unsigned int framesize = 2 * _nchannels;
 
 	while (p < n) {
-		framesize = framesize;
 		int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
 		
 		if (k < 0) {

@@ -33,7 +33,7 @@
 #if 1
 int main(int argc, const char * argv[]) {
 
-	PiCanMgr*		pican 	= PiCanMgr::shared();
+	PiCanMgr* pican 	= PiCanMgr::shared();
 
 	// annoying log messages in librtlsdr
 //	freopen( "/dev/null", "w", stderr );

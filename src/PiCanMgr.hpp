@@ -43,12 +43,7 @@ class PiCanMgr {
 
 	public:
 	
-	static PiCanMgr *shared() {
-		if(!sharedInstance){
-			sharedInstance = new PiCanMgr;
-		}
-		return sharedInstance;
-	}
+	static PiCanMgr *shared();
  
 	PiCanMgr();
 	~PiCanMgr();
@@ -89,7 +84,6 @@ private:
 	// C wrappers for SDRReader;
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
-	
 	
 	DisplayMgr* 		_display;
 	AudioOutput 		_audio;

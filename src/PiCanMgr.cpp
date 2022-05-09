@@ -30,9 +30,17 @@ static void sigHandler (int signum) {
 	picanMgr->stop();
 }
 
+
+PiCanMgr * PiCanMgr::shared() {
+	if(!sharedInstance){
+		sharedInstance = new PiCanMgr;
+	}
+	return sharedInstance;
+}
+
+
 PiCanMgr::PiCanMgr(){
 	
-	_display = new DisplayMgr();
  
 //
 	signal(SIGKILL, sigHandler);
@@ -40,16 +48,11 @@ PiCanMgr::PiCanMgr(){
 //	signal(SIGQUIT, sigHandler);
 //	signal(SIGTERM, sigHandler);
 //	signal(SIGINT, sigHandler);
-  
-	pthread_create(&_piCanLoopTID, NULL,
-								  (THREADFUNCPTR) &PiCanMgr::PiCanLoopThread, (void*)this);
-
+ 
 }
 
 PiCanMgr::~PiCanMgr(){
-	
-	triggerEvent(PGMR_EVENT_EXIT);
-	pthread_join(_piCanLoopTID, NULL);
+	stop();
 }
 
  
@@ -57,24 +60,19 @@ bool PiCanMgr::begin(){
 	_isSetup = false;
 		
 	try {
+ 
+		_display = new DisplayMgr();
+
 		// clear DB
 		_db.clearValues();
 
 		// read in any properties
 		_db.restorePropertiesFromFile();
 
-		_display->showStartup();
+	//	_display->showStartup();
 	
 		startCPUInfo();
-		
-		// setup display device
-		if(!_display->begin(dev_display,B9600))
-			throw Exception("failed to setup Display ");
-		
-		// set initial brightness?
-		if(!_display->setBrightness(5))
-			throw Exception("failed to set brightness ");
-		
+ 
 		// if we fail, no big deal..
 		startTempSensors();
 		startControls();
@@ -96,8 +94,19 @@ bool PiCanMgr::begin(){
 		if(!_radio.begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
 	 
+		// setup display device
+		if(!_display->begin(dev_display,B9600))
+			throw Exception("failed to setup Display ");
+		
+		// set initial brightness?
+		if(!_display->setBrightness(5))
+			throw Exception("failed to set brightness ");
+
 		_display->showStartup();  // show it again
 	
+		pthread_create(&_piCanLoopTID, NULL,
+											  (THREADFUNCPTR) &PiCanMgr::PiCanLoopThread, (void*)this);
+
 		_isSetup = true;
 		
 	}
@@ -121,6 +130,9 @@ bool PiCanMgr::begin(){
 void PiCanMgr::stop(){
 	
 	if(_isSetup  ){
+		triggerEvent(PGMR_EVENT_EXIT);
+		pthread_join(_piCanLoopTID, NULL);
+
 		stopControls();
 		stopTempSensors();
 		stopCPUInfo();
@@ -128,9 +140,7 @@ void PiCanMgr::stop(){
 		_audio.setVolume(0);
 		_audio.setBalance(0);
 		_audio.stop();
-	
 		_display->stop();
-		
 	}
 	
 	_isSetup = false;
@@ -154,6 +164,7 @@ void PiCanMgr::PiCanLoop(){
 	bool		 shouldQuit = false;
 	timeval	 lastPollTime = {0,0};
 
+	
 	try{
 		while(!shouldQuit){
 			

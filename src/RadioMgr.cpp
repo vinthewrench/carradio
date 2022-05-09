@@ -27,28 +27,15 @@ RadioMgr::RadioMgr(){
 	_mux = MUX_MONO;
 	_fmDecoder = NULL;
 	_frequency = 0;
+	_isSetup = false;
 	
 	_shouldQuit = false;
-	pthread_create(&_sdrReaderTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
-
-	pthread_create(&_sdrProcessorTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
-
-
-	pthread_create(&_outputProcessorTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
-
  
  }
  
 RadioMgr::~RadioMgr(){
-	
-	_shouldQuit = true;
-	pthread_join(_sdrReaderTID, NULL);
-	pthread_join(_sdrProcessorTID, NULL);
-	pthread_join(_outputProcessorTID, NULL);
- }
+	stop();
+}
  
 
 bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate){
@@ -77,6 +64,17 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	if(! _sdr.setACGMode(false))
 		return false;
   
+	pthread_create(&_sdrReaderTID, NULL,
+								  (THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
+
+	pthread_create(&_sdrProcessorTID, NULL,
+								  (THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
+
+
+	pthread_create(&_outputProcessorTID, NULL,
+								  (THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
+
+
 	_isSetup = true;
  
  	return true;
@@ -85,11 +83,16 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 void RadioMgr::stop(){
 	
 	if(_isSetup  ){
-			_sdr.stop();
-	}
+		_shouldRead = false;
+		_shouldQuit = true;
+		pthread_join(_sdrReaderTID, NULL);
+		pthread_join(_sdrProcessorTID, NULL);
+		pthread_join(_outputProcessorTID, NULL);
+		_sdr.stop();
+ 	}
 	
-	_shouldRead = false;
  	_isSetup = false;
+ 
  }
 
 
@@ -306,20 +309,22 @@ void RadioMgr::SDRReader(){
 	IQSampleVector iqsamples;
 
 	while(!_shouldQuit){
+		{	std::lock_guard<std::mutex> lock(_mutex);
+			
+			// radio is off sleep for awhile.
+			if(!_isSetup || !_shouldRead){
+ 				usleep(200000);
+				continue;
+			}
+		}
 		
-		// radio is off sleep for awhile.
-		if(!_isSetup || !_shouldRead){
-			usleep(200000);
+		if (!_sdr.getSamples(iqsamples)) {
+			//			 fprintf(stderr, "ERROR: getSamples\n");
 			continue;
 		}
-		 
-		if (!_sdr.getSamples(iqsamples)) {
-//			 fprintf(stderr, "ERROR: getSamples\n");
-			continue;
-	 		}
 		
-//		printf("read: %ld\n", iqsamples.size());
-		 
+		//		printf("read: %ld\n", iqsamples.size());
+		
 		_source_buffer.push(move(iqsamples));
 	}
 	

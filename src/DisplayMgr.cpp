@@ -25,18 +25,10 @@ printf("FAIL AT line: %d\n", __LINE__ ); \
 
  
 DisplayMgr::DisplayMgr(){
-	 
-	pthread_create(&_updateTID, NULL,
-								  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
- 
-	showStartup();
 }
 
 DisplayMgr::~DisplayMgr(){
 	
-	_event |= DISPLAY_EVENT_EXIT;
-	pthread_cond_signal(&_cond);
-	pthread_join(_updateTID, NULL);
 }
 
 
@@ -56,6 +48,13 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	if(_vfd.reset())
 		_isSetup = true;
 	
+	if(_isSetup) {
+		pthread_create(&_updateTID, NULL,
+									  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
+
+		showStartup();
+ 	}
+ 
 	return _isSetup;
 }
 
@@ -63,8 +62,13 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 void DisplayMgr::stop(){
  
 	if(_isSetup){
+		
+		_event |= DISPLAY_EVENT_EXIT;
+		pthread_cond_signal(&_cond);
+		pthread_join(_updateTID, NULL);
+
 		_vfd.stop();
-	}
+ 	}
 	
 	_isSetup = false;
 }

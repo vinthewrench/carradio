@@ -52,7 +52,6 @@ public:
 	bool begin(uint32_t deviceIndex, int  pcmrate,  int &error);
 	void stop();
 	
-	
 	bool getDeviceInfo(RtlSdr::device_info_t&);
 	
 	static string freqSuffixString(double hz);
@@ -70,10 +69,13 @@ public:
 	double nextFrequency(bool up);
 	
 private:
+
+
 	bool					_isSetup;
+	
+	
 	RtlSdr				_sdr;
 	int					_pcmrate;
-	
 	radio_mode_t 		_mode;
 	double				_frequency;
 	radio_mux_t 		_mux;

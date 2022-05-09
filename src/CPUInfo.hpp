@@ -17,12 +17,14 @@
 
 using namespace std;
 
+
+constexpr string_view CPU_INFO_TEMP	 				= "CPU_TEMP";
+constexpr string_view  PROP_CPU_TEMP_QUERY_DELAY	= "cputemp-query-delay";
+
 class CPUInfo : public PiCanMgrDevice{
  
 public:
 
-	constexpr static string_view CPU_INFO_TEMP	 				= "CPU_TEMP";
-	constexpr static string_view PROP_CPU_TEMP_QUERY_DELAY	= "cputemp-query-delay";
 
 	CPUInfo();
 	~CPUInfo();

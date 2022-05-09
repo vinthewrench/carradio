@@ -434,7 +434,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	}
 	
 	
-	if(db->getFloatValue(CPUInfo::CPU_INFO_TEMP, temp)){
+	if(db->getFloatValue(CPU_INFO_TEMP, temp)){
 		char buffer[64] = {0};
 		
 		TRY(_vfd.setCursor(40, 55));

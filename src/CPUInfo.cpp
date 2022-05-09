@@ -120,7 +120,7 @@ void CPUInfo::idle(){
 			double tempC;
 			
 			if(getCPUTemp(&tempC)){
-				_resultMap[string(CPUInfo::CPU_INFO_TEMP)] =  to_string(tempC);
+				_resultMap[string(CPU_INFO_TEMP)] =  to_string(tempC);
 				_state = INS_RESPONSE;
 				gettimeofday(&_lastQueryTime, NULL);
 				

@@ -56,8 +56,8 @@ class PiCanDB  {
 	bool valueWithKey	 (string_view key, string  &valueOut);
 	bool getStringValue(string_view key,	string &result);
 	bool getFloatValue(string_view key,  float &result);
-	bool getDoubleForKey(string_view key,  double &result);
-	bool getIntForKey(string_view key,  int &result);
+	bool getDoubleValue(string_view key,  double &result);
+	bool getIntValue(string_view key,  int &result);
 
 private:
 	

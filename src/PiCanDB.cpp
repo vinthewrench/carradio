@@ -144,7 +144,7 @@ bool PiCanDB::getFloatValue(string_view key,  float &result){
 	return false;
 }
 
-bool PiCanDB::getDoubleForKey(string_view key,  double &result){
+bool PiCanDB::getDoubleValue(string_view key,  double &result){
 	
 	string str;
 	if(valueWithKey(key,str)) {
@@ -159,7 +159,7 @@ bool PiCanDB::getDoubleForKey(string_view key,  double &result){
 }
 
  
-bool PiCanDB::getIntForKey(string_view key,  int &result) {
+bool PiCanDB::getIntValue(string_view key,  int &result) {
 	
 	string str;
 	if(valueWithKey(key,str)) {

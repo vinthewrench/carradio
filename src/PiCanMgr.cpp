@@ -192,8 +192,60 @@ void PiCanMgr::PiCanLoop(){
 				else {
 					_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM,savedFreq);
 				}
-	 
 			}
+			
+			bool movedUp = false;
+			if(_volKnob.wasMoved(movedUp)){
+				
+#if 1
+				// change  channel
+				if(_radio.radioMode() != RadioMgr::RADIO_OFF){
+					auto newfreq = _radio.nextFrequency(movedUp);
+					_radio.setFrequencyandMode(_radio.radioMode(), newfreq);
+				}
+				
+#elif 1
+				// change  volume
+				auto volume = _audio.volume();
+				
+				if(movedUp){
+					if(volume < 1) {						// twist up
+						volume +=.04;
+						if(volume > 1) volume = 1.0;	// pin volume
+						_audio.setVolume(volume);
+					}
+				}
+				else {
+					if(volume > 0) {							// twist down
+						volume -=.04;
+						if(volume < 0) volume = 0.0;		// twist down
+						_audio.setVolume(volume);
+					}
+				}
+				
+				_display->showVolumeChange();
+#else
+				// change  balance
+				auto balance = _audio.balance();
+				
+				if(balance < 1) {						// twist up
+					balance +=.04;
+					if(balance > 1) balance = 1.0;	// pin volume
+					_audio.setBalance(balance);
+				}
+				
+				else {
+					if(balance > -1) {							// twist down
+						balance -=.04;
+						if(balance < -1) balance = -1.;		// twist down
+						_audio.setBalance(balance);
+					}
+				}
+				_display->showBalanceChange();
+#endif
+				
+			}
+			
 			
 			// handle slower stuff like polling
 			timeval now, diff;

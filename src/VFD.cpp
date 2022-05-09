@@ -23,14 +23,14 @@ VFD::~VFD(){
 }
 
 
-bool VFD::begin(string path, speed_t speed){
+bool VFD::begin(const char* path, speed_t speed){
 	int error = 0;
 	
 	return begin(path, speed, error);
 }
 
 
-bool VFD::begin(string path, speed_t speed,  int &error){
+bool VFD::begin(const char* path, speed_t speed,  int &error){
 	
 #if defined(__APPLE__)
 	_fd  = 1;
@@ -40,7 +40,7 @@ bool VFD::begin(string path, speed_t speed,  int &error){
 	
 	int fd ;
 	
-	if((fd = ::open( path.c_str(), O_RDWR | O_NOCTTY)) <0) {
+	if((fd = ::open( path, O_RDWR | O_NOCTTY)) <0) {
 		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "OPEN %s", path.c_str());
 		error = errno;
 		return false;

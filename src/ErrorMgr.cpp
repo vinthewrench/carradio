@@ -7,6 +7,11 @@
 
 #include "ErrorMgr.hpp"
 
+#include "TimeStamp.hpp"
+
+using namespace std;
+using namespace timestamp;
+
 ErrorMgr *ErrorMgr::sharedInstance = NULL;
 
 
@@ -45,4 +50,32 @@ void ErrorMgr::logError( level_t 	level,
 }
 
 
+void ErrorMgr::logMessage(level_t level, bool logTime, string str){
+ 
+	//if((_logFlags & level) == 0) return;
+	if(logTime)
+		logTimedStampString(str);
+	else
+		writeToLog(str);
 
+}
+void ErrorMgr::logTimedStampString(const string  str){
+	writeToLog( TimeStamp(false).logFileString() + "\t" + str + "\n");
+}
+
+void ErrorMgr::writeToLog(const std::string str){
+	
+	writeToLog((const uint8_t*)str.c_str(), str.length());
+}
+
+void ErrorMgr::writeToLog(const uint8_t* buf, size_t len){
+	
+	lock_guard<std::mutex> lock(_mutex);
+
+	if(len){
+		printf("%.*s",(int)len, buf);
+   	}
+}
+
+
+ 

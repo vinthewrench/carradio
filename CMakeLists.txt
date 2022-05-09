@@ -44,7 +44,6 @@ set(SOURCES
 	src/ErrorMgr.cpp
 	src/I2C.cpp
 	src/TMP117.cpp
-#	src/INA219.cpp
 	src/QwiicTwist.cpp
 	src/VFD.cpp
 	src/DisplayMgr.cpp
@@ -54,6 +53,11 @@ set(SOURCES
 	src/RadioDataSource.cpp
 	src/AudioOutput.cpp
 	src/RtlSdr.cpp
+	src/CPUInfo.cpp
+	src/PiCanDB.cpp
+	src/PiCanMgr.cpp
+	src/TempSensor.cpp
+	src/TimeStamp.cpp
 #	src/MicroNMEA.cpp
 	)
 
@@ -102,8 +106,8 @@ target_include_directories(carradio
 set(CMAKE_BINARY_DIR "bin")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
-#add_custom_target(copy_assets
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Assets ${CMAKE_BINARY_DIR}
-#)
+add_custom_target(copy_assets
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Assets ${CMAKE_BINARY_DIR}
+ )
 
-#add_dependencies(carradio copy_assets)
+add_dependencies(carradio copy_assets)

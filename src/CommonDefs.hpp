@@ -16,6 +16,20 @@
 #include <exception>
 #include <stdexcept>
 
+#include "Utils.hpp"
+
+
+typedef uint64_t eTag_t;
+#define MAX_ETAG UINT64_MAX
+
+#ifndef _UINT16_T
+#define _UINT16_T
+typedef unsigned short uint16_t;
+#endif /* _UINT16_T */
+
+typedef std::function<void(bool didSucceed)> boolCallback_t;
+typedef std::function<void()> voidCallback_t;
+typedef std::vector<std::string> stringvector;
 
 class Exception: virtual public std::runtime_error {
 	

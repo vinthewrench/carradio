@@ -14,7 +14,9 @@
 #include <stdlib.h>
 #include <cmath>
 
-#include "RadioMgr.hpp"
+#include "PiCanMgr.hpp"
+#include "CPUInfo.hpp"
+#include "TempSensor.hpp"
 
 #define TRY(_statement_) if(!(_statement_)) { \
 printf("FAIL AT line: %d\n", __LINE__ ); \
@@ -26,6 +28,8 @@ typedef void * (*THREADFUNCPTR)(void *);
 
  
 DisplayMgr::DisplayMgr(){
+	
+	_dataSource = NULL;
 	
 	pthread_create(&_updateTID, NULL,
 								  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
@@ -41,13 +45,13 @@ DisplayMgr::~DisplayMgr(){
 }
 
 
-bool DisplayMgr::begin(string path, speed_t speed){
+bool DisplayMgr::begin(const char* path, speed_t speed){
 	int error = 0;
 
 	return begin(path, speed, error);
 }
 
-bool DisplayMgr::begin(string path, speed_t speed,  int &error){
+bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	
 	_isSetup = false;
 	
@@ -56,7 +60,6 @@ bool DisplayMgr::begin(string path, speed_t speed,  int &error){
 	
 	if(_vfd.reset())
 		_isSetup = true;
-	
 	
 	return _isSetup;
 }
@@ -400,46 +403,47 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 }
 
 void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
+	
+	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
 	
 	if(redraw)
 		_vfd.clearScreen();
-
+	
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.setFont(VFD::FONT_10x14));
 	TRY(_vfd.write(buffer));
-
+	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.write( (t->tm_hour > 12)?"PM":"AM"));
 	
 	float temp = 0;
-	if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_OUTSIDE_TEMP, temp)){
-		
+	if(db->getFloatValue("TEMP_0x48", temp)){				// GET THIS FORM SOMEWHERE!!!
+
 		char buffer[64] = {0};
 		
-			TRY(_vfd.setCursor(10, 55));
-			TRY(_vfd.setFont(VFD::FONT_5x7));
-			sprintf(buffer, "%3dF", (int) round(temp) );
-			TRY(_vfd.write(buffer));
+		TRY(_vfd.setCursor(10, 55));
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		sprintf(buffer, "%3dF", (int) round(temp) );
+		TRY(_vfd.write(buffer));
 	}
-
-	if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_CPU_TEMP, temp)){
-		
+	
+	
+	if(db->getFloatValue(CPUInfo::CPU_INFO_TEMP, temp)){
 		char buffer[64] = {0};
 		
-			TRY(_vfd.setCursor(40, 55));
-			TRY(_vfd.setFont(VFD::FONT_5x7));
-			sprintf(buffer, "CPU:%dC  ", (int) round(temp) );
-			TRY(_vfd.write(buffer));
+		TRY(_vfd.setCursor(40, 55));
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		sprintf(buffer, "CPU:%dC  ", (int) round(temp) );
+		TRY(_vfd.write(buffer));
 	}
-
-		
+	
+	
 }
 
 

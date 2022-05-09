@@ -37,13 +37,13 @@ AudioOutput::~AudioOutput(){
 	stop();
 }
 
-bool AudioOutput::begin(string devname,  unsigned int samplerate,  bool stereo){
+bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo){
 	int error = 0;
-	return begin(devname, samplerate,stereo, error);
+	return begin(path, samplerate,stereo, error);
 }
 
  
-bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  int &error){
+bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
 	
 	bool success = false;
 	
@@ -56,7 +56,7 @@ bool AudioOutput::begin(string devname, unsigned int samplerate,  bool stereo,  
 #else
 	int r;
  
-	r = snd_pcm_open(&_pcm, devname.c_str(),
+	r = snd_pcm_open(&_pcm, path,
 								SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 	if( r < 0){
 		error = r;

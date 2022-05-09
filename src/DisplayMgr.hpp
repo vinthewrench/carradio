@@ -60,20 +60,20 @@ class DisplayMgr {
 	
 public:
 
-	  static DisplayMgr *shared() {
-		  if(!sharedInstance){
-			  sharedInstance = new DisplayMgr;
-		  }
-		  return sharedInstance;
-	  }
+//	  static DisplayMgr *shared() {
+//		  if(!sharedInstance){
+//			  sharedInstance = new DisplayMgr;
+//		  }
+//		  return sharedInstance;
+//	  }
 
 	DisplayMgr();
 	~DisplayMgr();
 	
 	void setDataSource(DisplayDataSource * datasource) { _dataSource = datasource;};
 	
-	bool begin(string path, speed_t speed =  B19200);
-	bool begin(string path, speed_t speed, int &error);
+	bool begin(const char* path, speed_t speed =  B19200);
+	bool begin(const char* path, speed_t speed, int &error);
 	void stop();
 
 	 bool reset();

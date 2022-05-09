@@ -27,7 +27,32 @@
 #include "QwiicTwist.hpp"
 #include "RadioDataSource.hpp"
 #include "AudioOutput.hpp"
+#include "PiCanDB.hpp"
+#include "PiCanMgr.hpp"
 
+
+#if 1
+int main(int argc, const char * argv[]) {
+
+	PiCanMgr*		pican 	= PiCanMgr::shared();
+
+	// annoying log messages in librtlsdr
+//	freopen( "/dev/null", "w", stderr );
+ 
+	if(!pican->begin()) {
+		return 0;
+	}
+	
+	// run the main loop.
+	while(true) {
+		sleep(60);
+	}
+
+	return 0;
+
+}
+
+#else
 
 int main(int argc, const char * argv[]) {
 	
@@ -37,9 +62,13 @@ int main(int argc, const char * argv[]) {
 
 	constexpr int  pcmrate = 48000;
 
+	
+	PiCanMgr*		pican 	= PiCanMgr::shared();
+
 	DisplayMgr*		display 	= DisplayMgr::shared();
 	RadioMgr*		radio 	= RadioMgr::shared();
 	AudioOutput* 	audio 	= AudioOutput::shared();
+	PiCanDB * 		db 		= PiCanDB ::shared();
 
 	TMP117 		tmp117;
 	QwiicTwist	twist;
@@ -54,9 +83,15 @@ int main(int argc, const char * argv[]) {
 	
 	try {
 		
-		if(!display->begin(dev_display,B9600))
-			throw Exception("failed to setup Display ");
+		if(!pican->begin())
+			throw Exception("failed to setup PiCan System ");
 		
+		return 0;
+		
+//
+//		if(!display->begin(dev_display,B9600))
+//			throw Exception("failed to setup Display ");
+//
 		// these could fail.
 		tmp117.begin(0x4A);
 		twist.begin();
@@ -71,11 +106,11 @@ int main(int argc, const char * argv[]) {
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
 		
-		if(!audio->begin(dev_audio ,pcmrate, true ))
-			throw Exception("failed to setup Audio ");
-	
-		audio->setVolume(.75);
-		audio->setBalance(.1);
+//		if(!audio->begin(dev_audio ,pcmrate, true ))
+//			throw Exception("failed to setup Audio ");
+//
+//		audio->setVolume(.75);
+//		audio->setBalance(.1);
 			
 		if(!radio->begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
@@ -185,3 +220,5 @@ int main(int argc, const char * argv[]) {
 	
 	return EXIT_SUCCESS;
 }
+#endif
+

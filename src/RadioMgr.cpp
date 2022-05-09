@@ -13,6 +13,7 @@
 #include <cmath>
 #include <limits.h>
 
+#include "PiCanMgr.hpp"
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 
@@ -104,7 +105,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	DisplayMgr*		display 	= DisplayMgr::shared();
+	DisplayMgr*		display 	= PiCanMgr::shared()->display();
 
 	if(!_isSetup)
 		return false;
@@ -469,7 +470,7 @@ void RadioMgr::SDRProcessorThreadCleanup(void *context){
  
 //	printf("cleanup sdr\n");
 }
-// MARK: -  Audio Outpit processor  thread
+// MARK: -  Audio Output processor  thread
 
  
 void RadioMgr::OutputProcessor(){

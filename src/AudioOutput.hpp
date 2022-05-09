@@ -41,8 +41,8 @@ public:
 	AudioOutput();
 	~AudioOutput();
 	
-	bool begin(string devname = "default",  unsigned int samplerate = 48000,  bool stereo = true);
-	bool begin(string devname, unsigned int samplerate,  bool stereo,  int &error);
+	bool begin(const char* path = "default",  unsigned int samplerate = 48000,  bool stereo = true);
+	bool begin(const char* path, unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
  
 	bool write(const SampleVector& samples);

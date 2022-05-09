@@ -110,7 +110,6 @@ bool PiCarMgr::begin(){
 
 		_display->showStartup();  // show startup
 	
-
 		_isSetup = true;
 		
 	}
@@ -273,6 +272,10 @@ void PiCarMgr::PiCanLoop(){
 			
 			if(diff.tv_sec >=  pollTime) {
 				gettimeofday(&lastPollTime, NULL);
+				
+				// run idle first to prevent delays on first run.
+				_tempSensor1.idle();
+				_cpuInfo.idle();
 				
 				if(_tempSensor1.isConnected()){
 					// handle input

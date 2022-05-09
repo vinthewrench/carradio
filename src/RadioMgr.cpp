@@ -178,8 +178,10 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 			didUpdate = true;
 			
 			_sdr.resetBuffer();
+			_source_buffer.flush();
+			_output_buffer.flush();
 			_shouldRead = true;
-			}
+		}
 	}
 
 	if(didUpdate){
@@ -518,8 +520,6 @@ void RadioMgr::OutputProcessor(){
 		// Get samples from buffer and write to output.
 		SampleVector samples =_output_buffer.pull();
 		audio->write(samples);
-  
-
 	}
 	
  }

@@ -82,6 +82,14 @@ public:
 		  return ret;
 	 }
 
+	void flush() {
+		unique_lock<mutex> lock(m_mutex);
+		m_queue = {};
+	//	m_end_marked = true;
+		lock.unlock();
+		m_cond.notify_all();
+	}
+	
 	 /** Return true if the end has been reached at the Pull side. */
 	 bool pull_end_reached()
 	 {
@@ -96,6 +104,7 @@ public:
 		  while (m_qlen < minfill && !m_end_marked)
 				m_cond.wait(lock);
 	 }
+	
 
 private:
 	 size_t              m_qlen;

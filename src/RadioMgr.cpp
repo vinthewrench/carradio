@@ -22,8 +22,6 @@
 typedef void * (*THREADFUNCPTR)(void *);
 
 
-RadioMgr *RadioMgr::sharedInstance = NULL;
-
 RadioMgr::RadioMgr(){
 	_mode = RADIO_OFF;
 	_mux = MUX_MONO;
@@ -489,8 +487,8 @@ void RadioMgr::SDRProcessorThreadCleanup(void *context){
 
  
 void RadioMgr::OutputProcessor(){
- 
-	AudioOutput* 	audio 	= AudioOutput::shared();
+  
+	AudioOutput*	 audio  = PiCanMgr::shared()->audio();
 
 	while(!_shouldQuit){
 		

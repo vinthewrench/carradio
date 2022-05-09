@@ -21,9 +21,7 @@
 printf("FAIL AT line: %d\n", __LINE__ ); \
 }
  
-DisplayMgr *DisplayMgr::sharedInstance = NULL;
-
-typedef void * (*THREADFUNCPTR)(void *);
+ typedef void * (*THREADFUNCPTR)(void *);
 
  
 DisplayMgr::DisplayMgr(){

@@ -50,13 +50,6 @@ class DisplayMgr {
 	
 public:
 
-//	  static DisplayMgr *shared() {
-//		  if(!sharedInstance){
-//			  sharedInstance = new DisplayMgr;
-//		  }
-//		  return sharedInstance;
-//	  }
-
 	DisplayMgr();
 	~DisplayMgr();
 		
@@ -122,9 +115,7 @@ private:
 	pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_t			_updateTID;
 	
-	static DisplayMgr *sharedInstance;
- 
-	// display
+ 	// display
 	bool 					_isSetup = false;
 	VFD 					_vfd;
 	// debug stuff

@@ -24,9 +24,7 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 
-AudioOutput *AudioOutput::sharedInstance = NULL;
-
-AudioOutput::AudioOutput(){
+ AudioOutput::AudioOutput(){
 	_isSetup = false;
 	_balance = 0;
 	_pcm = NULL;

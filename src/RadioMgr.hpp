@@ -44,14 +44,7 @@ public:
 		MUX_QUAD,
 	}radio_mux_t;
 	
-	
-	static RadioMgr *shared() {
-		if(!sharedInstance){
-			sharedInstance = new RadioMgr;
-		}
-		return sharedInstance;
-	}
-	
+ 
 	RadioMgr();
 	~RadioMgr();
 	
@@ -91,8 +84,6 @@ private:
 	// output data queue
 	DataBuffer<Sample>   _output_buffer;
 
-	static RadioMgr *sharedInstance;
-	
 	mutable std::mutex _mutex;		// when changing frequencies and modes.
 	FmDecoder*			_fmDecoder;
 	

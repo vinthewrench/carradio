@@ -77,7 +77,6 @@ int main(int argc, const char * argv[]) {
 
 	
 	PiCanMgr*		pican 	= PiCanMgr::shared();
-
 	DisplayMgr*		display 	= DisplayMgr::shared();
 	RadioMgr*		radio 	= RadioMgr::shared();
 	AudioOutput* 	audio 	= AudioOutput::shared();

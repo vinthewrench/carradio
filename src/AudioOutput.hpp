@@ -32,13 +32,7 @@ typedef struct _snd_mixer_elem snd_mixer_elem_t;
 class AudioOutput {
 	 
 public:
-	  static AudioOutput *shared() {
-		  if(!sharedInstance){
-			  sharedInstance = new AudioOutput;
-		  }
-		  return sharedInstance;
-	  }
-
+ 
 	AudioOutput();
 	~AudioOutput();
 	
@@ -68,8 +62,6 @@ public:
 	
 	vector<uint8_t>  		_bytebuf;
  
-	static AudioOutput *sharedInstance;
- 
-	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);
+	 	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);
 };
 

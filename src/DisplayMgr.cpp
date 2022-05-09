@@ -377,7 +377,6 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	
 	RadioMgr*	radio 	= PiCanMgr::shared()->radio();
  
-	
 	RtlSdr::device_info_t info;
 	
 	if(redraw)

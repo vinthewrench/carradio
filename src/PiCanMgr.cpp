@@ -33,8 +33,6 @@ static void sigHandler (int signum) {
 PiCanMgr::PiCanMgr(){
 	
 	_display = new DisplayMgr();
-	_audio 	= new AudioOutput();
-	_radio	= new RadioMgr();
  
 //
 	signal(SIGKILL, sigHandler);
@@ -82,12 +80,12 @@ bool PiCanMgr::begin(){
 		startControls();
 		
 		// setup audio out
-		if(!_audio->begin(dev_audio ,pcmrate, true ))
+		if(!_audio.begin(dev_audio ,pcmrate, true ))
 			throw Exception("failed to setup Audio ");
 		
 		// quiet audio first
-		if(!_audio->setVolume(0)
-			|| ! _audio->setBalance(0))
+		if(!_audio.setVolume(0)
+			|| ! _audio.setBalance(0))
 			throw Exception("failed to setup Audio levels ");
 			
 		// find first RTS device
@@ -95,7 +93,7 @@ bool PiCanMgr::begin(){
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
 
-		if(!_radio->begin(devices[0].index, pcmrate))
+		if(!_radio.begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
 	 
 		_display->showStartup();  // show it again
@@ -126,10 +124,10 @@ void PiCanMgr::stop(){
 		stopControls();
 		stopTempSensors();
 		stopCPUInfo();
-		_radio->stop();
-		_audio->setVolume(0);
-		_audio->setBalance(0);
-		_audio->stop();
+		_radio.stop();
+		_audio.setVolume(0);
+		_audio.setBalance(0);
+		_audio.stop();
 	
 		_display->stop();
 		
@@ -180,11 +178,11 @@ void PiCanMgr::PiCanLoop(){
 
 			// handle the fast stuff
 			if(_volKnob.wasClicked()){
-				if(_radio->radioMode() != RadioMgr::RADIO_OFF){
-					_radio->setFrequencyandMode(RadioMgr::RADIO_OFF);
+				if(_radio.radioMode() != RadioMgr::RADIO_OFF){
+					_radio.setFrequencyandMode(RadioMgr::RADIO_OFF);
 				}
 				else {
-					_radio->setFrequencyandMode(RadioMgr::BROADCAST_FM,savedFreq);
+					_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM,savedFreq);
 				}
 	 
 			}

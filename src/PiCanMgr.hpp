@@ -57,8 +57,8 @@ class PiCanMgr {
 	void stop();
 
 	DisplayMgr* display() {return _display;};
-	AudioOutput* audio() {return _audio;};
-	RadioMgr* radio() 	{return _radio;};
+	AudioOutput* audio() {return &_audio;};
+	RadioMgr* radio() 	{return &_radio;};
 	PiCanDB * db() 	{return &_db;};
 	
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
@@ -92,9 +92,8 @@ private:
 	
 	
 	DisplayMgr* 		_display;
-	AudioOutput*		_audio;
-	RadioMgr*			_radio;
-	
+	AudioOutput 		_audio;
+	RadioMgr				_radio;
 	PiCanDB 				_db;
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;

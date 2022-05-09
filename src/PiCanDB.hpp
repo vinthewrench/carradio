@@ -45,19 +45,19 @@ class PiCanDB  {
 	
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
-	void updateValue(string_view key, string value, time_t when);
+	void updateValue(string key, string value, time_t when);
 	void clearValues();
 	int valuesCount();
 
-	vector<string_view> 		allValueKeys();
-	vector<string_view>  	valuesUpdateSinceEtag(eTag_t eTag, eTag_t *newEtag);
-	vector<string_view>  	valuesOlderthan(time_t time);
+	vector<string> 	allValueKeys();
+	vector<string>  	valuesUpdateSinceEtag(eTag_t eTag, eTag_t *newEtag);
+	vector<string>  	valuesOlderthan(time_t time);
 	
-	bool valueWithKey	 (string_view key, string  &valueOut);
-	bool getStringValue(string_view key,	string &result);
-	bool getFloatValue(string_view key,  float &result);
-	bool getDoubleValue(string_view key,  double &result);
-	bool getIntValue(string_view key,  int &result);
+	bool valueWithKey	 (string key, string  &valueOut);
+	bool getStringValue(string key,	string &result);
+	bool getFloatValue(string key,  float &result);
+	bool getDoubleValue(string key,  double &result);
+	bool getIntValue(string key,  int &result);
 
 private:
 	
@@ -77,5 +77,5 @@ private:
 		string			value;
 		} value_t;
 
-	map<string_view, value_t> _values;
+	map<string, value_t> _values;
 };

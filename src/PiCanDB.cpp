@@ -51,7 +51,7 @@ void  PiCanDB::updateValues(map<string,string>  values, time_t when){
  };
 
  
-void PiCanDB::updateValue(string_view key, string value, time_t when){
+void PiCanDB::updateValue(string key, string value, time_t when){
  
 	if(when == 0)
 		when = time(NULL);
@@ -72,10 +72,10 @@ void PiCanDB::updateValue(string_view key, string value, time_t when){
 
 
 
-vector<string_view> PiCanDB::allValueKeys(){
+vector<string> PiCanDB::allValueKeys(){
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	vector<string_view> keys;
+	vector<string> keys;
 	keys.clear();
 	
 	for (const auto& [key, value] : _values) {
@@ -86,10 +86,10 @@ vector<string_view> PiCanDB::allValueKeys(){
 }
   
 
-vector<string_view> PiCanDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut){
+vector<string> PiCanDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
-	vector<string_view> keys = {};
+	vector<string> keys = {};
 	
 	for (const auto& [key, value] : _values) {
 		if(value.eTag <= eTag)
@@ -102,10 +102,10 @@ vector<string_view> PiCanDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut)
 	return keys;
 };
 
-vector<string_view> PiCanDB::valuesOlderthan(time_t time){
+vector<string> PiCanDB::valuesOlderthan(time_t time){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
-	vector<string_view> keys = {};
+	vector<string> keys = {};
 	
 	for (const auto& [key, value] : _values) {
 		if(value.lastUpdate < time)
@@ -116,7 +116,7 @@ vector<string_view> PiCanDB::valuesOlderthan(time_t time){
 };
 
 
-bool PiCanDB::valueWithKey(string_view key, string &valueOut){
+bool PiCanDB::valueWithKey(string key, string &valueOut){
 	std::lock_guard<std::mutex> lock(_mutex);
 	
 	if(_values.count(key) == 0 )
@@ -126,11 +126,11 @@ bool PiCanDB::valueWithKey(string_view key, string &valueOut){
 	return true;
 };
 
-bool PiCanDB::getStringValue(string_view key,  string &result){
+bool PiCanDB::getStringValue(string key,  string &result){
 	return valueWithKey(key,result);
 }
 
-bool PiCanDB::getFloatValue(string_view key,  float &result){
+bool PiCanDB::getFloatValue(string key,  float &result){
 	
 	string str;
 	if(valueWithKey(key,str)) {
@@ -144,7 +144,7 @@ bool PiCanDB::getFloatValue(string_view key,  float &result){
 	return false;
 }
 
-bool PiCanDB::getDoubleValue(string_view key,  double &result){
+bool PiCanDB::getDoubleValue(string key,  double &result){
 	
 	string str;
 	if(valueWithKey(key,str)) {
@@ -159,7 +159,7 @@ bool PiCanDB::getDoubleValue(string_view key,  double &result){
 }
 
  
-bool PiCanDB::getIntValue(string_view key,  int &result) {
+bool PiCanDB::getIntValue(string key,  int &result) {
 	
 	string str;
 	if(valueWithKey(key,str)) {

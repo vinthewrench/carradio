@@ -64,9 +64,7 @@ CPUInfo::rcvResponse(std::function<void(map<string,string>)> cb){
 		if(cb) (cb)(_resultMap);
 		_state = INS_IDLE;
 	}
-	
-done:
-	
+ 
 	if(result == CONTINUE)
 		return result;
 

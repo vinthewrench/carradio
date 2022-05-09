@@ -226,7 +226,7 @@ void PiCanMgr::startTempSensor( std::function<void(bool didSucceed, std::string 
 	
 	constexpr string_view TEMPSENSOR_KEY = "TEMP_";
 	
-	uint8_t deviceAddress = 0x48;
+	uint8_t deviceAddress = 0x4A;
 	string resultKey =  string(TEMPSENSOR_KEY) + to_hex(deviceAddress,true);
 	
 	didSucceed =  _tempSensor1.begin(deviceAddress, resultKey, errnum);

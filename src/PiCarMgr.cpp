@@ -91,6 +91,9 @@ bool PiCarMgr::begin(){
 
 		if(!_radio.begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
+	  
+		// DEBUG replace this with saved volume
+		_audio.setVolume(.6);
 	 
 		// setup display device
 		if(!_display->begin(dev_display,B9600))

@@ -204,7 +204,7 @@ void PiCanMgr::PiCanLoop(){
 					_radio.setFrequencyandMode(_radio.radioMode(), newfreq);
 				}
 				
-#elif 0
+#elif 1
 				// change  volume
 				auto volume = _audio.volume();
 				
@@ -222,7 +222,7 @@ void PiCanMgr::PiCanLoop(){
 						if(volume < 0) volume = 0.0;		// twist down
 						_audio.setVolume(volume);
 						_db.updateValue(VAL_AUDIO_VOLUME, volume);
- 					}
+					}
 				}
 				
 				_display->showVolumeChange();
@@ -230,14 +230,16 @@ void PiCanMgr::PiCanLoop(){
 				// change  balance
 				auto balance = _audio.balance();
 				
-				if(balance < 1) {						// twist up
-					balance +=.04;
-					if(balance > 1) balance = 1.0;	// pin volume
-					_audio.setBalance(balance);
-					_db.updateValue(VAL_AUDIO_BALANCE, balance);
- 				}
-				
+				if(movedUp){
+					if(balance < 1) {						// twist up
+						balance +=.04;
+						if(balance > 1) balance = 1.0;	// pin volume
+						_audio.setBalance(balance);
+						_db.updateValue(VAL_AUDIO_BALANCE, balance);
+					}
+				}
 				else {
+					
 					if(balance > -1) {							// twist down
 						balance -=.04;
 						if(balance < -1) balance = -1.;		// twist down

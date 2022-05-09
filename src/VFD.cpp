@@ -41,7 +41,7 @@ bool VFD::begin(const char* path, speed_t speed,  int &error){
 	int fd ;
 	
 	if((fd = ::open( path, O_RDWR | O_NOCTTY)) <0) {
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "OPEN %s", path.c_str());
+		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "OPEN %s", path);
 		error = errno;
 		return false;
 	}
@@ -50,7 +50,7 @@ bool VFD::begin(const char* path, speed_t speed,  int &error){
 	
 	// Back up current TTY settings
 	if( tcgetattr(fd, &_tty_opts_backup)<0) {
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "tcgetattr %s", path.c_str());
+		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "tcgetattr %s", path);
 		error = errno;
 		return false;
 	}
@@ -79,7 +79,7 @@ bool VFD::begin(const char* path, speed_t speed,  int &error){
 	cfsetispeed (&options, speed);
 	
 	if (tcsetattr(fd, TCSANOW, &options) < 0){
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "Unable to tcsetattr %s", path.c_str());
+		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "Unable to tcsetattr %s", path);
 		error = errno;
 		return false;
 	}

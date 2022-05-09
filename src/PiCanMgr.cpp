@@ -101,7 +101,6 @@ bool PiCanMgr::begin(){
 	 
 		_display->showStartup();  // show it again
 	
-
 		_isSetup = true;
 		
 	}

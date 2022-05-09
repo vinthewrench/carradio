@@ -381,7 +381,7 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	
-	RadioMgr*	radio 	= RadioMgr::shared();
+	RadioMgr*	radio 	= PiCanMgr::shared()->radio();
  
 	
 	RtlSdr::device_info_t info;

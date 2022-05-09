@@ -422,24 +422,25 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.write( (t->tm_hour > 12)?"PM":"AM"));
 	
-	float temp = 0;
-	if(db->getFloatValue("TEMP_0x4a", temp)){				// GET THIS FROM SOMEWHERE!!!
+	float cTemp = 0;
+	if(db->getFloatValue("TEMP_0x4a", cTemp)){				// GET THIS FROM SOMEWHERE!!!
 
+		float fTemp = cTemp *9.0/5.0 + 32.0;
 		char buffer[64] = {0};
 		
 		TRY(_vfd.setCursor(10, 55));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
-		sprintf(buffer, "%3dF", (int) round(temp) );
+		sprintf(buffer, "%3dF", (int) round(fTemp) );
 		TRY(_vfd.write(buffer));
 	}
 	
 	
-	if(db->getFloatValue(CPUInfo::CPU_INFO_TEMP, temp)){
+	if(db->getFloatValue(CPUInfo::CPU_INFO_TEMP, cTemp)){
 		char buffer[64] = {0};
 		
 		TRY(_vfd.setCursor(40, 55));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
-		sprintf(buffer, "CPU:%dC  ", (int) round(temp) );
+		sprintf(buffer, "CPU:%dC  ", (int) round(cTemp) );
 		TRY(_vfd.write(buffer));
 	}
 	

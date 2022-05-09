@@ -418,7 +418,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	TRY(_vfd.write( (t->tm_hour > 12)?"PM":"AM"));
 	
 	float cTemp = 0;
-	if(db->getFloatValue("TEMP_0x4a", cTemp)){				// GET THIS FROM SOMEWHERE!!!
+	if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
 
 		float fTemp = cTemp *9.0/5.0 + 32.0;
 		char buffer[64] = {0};

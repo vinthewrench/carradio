@@ -20,6 +20,7 @@ using namespace std;
 
 inline static const string VAL_CPU_INFO_TEMP 	= "CPU_TEMP";
 inline static const string VAL_OUTSIDE_TEMP 		= "OUTSIDE_TEMP";
+
 inline static const string VAL_AUDIO_VOLUME		= "vol";
 inline static const string VAL_AUDIO_BALANCE		= "bal";
 inline static const string VAL_RADIO_FREQ			= "freq";

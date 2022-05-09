@@ -49,8 +49,8 @@ int main(int argc, const char * argv[]) {
 		
 		if(firstrun){
 			sleep(5);
-			
-#if defined(__APPLE__)
+#if 0
+//#if defined(__APPLE__)
 			pican->audio()->setVolume(.5);
 			pican->radio()->setFrequencyandMode(RadioMgr::BROADCAST_FM, 101.900e6);
 			firstrun = false;

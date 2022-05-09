@@ -35,7 +35,7 @@ RadioMgr::RadioMgr(){
  
 RadioMgr::~RadioMgr(){
 	stop();
-}
+	}
  
 
 bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate){
@@ -309,11 +309,10 @@ void RadioMgr::SDRReader(){
 	IQSampleVector iqsamples;
 
 	while(!_shouldQuit){
-		{	std::lock_guard<std::mutex> lock(_mutex);
-			
+		{
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldRead){
- 				usleep(200000);
+ 				usleep(2);
 				continue;
 			}
 		}

@@ -69,8 +69,6 @@ bool PiCanMgr::begin(){
 		// read in any properties
 		_db.restorePropertiesFromFile();
 
-	//	_display->showStartup();
-	
 		startCPUInfo();
  
 		// if we fail, no big deal..
@@ -163,8 +161,7 @@ void PiCanMgr::PiCanLoop(){
 
 	bool		 shouldQuit = false;
 	timeval	 lastPollTime = {0,0};
-
-	
+ 
 	try{
 		while(!shouldQuit){
 			

@@ -9,6 +9,7 @@
 
 #include "RotaryKnob.hpp"
 #include "QwiicTwist.hpp"
+#include <stdlib.h>
 
 using namespace std;
  

@@ -81,7 +81,6 @@ private:
 	#define PGMR_EVENT_EXIT	0x0001
  	void triggerEvent(uint16_t);
 
-	bool 					_shouldQuit;				//Flag for starting and terminating the main loop
 	pthread_t			_piCanLoopTID;
 	pthread_cond_t 	_cond = PTHREAD_COND_INITIALIZER;
 	pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;

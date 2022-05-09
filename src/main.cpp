@@ -43,8 +43,20 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	// run the main loop.
+	
+	bool firstrun = true;
 	while(true) {
-		sleep(60);
+		
+		if(firstrun){
+			sleep(5);
+			
+			pican->audio()->setVolume(.5);
+			pican->radio()->setFrequencyandMode(RadioMgr::BROADCAST_FM, 101.900e6);
+			firstrun = false;
+			continue;
+		}
+	 
+ 		sleep(60);
 	}
 
 	return 0;

@@ -423,7 +423,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	TRY(_vfd.write( (t->tm_hour > 12)?"PM":"AM"));
 	
 	float temp = 0;
-	if(db->getFloatValue("TEMP_0x4A", temp)){				// GET THIS FORM SOMEWHERE!!!
+	if(db->getFloatValue("TEMP_0x4a", temp)){				// GET THIS FROM SOMEWHERE!!!
 
 		char buffer[64] = {0};
 		

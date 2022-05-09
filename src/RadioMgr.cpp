@@ -185,7 +185,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 	if(didUpdate){
 		db->updateValue(VAL_MODULATION_MODE, _mode);
 		db->updateValue(VAL_RADIO_FREQ, _frequency);
-		display->showRadioChange();
+		db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
+  		display->showRadioChange();
  	}
  
 	return true;

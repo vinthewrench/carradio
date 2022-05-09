@@ -595,7 +595,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 			double freq = 0;
 			RadioMgr::radio_mode_t  mode  = RadioMgr::RADIO_OFF;
 			RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
-	 
+	  
 			if(   db->getDoubleValue(VAL_RADIO_FREQ, freq)
 				&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
 				&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {

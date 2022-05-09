@@ -103,10 +103,13 @@ bool PiCarMgr::begin(){
 		if(!_display->setBrightness(5))
 			throw Exception("failed to set brightness ");
 
-		_display->showStartup();  // show it again
-	
 		pthread_create(&_piCanLoopTID, NULL,
 											  (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
+
+		triggerEvent(PGMR_EVENT_START);
+
+		_display->showStartup();  // show startup
+	
 
 		_isSetup = true;
 		
@@ -178,13 +181,20 @@ void PiCarMgr::PiCanLoop(){
 			if (_event == 0)
 				pthread_cond_timedwait(&_cond, &_mutex, &ts);
 	 
+			// startEvent is used for ignoring the pthread_cond_timedwait
+			if((_event & PGMR_EVENT_START ) != 0){
+				_event &= ~PGMR_EVENT_START;
+			}
+			
 			if((_event & PGMR_EVENT_EXIT ) != 0){
 				_event &= ~PGMR_EVENT_EXIT;
 				shouldQuit = true;
-				continue;
 			}
+	 
 			pthread_mutex_unlock (&_mutex);
  
+			if(shouldQuit) continue;
+			
 			double savedFreq = 101.900e6;
 
 			// handle the fast stuff

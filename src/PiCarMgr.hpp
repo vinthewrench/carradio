@@ -73,7 +73,9 @@ private:
 
 	
 	//  event thread
-	#define PGMR_EVENT_EXIT	0x0001
+#define PGMR_EVENT_START	0x0001
+#define PGMR_EVENT_EXIT		0x0002
+	
  	void triggerEvent(uint16_t);
 
 	pthread_t			_piCanLoopTID;

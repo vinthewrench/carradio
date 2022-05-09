@@ -16,8 +16,9 @@
 #include "PiCanMgr.hpp"
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
+#include "PropValKeys.hpp"
 
-
+#define DEBUG_DEMOD 1
 typedef void * (*THREADFUNCPTR)(void *);
 
 
@@ -101,12 +102,13 @@ bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
 
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
-	
-	
+ 
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	DisplayMgr*		display 	= PiCanMgr::shared()->display();
-
+ 	PiCanDB*			db 		= PiCanMgr::shared()->db();
+	bool 			didUpdate = false;
+	
 	if(!_isSetup)
 		return false;
 	
@@ -122,67 +124,70 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 		}
 
 		_sdr.resetBuffer();
-		display->showRadioChange();
-		return true;
-	}
-	
-	if(newMode){
-		_mode = newMode;
+	 	didUpdate = true;
+ 	}
+	else {
+		if(newMode){
+			_mode = newMode;
+			
+			// SOMETHING ABOUT MODES HERE?
+		}
 		
-		// SOMETHING ABOUT MODES HERE?
+		if(newFreq != _frequency){
+			// Intentionally tune at a higher frequency to avoid DC offset.
+			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+			
+			if(! _sdr.setFrequency(tuner_freq))
+				return false;
+			
+			_frequency = newFreq;
+			
+			// create proper decoder
+			if(_fmDecoder) {
+				delete _fmDecoder;
+				_fmDecoder = NULL;
+			}
+			
+			if(_mode == BROADCAST_FM) {
+				
+				// changing FM frequencies means recreating the decoder
+				
+				// The baseband signal is empty above 100 kHz, so we can
+				// downsample to ~ 200 kS/s without loss of information.
+				// This will speed up later processing stages.
+				unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
+				fprintf(stderr, "baseband downsampling factor %u\n", downsample);
+				
+				// Prevent aliasing at very low output sample rates.
+				double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
+													0.45 * _pcmrate);
+				
+				_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
+													newFreq - tuner_freq,
+													_pcmrate,
+													true,  // stereo
+													FmDecoder::default_deemphasis,     // deemphasis,
+													FmDecoder::default_bandwidth_if,   // bandwidth_if
+													FmDecoder::default_freq_dev,       // freq_dev
+													bandwidth_pcm,
+													downsample
+													);
+			}
+			
+			didUpdate = true;
+			
+			_sdr.resetBuffer();
+			_shouldRead = true;
+			}
 	}
 
-	if(newFreq != _frequency){
-		// Intentionally tune at a higher frequency to avoid DC offset.
-		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+	if(didUpdate){
+		db->updateValue(VAL_MODULATION_MODE, _mode);
+		db->updateValue(VAL_RADIO_FREQ, _frequency);
+		display->showRadioChange();
+ 	}
  
-		if(! _sdr.setFrequency(tuner_freq))
-			return false;
-	 
-		_frequency = newFreq;
-		
-		// create proper decoder
-		if(_fmDecoder) {
-			delete _fmDecoder;
-			_fmDecoder = NULL;
-		}
-		
-		if(_mode == BROADCAST_FM) {
-			
-			// changing FM frequencies means recreating the decoder
-	 
-			// The baseband signal is empty above 100 kHz, so we can
-			// downsample to ~ 200 kS/s without loss of information.
-			// This will speed up later processing stages.
-			unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
-			fprintf(stderr, "baseband downsampling factor %u\n", downsample);
-			
-			// Prevent aliasing at very low output sample rates.
-			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
-												0.45 * _pcmrate);
-
-			_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
-												newFreq - tuner_freq,
-												_pcmrate,
-												true,  // stereo
-												FmDecoder::default_deemphasis,     // deemphasis,
-												FmDecoder::default_bandwidth_if,   // bandwidth_if
-												FmDecoder::default_freq_dev,       // freq_dev
-												bandwidth_pcm,
-												downsample
-												);
-		}
-		
-		if(! _sdr.resetBuffer())
-			return false;
-
-		_shouldRead = true;
-		display->showRadioChange();
-
-		return true;
-	}
-	
-	return false;
+	return true;
 }
  
 
@@ -359,6 +364,9 @@ void adjust_gain(SampleVector& samples, double gain)
 
 void RadioMgr::SDRProcessor(){
 	
+	DisplayMgr*		display 	= PiCanMgr::shared()->display();
+	PiCanDB*			db 		= PiCanMgr::shared()->db();
+
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
 	double audio_level = 0;
@@ -401,9 +409,16 @@ void RadioMgr::SDRProcessor(){
 			// Set nominal audio volume.
 			adjust_gain(audiosamples, 0.5);
 			
-			// Stereo indicator
-			_mux = _fmDecoder->stereo_detected()? MUX_STEREO:MUX_MONO;
-	
+			// Stereo indicator change
+			if (_fmDecoder->stereo_detected() != got_stereo) {
+				_mux = _fmDecoder->stereo_detected()? MUX_STEREO:MUX_MONO;
+		
+				db->updateValue(VAL_MODULATION_MUX, _mux);
+	 			display->showRadioChange();
+ 			}
+			
+#if DEBUG_DEMOD
+			
 			// Show statistics.
 			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
 					  block,
@@ -417,15 +432,15 @@ void RadioMgr::SDRProcessor(){
 			// Show stereo status.
 	 			if (_fmDecoder->stereo_detected() != got_stereo) {
 				
-				
-				got_stereo = _fmDecoder->stereo_detected();
+		 		got_stereo = _fmDecoder->stereo_detected();
 				if (got_stereo)
 					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
 							  _fmDecoder->get_pilot_level());
 				else
 					fprintf(stderr, "\nlost stereo signal\n");
 			}
-			
+	
+#endif
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.
 			if (block > 0) {

@@ -25,7 +25,6 @@
 #include "RadioMgr.hpp"
 #include "TMP117.hpp"
 #include "QwiicTwist.hpp"
-#include "RadioDataSource.hpp"
 #include "AudioOutput.hpp"
 #include "PiCanDB.hpp"
 #include "PiCanMgr.hpp"
@@ -58,7 +57,7 @@ int main(int argc, const char * argv[]) {
 	
 	string dev_display  = "/dev/ttyUSB0";
 	//string dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
-		string dev_audio  = "default";
+	string dev_audio  = "default";
 
 	constexpr int  pcmrate = 48000;
 
@@ -73,8 +72,6 @@ int main(int argc, const char * argv[]) {
 	TMP117 		tmp117;
 	QwiicTwist	twist;
 	
-	RadioDataSource source(&tmp117, &twist);
-
 	double savedFreq = 101.900e6;
 	
 
@@ -95,9 +92,7 @@ int main(int argc, const char * argv[]) {
 		// these could fail.
 		tmp117.begin(0x4A);
 		twist.begin();
-		
-		display->setDataSource(&source);
-		
+			
 		if(!display->setBrightness(7))
 			throw Exception("failed to set brightness ");
 		

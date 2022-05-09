@@ -33,10 +33,10 @@
 #include "PiCanDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
+#include "QTKnob.hpp"
 
 using namespace std;
-
-
+ 
 class PiCanMgr {
  
 	static const char* 	PiCanMgr_Version;
@@ -64,23 +64,33 @@ class PiCanMgr {
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
 
-	void startTempSensor( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
-	void stopTempSensor();
+	void startTempSensors( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
+	void stopTempSensors();
 	PiCanMgrDevice::device_state_t tempSensor1State();
+
+ 	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
+	void stopControls();
 
 private:
 	
 	static PiCanMgr *sharedInstance;
 	bool					_isSetup;
 
+	
+	//  event thread
+	#define PGMR_EVENT_EXIT	0x0001
+ 	void triggerEvent(uint16_t);
+
 	bool 					_shouldQuit;				//Flag for starting and terminating the main loop
 	pthread_t			_piCanLoopTID;
- 
+	pthread_cond_t 	_cond = PTHREAD_COND_INITIALIZER;
+	pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
+	uint16_t				_event = 0;
 	void PiCanLoop();		// C++ version of thread
 	// C wrappers for SDRReader;
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
-
+	
 	
 	DisplayMgr* 		_display;
 	AudioOutput*		_audio;
@@ -89,6 +99,7 @@ private:
 	PiCanDB 				_db;
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
-
+	QTKnob				_volKnob;
+	
 };
 

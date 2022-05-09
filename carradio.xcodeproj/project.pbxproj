@@ -16,12 +16,12 @@
 		2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */; };
 		2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8E92817008500F5066B /* DisplayMgr.cpp */; };
 		2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F02822E16900F5066B /* RadioMgr.cpp */; };
-		2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */; };
 		2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F928244E5F00F5066B /* RtlSdr.cpp */; };
 		2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */; };
 		2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */; };
 		2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A907282465B500F5066B /* AudioOutput.cpp */; };
 		2E821034282884B1003D074C /* carradio.props.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E8210332828848E003D074C /* carradio.props.json */; };
+		2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E82103B28298A5A003D074C /* QTKnob.cpp */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCanDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */; };
@@ -65,8 +65,6 @@
 		2E62A8EA2817008500F5066B /* DisplayMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DisplayMgr.hpp; sourceTree = "<group>"; };
 		2E62A8F02822E16900F5066B /* RadioMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RadioMgr.cpp; sourceTree = "<group>"; };
 		2E62A8F12822E16900F5066B /* RadioMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RadioMgr.hpp; sourceTree = "<group>"; };
-		2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RadioDataSource.cpp; sourceTree = "<group>"; };
-		2E62A8F628244B8B00F5066B /* RadioDataSource.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RadioDataSource.hpp; path = ../../../../../../../../Desktop/RasberryPi/carradio/src/RadioDataSource.hpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A8F828244E5F00F5066B /* RtlSdr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RtlSdr.hpp; sourceTree = "<group>"; };
 		2E62A8F928244E5F00F5066B /* RtlSdr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtlSdr.cpp; sourceTree = "<group>"; };
 		2E62A8FB28244E7D00F5066B /* IQSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQSample.h; sourceTree = "<group>"; };
@@ -80,6 +78,10 @@
 		2E62A907282465B500F5066B /* AudioOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioOutput.cpp; sourceTree = "<group>"; };
 		2E62A908282465B500F5066B /* AudioOutput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AudioOutput.hpp; sourceTree = "<group>"; };
 		2E8210332828848E003D074C /* carradio.props.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = carradio.props.json; path = Assets/carradio.props.json; sourceTree = "<group>"; };
+		2E82103528296D95003D074C /* PropValKeys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PropValKeys.hpp; sourceTree = "<group>"; };
+		2E82103928298734003D074C /* RotaryKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotaryKnob.hpp; sourceTree = "<group>"; };
+		2E82103B28298A5A003D074C /* QTKnob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QTKnob.cpp; sourceTree = "<group>"; };
+		2E82103C28298A5A003D074C /* QTKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QTKnob.hpp; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -141,10 +143,9 @@
 				2E9F9EA8282876C800E12F5D /* PiCanMgrDevice.hpp */,
 				2E62A8E92817008500F5066B /* DisplayMgr.cpp */,
 				2E62A8EA2817008500F5066B /* DisplayMgr.hpp */,
+				2E82103528296D95003D074C /* PropValKeys.hpp */,
 				2E9F9EA128285F3C00E12F5D /* PiCanDB.hpp */,
 				2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */,
-				2E62A8F528244B8B00F5066B /* RadioDataSource.cpp */,
-				2E62A8F628244B8B00F5066B /* RadioDataSource.hpp */,
 				2E62A8F02822E16900F5066B /* RadioMgr.cpp */,
 				2E62A8F12822E16900F5066B /* RadioMgr.hpp */,
 				2E62A8F928244E5F00F5066B /* RtlSdr.cpp */,
@@ -161,6 +162,9 @@
 				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 				2E9F9EAD282879C100E12F5D /* CPUInfo.cpp */,
 				2E9F9EAE282879C100E12F5D /* CPUInfo.hpp */,
+				2E82103928298734003D074C /* RotaryKnob.hpp */,
+				2E82103C28298A5A003D074C /* QTKnob.hpp */,
+				2E82103B28298A5A003D074C /* QTKnob.cpp */,
 				2E9F9EA92828777200E12F5D /* TempSensor.cpp */,
 				2E9F9EAA2828777200E12F5D /* TempSensor.hpp */,
 				2E62A85D2807375300F5066B /* TMP117.cpp */,
@@ -282,9 +286,9 @@
 				2E9F9EAF282879C100E12F5D /* CPUInfo.cpp in Sources */,
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
-				2E62A8F728244C5B00F5066B /* RadioDataSource.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
 				2E9F9EA228285F3C00E12F5D /* PiCanDB.cpp in Sources */,
+				2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */,
 				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
 				2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */,
 				2E62A8612807375300F5066B /* I2C.cpp in Sources */,

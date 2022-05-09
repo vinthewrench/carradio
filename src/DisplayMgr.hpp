@@ -21,16 +21,6 @@
 using namespace std;
  
 
-constexpr string_view DS_KEY_OUTSIDE_TEMP	= "temp1";
-constexpr string_view DS_KEY_CPU_TEMP		= "tempcpu";
-
-constexpr string_view DS_KEY_AUDIO_VOLUME		= "vol";
-constexpr string_view DS_KEY_AUDIO_BALANCE	= "bal";
-constexpr string_view DS_KEY_RADIO_FREQ		= "freq";
-constexpr string_view DS_KEY_MODULATION_MODE	= "mode";
-constexpr string_view DS_KEY_MODULATION_MUX	=	 "mux";
-
-
 class DisplayDataSource {
 public:
 
@@ -69,9 +59,7 @@ public:
 
 	DisplayMgr();
 	~DisplayMgr();
-	
-	void setDataSource(DisplayDataSource * datasource) { _dataSource = datasource;};
-	
+		
 	bool begin(const char* path, speed_t speed =  B19200);
 	bool begin(const char* path, speed_t speed, int &error);
 	void stop();
@@ -139,7 +127,6 @@ private:
 	// display
 	bool 					_isSetup = false;
 	VFD 					_vfd;
-	DisplayDataSource	*_dataSource;
 	// debug stuff
 	
 //	string modeString();

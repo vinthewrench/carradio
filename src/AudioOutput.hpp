@@ -27,6 +27,7 @@ typedef struct _snd_mixer_elem snd_mixer_elem_t;
 #include <alsa/mixer.h>
 
 #endif
+ 
 
 class AudioOutput {
 	 

@@ -44,13 +44,13 @@ set(SOURCES
 	src/ErrorMgr.cpp
 	src/I2C.cpp
 	src/TMP117.cpp
+	src/QTKnob.cpp
 	src/QwiicTwist.cpp
 	src/VFD.cpp
 	src/DisplayMgr.cpp
 	src/RadioMgr.cpp
 	src/FmDecode.cpp
 	src/Filter.cpp
-	src/RadioDataSource.cpp
 	src/AudioOutput.cpp
 	src/RtlSdr.cpp
 	src/CPUInfo.cpp

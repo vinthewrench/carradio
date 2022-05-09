@@ -15,8 +15,7 @@
 #include <cmath>
 
 #include "PiCanMgr.hpp"
-#include "CPUInfo.hpp"
-#include "TempSensor.hpp"
+#include "PropValKeys.hpp"
 
 #define TRY(_statement_) if(!(_statement_)) { \
 printf("FAIL AT line: %d\n", __LINE__ ); \
@@ -28,9 +27,7 @@ typedef void * (*THREADFUNCPTR)(void *);
 
  
 DisplayMgr::DisplayMgr(){
-	
-	_dataSource = NULL;
-	
+	 
 	pthread_create(&_updateTID, NULL,
 								  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
  
@@ -280,11 +277,10 @@ void DisplayMgr::DisplayUpdate(){
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
+	PiCanDB*	db 	= PiCanMgr::shared()->db();
 	int temp;
 	
-	if(_dataSource
-		&& _dataSource->getIntForKey(DS_KEY_MODULATION_MODE, temp)
-		){
+	if(db->getIntValue(VAL_MODULATION_MODE, temp)){
 			RadioMgr::radio_mode_t newMode = (RadioMgr::radio_mode_t) temp;
 
 		if(newMode == RadioMgr::RADIO_OFF){
@@ -434,7 +430,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	}
 	
 	
-	if(db->getFloatValue(CPUInfo::CPU_INFO_TEMP, cTemp)){
+	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 		char buffer[64] = {0};
 		
 		TRY(_vfd.setCursor(40, 55));
@@ -449,6 +445,8 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	
+	PiCanDB*	db 	= PiCanMgr::shared()->db();
+
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
@@ -475,10 +473,10 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 			}
 		
 		float volume = 0;
-		if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_VOLUME, volume)){
-			
-			uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
+		
+	 
+		if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
+	 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 
 			// clear rest of inside of box
 			if(volume < 1){
@@ -514,6 +512,8 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
+	PiCanDB*	db 	= PiCanMgr::shared()->db();
+
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
@@ -546,9 +546,9 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 		}
 		
 		float balance = 0;
-		if(_dataSource
-			&& _dataSource->getFloatForKey(DS_KEY_AUDIO_BALANCE, balance)){
-			
+		
+		if(db->getFloatValue(VAL_AUDIO_BALANCE, balance)){
+
 			uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
 			itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 			itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
@@ -582,6 +582,8 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 //	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 
+	PiCanDB*	db 	= PiCanMgr::shared()->db();
+
 	try{
 		if(redraw){
 			_vfd.clearScreen();
@@ -590,16 +592,13 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 		// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 		if(event != 0) {
 			double freq = 0;
-			int temp, temp1;
-		 
-			if(_dataSource
-				&& _dataSource->getDoubleForKey(DS_KEY_RADIO_FREQ, freq)
-				&& _dataSource->getIntForKey(DS_KEY_MODULATION_MODE, temp)
-				&& _dataSource->getIntForKey(DS_KEY_MODULATION_MUX, temp1)
-				){
-					RadioMgr::radio_mode_t mode = (RadioMgr::radio_mode_t) temp;
-					RadioMgr::radio_mux_t mux = (RadioMgr::radio_mux_t) temp1;
-					
+			RadioMgr::radio_mode_t  mode  = RadioMgr::RADIO_OFF;
+			RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
+	 
+			if(   db->getDoubleValue(VAL_RADIO_FREQ, freq)
+				&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
+				&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {
+ 
 				int precision = 0;
 				int centerX = _vfd.width() /2;
 				int centerY = _vfd.height() /2;

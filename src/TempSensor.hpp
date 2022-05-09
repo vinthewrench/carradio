@@ -22,8 +22,6 @@ class TempSensor : public PiCanMgrDevice{
  
 public:
 
-	inline static const string  PROP_TEMPSENSOR_QUERY_DELAY				= "temp-query-delay";
-
 	TempSensor();
 	~TempSensor();
 

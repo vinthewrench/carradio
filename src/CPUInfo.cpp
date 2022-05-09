@@ -10,7 +10,8 @@
 #include <iostream>
 #include <filesystem> // C++17
 #include <fstream>
-
+#include "PropValKeys.hpp"
+ 
 CPUInfo::CPUInfo(){
 	_state = INS_UNKNOWN;
 	_lastQueryTime = {0,0};
@@ -120,7 +121,7 @@ void CPUInfo::idle(){
 			double tempC;
 			
 			if(getCPUTemp(&tempC)){
-				_resultMap[string(CPU_INFO_TEMP)] =  to_string(tempC);
+				_resultMap[VAL_CPU_INFO_TEMP] =  to_string(tempC);
 				_state = INS_RESPONSE;
 				gettimeofday(&_lastQueryTime, NULL);
 				

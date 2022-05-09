@@ -21,6 +21,7 @@
 
 using namespace std;
 
+
 class PiCanDB  {
  
 	public:
@@ -28,7 +29,7 @@ class PiCanDB  {
 	PiCanDB ();
 	~PiCanDB ();
 
-	// MARK: - properties
+	// MARK: - properties // persisant
 	bool savePropertiesToFile(string filePath = "") ;
 	bool restorePropertiesFromFile(string filePath = "");
  
@@ -46,6 +47,11 @@ class PiCanDB  {
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
 	void updateValue(string key, string value, time_t when);
+	
+	void updateValue(string key, int value, time_t  when = 0);
+	void updateValue(string key, float value, time_t  when = 0);
+	void updateValue(string key, double value, time_t  when = 0);
+
 	void clearValues();
 	int valuesCount();
 

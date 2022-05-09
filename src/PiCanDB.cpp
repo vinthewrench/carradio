@@ -73,6 +73,22 @@ void PiCanDB::updateValue(string key, string value, time_t when){
 }
 
 
+void PiCanDB::updateValue(string key, int value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
+
+
+void PiCanDB::updateValue(string key, float value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
+
+
+void PiCanDB::updateValue(string key, double value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
+
+ 
+
 
 vector<string> PiCanDB::allValueKeys(){
 	std::lock_guard<std::mutex> lock(_mutex);

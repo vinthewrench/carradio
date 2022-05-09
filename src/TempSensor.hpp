@@ -13,12 +13,12 @@
 #include <sys/time.h>
 
 #include <map>
-#include "PiCanMgrDevice.hpp"
+#include "PiCarMgrDevice.hpp"
 #include "TMP117.hpp"
 
 using namespace std;
 
-class TempSensor : public PiCanMgrDevice{
+class TempSensor : public PiCarMgrDevice{
  
 public:
 

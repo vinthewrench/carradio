@@ -1,5 +1,5 @@
 //
-//  PiCanMgrDevice.h
+//  PiCarMgrDevice.h
 //  carradio
 //
 //  Created by Vincent Moscaritolo on 5/8/22.
@@ -14,7 +14,7 @@
  
 #include "CommonDefs.hpp"
  
-class PiCanMgrDevice {
+class PiCarMgrDevice {
 	
 public:
 	
@@ -70,7 +70,7 @@ public:
 		return result;
 	}
 
-	virtual PiCanMgrDevice::response_result_t
+	virtual PiCarMgrDevice::response_result_t
 	rcvResponse(std::function<void(std::map<std::string, std::string>)> callback = NULL) { return INVALID;};
 	
 };

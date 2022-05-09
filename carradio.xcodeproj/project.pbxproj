@@ -25,7 +25,7 @@
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCanDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */; };
-		2E9F9EA72828655900E12F5D /* PiCanMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA62828655900E12F5D /* PiCanMgr.cpp */; };
+		2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */; };
 		2E9F9EAB2828777200E12F5D /* TempSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA92828777200E12F5D /* TempSensor.cpp */; };
 		2E9F9EAF282879C100E12F5D /* CPUInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EAD282879C100E12F5D /* CPUInfo.cpp */; };
 		2E9F9EB228287C7E00E12F5D /* TimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EB028287C7E00E12F5D /* TimeStamp.cpp */; };
@@ -89,9 +89,9 @@
 		2E9F9E9D282727D200E12F5D /* FmDecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FmDecode.cpp; sourceTree = "<group>"; };
 		2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCanDB.cpp; sourceTree = "<group>"; };
 		2E9F9EA128285F3C00E12F5D /* PiCanDB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCanDB.hpp; sourceTree = "<group>"; };
-		2E9F9EA52828655900E12F5D /* PiCanMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCanMgr.hpp; sourceTree = "<group>"; };
-		2E9F9EA62828655900E12F5D /* PiCanMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCanMgr.cpp; sourceTree = "<group>"; };
-		2E9F9EA8282876C800E12F5D /* PiCanMgrDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCanMgrDevice.hpp; sourceTree = "<group>"; };
+		2E9F9EA52828655900E12F5D /* PiCarMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarMgr.hpp; sourceTree = "<group>"; };
+		2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCarMgr.cpp; sourceTree = "<group>"; };
+		2E9F9EA8282876C800E12F5D /* PiCarMgrDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarMgrDevice.hpp; sourceTree = "<group>"; };
 		2E9F9EA92828777200E12F5D /* TempSensor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TempSensor.cpp; sourceTree = "<group>"; };
 		2E9F9EAA2828777200E12F5D /* TempSensor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TempSensor.hpp; sourceTree = "<group>"; };
 		2E9F9EAC2828790700E12F5D /* Utils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
@@ -138,9 +138,9 @@
 			isa = PBXGroup;
 			children = (
 				2E62A851280735DA00F5066B /* main.cpp */,
-				2E9F9EA52828655900E12F5D /* PiCanMgr.hpp */,
-				2E9F9EA62828655900E12F5D /* PiCanMgr.cpp */,
-				2E9F9EA8282876C800E12F5D /* PiCanMgrDevice.hpp */,
+				2E9F9EA52828655900E12F5D /* PiCarMgr.hpp */,
+				2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */,
+				2E9F9EA8282876C800E12F5D /* PiCarMgrDevice.hpp */,
 				2E62A8E92817008500F5066B /* DisplayMgr.cpp */,
 				2E62A8EA2817008500F5066B /* DisplayMgr.hpp */,
 				2E82103528296D95003D074C /* PropValKeys.hpp */,
@@ -295,7 +295,7 @@
 				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
 				2E9F9EB228287C7E00E12F5D /* TimeStamp.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,
-				2E9F9EA72828655900E12F5D /* PiCanMgr.cpp in Sources */,
+				2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */,
 				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,
 				2E9F9EAB2828777200E12F5D /* TempSensor.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,

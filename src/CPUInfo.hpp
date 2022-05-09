@@ -13,12 +13,12 @@
 #include <sys/time.h>
 
 #include <map>
-#include "PiCanMgrDevice.hpp"
+#include "PiCarMgrDevice.hpp"
 
 using namespace std;
 
  
-class CPUInfo : public PiCanMgrDevice{
+class CPUInfo : public PiCarMgrDevice{
  
 public:
 

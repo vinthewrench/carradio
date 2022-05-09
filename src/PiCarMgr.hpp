@@ -1,5 +1,5 @@
 //
-//  PiCanMgr.h
+//  PiCarMgr.h
 //  carradio
 //
 //  Created by Vincent Moscaritolo on 5/8/22.
@@ -26,7 +26,7 @@
 
 
 #include "CommonDefs.hpp"
-#include "PiCanMgrDevice.hpp"
+#include "PiCarMgrDevice.hpp"
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 #include "RadioMgr.hpp"
@@ -37,16 +37,16 @@
 
 using namespace std;
  
-class PiCanMgr {
+class PiCarMgr {
  
-	static const char* 	PiCanMgr_Version;
+	static const char* 	PiCarMgr_Version;
 
 	public:
 	
-	static PiCanMgr *shared();
+	static PiCarMgr *shared();
  
-	PiCanMgr();
-	~PiCanMgr();
+	PiCarMgr();
+	~PiCarMgr();
 
 	bool begin();
 	void stop();
@@ -61,14 +61,14 @@ class PiCanMgr {
 
 	void startTempSensors( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopTempSensors();
-	PiCanMgrDevice::device_state_t tempSensor1State();
+	PiCarMgrDevice::device_state_t tempSensor1State();
 
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
 private:
 	
-	static PiCanMgr *sharedInstance;
+	static PiCarMgr *sharedInstance;
 	bool					_isSetup;
 
 	

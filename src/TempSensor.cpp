@@ -65,10 +65,10 @@ void TempSensor::setQueryDelay(uint64_t delay){
 };
 
 
-PiCanMgrDevice::response_result_t
+PiCarMgrDevice::response_result_t
 TempSensor::rcvResponse(std::function<void(map<string,string>)> cb){
 
-	PiCanMgrDevice::response_result_t result = NOTHING;
+	PiCarMgrDevice::response_result_t result = NOTHING;
 	
 	if(!isConnected()) {
 		return ERROR;
@@ -96,7 +96,7 @@ TempSensor::rcvResponse(std::function<void(map<string,string>)> cb){
 
  
 
-PiCanMgrDevice::device_state_t TempSensor::getDeviceState(){
+PiCarMgrDevice::device_state_t TempSensor::getDeviceState(){
   
   device_state_t retval = DEVICE_STATE_UNKNOWN;
   

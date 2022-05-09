@@ -55,7 +55,7 @@ set(SOURCES
 	src/RtlSdr.cpp
 	src/CPUInfo.cpp
 	src/PiCanDB.cpp
-	src/PiCanMgr.cpp
+	src/PiCarMgr.cpp
 	src/TempSensor.cpp
 	src/TimeStamp.cpp
 #	src/MicroNMEA.cpp

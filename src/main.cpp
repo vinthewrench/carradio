@@ -27,13 +27,13 @@
 #include "QwiicTwist.hpp"
 #include "AudioOutput.hpp"
 #include "PiCanDB.hpp"
-#include "PiCanMgr.hpp"
+#include "PiCarMgr.hpp"
 
 
 #if 1
 int main(int argc, const char * argv[]) {
 
-	PiCanMgr* pican 	= PiCanMgr::shared();
+	PiCarMgr* pican 	= PiCarMgr::shared();
 
 	// annoying log messages in librtlsdr
 //	freopen( "/dev/null", "w", stderr );
@@ -75,7 +75,7 @@ int main(int argc, const char * argv[]) {
 	constexpr int  pcmrate = 48000;
 
 	
-	PiCanMgr*		pican 	= PiCanMgr::shared();
+	PiCarMgr*		pican 	= PiCarMgr::shared();
 	DisplayMgr*		display 	= DisplayMgr::shared();
 	RadioMgr*		radio 	= RadioMgr::shared();
 	AudioOutput* 	audio 	= AudioOutput::shared();

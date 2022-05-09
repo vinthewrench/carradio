@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <cmath>
 
-#include "PiCanMgr.hpp"
+#include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
 
 #define TRY(_statement_) if(!(_statement_)) { \
@@ -279,7 +279,7 @@ void DisplayMgr::DisplayUpdate(){
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
-	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	PiCanDB*	db 	= PiCarMgr::shared()->db();
 	int temp;
 	
 	if(db->getIntValue(VAL_MODULATION_MODE, temp)){
@@ -379,7 +379,7 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 	
-	RadioMgr*	radio 	= PiCanMgr::shared()->radio();
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
  
 	RtlSdr::device_info_t info;
 	
@@ -400,7 +400,7 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	PiCanDB*	db 	= PiCarMgr::shared()->db();
 	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
@@ -446,7 +446,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	PiCanDB*	db 	= PiCarMgr::shared()->db();
 
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -513,7 +513,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	PiCanDB*	db 	= PiCarMgr::shared()->db();
 
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -583,7 +583,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 //	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 
-	PiCanDB*	db 	= PiCanMgr::shared()->db();
+	PiCanDB*	db 	= PiCarMgr::shared()->db();
 
 	try{
 		if(redraw){

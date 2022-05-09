@@ -13,7 +13,7 @@
 #include <cmath>
 #include <limits.h>
 
-#include "PiCanMgr.hpp"
+#include "PiCarMgr.hpp"
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 #include "PropValKeys.hpp"
@@ -106,8 +106,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
  
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	DisplayMgr*		display 	= PiCanMgr::shared()->display();
- 	PiCanDB*			db 		= PiCanMgr::shared()->db();
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+ 	PiCanDB*			db 		= PiCarMgr::shared()->db();
 	bool 			didUpdate = false;
 	
 	if(!_isSetup)
@@ -367,8 +367,8 @@ void adjust_gain(SampleVector& samples, double gain)
 
 void RadioMgr::SDRProcessor(){
 	
-	DisplayMgr*		display 	= PiCanMgr::shared()->display();
-	PiCanDB*			db 		= PiCanMgr::shared()->db();
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+	PiCanDB*			db 		= PiCarMgr::shared()->db();
 
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
@@ -493,7 +493,7 @@ void RadioMgr::SDRProcessorThreadCleanup(void *context){
  
 void RadioMgr::OutputProcessor(){
   
-	AudioOutput*	 audio  = PiCanMgr::shared()->audio();
+	AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 
 	while(!_shouldQuit){
 		

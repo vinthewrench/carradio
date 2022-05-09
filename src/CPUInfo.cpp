@@ -55,10 +55,10 @@ void CPUInfo::setQueryDelay(uint64_t delay){
 	_lastQueryTime = {0,0};
 };
 
-PiCanMgrDevice::response_result_t
+PiCarMgrDevice::response_result_t
 CPUInfo::rcvResponse(std::function<void(map<string,string>)> cb){
 
-	PiCanMgrDevice::response_result_t result = NOTHING;
+	PiCarMgrDevice::response_result_t result = NOTHING;
 	
 	if(_state == INS_RESPONSE){
 		result = PROCESS_VALUES;
@@ -81,7 +81,7 @@ CPUInfo::rcvResponse(std::function<void(map<string,string>)> cb){
 
  
 
-PiCanMgrDevice::device_state_t CPUInfo::getDeviceState(){
+PiCarMgrDevice::device_state_t CPUInfo::getDeviceState(){
   
   device_state_t retval = DEVICE_STATE_UNKNOWN;
   

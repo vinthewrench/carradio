@@ -1,15 +1,15 @@
 //
-//  PiCanMgr.c
+//  PiCarMgr.c
 //  carradio
 //
 //  Created by Vincent Moscaritolo on 5/8/22.
 //
 
-#include "PiCanMgr.hpp"
+#include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
 
 
-const char* 	PiCanMgr::PiCanMgr_Version = "1.0.0 dev 2";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
 
 
 const char* dev_display  = "/dev/ttyUSB0";
@@ -22,24 +22,24 @@ constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);
 
-PiCanMgr *PiCanMgr::sharedInstance = NULL;
+PiCarMgr *PiCarMgr::sharedInstance = NULL;
  
 static void sigHandler (int signum) {
 	
-	auto picanMgr = PiCanMgr::shared();
+	auto picanMgr = PiCarMgr::shared();
 	picanMgr->stop();
 }
 
 
-PiCanMgr * PiCanMgr::shared() {
+PiCarMgr * PiCarMgr::shared() {
 	if(!sharedInstance){
-		sharedInstance = new PiCanMgr;
+		sharedInstance = new PiCarMgr;
 	}
 	return sharedInstance;
 }
 
 
-PiCanMgr::PiCanMgr(){
+PiCarMgr::PiCarMgr(){
 	
  
 //
@@ -51,12 +51,12 @@ PiCanMgr::PiCanMgr(){
  
 }
 
-PiCanMgr::~PiCanMgr(){
+PiCarMgr::~PiCarMgr(){
 	stop();
 }
 
  
-bool PiCanMgr::begin(){
+bool PiCarMgr::begin(){
 	_isSetup = false;
 		
 	try {
@@ -103,7 +103,7 @@ bool PiCanMgr::begin(){
 		_display->showStartup();  // show it again
 	
 		pthread_create(&_piCanLoopTID, NULL,
-											  (THREADFUNCPTR) &PiCanMgr::PiCanLoopThread, (void*)this);
+											  (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
 
 		_isSetup = true;
 		
@@ -125,7 +125,7 @@ bool PiCanMgr::begin(){
 		 return _isSetup;
 }
 
-void PiCanMgr::stop(){
+void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
 		triggerEvent(PGMR_EVENT_EXIT);
@@ -145,16 +145,16 @@ void PiCanMgr::stop(){
 
 }
 
-// MARK: -  PiCanMgr main loop  thread
+// MARK: -  PiCarMgr main loop  thread
  
-void PiCanMgr::triggerEvent(uint16_t evt ){
+void PiCarMgr::triggerEvent(uint16_t evt ){
 	pthread_mutex_lock (&_mutex);
 		_event |= evt;
 	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);
 }
 
-void PiCanMgr::PiCanLoop(){
+void PiCarMgr::PiCanLoop(){
 	
 	constexpr struct timespec sleepTime  =  {0, 50 * 1000000};  // idle sleep in 50 millisconds
 	constexpr time_t pollTime	= 5;  // poll sleep in seconds
@@ -304,11 +304,11 @@ void PiCanMgr::PiCanLoop(){
 }
 
 
-void* PiCanMgr::PiCanLoopThread(void *context){
-	PiCanMgr* d = (PiCanMgr*)context;
+void* PiCarMgr::PiCanLoopThread(void *context){
+	PiCarMgr* d = (PiCarMgr*)context;
 
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
-	pthread_cleanup_push(   &PiCanMgr::PiCanLoopThreadCleanup ,context);
+	pthread_cleanup_push(   &PiCarMgr::PiCanLoopThreadCleanup ,context);
  
 	d->PiCanLoop();
 	
@@ -319,8 +319,8 @@ void* PiCanMgr::PiCanLoopThread(void *context){
 }
 
  
-void PiCanMgr::PiCanLoopThreadCleanup(void *context){
-	//PiCanMgr* d = (PiCanMgr*)context;
+void PiCarMgr::PiCanLoopThreadCleanup(void *context){
+	//PiCarMgr* d = (PiCarMgr*)context;
  
 //	printf("cleanup sdr\n");
 }
@@ -328,7 +328,7 @@ void PiCanMgr::PiCanLoopThreadCleanup(void *context){
 
 // MARK: -   Knobs and Buttons
 
-void PiCanMgr::startControls( std::function<void(bool didSucceed, std::string error_text)> cb){
+void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string error_text)> cb){
 	int  errnum = 0;
 	bool didSucceed = false;
 
@@ -349,7 +349,7 @@ void PiCanMgr::startControls( std::function<void(bool didSucceed, std::string er
 }
 
 
-void PiCanMgr::stopControls(){
+void PiCarMgr::stopControls(){
 	_volKnob.stop();
 	
 }
@@ -357,7 +357,7 @@ void PiCanMgr::stopControls(){
 
 // MARK: -   I2C Temp Sensors
 
-void PiCanMgr::startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> cb){
+void PiCarMgr::startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> cb){
 	
 	int  errnum = 0;
 	bool didSucceed = false;
@@ -381,13 +381,13 @@ void PiCanMgr::startCPUInfo( std::function<void(bool didSucceed, std::string err
 	 
 }
 
-void PiCanMgr::stopCPUInfo(){
+void PiCarMgr::stopCPUInfo(){
 	_cpuInfo.stop();
 
 }
 
 
-void PiCanMgr::startTempSensors( std::function<void(bool didSucceed, std::string error_text)> cb){
+void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string error_text)> cb){
 	
 	int  errnum = 0;
 	bool didSucceed = false;
@@ -419,10 +419,10 @@ void PiCanMgr::startTempSensors( std::function<void(bool didSucceed, std::string
 	
 }
 
-void PiCanMgr::stopTempSensors(){
+void PiCarMgr::stopTempSensors(){
 	_tempSensor1.stop();
 }
 
-PiCanMgrDevice::device_state_t PiCanMgr::tempSensor1State(){
+PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 	return _tempSensor1.getDeviceState();
 }

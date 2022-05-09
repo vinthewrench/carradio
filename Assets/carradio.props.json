@@ -1,4 +1,4 @@
 {
-	"temp-query-delay" : 60,
-	"cputemp-query-delay" : 60
+	"temp-query-delay" : 4,
+	"cputemp-query-delay" : 4
 }

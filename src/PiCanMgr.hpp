@@ -61,6 +61,9 @@ class PiCanMgr {
 	RadioMgr* radio() 	{return _radio;};
 	PiCanDB * db() 	{return &_db;};
 	
+	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
+	void stopCPUInfo();
+
 	void startTempSensor( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopTempSensor();
 	PiCanMgrDevice::device_state_t tempSensor1State();

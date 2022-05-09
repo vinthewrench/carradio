@@ -67,7 +67,7 @@ bool PiCanMgr::begin(){
 		// read in any properties
 		_db.restorePropertiesFromFile();
 
-		_cpuInfo.begin();
+		startCPUInfo();
 		
 		// setup display device
 		if(!_display->begin(dev_display,B9600))
@@ -123,13 +123,12 @@ void PiCanMgr::stop(){
 	
 	if(_isSetup  ){
 		stopTempSensor();
-
+		stopCPUInfo();
 		_radio->stop();
 		_audio->setVolume(0);
 		_audio->setBalance(0);
 		_audio->stop();
-		_cpuInfo.stop();
-
+	
 		_display->stop();
 		
 	}
@@ -209,7 +208,6 @@ void* PiCanMgr::PiCanLoopThread(void *context){
  
 void PiCanMgr::PiCanLoopThreadCleanup(void *context){
 	//PiCanMgr* d = (PiCanMgr*)context;
-
  
 //	printf("cleanup sdr\n");
 }
@@ -217,6 +215,37 @@ void PiCanMgr::PiCanLoopThreadCleanup(void *context){
 
 
 // MARK: -   I2C Temp Sensors
+
+void PiCanMgr::startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> cb){
+	
+	int  errnum = 0;
+	bool didSucceed = false;
+
+	didSucceed =  _cpuInfo.begin(errnum);
+	if(didSucceed){
+		
+		uint16_t queryDelay = 0;
+		if(_db.getUint16Property(string(CPUInfo::PROP_CPU_TEMP_QUERY_DELAY), &queryDelay)){
+			_cpuInfo.setQueryDelay(queryDelay);
+		}
+		
+ 	}
+	else {
+		ELOG_ERROR(ErrorMgr::FAC_SENSOR, 0, errnum,  "Start CPUInfo");
+	}
+	
+	
+	if(cb)
+		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
+	
+	_cpuInfo.begin();
+
+}
+
+void PiCanMgr::stopCPUInfo(){
+	_cpuInfo.stop();
+
+}
 
 
 void PiCanMgr::startTempSensor( std::function<void(bool didSucceed, std::string error_text)> cb){

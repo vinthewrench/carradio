@@ -67,6 +67,8 @@ bool PiCanMgr::begin(){
 		// read in any properties
 		_db.restorePropertiesFromFile();
 
+		_display->showStartup();
+	
 		startCPUInfo();
 		
 		// setup display device
@@ -76,8 +78,6 @@ bool PiCanMgr::begin(){
 		// set initial brightness?
 		if(!_display->setBrightness(5))
 			throw Exception("failed to set brightness ");
-		
-		_display->showStartup();
 		
 		// if we fail, no big deal..
 		startTempSensor();
@@ -98,7 +98,10 @@ bool PiCanMgr::begin(){
 
 		if(!_radio->begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
-		
+	 
+		_display->showStartup();  // show it again
+	
+
 		_isSetup = true;
 		
 	}

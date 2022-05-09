@@ -356,7 +356,6 @@ void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
 			case MODE_DIAG:
 				drawDiagScreen(redraw,event);
 				
-				
 			default:
 				drawInternalError(redraw,event);
 		}

@@ -197,7 +197,7 @@ void PiCarMgr::PiCanLoop(){
 			bool movedUp = false;
 			if(_volKnob.wasMoved(movedUp)){
 				
-#if 0
+#if 1
 				// change  channel
 				if(_radio.radioMode() != RadioMgr::RADIO_OFF){
 					auto newfreq = _radio.nextFrequency(movedUp);

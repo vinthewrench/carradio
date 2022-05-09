@@ -52,7 +52,9 @@ void  PiCanDB::updateValues(map<string,string>  values, time_t when){
 
  
 void PiCanDB::updateValue(string key, string value, time_t when){
- 
+	
+	std::lock_guard<std::mutex> lock(_mutex);
+
 	if(when == 0)
 		when = time(NULL);
 

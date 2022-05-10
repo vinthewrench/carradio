@@ -63,9 +63,9 @@ public:
  	bool setON(bool);
 	bool isOn() {return _isOn;};
 	
-	bool setFrequencyandMode(radio_mode_t, double freq = 0, bool force = false);
+	bool setFrequencyandMode(radio_mode_t, uint32_t freq = 0, bool force = false);
 	radio_mode_t radioMode() {return _mode;};
-	double frequency();
+	uint32_t frequency();
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
@@ -80,7 +80,7 @@ private:
 	RtlSdr				_sdr;
 	int					_pcmrate;
 	radio_mode_t 		_mode;
-	double				_frequency;
+	uint32_t				_frequency;
 	radio_mux_t 		_mux;
 	bool					_isOn;
 	 

@@ -77,6 +77,12 @@ void PiCanDB::updateValue(string key, string value, time_t when){
 }
 
 
+
+
+void PiCanDB::updateValue(string key, uint32_t value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
+
 void PiCanDB::updateValue(string key, int value, time_t  when){
 	updateValue(key, to_string(value), when);
 }

@@ -2,10 +2,13 @@
 	 "cputemp-query-delay": 4,
 	 "on-off": true,
 	 "radio_setting": {
-		  "bal": 0.0,
-		  "freq": 104700000.0,
-		  "mode": "FM",
-		  "vol": 1.0
-	 },
+		  "freq": 104700000,
+		  "mode": "FM"
+		 },
+	 
+	 "audio_setting" : {
+		 "bal": 0.0,
+		 "vol": 0.5
+	},
 	 "temp-query-delay": 4
 }

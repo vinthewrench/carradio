@@ -136,7 +136,7 @@ bool RadioMgr::setON(bool isOn) {
 }
 
  
-bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq, bool force){
+bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 	
@@ -218,7 +218,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq, bool f
 }
  
 
-double RadioMgr::frequency(){
+uint32_t RadioMgr::frequency(){
 	return _frequency;
  }
 

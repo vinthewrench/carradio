@@ -65,8 +65,8 @@ class PiCarMgr {
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
-	bool saveRadioSettings();
-	bool restoreRadioSettings();
+	void saveRadioSettings();
+	void restoreRadioSettings();
  
 private:
 	
@@ -80,6 +80,9 @@ private:
 	nlohmann::json GetRadioJSON();
 	bool SetRadio(nlohmann::json j);
 
+	nlohmann::json GetAudioJSON();
+	bool SetAudio(nlohmann::json j);
+ 
  	void triggerEvent(uint16_t);
 
 	pthread_t			_piCanLoopTID;
@@ -91,7 +94,7 @@ private:
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
 		
-	double 							_lastFreq;
+	uint32_t 						_lastFreq;
 	RadioMgr::radio_mode_t		_lastRadioMode;
  
 	DisplayMgr* 		_display;

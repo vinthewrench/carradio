@@ -58,6 +58,7 @@ class PiCanDB  {
 	void updateValue(string key, int value, time_t  when = 0);
 	void updateValue(string key, float value, time_t  when = 0);
 	void updateValue(string key, double value, time_t  when = 0);
+	void updateValue(string key, uint32_t value, time_t   when = 0);
 
 	void clearValues();
 	int valuesCount();

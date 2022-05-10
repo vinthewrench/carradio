@@ -158,77 +158,84 @@ nlohmann::json PiCarMgr::GetRadioJSON(){
 	
 	j[PROP_LAST_RADIO_SETTING_FREQ] =  _radio.frequency();
 	j[PROP_LAST_RADIO_SETTING_MODE] =  _radio.modeString (_radio.radioMode());
- 	j[PROP_LAST_RADIO_SETTING_VOL] =  _audio.volume();
-	j[PROP_LAST_RADIO_SETTING_BAL] =  _audio.balance();
-
+ 
 	return j;
 }
+
 
 bool PiCarMgr::SetRadio(nlohmann::json j){
 	bool success = false;
 	
 	return success;
 }
+ 
+nlohmann::json PiCarMgr::GetAudioJSON(){
+	json j;
+	
+	j[PROP_LAST_AUDIO_SETTING_VOL] =  _audio.volume();
+	j[PROP_LAST_AUDIO_SETTING_BAL] =  _audio.balance();
 
-bool PiCarMgr::saveRadioSettings(){
- 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
-  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
- 	return true;
- }
+	return j;
+}
 
-bool PiCarMgr::restoreRadioSettings(){
+bool PiCarMgr::SetAudio(nlohmann::json j){
 	bool success = false;
-	
-	nlohmann::json j = {};
-	
-
-	if( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
-		&& !j.empty()) {
-		
-		if( j.contains(PROP_LAST_RADIO_SETTING_FREQ)
-			&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
-			&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
-			&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
-			
-			auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
- 			auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
-			
-			_lastFreq = freq;
-			_lastRadioMode = mode;
-
-			_radio.setFrequencyandMode(mode, freq);
- 		}
-		else {
- 			_lastFreq = 1067000.0;
-			_lastRadioMode = RadioMgr::BROADCAST_FM;
-			_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
-		}
-		
-		if( j.contains(PROP_LAST_RADIO_SETTING_VOL)
-			&&  j.at(PROP_LAST_RADIO_SETTING_VOL).is_number()
- 			&&  j.contains(PROP_LAST_RADIO_SETTING_BAL)
-			&&  j.at(PROP_LAST_RADIO_SETTING_BAL).is_number() ){
-			
-			auto vol = j[PROP_LAST_RADIO_SETTING_VOL];
-			auto bal = j[PROP_LAST_RADIO_SETTING_BAL];
-			
-			_audio.setVolume(vol);
-			_audio.setBalance(bal);
-		}
-		else {
-			_audio.setVolume(.6);
-			_audio.setBalance(0.0);
-		}
-		
-		bool isOn = false;
-		if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
-			_radio.setON(isOn);
-		}
-
-	}
 	
 	return success;
 }
+
+void PiCarMgr::saveRadioSettings(){
+ 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
+  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
+ }
+
+void PiCarMgr::restoreRadioSettings(){
+	
+	nlohmann::json j = {};
+	
+	// SET Audio
+	if( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
+		&&  j.contains(PROP_LAST_AUDIO_SETTING_VOL)
+		&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()
+		&&  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
+		&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number() ){
+		auto vol = j[PROP_LAST_AUDIO_SETTING_VOL];
+		auto bal = j[PROP_LAST_AUDIO_SETTING_BAL];
+		
+		_audio.setVolume(vol);
+		_audio.setBalance(bal);
+	}
+	else {
+		_audio.setVolume(.6);
+		_audio.setBalance(0.0);
+	}
+	
+	// SET RADIO
+	
+	if( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
+		&&  j.contains(PROP_LAST_RADIO_SETTING_FREQ)
+		&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
+		&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
+		&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
+		
+		auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
+		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
+		
+		_lastFreq = freq;
+		_lastRadioMode = mode;
+  	}
+	else {
+		_lastFreq = 104700000;
+		_lastRadioMode = RadioMgr::BROADCAST_FM;
+	}
+	_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
+
+	// SET ON/OFF
+	bool isOn = false;
+	if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
+		_radio.setON(isOn);
+	}
+ }
 
 
 // MARK: -  PiCarMgr main loop  thread

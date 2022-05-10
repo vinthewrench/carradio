@@ -279,17 +279,15 @@ void DisplayMgr::DisplayUpdate(){
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
-	PiCanDB*	db 	= PiCarMgr::shared()->db();
-	bool isOn = false;
-	
-	if(db->getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
-		
-		if(isOn){
+//	PiCanDB*	db 	= PiCarMgr::shared()->db();
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+ 
+		if(radio->isOn()){
 			newState = MODE_RADIO;
 		}else {
 			newState = MODE_TIME;
 		}
-	}
+	 
 	
 	return newState;
 	
@@ -582,7 +580,8 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 //	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 
-	PiCanDB*	db 	= PiCarMgr::shared()->db();
+	PiCanDB*	db 		= PiCarMgr::shared()->db();
+	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 
 	try{
 		if(redraw){

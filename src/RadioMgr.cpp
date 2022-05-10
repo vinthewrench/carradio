@@ -23,10 +23,11 @@ typedef void * (*THREADFUNCPTR)(void *);
 
 
 RadioMgr::RadioMgr(){
-	_mode = RADIO_OFF;
+	_mode = MODE_UNKNOWN;
 	_mux = MUX_MONO;
 	_fmDecoder = NULL;
 	_frequency = 0;
+	_isOn = false;
 	_isSetup = false;
 	
 	_shouldQuit = false;
@@ -101,22 +102,21 @@ bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
 	return _sdr.getDeviceInfo(info);
 }
 
- 
-bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
- 
-	std::lock_guard<std::mutex> lock(_mutex);
+bool RadioMgr::setON(bool isOn) {
 
+	PiCanDB*			db 		= PiCarMgr::shared()->db();
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
- 	PiCanDB*			db 		= PiCarMgr::shared()->db();
-	bool 			didUpdate = false;
-	
+
 	if(!_isSetup)
 		return false;
+	 
+	_isOn = isOn;
 	
-	if(newMode == RADIO_OFF){
+	if(!isOn){
 		_shouldRead = false;
-		_mode = RADIO_OFF;
-		_frequency = 0;
+		_sdr.resetBuffer();
+		_source_buffer.flush();
+		_output_buffer.flush();
 		
 		// delete decoders
 		if(_fmDecoder) {
@@ -124,73 +124,92 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 			_fmDecoder = NULL;
 		}
 
-		_sdr.resetBuffer();
-	 	didUpdate = true;
- 	}
+	}
 	else {
-		if(newMode){
-			_mode = newMode;
-			
-			// SOMETHING ABOUT MODES HERE?
+		setFrequencyandMode(_mode,_frequency);
+	}
+	
+	db->updateValue(PROP_LAST_RADIO_SETTING_ONOFF,isOn);
+	display->showRadioChange();
+
+	return true;
+}
+
+ 
+bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
+	
+	std::lock_guard<std::mutex> lock(_mutex);
+	
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+	PiCanDB*			db 		= PiCarMgr::shared()->db();
+	bool 			didUpdate = false;
+	
+	if(!_isSetup)
+		return false;
+	
+	_frequency = newFreq;
+	_mode = newMode;
+	
+	if(newMode){
+		_mode = newMode;
+		// SOMETHING ABOUT MODES HERE?
+	}
+	
+	if( _isOn &&  (newFreq != _frequency)){
+		// Intentionally tune at a higher frequency to avoid DC offset.
+		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+		
+		if(! _sdr.setFrequency(tuner_freq))
+			return false;
+		
+		// create proper decoder
+		if(_fmDecoder) {
+			delete _fmDecoder;
+			_fmDecoder = NULL;
 		}
 		
-		if(newFreq != _frequency){
-			// Intentionally tune at a higher frequency to avoid DC offset.
-			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+		if(_mode == BROADCAST_FM) {
 			
-			if(! _sdr.setFrequency(tuner_freq))
-				return false;
+			// changing FM frequencies means recreating the decoder
 			
-			_frequency = newFreq;
+			// The baseband signal is empty above 100 kHz, so we can
+			// downsample to ~ 200 kS/s without loss of information.
+			// This will speed up later processing stages.
+			unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
+			fprintf(stderr, "baseband downsampling factor %u\n", downsample);
 			
-			// create proper decoder
-			if(_fmDecoder) {
-				delete _fmDecoder;
-				_fmDecoder = NULL;
-			}
+			// Prevent aliasing at very low output sample rates.
+			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
+												0.45 * _pcmrate);
 			
-			if(_mode == BROADCAST_FM) {
-				
-				// changing FM frequencies means recreating the decoder
-				
-				// The baseband signal is empty above 100 kHz, so we can
-				// downsample to ~ 200 kS/s without loss of information.
-				// This will speed up later processing stages.
-				unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
-				fprintf(stderr, "baseband downsampling factor %u\n", downsample);
-				
-				// Prevent aliasing at very low output sample rates.
-				double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
-													0.45 * _pcmrate);
-				
-				_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
-													newFreq - tuner_freq,
-													_pcmrate,
-													true,  // stereo
-													FmDecoder::default_deemphasis,     // deemphasis,
-													FmDecoder::default_bandwidth_if,   // bandwidth_if
-													FmDecoder::default_freq_dev,       // freq_dev
-													bandwidth_pcm,
-													downsample
-													);
-			}
-			
-			didUpdate = true;
-			
-			_sdr.resetBuffer();
-			_source_buffer.flush();
-			_output_buffer.flush();
-			_shouldRead = true;
+			_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
+												newFreq - tuner_freq,
+												_pcmrate,
+												true,  // stereo
+												FmDecoder::default_deemphasis,     // deemphasis,
+												FmDecoder::default_bandwidth_if,   // bandwidth_if
+												FmDecoder::default_freq_dev,       // freq_dev
+												bandwidth_pcm,
+												downsample
+												);
 		}
+		
+		didUpdate = true;
+		
+		_sdr.resetBuffer();
+		_source_buffer.flush();
+		_output_buffer.flush();
+		_shouldRead = true;
 	}
-
+	
+	
 	if(didUpdate){
 		db->updateValue(VAL_MODULATION_MODE, _mode);
 		db->updateValue(VAL_RADIO_FREQ, _frequency);
 		db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
-  		display->showRadioChange();
- 	}
- 
+		display->showRadioChange();
+	}
+	
 	return true;
 }
  
@@ -214,11 +233,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 		case VHF:
 			str = "VHF";
 			break;
-			
-		case RADIO_OFF:
-			str = "OFF";
-			break;
-			
+ 
 		default: ;
 	}
  
@@ -230,7 +245,6 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 
 	 if(str == "AM") mode = BROADCAST_AM;
 	 else  if(str == "FM") mode = BROADCAST_FM;
-	 else if(str == "OFF") mode = RADIO_OFF;
 	 else if(str == "VHF") mode = VHF;
 	return mode;
 		

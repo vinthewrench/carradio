@@ -112,9 +112,6 @@ bool PiCarMgr::begin(){
 	
 		restoreRadioSettings();
 		_isSetup = true;
-		
-					 
-		
 	}
 	catch ( const Exception& e)  {
 		
@@ -174,6 +171,7 @@ bool PiCarMgr::SetRadio(nlohmann::json j){
 }
 
 bool PiCarMgr::saveRadioSettings(){
+ 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
   	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
  	return true;
  }
@@ -183,8 +181,7 @@ bool PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
 	
-	// DEBUG FINISH HERE;
-	
+
 	if( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
 		&& !j.empty()) {
 		
@@ -202,10 +199,9 @@ bool PiCarMgr::restoreRadioSettings(){
 			_radio.setFrequencyandMode(mode, freq);
  		}
 		else {
- 			_lastFreq = 0;
-			_lastRadioMode = RadioMgr::RADIO_OFF;
+ 			_lastFreq = 1067000.0;
+			_lastRadioMode = RadioMgr::BROADCAST_FM;
 			_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
-
 		}
 		
 		if( j.contains(PROP_LAST_RADIO_SETTING_VOL)
@@ -224,6 +220,11 @@ bool PiCarMgr::restoreRadioSettings(){
 			_audio.setBalance(0.0);
 		}
 		
+		bool isOn = false;
+		if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
+			_radio.setON(isOn);
+		}
+
 	}
 	
 	return success;
@@ -274,18 +275,12 @@ void PiCarMgr::PiCanLoop(){
 			pthread_mutex_unlock (&_mutex);
  
 			if(shouldQuit) continue;
-			
-		
-
+	
 			// handle the fast stuff
 			if(_volKnob.wasClicked()){
-				if(_radio.radioMode() != RadioMgr::RADIO_OFF){
-					_radio.setFrequencyandMode(RadioMgr::RADIO_OFF);
-				}
-				else {
- 					_radio.setFrequencyandMode(_lastRadioMode,_lastFreq);
-				}
- 				saveRadioSettings();
+				bool isOn = _radio.isOn();
+				_radio.setON(!isOn);
+				saveRadioSettings();
 			}
 			
 			bool movedUp = false;
@@ -293,9 +288,10 @@ void PiCarMgr::PiCanLoop(){
 #if 1
 				// change  channel
 				
-				auto mode  = _radio.radioMode();
-				if(mode != RadioMgr::RADIO_OFF){
+				if(_radio.isOn()){
 					auto newfreq = _radio.nextFrequency(movedUp);
+					auto mode  = _radio.radioMode();
+
 					_lastRadioMode = mode;
 					_lastFreq = newfreq;
 					_radio.setFrequencyandMode(mode, newfreq);

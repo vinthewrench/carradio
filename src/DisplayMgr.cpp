@@ -280,20 +280,19 @@ DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
 	PiCanDB*	db 	= PiCarMgr::shared()->db();
-	int temp;
+	bool isOn = false;
 	
-	if(db->getIntValue(VAL_MODULATION_MODE, temp)){
-			RadioMgr::radio_mode_t newMode = (RadioMgr::radio_mode_t) temp;
-
-		if(newMode == RadioMgr::RADIO_OFF){
-			newState = MODE_TIME;
-		}else {
+	if(db->getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
+		
+		if(isOn){
 			newState = MODE_RADIO;
+		}else {
+			newState = MODE_TIME;
 		}
 	}
 	
 	return newState;
-		
+	
 }
 
 
@@ -593,7 +592,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 		// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 		if(event != 0) {
 			double freq = 0;
-			RadioMgr::radio_mode_t  mode  = RadioMgr::RADIO_OFF;
+			RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
 			RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
 	  
 			if(   db->getDoubleValue(VAL_RADIO_FREQ, freq)

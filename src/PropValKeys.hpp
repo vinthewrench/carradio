@@ -36,4 +36,5 @@ inline static const string  PROP_LAST_RADIO_SETTING_FREQ		= "freq";
 inline static const string  PROP_LAST_RADIO_SETTING_MODE		= "mode";
 inline static const string  PROP_LAST_RADIO_SETTING_VOL		= "vol";
 inline static const string  PROP_LAST_RADIO_SETTING_BAL		= "bal";
+inline static const string  PROP_LAST_RADIO_SETTING_ONOFF	= "on-off";
 

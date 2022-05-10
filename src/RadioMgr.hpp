@@ -32,7 +32,6 @@ class RadioMgr {
 public:
 	typedef enum :int {
 		MODE_UNKNOWN = 0,
-		RADIO_OFF,
 		BROADCAST_AM,
 		BROADCAST_FM,
 		VHF,
@@ -61,8 +60,10 @@ public:
 	static radio_mode_t stringToMode(string);
 	static string muxstring(radio_mux_t);
 	
-	 
-	bool setFrequencyandMode(radio_mode_t, double freq = 0 );
+ 	bool setON(bool);
+	bool isOn() {return _isOn;};
+	
+	bool setFrequencyandMode(radio_mode_t, double freq = 0);
 	radio_mode_t radioMode() {return _mode;};
 	double frequency();
 	
@@ -81,6 +82,7 @@ private:
 	radio_mode_t 		_mode;
 	double				_frequency;
 	radio_mux_t 		_mux;
+	bool					_isOn;
 	 
 	// Create source data queue.
 	DataBuffer<IQSample> _source_buffer;

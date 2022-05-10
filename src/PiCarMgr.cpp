@@ -285,11 +285,11 @@ void PiCarMgr::PiCanLoop(){
 				else {
  					_radio.setFrequencyandMode(_lastRadioMode,_lastFreq);
 				}
+ 				saveRadioSettings();
 			}
 			
 			bool movedUp = false;
 			if(_volKnob.wasMoved(movedUp)){
-				
 #if 1
 				// change  channel
 				
@@ -299,6 +299,7 @@ void PiCarMgr::PiCanLoop(){
 					_lastRadioMode = mode;
 					_lastFreq = newfreq;
 					_radio.setFrequencyandMode(mode, newfreq);
+					saveRadioSettings();
 				}
 				
 #elif 1

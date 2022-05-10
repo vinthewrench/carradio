@@ -161,3 +161,17 @@ template<class T, class> std::string to_hex(const T & data, bool addPrefix)
 	return (addPrefix ? u8"0x" : u8"") + ret;
 }
 
+
+
+inline std::string truncate(std::string str, size_t width, bool show_ellipsis=true)
+{
+	if (str.length() > width){
+		 if (show_ellipsis){
+				return str.substr(0, width) + "...";
+		 }
+		 else {
+				return str.substr(0, width);
+		 }
+	}
+	 return str;
+}

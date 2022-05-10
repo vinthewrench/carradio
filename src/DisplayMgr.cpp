@@ -638,13 +638,21 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 				TRY(_vfd.setFont(VFD::FONT_5x7));
 				TRY(_vfd.write( " " + hzstr));
 				
+				// Draw title
+				int titleBottom = centerY -10;
+				uint8_t buff1[] = {VFD_CLEAR_AREA,
+					0,  static_cast<uint8_t> (titleBottom-7),
+						static_cast<uint8_t> (_vfd.width()),static_cast<uint8_t> (titleBottom)};
+	 			_vfd.writePacket(buff1, sizeof(buff1), 20);
+
 				PiCarMgr::station_info_t info;
 				if(mgr->getStationInfo(mode, freq, info)
 					&& !info.title.empty()) {
-					auto titleStart =  centerX - ((info.title.size() * 6)/2);
+					string title = truncate(info.title, 20, true);
+	 				auto titleStart =  centerX - ((title.size() * 6)/2);
 					TRY(_vfd.setFont(VFD::FONT_5x7));
-					TRY(_vfd.setCursor( titleStart ,centerY -8 ));
-					TRY(_vfd.write( info.title));
+					TRY(_vfd.setCursor( titleStart ,titleBottom ));
+					TRY(_vfd.write( title));
 				}
 			}
 		}

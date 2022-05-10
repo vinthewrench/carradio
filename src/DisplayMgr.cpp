@@ -639,7 +639,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 				TRY(_vfd.write( " " + hzstr));
 				
 				// Draw title
-				int titleBottom = centerY -10;
+				int titleBottom = centerY -14;
 				uint8_t buff1[] = {VFD_CLEAR_AREA,
 					0,  static_cast<uint8_t> (titleBottom-7),
 						static_cast<uint8_t> (_vfd.width()),static_cast<uint8_t> (titleBottom)};

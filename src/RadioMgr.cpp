@@ -147,17 +147,19 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq, bool f
 	if(!_isSetup)
 		return false;
 	
-	_frequency = newFreq;
-	_mode = newMode;
 	
 	if(newMode){
 		// SOMETHING ABOUT MODES HERE?
 	}
-	
-	if( _isOn &&  (force || (newFreq != _frequency))){
+	if(!isOn()){
+		_frequency = newFreq;
+		_mode = newMode;
+ 	}
+	else if(force || (newFreq != _frequency)){
 		// Intentionally tune at a higher frequency to avoid DC offset.
 		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 		
+
 		if(! _sdr.setFrequency(tuner_freq))
 			return false;
 		

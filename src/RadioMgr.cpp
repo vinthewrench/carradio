@@ -115,7 +115,6 @@ bool RadioMgr::setON(bool isOn) {
 	if(!isOn){
 		_shouldRead = false;
 		_sdr.resetBuffer();
-		_source_buffer.flush();
 		_output_buffer.flush();
 		
 		// delete decoders
@@ -201,7 +200,6 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		didUpdate = true;
 		
 		_sdr.resetBuffer();
-		_source_buffer.flush();
 		_output_buffer.flush();
 		_shouldRead = true;
 	}

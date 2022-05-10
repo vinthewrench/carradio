@@ -139,8 +139,7 @@ bool RadioMgr::setON(bool isOn) {
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
-	std::lock_guard<std::mutex> lock(_mutex);
-	
+ 
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 	PiCanDB*			db 		= PiCarMgr::shared()->db();
 	bool 			didUpdate = false;

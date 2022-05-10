@@ -31,7 +31,8 @@ class RadioMgr {
 	
 public:
 	typedef enum :int {
-		RADIO_OFF = 0,
+		MODE_UNKNOWN = 0,
+		RADIO_OFF,
 		BROADCAST_AM,
 		BROADCAST_FM,
 		VHF,
@@ -57,6 +58,7 @@ public:
 	static string freqSuffixString(double hz);
 	static string hertz_to_string(double hz, int precision = 1);
 	static string modeString(radio_mode_t);
+	static radio_mode_t stringToMode(string);
 	static string muxstring(radio_mux_t);
 	
 	 
@@ -67,7 +69,7 @@ public:
 	radio_mux_t radioMuxMode() {return _mux;};
 
 	double nextFrequency(bool up);
-	
+		
 private:
 
 

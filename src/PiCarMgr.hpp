@@ -22,9 +22,7 @@
 #include <functional>
 #include <cstdlib>
 #include <signal.h>
-
-
-
+ 
 #include "CommonDefs.hpp"
 #include "PiCarMgrDevice.hpp"
 #include "DisplayMgr.hpp"
@@ -34,6 +32,7 @@
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
 #include "QTKnob.hpp"
+#include "json.hpp"
 
 using namespace std;
  
@@ -66,16 +65,21 @@ class PiCarMgr {
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
+	bool saveRadioSettings();
+	bool restoreRadioSettings();
+ 
 private:
 	
 	static PiCarMgr *sharedInstance;
 	bool					_isSetup;
-
-	
+ 
 	//  event thread
 #define PGMR_EVENT_START	0x0001
 #define PGMR_EVENT_EXIT		0x0002
 	
+	nlohmann::json GetRadioJSON();
+	bool SetRadio(nlohmann::json j);
+
  	void triggerEvent(uint16_t);
 
 	pthread_t			_piCanLoopTID;

@@ -22,6 +22,10 @@ using namespace nlohmann;
 PiCanDB::PiCanDB (){
 	_lastEtag = 0;
 	_values.clear();
+//	_properties.clear();
+	_props.clear();
+	
+	_didChangeProperties  = false;
 }
 
 PiCanDB::~PiCanDB (){
@@ -194,17 +198,23 @@ bool PiCanDB::getIntValue(string key,  int &result) {
 
 // MARK: - properties
 bool PiCanDB::setProperty(string key, string value){
-	_properties[key] = value;
-	savePropertiesToFile();
 	
-	 
+	bool shouldUpdate =
+			(_props.count(key) == 0)
+		 ||(_props[key] != value) ;
+	
+	if(shouldUpdate) {
+		_props[key] = value;
+		_didChangeProperties  = shouldUpdate;
+ 	}
+ 
 	return true;
 }
 
 bool PiCanDB::removeProperty(string key){
 	
-	if(_properties.count(key)){
-		_properties.erase(key);
+	if(_props.count(key)){
+		_props.erase(key);
 		savePropertiesToFile();
 	 
 		return true;
@@ -214,36 +224,62 @@ bool PiCanDB::removeProperty(string key){
 
 bool PiCanDB::setPropertyIfNone(string key, string value){
 	
-	if(_properties.count(key) == 0){
-		_properties[key] = value;
+	if(_props.count(key) == 0){
+		_props[key] = value;
 		savePropertiesToFile();
 		return true;
 	}
 	return false;
 }
+ 
 
-map<string ,string> PiCanDB::getProperties(){
+vector<string> PiCanDB::propertiesKeys(){
 	
-	return _properties;
+	vector<string> keys = {};
+	for(auto it =  _props.begin(); it != _props.end(); ++it) {
+		keys.push_back(it.key());
+	}
+	return keys;
 }
+
+
+
+bool PiCanDB::setProperty(string key, nlohmann::json  value){
+	
+	bool shouldUpdate =
+			(_props.count(key) == 0)
+		 ||(_props[key] != value) ;
+	
+	if(shouldUpdate) {
+		_props[key] = value;
+		_didChangeProperties  = shouldUpdate;
+	}
+	
+	return true;
+}
+
 
 bool PiCanDB::getProperty(string key, string *value){
 	
-	if(_properties.count(key)){
+	if( _props.contains(key)
+		&&  _props.at(key).is_string())
+	{
 		if(value)
-			*value = _properties[key];
+			*value  = _props.at(key);
 		return true;
-	}
+ 	}
+
 	return false;
 }
 
 bool  PiCanDB::getUint16Property(string key, uint16_t * valOut){
 	
-	string str;
-	if(getProperty(string(key), &str)){
-		char* p;
-		long val = strtoul(str.c_str(), &p, 0);
-		if(*p == 0 && val <= UINT16_MAX){
+	if( _props.contains(key)
+		&&  _props.at(key).is_number_unsigned())
+	{
+		auto val = _props.at(key);
+		
+		if(val <= UINT16_MAX){
 			if(valOut)
 				*valOut = (uint16_t) val;
 			return true;
@@ -254,43 +290,56 @@ bool  PiCanDB::getUint16Property(string key, uint16_t * valOut){
 
 bool  PiCanDB::getFloatProperty(string key, float * valOut){
 	
-	string str;
-	if(getProperty(string(key), &str)){
-		char* p;
-		float val = strtof(str.c_str(), &p);
-		if(*p == 0){
-			if(valOut)
-				*valOut = (float) val;
+	if( _props.contains(key)
+		&&  _props.at(key).is_number_float())
+	{
+		auto val = _props.at(key);
+		if(valOut)
+				*valOut = (uint16_t) val;
 			return true;
 		}
-	}
-	return false;
+   	return false;
 }
  
 bool  PiCanDB::getBoolProperty(string key, bool * valOut){
 	
-	string str;
-	if(getProperty(string(key), &str) ){
-		char* p;
-		
-		transform(str.begin(), str.end(), str.begin(), ::tolower);
-		
-		long val = strtoul(str.c_str(), &p, 0);
-		if(*p == 0 && (val == 0 || val == 1)){
-			if(valOut) *valOut = (bool)val;
-			return true;
-			
-		}else if(str == "true"){
-			if(valOut) *valOut = true;
+	if( _props.contains(key) ){
+	 	auto val = _props.at(key);
+
+		if(_props.at(key).is_boolean()){
+ 			if(valOut) *valOut = (bool)val;
 			return true;
 		}
-		else if(str == "false"){
-			if(valOut)	*valOut = false;
-			return true;
+		else 	if(_props.at(key).is_string()){
+			if(val == "true"){
+				if(valOut) *valOut = true;
+				return true;
+			}
+			else if(val == "false"){
+				if(valOut)	*valOut = false;
+				return true;
+			}
 		}
 	}
-	return false;
+ 	return false;
 }
+
+
+
+bool PiCanDB::getJSONProperty(string key, nlohmann::json  *valOut){
+	
+	if( _props.contains(key)
+		&&  _props.at(key).is_object())
+	{
+		auto val = _props.at(key);
+		if(valOut)
+				*valOut = val;
+			return true;
+		}
+ 
+	return  false;
+}
+
 
 
 //MARK: - Database Persistent operations
@@ -314,22 +363,32 @@ bool PiCanDB::restorePropertiesFromFile(string filePath){
 		ifs.open(filePath, ios::in);
 		if(!ifs.is_open()) return false;
 	
-		json jP;
-		ifs >> jP;
+		_props.clear();
 		
-		for (json::iterator it = jP.begin(); it != jP.end(); ++it) {
-			
-		 if( it.value().is_string()){
-				_properties[it.key() ] = string(it.value());
-			}
-			else if (it.value().is_number()){
-				_properties[it.key() ] = to_string(it.value());
-			}
-			else if (it.value().is_boolean()){
-				_properties[it.key() ] = to_string(it.value());
-			}
-		}
+		json jP;
+		ifs >> _props;
+		
+//		ifs >> jP;
+//
+//		_props = jP;
+//		auto str = _props.dump();
+//
+//
+//		for (json::iterator it = jP.begin(); it != jP.end(); ++it) {
+//
+//		 if( it.value().is_string()){
+//				_properties[it.key() ] = string(it.value());
+//			}
+//			else if (it.value().is_number()){
+//				_properties[it.key() ] = to_string(it.value());
+//			}
+//			else if (it.value().is_boolean()){
+//				_properties[it.key() ] = to_string(it.value());
+//			}
+//		}
 		statusOk = true;
+		_didChangeProperties  = false;
+
 		ifs.close();
 		
 		// if we were sucessful, then save the filPath
@@ -363,19 +422,15 @@ bool PiCanDB::savePropertiesToFile(string filePath){
 		if(ofs.fail())
 			return false;
 
-		json jP;
-
-		for (auto& [key, value] : _properties) {
-			jP[key] =  string(value);
-		}
-		
-		string jsonStr = jP.dump(4);
+		string jsonStr = _props.dump(4);
 		ofs << jsonStr << "\n";
 		
 		ofs.flush();
 		ofs.close();
 			
 		statusOk = true;
+		_didChangeProperties  = false;
+
 	}
 	catch(std::ofstream::failure &writeErr) {
 			statusOk = false;

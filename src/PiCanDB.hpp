@@ -16,6 +16,7 @@
 #include <strings.h>
 #include <cstring>
 
+#include "json.hpp"
 
 #include "CommonDefs.hpp"
 
@@ -34,16 +35,22 @@ class PiCanDB  {
 	bool restorePropertiesFromFile(string filePath = "");
  
 	bool setProperty(string key, string value);
+	bool setProperty(string key, nlohmann::json  j);
 	bool getProperty(string key, string *value);
+	
 	bool setPropertyIfNone(string key, string value);
 
 	bool getUint16Property(string key, uint16_t * value);
 	bool getFloatProperty(string key, float * valOut);
 	bool getBoolProperty(string key, bool * valOut);
+	bool getJSONProperty(string key, nlohmann::json  *j);
+	
 
 	bool removeProperty(string key);
-	map<string ,string> getProperties();
+	vector<string> propertiesKeys();
 	
+	bool propertiesChanged() {return _didChangeProperties;};
+ 
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
 	void updateValue(string key, string value, time_t when);
@@ -71,9 +78,12 @@ private:
 
 	mutable std::mutex _mutex;
 
-	map<string,string> 			_properties;
+	nlohmann::json					_props;
+	
+//	map<string,string> 			_properties;
 	string 							_propertyFilePath;
-  
+	bool								_didChangeProperties;
+	
 	// value database
 	eTag_t 		_lastEtag;
 

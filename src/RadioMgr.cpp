@@ -201,7 +201,7 @@ double RadioMgr::frequency(){
 
 string RadioMgr::modeString(radio_mode_t mode){
  
-	string str = "   ";
+	string str = "?";
 	switch (mode) {
 		case BROADCAST_AM:
 			str = "AM";
@@ -215,11 +215,27 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "VHF";
 			break;
 			
+		case RADIO_OFF:
+			str = "OFF";
+			break;
+			
 		default: ;
 	}
  
 	return str;
 }
+
+ RadioMgr::radio_mode_t RadioMgr::stringToMode(string str){
+	 radio_mode_t mode = MODE_UNKNOWN;
+	 
+	 if(str == "AM") mode = BROADCAST_AM;
+	 else  if(str == "FM") mode = BROADCAST_FM;
+	 else if(str == "OFF") mode = RADIO_OFF;
+	 else if(str == "VHF") mode = VHF;
+	return mode;
+		
+}
+
 
 string RadioMgr::muxstring(radio_mux_t mux){
  

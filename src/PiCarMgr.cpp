@@ -8,6 +8,9 @@
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
 
+#include <iostream>
+
+using namespace nlohmann;
 
 const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
 
@@ -110,7 +113,10 @@ bool PiCarMgr::begin(){
 
 		_display->showStartup();  // show startup
 	
+		restoreRadioSettings();
 		_isSetup = true;
+		
+					 
 		
 	}
 	catch ( const Exception& e)  {
@@ -149,6 +155,69 @@ void PiCarMgr::stop(){
 	_isSetup = false;
 
 }
+
+
+// MARK: -  convert to/from JSON
+
+nlohmann::json PiCarMgr::GetRadioJSON(){
+	json j;
+	
+	j[PROP_LAST_RADIO_SETTING_FREQ] =  _radio.frequency();
+	j[PROP_LAST_RADIO_SETTING_MODE] =  _radio.modeString (_radio.radioMode());
+ 	j[PROP_LAST_RADIO_SETTING_VOL] =  _audio.volume();
+	j[PROP_LAST_RADIO_SETTING_BAL] =  _audio.balance();
+
+	return j;
+}
+
+bool PiCarMgr::SetRadio(nlohmann::json j){
+	bool success = false;
+	
+	return success;
+}
+
+bool PiCarMgr::saveRadioSettings(){
+  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
+ 	return true;
+ }
+
+bool PiCarMgr::restoreRadioSettings(){
+	bool success = false;
+	
+	nlohmann::json j = {};
+	
+	// DEBUG FINISH HERE;
+	
+	if( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
+		&& !j.empty()) {
+		
+		if( j.contains(PROP_LAST_RADIO_SETTING_FREQ)
+			&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
+			&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
+			&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
+			
+			auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
+ 			auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
+			_radio.setFrequencyandMode(mode, freq);
+ 		};
+		
+		if( j.contains(PROP_LAST_RADIO_SETTING_VOL)
+			&&  j.at(PROP_LAST_RADIO_SETTING_VOL).is_number()
+ 			&&  j.contains(PROP_LAST_RADIO_SETTING_BAL)
+			&&  j.at(PROP_LAST_RADIO_SETTING_BAL).is_number() ){
+			
+			auto vol = j[PROP_LAST_RADIO_SETTING_VOL];
+			auto bal = j[PROP_LAST_RADIO_SETTING_BAL];
+			
+			_audio.setVolume(vol);
+			_audio.setBalance(bal);
+ 		}
+		
+	}
+	
+	return success;
+}
+
 
 // MARK: -  PiCarMgr main loop  thread
  
@@ -291,8 +360,10 @@ void PiCarMgr::PiCanLoop(){
 					});
 				}
 				
-				_tempSensor1.idle();
-				_cpuInfo.idle();
+				// ocassionally save properties
+				if(_db.propertiesChanged()){
+					_db.savePropertiesToFile();
+				}
 			}
 		};
 

@@ -90,7 +90,10 @@ private:
 	// C wrappers for SDRReader;
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
-	
+		
+	double 							_lastFreq;
+	RadioMgr::radio_mode_t		_lastRadioMode;
+ 
 	DisplayMgr* 		_display;
 	AudioOutput 		_audio;
 	RadioMgr				_radio;

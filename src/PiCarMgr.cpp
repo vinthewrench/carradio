@@ -94,10 +94,7 @@ bool PiCarMgr::begin(){
 
 		if(!_radio.begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
-	  
-		// DEBUG replace this with saved volume
-		_audio.setVolume(.6);
-	 
+	
 		// setup display device
 		if(!_display->begin(dev_display,B9600))
 			throw Exception("failed to setup Display ");
@@ -198,8 +195,18 @@ bool PiCarMgr::restoreRadioSettings(){
 			
 			auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
  			auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
+			
+			_lastFreq = freq;
+			_lastRadioMode = mode;
+
 			_radio.setFrequencyandMode(mode, freq);
- 		};
+ 		}
+		else {
+ 			_lastFreq = 0;
+			_lastRadioMode = RadioMgr::RADIO_OFF;
+			_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
+
+		}
 		
 		if( j.contains(PROP_LAST_RADIO_SETTING_VOL)
 			&&  j.at(PROP_LAST_RADIO_SETTING_VOL).is_number()
@@ -211,7 +218,11 @@ bool PiCarMgr::restoreRadioSettings(){
 			
 			_audio.setVolume(vol);
 			_audio.setBalance(bal);
- 		}
+		}
+		else {
+			_audio.setVolume(.6);
+			_audio.setBalance(0.0);
+		}
 		
 	}
 	
@@ -237,6 +248,7 @@ void PiCarMgr::PiCanLoop(){
 	timeval	 lastPollTime = {0,0};
  
 	try{
+		
 		while(!shouldQuit){
 			
 			// --check if any events need processing else wait for a timeout
@@ -263,7 +275,7 @@ void PiCarMgr::PiCanLoop(){
  
 			if(shouldQuit) continue;
 			
-			double savedFreq = 101.900e6;
+		
 
 			// handle the fast stuff
 			if(_volKnob.wasClicked()){
@@ -271,7 +283,7 @@ void PiCarMgr::PiCanLoop(){
 					_radio.setFrequencyandMode(RadioMgr::RADIO_OFF);
 				}
 				else {
-					_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM,savedFreq);
+ 					_radio.setFrequencyandMode(_lastRadioMode,_lastFreq);
 				}
 			}
 			
@@ -280,9 +292,13 @@ void PiCarMgr::PiCanLoop(){
 				
 #if 1
 				// change  channel
-				if(_radio.radioMode() != RadioMgr::RADIO_OFF){
+				
+				auto mode  = _radio.radioMode();
+				if(mode != RadioMgr::RADIO_OFF){
 					auto newfreq = _radio.nextFrequency(movedUp);
-					_radio.setFrequencyandMode(_radio.radioMode(), newfreq);
+					_lastRadioMode = mode;
+					_lastFreq = newfreq;
+					_radio.setFrequencyandMode(mode, newfreq);
 				}
 				
 #elif 1

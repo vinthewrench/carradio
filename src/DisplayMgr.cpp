@@ -644,6 +644,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 					auto titleStart =  centerX - ((info.title.size() * 6)/2);
 					TRY(_vfd.setFont(VFD::FONT_5x7));
 					TRY(_vfd.setCursor( titleStart ,centerY -8 ));
+					TRY(_vfd.write( info.title));
 				}
 			}
 		}

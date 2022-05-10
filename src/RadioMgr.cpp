@@ -113,6 +113,8 @@ bool RadioMgr::setON(bool isOn) {
 	_isOn = isOn;
 	
 	if(!isOn){
+		std::lock_guard<std::mutex> lock(_mutex);
+
 		_shouldRead = false;
 		_sdr.resetBuffer();
 		_output_buffer.flush();
@@ -156,6 +158,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  	}
 	else if(force || (newFreq != _frequency)){
 		
+		std::lock_guard<std::mutex> lock(_mutex);
+ 
 		_frequency = newFreq;
 		_mode = newMode;
 
@@ -172,7 +176,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
 		
 		if(_mode == BROADCAST_FM) {
-			
+	 
 			// changing FM frequencies means recreating the decoder
 			
 			// The baseband signal is empty above 100 kHz, so we can
@@ -492,8 +496,6 @@ void RadioMgr::SDRProcessor(){
 			usleep(200000);
 			continue;
 		}
-		
-		
 		
 	}
 	

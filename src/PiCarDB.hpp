@@ -19,16 +19,16 @@
 #include "json.hpp"
 
 #include "CommonDefs.hpp"
-
+ 
 using namespace std;
 
 
-class PiCanDB  {
+class PiCarDB  {
  
 	public:
 	
-	PiCanDB ();
-	~PiCanDB ();
+	PiCarDB ();
+	~PiCarDB ();
 
 	// MARK: - properties // persisant
 	bool savePropertiesToFile(string filePath = "") ;
@@ -45,11 +45,11 @@ class PiCanDB  {
 	bool getBoolProperty(string key, bool * valOut);
 	bool getJSONProperty(string key, nlohmann::json  *j);
 	
-
 	bool removeProperty(string key);
 	vector<string> propertiesKeys();
 	
 	bool propertiesChanged() {return _didChangeProperties;};
+	
  
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
@@ -72,6 +72,7 @@ class PiCanDB  {
 	bool getFloatValue(string key,  float &result);
 	bool getDoubleValue(string key,  double &result);
 	bool getIntValue(string key,  int &result);
+	bool getUInt32Value(string key,  uint32_t &result);
 
 private:
 	

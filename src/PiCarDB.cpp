@@ -5,7 +5,7 @@
 //  Created by Vincent Moscaritolo on 5/8/22.
 //
 
-#include "PiCanDB.hpp"
+#include "PiCarDB.hpp"
  
 #include <stdlib.h>
 #include <algorithm>
@@ -19,7 +19,7 @@
 
 using namespace nlohmann;
 
-PiCanDB::PiCanDB (){
+PiCarDB::PiCarDB (){
 	_lastEtag = 0;
 	_values.clear();
 //	_properties.clear();
@@ -28,23 +28,23 @@ PiCanDB::PiCanDB (){
 	_didChangeProperties  = false;
 }
 
-PiCanDB::~PiCanDB (){
+PiCarDB::~PiCarDB (){
 	
 }
 
 
-void  PiCanDB::clearValues(){
+void  PiCarDB::clearValues(){
 	_values.clear();
 	_lastEtag = 0;
 }
 
-int PiCanDB::valuesCount() {
+int PiCarDB::valuesCount() {
 	return (int) _values.size();
 }
 
 
 
-void  PiCanDB::updateValues(map<string,string>  values, time_t when){
+void  PiCarDB::updateValues(map<string,string>  values, time_t when){
 	
 	if(when == 0)
 		when = time(NULL);
@@ -55,7 +55,7 @@ void  PiCanDB::updateValues(map<string,string>  values, time_t when){
  };
 
  
-void PiCanDB::updateValue(string key, string value, time_t when){
+void PiCarDB::updateValue(string key, string value, time_t when){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -79,28 +79,28 @@ void PiCanDB::updateValue(string key, string value, time_t when){
 
 
 
-void PiCanDB::updateValue(string key, uint32_t value, time_t  when){
+void PiCarDB::updateValue(string key, uint32_t value, time_t  when){
 	updateValue(key, to_string(value), when);
 }
 
-void PiCanDB::updateValue(string key, int value, time_t  when){
-	updateValue(key, to_string(value), when);
-}
-
-
-void PiCanDB::updateValue(string key, float value, time_t  when){
+void PiCarDB::updateValue(string key, int value, time_t  when){
 	updateValue(key, to_string(value), when);
 }
 
 
-void PiCanDB::updateValue(string key, double value, time_t  when){
+void PiCarDB::updateValue(string key, float value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
+
+
+void PiCarDB::updateValue(string key, double value, time_t  when){
 	updateValue(key, to_string(value), when);
 }
 
  
 
 
-vector<string> PiCanDB::allValueKeys(){
+vector<string> PiCarDB::allValueKeys(){
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	vector<string> keys;
@@ -114,7 +114,7 @@ vector<string> PiCanDB::allValueKeys(){
 }
   
 
-vector<string> PiCanDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut){
+vector<string> PiCarDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 	vector<string> keys = {};
@@ -130,7 +130,7 @@ vector<string> PiCanDB::valuesUpdateSinceEtag(eTag_t eTag, eTag_t *eTagOut){
 	return keys;
 };
 
-vector<string> PiCanDB::valuesOlderthan(time_t time){
+vector<string> PiCarDB::valuesOlderthan(time_t time){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 	vector<string> keys = {};
@@ -144,7 +144,7 @@ vector<string> PiCanDB::valuesOlderthan(time_t time){
 };
 
 
-bool PiCanDB::valueWithKey(string key, string &valueOut){
+bool PiCarDB::valueWithKey(string key, string &valueOut){
 	std::lock_guard<std::mutex> lock(_mutex);
 	
 	if(_values.count(key) == 0 )
@@ -154,11 +154,11 @@ bool PiCanDB::valueWithKey(string key, string &valueOut){
 	return true;
 };
 
-bool PiCanDB::getStringValue(string key,  string &result){
+bool PiCarDB::getStringValue(string key,  string &result){
 	return valueWithKey(key,result);
 }
 
-bool PiCanDB::getFloatValue(string key,  float &result){
+bool PiCarDB::getFloatValue(string key,  float &result){
 	
 	string str;
 	if(valueWithKey(key,str)) {
@@ -172,7 +172,7 @@ bool PiCanDB::getFloatValue(string key,  float &result){
 	return false;
 }
 
-bool PiCanDB::getDoubleValue(string key,  double &result){
+bool PiCarDB::getDoubleValue(string key,  double &result){
 	
 	string str;
 	if(valueWithKey(key,str)) {
@@ -187,14 +187,28 @@ bool PiCanDB::getDoubleValue(string key,  double &result){
 }
 
  
-bool PiCanDB::getIntValue(string key,  int &result) {
+bool PiCarDB::getIntValue(string key,  int &result) {
 	
 	string str;
 	if(valueWithKey(key,str)) {
 		char* p;
-		long val = strtoul(str.c_str(), &p, 0);
+		long val = strtol(str.c_str(), &p, 0);
 		if(*p == 0){
-			result = (uint16_t) val;
+			result = (int) val;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool PiCarDB::getUInt32Value(string key,  uint32_t &result){
+	string str;
+	if(valueWithKey(key,str)) {
+		char* p;
+		unsigned long val = strtoul(str.c_str(), &p, 0);
+		if(*p == 0 && val < UINT32_MAX ){
+			result = (uint32_t) val;
 			return true;
 		}
 	}
@@ -203,7 +217,7 @@ bool PiCanDB::getIntValue(string key,  int &result) {
 
 
 // MARK: - properties
-bool PiCanDB::setProperty(string key, string value){
+bool PiCarDB::setProperty(string key, string value){
 	
 	bool shouldUpdate =
 			(_props.count(key) == 0)
@@ -217,7 +231,7 @@ bool PiCanDB::setProperty(string key, string value){
 	return true;
 }
 
-bool PiCanDB::removeProperty(string key){
+bool PiCarDB::removeProperty(string key){
 	
 	if(_props.count(key)){
 		_props.erase(key);
@@ -228,7 +242,7 @@ bool PiCanDB::removeProperty(string key){
 	return false;
 }
 
-bool PiCanDB::setPropertyIfNone(string key, string value){
+bool PiCarDB::setPropertyIfNone(string key, string value){
 	
 	if(_props.count(key) == 0){
 		_props[key] = value;
@@ -239,7 +253,7 @@ bool PiCanDB::setPropertyIfNone(string key, string value){
 }
  
 
-vector<string> PiCanDB::propertiesKeys(){
+vector<string> PiCarDB::propertiesKeys(){
 	
 	vector<string> keys = {};
 	for(auto it =  _props.begin(); it != _props.end(); ++it) {
@@ -250,7 +264,7 @@ vector<string> PiCanDB::propertiesKeys(){
 
 
 
-bool PiCanDB::setProperty(string key, nlohmann::json  value){
+bool PiCarDB::setProperty(string key, nlohmann::json  value){
 	
 	bool shouldUpdate =
 			(_props.count(key) == 0)
@@ -265,7 +279,7 @@ bool PiCanDB::setProperty(string key, nlohmann::json  value){
 }
 
 
-bool PiCanDB::getProperty(string key, string *value){
+bool PiCarDB::getProperty(string key, string *value){
 	
 	if( _props.contains(key)
 		&&  _props.at(key).is_string())
@@ -278,7 +292,7 @@ bool PiCanDB::getProperty(string key, string *value){
 	return false;
 }
 
-bool  PiCanDB::getUint16Property(string key, uint16_t * valOut){
+bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 	
 	if( _props.contains(key)
 		&&  _props.at(key).is_number_unsigned())
@@ -294,7 +308,7 @@ bool  PiCanDB::getUint16Property(string key, uint16_t * valOut){
 	return false;
 }
 
-bool  PiCanDB::getFloatProperty(string key, float * valOut){
+bool  PiCarDB::getFloatProperty(string key, float * valOut){
 	
 	if( _props.contains(key)
 		&&  _props.at(key).is_number_float())
@@ -307,7 +321,7 @@ bool  PiCanDB::getFloatProperty(string key, float * valOut){
    	return false;
 }
  
-bool  PiCanDB::getBoolProperty(string key, bool * valOut){
+bool  PiCarDB::getBoolProperty(string key, bool * valOut){
 	
 	if( _props.contains(key) ){
 	 	auto val = _props.at(key);
@@ -332,7 +346,7 @@ bool  PiCanDB::getBoolProperty(string key, bool * valOut){
 
 
 
-bool PiCanDB::getJSONProperty(string key, nlohmann::json  *valOut){
+bool PiCarDB::getJSONProperty(string key, nlohmann::json  *valOut){
 	
 	if( _props.contains(key)
 		&&  _props.at(key).is_object())
@@ -350,7 +364,7 @@ bool PiCanDB::getJSONProperty(string key, nlohmann::json  *valOut){
 
 //MARK: - Database Persistent operations
 
-bool PiCanDB::restorePropertiesFromFile(string filePath){
+bool PiCarDB::restorePropertiesFromFile(string filePath){
 
 	std::ifstream	ifs;
 	bool 				statusOk = false;
@@ -409,7 +423,7 @@ bool PiCanDB::restorePropertiesFromFile(string filePath){
 }
 
  
-bool PiCanDB::savePropertiesToFile(string filePath){
+bool PiCarDB::savePropertiesToFile(string filePath){
  
 	std::lock_guard<std::mutex> lock(_mutex);
 	bool statusOk = false;
@@ -446,6 +460,6 @@ bool PiCanDB::savePropertiesToFile(string filePath){
 	return statusOk;
 }
 
-string PiCanDB::defaultPropertyFilePath(){
+string PiCarDB::defaultPropertyFilePath(){
 	return "carradio.props.json";
 }

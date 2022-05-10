@@ -104,7 +104,7 @@ bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
 
 bool RadioMgr::setON(bool isOn) {
 
-	PiCanDB*			db 		= PiCarMgr::shared()->db();
+	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 
 	if(!_isSetup)
@@ -135,13 +135,40 @@ bool RadioMgr::setON(bool isOn) {
 
 	return true;
 }
+// MARK: -  utilities
 
- 
+uint32_t RadioMgr::stringToFreq(string str ){
+
+	uint32_t  freq =0;
+	uint32_t  suff = 1;
+	
+	auto suffix = str.back();
+	switch (suffix) {
+		case 'g':
+		case 'G':
+			suff *= 1e3;
+			/* fall-through */
+		case 'm':
+		case 'M':
+			suff *= 1e3;
+			/* fall-through */
+		case 'k':
+		case 'K':
+			suff *= 1e3;
+			str.pop_back();
+		default:
+ 			freq  = std::stof(str) * suff;
+			break;
+	}
+	
+	return freq;
+}
+
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
  
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-	PiCanDB*			db 		= PiCarMgr::shared()->db();
+	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	bool 			didUpdate = false;
 	
 	if(!_isSetup)
@@ -405,7 +432,7 @@ void adjust_gain(SampleVector& samples, double gain)
 void RadioMgr::SDRProcessor(){
 	
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-	PiCanDB*			db 		= PiCarMgr::shared()->db();
+	PiCarDB*			db 		= PiCarMgr::shared()->db();
 
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;

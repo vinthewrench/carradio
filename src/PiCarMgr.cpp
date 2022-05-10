@@ -9,6 +9,9 @@
 #include "PropValKeys.hpp"
 
 #include <iostream>
+#include <iostream>
+#include <filesystem> // C++17
+#include <fstream>
 
 using namespace nlohmann;
 
@@ -109,7 +112,8 @@ bool PiCarMgr::begin(){
 		triggerEvent(PGMR_EVENT_START);
 
 		_display->showStartup();  // show startup
-	
+		
+		restoreStationsFromFile();
 		restoreRadioSettings();
 		_isSetup = true;
 	}
@@ -166,6 +170,20 @@ nlohmann::json PiCarMgr::GetRadioJSON(){
 bool PiCarMgr::SetRadio(nlohmann::json j){
 	bool success = false;
 	
+	if( j.is_object()
+		&&  j.contains(PROP_LAST_RADIO_SETTING_FREQ)
+		&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
+		&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
+		&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
+		
+		auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
+		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
+		
+		_lastFreq = freq;
+		_lastRadioMode = mode;
+		_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
+	}
+	
 	return success;
 }
  
@@ -181,20 +199,7 @@ nlohmann::json PiCarMgr::GetAudioJSON(){
 bool PiCarMgr::SetAudio(nlohmann::json j){
 	bool success = false;
 	
-	return success;
-}
-
-void PiCarMgr::saveRadioSettings(){
- 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
-  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
- }
-
-void PiCarMgr::restoreRadioSettings(){
-	
-	nlohmann::json j = {};
-	
-	// SET Audio
-	if( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
+	if( j.is_object()
 		&&  j.contains(PROP_LAST_AUDIO_SETTING_VOL)
 		&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()
 		&&  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
@@ -204,32 +209,38 @@ void PiCarMgr::restoreRadioSettings(){
 		
 		_audio.setVolume(vol);
 		_audio.setBalance(bal);
+
+		success= true;
 	}
-	else {
-		_audio.setVolume(.6);
+
+	return success;
+}
+
+void PiCarMgr::saveRadioSettings(){
+ 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
+  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
+	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
+ }
+
+void PiCarMgr::restoreRadioSettings(){
+	
+	nlohmann::json j = {};
+	 
+	// SET Audio
+	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
+		  && SetAudio(j))){
+ 		_audio.setVolume(.6);
 		_audio.setBalance(0.0);
 	}
 	
 	// SET RADIO
-	
-	if( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
-		&&  j.contains(PROP_LAST_RADIO_SETTING_FREQ)
-		&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
-		&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
-		&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
-		
-		auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
-		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
-		
-		_lastFreq = freq;
-		_lastRadioMode = mode;
-  	}
-	else {
+	if(!( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
+		  && SetRadio(j))){
 		_lastFreq = 104700000;
 		_lastRadioMode = RadioMgr::BROADCAST_FM;
+ 		_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
 	}
-	_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
-
+ 
 	// SET ON/OFF
 	bool isOn = false;
 	if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
@@ -237,6 +248,72 @@ void PiCarMgr::restoreRadioSettings(){
 	}
  }
 
+// MARK: - stations File
+ 
+bool PiCarMgr::restoreStationsFromFile(string filePath){
+	bool success = false;
+	
+	std::ifstream	ifs;
+	
+	// create a file path
+	if(filePath.size() == 0)
+		filePath = "stations.tsv";
+
+	try{
+		string line;
+	 
+		_stationInfo.clear();
+
+ 		// open the file
+		ifs.open(filePath, ios::in);
+		if(!ifs.is_open()) return false;
+	
+		while ( std::getline(ifs, line) ) {
+			
+			// split the line looking for a token: and rest and ignore comments
+			line = Utils::trimStart(line);
+			if(line.size() == 0) continue;
+			if(line[0] == '#')  continue;
+			
+			vector<string> v = split<string>(line, "\t");
+			if(v.size() < 3)  continue;
+			
+			RadioMgr::radio_mode_t mode =  RadioMgr::stringToMode(v[0]);
+			auto freq = RadioMgr::stringToFreq(v[1]);
+			
+			string title = v[2];
+			string location = v.size() >2 ?v[3]:"";
+			
+			if(freq != 0
+				&& mode != RadioMgr::MODE_UNKNOWN){
+				station_info_t info = {mode, freq, title, location};
+				_stationInfo.push_back(info);
+ 				}
+	 		}
+		
+		success = _stationInfo.size() > 0;
+		ifs.close();
+	}
+	catch(std::ifstream::failure &err) {
+ 		ELOG_MESSAGE("READ stations:FAIL: %s", err.what());
+		success = false;
+	}
+	return success;
+}
+
+bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
+										uint32_t frequency,
+										station_info_t &info){
+ 
+	for(const auto& e : _stationInfo){
+		if(e.band == band && e.frequency == frequency){
+			info = e;
+			return true;
+		}
+	}
+	return false;
+
+}
 
 // MARK: -  PiCarMgr main loop  thread
  

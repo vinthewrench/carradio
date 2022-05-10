@@ -59,6 +59,9 @@ public:
 	static string modeString(radio_mode_t);
 	static radio_mode_t stringToMode(string);
 	static string muxstring(radio_mux_t);
+	static uint32_t stringToFreq(string);
+	
+	
 	
  	bool setON(bool);
 	bool isOn() {return _isOn;};

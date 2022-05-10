@@ -279,7 +279,7 @@ void DisplayMgr::DisplayUpdate(){
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
-//	PiCanDB*	db 	= PiCarMgr::shared()->db();
+//	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
  
 		if(radio->isOn()){
@@ -397,7 +397,7 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCarMgr::shared()->db();
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
@@ -443,7 +443,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCarMgr::shared()->db();
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
 
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -510,7 +510,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 
 void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
-	PiCanDB*	db 	= PiCarMgr::shared()->db();
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
 
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -578,11 +578,11 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
-//	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
-
-	PiCanDB*	db 		= PiCarMgr::shared()->db();
-	RadioMgr* radio 	= PiCarMgr::shared()->radio();
-
+	//	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	PiCarDB*	db 	= mgr->db();
+	
 	try{
 		if(redraw){
 			_vfd.clearScreen();
@@ -590,14 +590,14 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 		
 		// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 		if(event != 0) {
-			double freq = 0;
+			uint32_t freq = 0;
 			RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
 			RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
-	  
-			if(   db->getDoubleValue(VAL_RADIO_FREQ, freq)
+			
+			if(   db->getUInt32Value(VAL_RADIO_FREQ, freq)
 				&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
 				&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {
- 
+				
 				int precision = 0;
 				int centerX = _vfd.width() /2;
 				int centerY = _vfd.height() /2;
@@ -607,7 +607,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 					case RadioMgr::BROADCAST_FM: precision = 1;break;
 					default :
 						precision = 3; break;
-					}
+				}
 				
 				string str = 	RadioMgr::hertz_to_string(freq, precision);
 				string hzstr =	RadioMgr::freqSuffixString(freq);
@@ -616,13 +616,13 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 				
 				auto freqCenter =  centerX - (str.size() * 11) + 18;
 				if(precision > 1)  freqCenter += 10*2;
-
+				
 				auto modeStart = 5;
 				if(precision == 0)
 					modeStart += 15;
 				else if  (precision == 1)
 					modeStart += 5;
-				 
+				
 				TRY(_vfd.setFont(VFD::FONT_5x7));
 				TRY(_vfd.setCursor(modeStart, centerY-3));
 				TRY(_vfd.write(modStr));
@@ -634,21 +634,28 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 				TRY(_vfd.setFont(VFD::FONT_10x14));
 				TRY(_vfd.setCursor( freqCenter ,centerY+5));
 				TRY(_vfd.write(str));
-
+				
 				TRY(_vfd.setFont(VFD::FONT_5x7));
 				TRY(_vfd.write( " " + hzstr));
+				
+				PiCarMgr::station_info_t info;
+				if(mgr->getStationInfo(mode, freq, info)
+					&& !info.title.empty()) {
+					auto titleStart =  centerX - ((info.title.size() * 6)/2);
+					TRY(_vfd.setFont(VFD::FONT_5x7));
+					TRY(_vfd.setCursor( titleStart ,centerY -8 ));
+				}
 			}
 		}
-	
 		
-			time_t now = time(NULL);
-			struct tm *t = localtime(&now);
-			char buffer[16] = {0};
-			std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
-			TRY(_vfd.setFont(VFD::FONT_5x7));
-			TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
-			TRY(_vfd.write(buffer));
-
+		time_t now = time(NULL);
+		struct tm *t = localtime(&now);
+		char buffer[16] = {0};
+		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
+		TRY(_vfd.write(buffer));
+		
 		
 	} catch (...) {
 		// ignore fail

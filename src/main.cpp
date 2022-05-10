@@ -26,7 +26,7 @@
 #include "TMP117.hpp"
 #include "QwiicTwist.hpp"
 #include "AudioOutput.hpp"
-#include "PiCanDB.hpp"
+#include "PiCarDB.hpp"
 #include "PiCarMgr.hpp"
 
 
@@ -81,7 +81,7 @@ int main(int argc, const char * argv[]) {
 	DisplayMgr*		display 	= DisplayMgr::shared();
 	RadioMgr*		radio 	= RadioMgr::shared();
 	AudioOutput* 	audio 	= AudioOutput::shared();
-	PiCanDB * 		db 		= PiCanDB ::shared();
+	PiCarDB * 		db 		= PiCarDB ::shared();
 
 	TMP117 		tmp117;
 	QwiicTwist	twist;

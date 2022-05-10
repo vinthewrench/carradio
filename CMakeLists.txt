@@ -54,7 +54,7 @@ set(SOURCES
 	src/AudioOutput.cpp
 	src/RtlSdr.cpp
 	src/CPUInfo.cpp
-	src/PiCanDB.cpp
+	src/PiCarDB.cpp
 	src/PiCarMgr.cpp
 	src/TempSensor.cpp
 	src/TimeStamp.cpp

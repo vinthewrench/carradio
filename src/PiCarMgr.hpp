@@ -28,7 +28,7 @@
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 #include "RadioMgr.hpp"
-#include "PiCanDB.hpp"
+#include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
 #include "QTKnob.hpp"
@@ -53,7 +53,7 @@ class PiCarMgr {
 	DisplayMgr* display() {return _display;};
 	AudioOutput* audio() {return &_audio;};
 	RadioMgr* radio() 	{return &_radio;};
-	PiCanDB * db() 	{return &_db;};
+	PiCarDB * db() 	{return &_db;};
 	
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
@@ -68,6 +68,18 @@ class PiCarMgr {
 	void saveRadioSettings();
 	void restoreRadioSettings();
  
+	// MARK: - stations File
+	
+	typedef struct {
+		RadioMgr::radio_mode_t	band;
+		uint32_t						frequency;
+		string						title;
+		string						location;
+		} station_info_t;
+
+	bool restoreStationsFromFile(string filePath = "stations.tsv");
+	bool getStationInfo(RadioMgr::radio_mode_t band, uint32_t frequency, station_info_t&);
+
 private:
 	
 	static PiCarMgr *sharedInstance;
@@ -96,11 +108,12 @@ private:
 		
 	uint32_t 						_lastFreq;
 	RadioMgr::radio_mode_t		_lastRadioMode;
- 
+	vector<station_info_t>		_stationInfo;
+	
 	DisplayMgr* 		_display;
 	AudioOutput 		_audio;
 	RadioMgr				_radio;
-	PiCanDB 				_db;
+	PiCarDB 				_db;
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
 	QTKnob				_volKnob;

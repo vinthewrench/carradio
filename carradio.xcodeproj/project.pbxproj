@@ -22,9 +22,10 @@
 		2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A907282465B500F5066B /* AudioOutput.cpp */; };
 		2E821034282884B1003D074C /* carradio.props.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E8210332828848E003D074C /* carradio.props.json */; };
 		2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E82103B28298A5A003D074C /* QTKnob.cpp */; };
+		2E821040282AC43D003D074C /* stations.tsv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E82103F282AC43A003D074C /* stations.tsv */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
-		2E9F9EA228285F3C00E12F5D /* PiCanDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */; };
+		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
 		2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */; };
 		2E9F9EAB2828777200E12F5D /* TempSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA92828777200E12F5D /* TempSensor.cpp */; };
 		2E9F9EAF282879C100E12F5D /* CPUInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EAD282879C100E12F5D /* CPUInfo.cpp */; };
@@ -39,6 +40,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				2E821034282884B1003D074C /* carradio.props.json in CopyFiles */,
+				2E821040282AC43D003D074C /* stations.tsv in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,13 +84,14 @@
 		2E82103928298734003D074C /* RotaryKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotaryKnob.hpp; sourceTree = "<group>"; };
 		2E82103B28298A5A003D074C /* QTKnob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QTKnob.cpp; sourceTree = "<group>"; };
 		2E82103C28298A5A003D074C /* QTKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QTKnob.hpp; sourceTree = "<group>"; };
+		2E82103F282AC43A003D074C /* stations.tsv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stations.tsv; path = Assets/stations.tsv; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
 		2E9F9E9C282727D200E12F5D /* Filter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Filter.hpp; sourceTree = "<group>"; };
 		2E9F9E9D282727D200E12F5D /* FmDecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FmDecode.cpp; sourceTree = "<group>"; };
-		2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCanDB.cpp; sourceTree = "<group>"; };
-		2E9F9EA128285F3C00E12F5D /* PiCanDB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCanDB.hpp; sourceTree = "<group>"; };
+		2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCarDB.cpp; sourceTree = "<group>"; };
+		2E9F9EA128285F3C00E12F5D /* PiCarDB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarDB.hpp; sourceTree = "<group>"; };
 		2E9F9EA52828655900E12F5D /* PiCarMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarMgr.hpp; sourceTree = "<group>"; };
 		2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCarMgr.cpp; sourceTree = "<group>"; };
 		2E9F9EA8282876C800E12F5D /* PiCarMgrDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarMgrDevice.hpp; sourceTree = "<group>"; };
@@ -144,8 +147,8 @@
 				2E62A8E92817008500F5066B /* DisplayMgr.cpp */,
 				2E62A8EA2817008500F5066B /* DisplayMgr.hpp */,
 				2E82103528296D95003D074C /* PropValKeys.hpp */,
-				2E9F9EA128285F3C00E12F5D /* PiCanDB.hpp */,
-				2E9F9EA028285F3C00E12F5D /* PiCanDB.cpp */,
+				2E9F9EA128285F3C00E12F5D /* PiCarDB.hpp */,
+				2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */,
 				2E62A8F02822E16900F5066B /* RadioMgr.cpp */,
 				2E62A8F12822E16900F5066B /* RadioMgr.hpp */,
 				2E62A8F928244E5F00F5066B /* RtlSdr.cpp */,
@@ -221,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				2E8210332828848E003D074C /* carradio.props.json */,
+				2E82103F282AC43A003D074C /* stations.tsv */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -287,7 +291,7 @@
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
-				2E9F9EA228285F3C00E12F5D /* PiCanDB.cpp in Sources */,
+				2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */,
 				2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */,
 				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
 				2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */,

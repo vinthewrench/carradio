@@ -126,7 +126,7 @@ bool RadioMgr::setON(bool isOn) {
 
 	}
 	else {
-		setFrequencyandMode(_mode,_frequency);
+		setFrequencyandMode(_mode,_frequency, true);
 	}
 	
 	db->updateValue(PROP_LAST_RADIO_SETTING_ONOFF,isOn);
@@ -136,7 +136,7 @@ bool RadioMgr::setON(bool isOn) {
 }
 
  
-bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
+bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq, bool force){
 	
 	std::lock_guard<std::mutex> lock(_mutex);
 	
@@ -151,11 +151,10 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, double newFreq){
 	_mode = newMode;
 	
 	if(newMode){
-		_mode = newMode;
 		// SOMETHING ABOUT MODES HERE?
 	}
 	
-	if( _isOn &&  (newFreq != _frequency)){
+	if( _isOn &&  (force || (newFreq != _frequency))){
 		// Intentionally tune at a higher frequency to avoid DC offset.
 		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 		

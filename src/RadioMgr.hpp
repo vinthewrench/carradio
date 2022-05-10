@@ -63,7 +63,7 @@ public:
  	bool setON(bool);
 	bool isOn() {return _isOn;};
 	
-	bool setFrequencyandMode(radio_mode_t, double freq = 0);
+	bool setFrequencyandMode(radio_mode_t, double freq = 0, bool force = false);
 	radio_mode_t radioMode() {return _mode;};
 	double frequency();
 	

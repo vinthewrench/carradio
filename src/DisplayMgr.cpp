@@ -648,7 +648,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 				PiCarMgr::station_info_t info;
 				if(mgr->getStationInfo(mode, freq, info)
 					&& !info.title.empty()) {
-					string title = truncate(info.title, 20, true);
+					string title = truncate(info.title, 20);
 	 				auto titleStart =  centerX - ((title.size() * 6)/2);
 					TRY(_vfd.setFont(VFD::FONT_5x7));
 					TRY(_vfd.setCursor( titleStart ,titleBottom ));

@@ -409,6 +409,7 @@ void PiCarMgr::PiCanLoop(){
 				bool isOn = _radio.isOn();
 				_radio.setON(!isOn);
 				saveRadioSettings();
+				_db.savePropertiesToFile();
 			}
 			
 			bool movedUp = false;
@@ -424,6 +425,7 @@ void PiCarMgr::PiCanLoop(){
 					_lastFreq = newfreq;
 					_radio.setFrequencyandMode(mode, newfreq);
 					saveRadioSettings();
+					
 				}
 				
 #elif 1

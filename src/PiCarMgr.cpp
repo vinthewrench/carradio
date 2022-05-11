@@ -183,6 +183,7 @@ bool PiCarMgr::SetRadio(nlohmann::json j){
 		_lastFreq = freq;
 		_lastRadioMode = mode;
 		_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
+		success = true;
 	}
 	
 	return success;

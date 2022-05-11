@@ -116,6 +116,16 @@ bool PiCarMgr::begin(){
 		
 		restoreStationsFromFile();
 		restoreRadioSettings();
+		
+		{
+			uint32_t  freq = _lastFreq;
+			station_info_t  info;
+			while(nextStation(_lastRadioMode, freq, true, info)){
+				printf("%u %s\n",info.frequency, info.title.c_str());
+				freq = info.frequency;
+			}
+			printf("----\n");
+		}
 		_isSetup = true;
 	}
 	catch ( const Exception& e)  {
@@ -339,7 +349,7 @@ bool PiCarMgr::nextStation(RadioMgr::radio_mode_t band,
 			for ( auto i = v.begin(); i != v.end(); ++i ) {
 				if(i->frequency == frequency){
 					if(up){
-						if(i != v.end()){
+						if(next(i) != v.end()){
 							info = *(i+1);
 							return true;
 						}
@@ -354,8 +364,6 @@ bool PiCarMgr::nextStation(RadioMgr::radio_mode_t band,
 				}
 			}
 	}
-	
-	
 	return false;
 }
 

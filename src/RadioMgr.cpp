@@ -326,8 +326,6 @@ uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
 			newfreq = info.frequency;
 		}
 	}else {
-		
-		
 		switch (_mode) {
 			case BROADCAST_AM:
 				// AM steps are 10khz

@@ -506,16 +506,16 @@ void RadioMgr::SDRProcessor(){
 					  20*log10(audio_level) + 3.01);
 			
 			
-			// Show stereo status.
-	 			if (_fmDecoder->stereo_detected() != got_stereo) {
-				
-		 		got_stereo = _fmDecoder->stereo_detected();
-				if (got_stereo)
-					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
-							  _fmDecoder->get_pilot_level());
-				else
-					fprintf(stderr, "\nlost stereo signal\n");
-			}
+//			// Show stereo status.
+//	 			if (_fmDecoder->stereo_detected() != got_stereo) {
+//				
+//		 		got_stereo = _fmDecoder->stereo_detected();
+//				if (got_stereo)
+//					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
+//							  _fmDecoder->get_pilot_level());
+//				else
+//					fprintf(stderr, "\nlost stereo signal\n");
+//			}
 	
 #endif
 			// Throw away first block. It is noisy because IF filters

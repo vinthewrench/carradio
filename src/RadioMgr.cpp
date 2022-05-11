@@ -319,7 +319,6 @@ uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
 	uint32_t newfreq = _frequency;
 	
 	if(constrain){
-		
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
 		PiCarMgr::station_info_t info;
 		

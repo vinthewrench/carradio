@@ -116,16 +116,6 @@ bool PiCarMgr::begin(){
 		
 		restoreStationsFromFile();
 		restoreRadioSettings();
-		
-		{
-			uint32_t  freq = _lastFreq;
-			station_info_t  info;
-			while(nextStation(_lastRadioMode, freq, true, info)){
-				printf("%u %s\n",info.frequency, info.title.c_str());
-				freq = info.frequency;
-			}
-			printf("----\n");
-		}
 		_isSetup = true;
 	}
 	catch ( const Exception& e)  {

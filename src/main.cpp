@@ -143,8 +143,9 @@ int main(int argc, const char * argv[]) {
 				
 				if(twist.getDiff(twistCount, true)) {
 #if 1
+					bool shouldConstrain = true;
 					// controls channel
-					auto newfreq = radio->nextFrequency(twistCount > 0);
+					auto newfreq = radio->nextFrequency(twistCount > 0,shouldConstrain);
 					auto mode = radio->radioMode();
 					
 					if(( mode != RadioMgr::RADIO_OFF)

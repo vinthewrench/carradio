@@ -79,6 +79,10 @@ class PiCarMgr {
 
 	bool restoreStationsFromFile(string filePath = "stations.tsv");
 	bool getStationInfo(RadioMgr::radio_mode_t band, uint32_t frequency, station_info_t&);
+	bool nextStation(RadioMgr::radio_mode_t band,
+								uint32_t frequency,
+								bool up,
+								station_info_t &info);
 
 private:
 	
@@ -108,7 +112,8 @@ private:
 		
 	uint32_t 						_lastFreq;
 	RadioMgr::radio_mode_t		_lastRadioMode;
-	vector<station_info_t>		_stationInfo;
+ 
+	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	
 	DisplayMgr* 		_display;
 	AudioOutput 		_audio;

@@ -35,6 +35,7 @@ public:
 		BROADCAST_AM,
 		BROADCAST_FM,
 		VHF,
+		PS,
 	}radio_mode_t;
 	
 	typedef enum  {
@@ -72,7 +73,7 @@ public:
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
-	double nextFrequency(bool up);
+	uint32_t nextFrequency(bool up, bool constrain = false);
 		
 private:
 

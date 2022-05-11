@@ -55,6 +55,7 @@ PiCarMgr::PiCarMgr(){
 //	signal(SIGTERM, sigHandler);
 //	signal(SIGINT, sigHandler);
  
+	_stations.clear();
 }
 
 PiCarMgr::~PiCarMgr(){
@@ -262,9 +263,9 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 	try{
 		string line;
 	 
-		_stationInfo.clear();
-
- 		// open the file
+		 _stations.clear();
+		
+  		// open the file
 		ifs.open(filePath, ios::in);
 		if(!ifs.is_open()) return false;
 	
@@ -286,12 +287,21 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			
 			if(freq != 0
 				&& mode != RadioMgr::MODE_UNKNOWN){
+				
 				station_info_t info = {mode, freq, title, location};
-				_stationInfo.push_back(info);
- 				}
+				
+				_stations[mode].push_back(info);
+	 
 	 		}
+		}
+		for( auto &[mode, items]: _stations){
+			sort(items.begin(), items.end(),
+				  [] (const station_info_t& a,
+						const station_info_t& b) { return a.frequency < b.frequency; });
+ 		}
 		
-		success = _stationInfo.size() > 0;
+		
+		success = _stations.size() > 0;
 		ifs.close();
 	}
 	catch(std::ifstream::failure &err) {
@@ -305,14 +315,47 @@ bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
 										uint32_t frequency,
 										station_info_t &info){
  
-	for(const auto& e : _stationInfo){
-		if(e.band == band && e.frequency == frequency){
-			info = e;
-			return true;
+	if(_stations.count(band)){
+		for(const auto& e : _stations[band]){
+			if(e.frequency == frequency){
+				info = e;
+				return true;
+			}
 		}
 	}
+	
 	return false;
+}
 
+bool PiCarMgr::nextStation(RadioMgr::radio_mode_t band,
+								  uint32_t frequency,
+								  bool up,
+									station_info_t &info){
+	
+	if(_stations.count(band)){
+		auto v = _stations[band];
+		if(v.size() > 1)
+			for ( auto i = v.begin(); i != v.end(); ++i ) {
+				if(i->frequency == frequency){
+					if(up){
+						if(i != v.end()){
+							info = *(i+1);
+							return true;
+						}
+					}
+					else {
+						if(i != v.begin()){
+							info = *(i-1);
+							return true;
+							
+						}
+					}
+				}
+			}
+	}
+	
+	
+	return false;
 }
 
 // MARK: -  PiCarMgr main loop  thread

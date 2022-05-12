@@ -411,21 +411,22 @@ void PiCarMgr::PiCanLoop(){
 				else{
 				
 					
-					DisplayMgr::menuItems_t items = {
-						{1,"Time"},
-						{2,"AM"},
-						{3,"FM"},
-						{4,"VHF"},
-						{5,"GPS"},
-						{6,"Diagnostics"},
-						{7,"Exit"},
+					vector<DisplayMgr::menuItem_t> items = {
+						"Time",
+						"AM",
+						"FM",
+						"VHF",
+						"GPS",
+						"Diagnostics",
+						"Settings",
+						"Exit",
 					};
 					 
 					_display->showMenuScreen(items, 0, 10,
-													[=](bool didSucceed, uint selectedItemID ){
+													[=](bool didSucceed, uint selectedItem ){
 						
 						
-						printf("Menu Completed %d, %d\n", didSucceed, selectedItemID );
+						printf("Menu Completed %d, %d\n", didSucceed, selectedItem );
 						
 					});
 				}

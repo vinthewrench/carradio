@@ -146,7 +146,7 @@ void DisplayMgr::resetMenu() {
 
 }
 
-void DisplayMgr::showMenuScreen(menuItems_t items, uint intitialItem, time_t timeout,
+void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
 	resetMenu();
@@ -185,7 +185,7 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				
 			case MENU_CLICK:
 					if(_menuCB) {
-	 				_menuCB(true, _menuItems[_currentMenuItem].first);
+	 				_menuCB(true,  _currentMenuItem);
 				}
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
@@ -215,7 +215,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
 	
 	char buffer[64] = {0};
-	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
+	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].c_str()  );
 	TRY(_vfd.setCursor(0,20));
 	TRY(_vfd.write(buffer ));
 

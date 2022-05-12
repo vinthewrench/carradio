@@ -49,9 +49,9 @@ public:
 	void showRadioChange();
 
  	// Menu Screen Management
-	typedef vector< pair <uint, string>>  menuItems_t;
+	typedef string menuItem_t;
 	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
-	void showMenuScreen(menuItems_t items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
+	void showMenuScreen(vector<menuItem_t> items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
  
 	typedef enum  {
 		MENU_EXIT = 0,
@@ -98,9 +98,9 @@ private:
 //Menu stuff
 	void resetMenu();
 	void drawMenuScreen(bool redraw, bool shouldUpdate);
-	menuItems_t				 _menuItems;
-	int						 _currentMenuItem;
-	uint						 _menuCursor;
+	vector<menuItem_t>	_menuItems;
+	int						_currentMenuItem;
+	uint						_menuCursor;
 
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;

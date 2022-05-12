@@ -226,7 +226,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 		}
 	 
 		uint8_t cursorV = startV;
-		for(int i = _menuCursor; i < _menuCursor + maxLines; i ++){
+		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
 			char buffer[64] = {0};
 			sprintf(buffer, "%s %-16s",  i == _currentMenuItem?">":" ",  _menuItems[i].c_str() );
 			TRY(_vfd.setCursor(0,cursorV));

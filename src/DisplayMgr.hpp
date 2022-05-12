@@ -42,7 +42,7 @@ public:
 
 	void showTime();
 	void showDiag();
-
+	void showGPS();
 	void showStartup();
 	void showVolumeChange();
 	void showBalanceChange();
@@ -74,11 +74,9 @@ private:
 		MODE_RADIO,
 		MODE_DIAG,
 		MODE_GPS,
+	
 		MODE_MENU,
- 
-		// modified modes
-//		MODE_MENU_CHANGE,
-		MODE_SHUTDOWN,		// shutdown
+ 		MODE_SHUTDOWN,		// shutdown
 	}mode_state_t;
 
 	typedef enum  {
@@ -94,6 +92,7 @@ private:
 	void drawBalanceScreen(bool redraw, bool shouldUpdate);
 	void drawRadioScreen(bool redraw, bool shouldUpdate);
 	void drawDiagScreen(bool redraw, bool shouldUpdate);
+	void drawGPSScreen(bool redraw, bool shouldUpdate);
 	void drawInternalError(bool redraw, bool shouldUpdate);
 
 //Menu stuff
@@ -101,6 +100,8 @@ private:
 	void drawMenuScreen(bool redraw, bool shouldUpdate);
 	menuItems_t				 _menuItems;
 	uint						 _currentMenuItem;
+	uint						 _menuCursor;
+
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;
 //
@@ -121,25 +122,7 @@ private:
 	// C wrappers for DisplayUpdate;
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);
-
-//#define DISPLAY_EVENT_STARTUP	0x0001
-//#define DISPLAY_EVENT_EXIT 	0x0002
-//#define DISPLAY_EVENT_POP	 	0x0004
-//#define DISPLAY_EVENT_PUSH	 	0x0008
-//
-	
-	
-//
-//#define DISPLAY_EVENT_TIME 	0x0008
-//#define DISPLAY_EVENT_VOLUME 	0x0010
-//#define DISPLAY_EVENT_BALANCE 0x0020
-//#define DISPLAY_EVENT_RADIO 	0x0040
-//
-//#define DISPLAY_EVENT_DIAG 	0x0100
-//
-//#define DISPLAY_EVENT_MENU 			0x1000
-//#define DISPLAY_EVENT_MENU_CHANGED 	0x2000
-
+ 
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;

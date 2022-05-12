@@ -409,9 +409,21 @@ void PiCarMgr::PiCanLoop(){
 					_display->menuSelectAction(DisplayMgr::MENU_EXIT);
 				}
 				else{
-					DisplayMgr::menuItems_t items = {{0,"One"}, {1,"Two"}, {2,"Three"}};
+					
+					
+					DisplayMgr::menuItems_t items = {
+						{1,"Time"},
+						{2,"AM"},
+						{3,"FM"},
+						{4,"VHF"},
+						{5,"GPS"},
+						{6,"Diagnostics"},
+						{7,"Exit"},
+					};
+					 
 					_display->showMenuScreen(items, 1, 10,
 													[=](bool didSucceed, uint selectedItemID ){
+						
 						
 						printf("Menu Completed %d, %d\n", didSucceed, selectedItemID );
 						

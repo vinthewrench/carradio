@@ -13,6 +13,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cmath>
+#include <algorithm>
 
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
@@ -121,6 +122,11 @@ void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 	
 }
+void DisplayMgr::showGPS(){
+	setEvent(EVT_PUSH, MODE_GPS);
+ }
+
+ 
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	pthread_mutex_lock (&_mutex);
@@ -156,19 +162,43 @@ void DisplayMgr::menuSelectAction(menu_action action){
 	
 	if(isMenuDisplayed()) {
 		
-		printf("menuSelectAction %d\n",action);
-		if(action == MENU_EXIT){
-			_currentMenuItem = 0;
+		switch(action){
+				
+			case MENU_EXIT:
+				if(_menuCB) {
+					_menuCB(false, 0);
+				}
+				setEvent(EVT_POP, MODE_UNKNOWN);
+				resetMenu();
+				break;
+				
+			case MENU_UP:
+				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<uint>( _menuItems.size()));
+				setEvent(EVT_NONE,MODE_MENU);
+
+				break;
+				
+			case MENU_DOWN:
+				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<uint>( 1));
+				setEvent(EVT_NONE,MODE_MENU);
+ 				break;
+				
+			case MENU_CLICK:
+					if(_menuCB) {
+					_menuCB(false, _menuItems[_currentMenuItem].first);
+				}
+				setEvent(EVT_POP, MODE_UNKNOWN);
+				resetMenu();
+				break;
 		}
 		
-		setEvent(EVT_NONE,MODE_MENU);
 	}
 }
 
 
 void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
-	printf("drawMenuScreen %s  %s\n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
+//	printf("drawMenuScreen %s  %s\n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
 
 	if(redraw){
 		_vfd.clearScreen();
@@ -176,8 +206,6 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 
 	// did something change?
 	if(shouldUpdate){
-		
-		printf("menu changed\n");
 		
 		if(_currentMenuItem	== 0){
 			setEvent(EVT_POP, MODE_UNKNOWN);
@@ -199,6 +227,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_TIME:
 		case MODE_RADIO:
 		case MODE_DIAG:
+		case MODE_GPS:
 			isSticky = true;
 			break;
 			
@@ -418,6 +447,10 @@ void DisplayMgr::drawCurrentMode(bool redraw, bool shouldUpdate){
 				drawMenuScreen(redraw, shouldUpdate);
 				break;
 				
+			case MODE_GPS:
+				drawGPSScreen(redraw, shouldUpdate);
+				break;
+				
 			default:
 				drawInternalError(redraw,shouldUpdate);
 		}
@@ -503,7 +536,6 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 		sprintf(buffer, "CPU:%dC  ", (int) round(cTemp) );
 		TRY(_vfd.write(buffer));
 	}
-	
 	
 }
 
@@ -721,13 +753,11 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
 	TRY(_vfd.write(buffer));
-	
-	
-	
-}
+ }
 
 void DisplayMgr::drawDiagScreen(bool redraw, bool shouldUpdate){
 	printf("displayDiagScreen %s\n",redraw?"REDRAW":"");
+	TRY(_vfd.write("Diagnostics"));
 
 }
 
@@ -736,4 +766,16 @@ void DisplayMgr::drawInternalError(bool redraw, bool shouldUpdate){
 	
 	printf("displayInternalError %s\n",redraw?"REDRAW":"");
 }
+
+void DisplayMgr::drawGPSScreen(bool redraw, bool shouldUpdate){
+	
+	printf("GPS %s\n",redraw?"REDRAW":"");
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+	TRY(_vfd.write("GPS"));
+
+}
+
+
 

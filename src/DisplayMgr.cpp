@@ -204,7 +204,8 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	uint8_t height = _vfd.height();
  
 	uint8_t startV =  20;
- 	uint8_t maxLines =  (height - startV) / 8 ;
+	uint8_t lineHeight = 9;
+ 	uint8_t maxLines =  (height - startV) / lineHeight ;
 
 	if(redraw){
 		_vfd.clearScreen();
@@ -230,7 +231,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			sprintf(buffer, "%s %-16s",  i == _currentMenuItem?">":" ",  _menuItems[i].c_str() );
 			TRY(_vfd.setCursor(0,cursorV));
 			TRY(_vfd.write(buffer ));
-			cursorV += 8;
+			cursorV += lineHeight;
 		}
 	}
 //

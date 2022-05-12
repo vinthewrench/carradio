@@ -421,7 +421,7 @@ void PiCarMgr::PiCanLoop(){
 						{7,"Exit"},
 					};
 					 
-					_display->showMenuScreen(items, 1, 10,
+					_display->showMenuScreen(items, 0, 10,
 													[=](bool didSucceed, uint selectedItemID ){
 						
 						

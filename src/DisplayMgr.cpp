@@ -173,12 +173,12 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				break;
 				
 			case MENU_UP:
-				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<uint>( _menuItems.size()));
+				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<uint>( _menuItems.size() -1));
 				setEvent(EVT_NONE,MODE_MENU);
 				break;
 				
 			case MENU_DOWN:
-				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<uint>( 1));
+				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<uint>(0));
 				setEvent(EVT_NONE,MODE_MENU);
  				break;
 				
@@ -214,7 +214,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
 	
 	char buffer[64] = {0};
-	sprintf(buffer, "%2d %10s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
+	sprintf(buffer, "%2d %-10s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
 	TRY(_vfd.setCursor(0,20));
 	TRY(_vfd.write(buffer ));
 

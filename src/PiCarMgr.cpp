@@ -414,7 +414,7 @@ void PiCarMgr::PiCanLoop(){
 			if(_volKnob.wasMoved(movedUp)){
 #if 1
 				// change  channel
-				bool shouldConstrain = true;
+				bool shouldConstrain = false;
 				if(_radio.isOn()){
 					auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
 					auto mode  = _radio.radioMode();

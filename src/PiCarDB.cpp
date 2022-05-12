@@ -388,24 +388,6 @@ bool PiCarDB::restorePropertiesFromFile(string filePath){
 		json jP;
 		ifs >> _props;
 		
-//		ifs >> jP;
-//
-//		_props = jP;
-//		auto str = _props.dump();
-//
-//
-//		for (json::iterator it = jP.begin(); it != jP.end(); ++it) {
-//
-//		 if( it.value().is_string()){
-//				_properties[it.key() ] = string(it.value());
-//			}
-//			else if (it.value().is_number()){
-//				_properties[it.key() ] = to_string(it.value());
-//			}
-//			else if (it.value().is_boolean()){
-//				_properties[it.key() ] = to_string(it.value());
-//			}
-//		}
 		statusOk = true;
 		_didChangeProperties  = false;
 

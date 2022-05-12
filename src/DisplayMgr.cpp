@@ -173,6 +173,9 @@ void DisplayMgr::drawMenuScreen(bool redraw, uint16_t event){
 
 	// did something change?
 	if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
+		
+		printf("menu changed\n");
+		
 		if(_currentMenuItem	== 0){
 			setEvent(DISPLAY_EVENT_POP);
 		}

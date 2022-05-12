@@ -3,7 +3,7 @@
 	 "on-off": true,
 	 "radio_setting": {
 		  "freq": 155805000,
-		  "mode": "PS"
+		  "mode": "VHF"
 		 },
 	 
 	 "audio_setting" : {

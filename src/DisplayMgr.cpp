@@ -152,7 +152,8 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	resetMenu();
 	_menuItems = items;
 	_currentMenuItem =  min( max( static_cast<int>(intitialItem), 0),static_cast<int>( _menuItems.size()) -1);
- 
+	_menuCursor	= 0;
+	
 	_menuTimeout = timeout;
 	_menuCB = cb;
 
@@ -198,26 +199,47 @@ void DisplayMgr::menuSelectAction(menu_action action){
 
 void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
-//	printf("drawMenuScreen %s  %s\n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
+ 
+//	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+ 
+	uint8_t startV =  20;
+ 	uint8_t maxLines =  (height - startV) / 8 ;
 
 	if(redraw){
 		_vfd.clearScreen();
-	}
-
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		TRY(_vfd.setCursor(0,10));
+		TRY(_vfd.write("MENU SCREEN"));
+ 	}
+ 
 	// did something change?
 	if(shouldUpdate){
 		
+		
+		if( (_currentMenuItem - maxLines) > _menuCursor) {
+			_menuCursor = max(_currentMenuItem - maxLines, 0);
+		}
+		else if(_currentMenuItem < _menuCursor) {
+			_menuCursor = _currentMenuItem;
+		}
+	 
+		uint8_t cursorV = startV;
+		for(int i = _menuCursor; i < _menuCursor + maxLines; i ++){
+			char buffer[64] = {0};
+			sprintf(buffer, "%s %-16s", " ",  _menuItems[i].c_str() );
+			TRY(_vfd.setCursor(0,cursorV));
+			TRY(_vfd.write(buffer ));
+			cursorV += 8;
+		}
 	}
- 
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("MENU SCREEN"));
-	
-	
-	char buffer[64] = {0};
-	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].c_str()  );
-	TRY(_vfd.setCursor(0,20));
-	TRY(_vfd.write(buffer ));
+//
+//
+//
+//	char buffer[64] = {0};
+//	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].c_str()  );
+//	TRY(_vfd.setCursor(0,20));
+//	TRY(_vfd.write(buffer ));
 
 }
 

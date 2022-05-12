@@ -100,7 +100,7 @@ private:
 	void drawMenuScreen(bool redraw, bool shouldUpdate);
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;
-	uint						_menuCursor;
+	uint						_menuCursor;			// item at top of screen
 
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;

@@ -165,16 +165,16 @@ void DisplayMgr::menuSelectAction(menu_action action){
 }
 
 
-void DisplayMgr::drawMenuScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawMenuScreen(bool redraw, uint16_t lastEvent){
 	
-	printf("drawMenuScreen %s\n",redraw?"REDRAW":"");
+	printf("drawMenuScreen %s %04x\n",redraw?"REDRAW":"", lastEvent);
 
 	if(redraw){
 		_vfd.clearScreen();
 	}
 
 	// did something change?
-	if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
+	if((event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
 		
 		printf("menu changed\n");
 		
@@ -302,7 +302,6 @@ void DisplayMgr::DisplayUpdate(){
 		}
 		 else if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
 			 newMode = MODE_MENU;
-			 printf("DISPLAY_EVENT_MENU_CHANGED\n");
 			 _event &= ~DISPLAY_EVENT_MENU_CHANGED;
 		}
 	 

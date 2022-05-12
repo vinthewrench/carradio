@@ -152,6 +152,8 @@ void DisplayMgr::menuSelectAction(menu_action action){
 	
 	if(isMenuDisplayed()) {
 		
+		printf("menuSelectAction %d\n",action);
+
 		pthread_mutex_lock (&_mutex);
 		if(action == MENU_EXIT){
 			_currentMenuItem = 0;

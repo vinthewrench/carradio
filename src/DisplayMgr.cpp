@@ -146,11 +146,20 @@ void DisplayMgr::showMenuScreen(menuItems_t items, uint intitialItem, time_t tim
 	_menuCB = cb;
 	
 	setEvent(DISPLAY_EVENT_MENU);
-
 }
  
 void DisplayMgr::menuSelectAction(menu_action action){
 	
+	if(isMenuDisplayed()) {
+		
+		pthread_mutex_lock (&_mutex);
+		if(action == MENU_EXIT){
+			_currentMenuItem = 0;
+		}
+		_event |= DISPLAY_EVENT_MENU_CHANGED;
+		pthread_cond_signal(&_cond);
+		pthread_mutex_unlock (&_mutex);
+	}
 }
 
 
@@ -162,9 +171,17 @@ void DisplayMgr::drawMenuScreen(bool redraw, uint16_t event){
 		_vfd.clearScreen();
 	}
 
+	// did something change?
+	if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
+		if(_currentMenuItem	== 0){
+			setEvent(DISPLAY_EVENT_POP);
+		}
+	}
+		
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("MENU SCREEN"));
+	
 }
 
 // MARK: -  mode utils
@@ -242,7 +259,15 @@ void DisplayMgr::DisplayUpdate(){
 			newMode = MODE_STARTUP;
 			_event &= ~DISPLAY_EVENT_STARTUP;
 		}
-		else if((_event & DISPLAY_EVENT_VOLUME ) != 0){
+ 		if((_event & DISPLAY_EVENT_POP ) != 0){
+			if(!isStickyMode(_current_mode)){
+				popMode();
+				newMode = _current_mode;
+				shouldRedraw = true;
+			}
+			_event &= ~DISPLAY_EVENT_POP;
+		}
+ 		else if((_event & DISPLAY_EVENT_VOLUME ) != 0){
 			newMode = MODE_VOLUME;
 			_event &= ~DISPLAY_EVENT_VOLUME;
 		}
@@ -269,9 +294,12 @@ void DisplayMgr::DisplayUpdate(){
 		 else if((_event & DISPLAY_EVENT_MENU ) != 0){
 			 newMode = MODE_MENU;
 			 _event &= ~DISPLAY_EVENT_MENU;
-			}
- 
-		
+		}
+		 else if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
+			 newMode = MODE_MENU;
+			 _event &= ~DISPLAY_EVENT_MENU_CHANGED;
+		}
+	 
 		pthread_mutex_unlock (&_mutex);
  
 		if(newMode != MODE_UNKNOWN){

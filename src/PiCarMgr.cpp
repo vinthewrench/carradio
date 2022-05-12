@@ -406,11 +406,11 @@ void PiCarMgr::PiCanLoop(){
 #if 1
 			if(_volKnob.wasClicked()){
 				if(_display->isMenuDisplayed()){
-					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
+					_display->menuSelectAction(DisplayMgr::MENU_EXIT);
 				}
 				else{
 					DisplayMgr::menuItems_t items = {{0,"One"}, {1,"Two"}, {2,"Three"}};
-					_display->showMenuScreen(items, 0, 10,
+					_display->showMenuScreen(items, 1, 10,
 													[=](bool didSucceed, uint selectedItemID ){
 						
 						printf("Menu Completed %d, %d\n", didSucceed, selectedItemID );

@@ -215,7 +215,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
 	
 	char buffer[64] = {0};
-	sprintf(buffer, "%2d %-10s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
+	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
 	TRY(_vfd.setCursor(0,20));
 	TRY(_vfd.write(buffer ));
 

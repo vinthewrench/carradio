@@ -229,8 +229,8 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
 			char buffer[64] = {0};
-			sprintf(buffer, "%s %.-*s %s",  i == _currentMenuItem?">":" ",
-					  maxCol-4 ,	_menuItems[i].c_str(),
+			sprintf(buffer, "%s %.*s %s",  i == _currentMenuItem?">":" ",
+					  -(maxCol-4) ,	_menuItems[i].c_str(),
  					  i == 0? "U": i == _menuItems.size()?"V": " ");
 			TRY(_vfd.setCursor(0,cursorV));
 			TRY(_vfd.write(buffer ));

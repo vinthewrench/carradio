@@ -432,65 +432,72 @@ void PiCarMgr::PiCanLoop(){
 			
 			bool movedUp = false;
 			if(_volKnob.wasMoved(movedUp)){
+				
+				if(_display->isMenuDisplayed()){
+					_display->menuSelectAction(movedUp?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
+		 		}
+				else
+				{
 #if 1
-				// change  channel
-				bool shouldConstrain = false;
-				if(_radio.isOn()){
-					auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
-					auto mode  = _radio.radioMode();
-
-					_lastRadioMode = mode;
-					_lastFreq = newfreq;
-					_radio.setFrequencyandMode(mode, newfreq);
-					saveRadioSettings();
+					// change  channel
+					bool shouldConstrain = false;
+					if(_radio.isOn()){
+						auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
+						auto mode  = _radio.radioMode();
+						
+						_lastRadioMode = mode;
+						_lastFreq = newfreq;
+						_radio.setFrequencyandMode(mode, newfreq);
+						saveRadioSettings();
+						
+					}
 					
-				}
-				
 #elif 1
-				// change  volume
-				auto volume = _audio.volume();
-				
-				if(movedUp){
-					if(volume < 1) {						// twist up
-						volume +=.04;
-						if(volume > 1) volume = 1.0;	// pin volume
-						_audio.setVolume(volume);
-						_db.updateValue(VAL_AUDIO_VOLUME, volume);
-					}
-				}
-				else {
-					if(volume > 0) {							// twist down
-						volume -=.04;
-						if(volume < 0) volume = 0.0;		// twist down
-						_audio.setVolume(volume);
-						_db.updateValue(VAL_AUDIO_VOLUME, volume);
-					}
-				}
-				
-				_display->showVolumeChange();
-#else
-				// change  balance
-				auto balance = _audio.balance();
-				
-				if(movedUp){
-					if(balance < 1) {						// twist up
-						balance +=.04;
-						if(balance > 1) balance = 1.0;	// pin volume
-						_audio.setBalance(balance);
-						_db.updateValue(VAL_AUDIO_BALANCE, balance);
-					}
-				}
-				else {
+					// change  volume
+					auto volume = _audio.volume();
 					
-					if(balance > -1) {							// twist down
-						balance -=.04;
-						if(balance < -1) balance = -1.;		// twist down
-						_audio.setBalance(balance);
-						_db.updateValue(VAL_AUDIO_BALANCE, balance);
+					if(movedUp){
+						if(volume < 1) {						// twist up
+							volume +=.04;
+							if(volume > 1) volume = 1.0;	// pin volume
+							_audio.setVolume(volume);
+							_db.updateValue(VAL_AUDIO_VOLUME, volume);
+						}
 					}
-				}
-				_display->showBalanceChange();
+					else {
+						if(volume > 0) {							// twist down
+							volume -=.04;
+							if(volume < 0) volume = 0.0;		// twist down
+							_audio.setVolume(volume);
+							_db.updateValue(VAL_AUDIO_VOLUME, volume);
+						}
+					}
+					
+					_display->showVolumeChange();
+#else
+					// change  balance
+					auto balance = _audio.balance();
+					
+					if(movedUp){
+						if(balance < 1) {						// twist up
+							balance +=.04;
+							if(balance > 1) balance = 1.0;	// pin volume
+							_audio.setBalance(balance);
+							_db.updateValue(VAL_AUDIO_BALANCE, balance);
+						}
+					}
+					else {
+						
+						if(balance > -1) {							// twist down
+							balance -=.04;
+							if(balance < -1) balance = -1.;		// twist down
+							_audio.setBalance(balance);
+							_db.updateValue(VAL_AUDIO_BALANCE, balance);
+						}
+					}
+					_display->showBalanceChange();
 #endif
+				}
 				
 			}
 			

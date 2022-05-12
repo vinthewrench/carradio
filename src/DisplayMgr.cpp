@@ -229,7 +229,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
 			char buffer[64] = {0};
-			sprintf(buffer, "%s %-.*s %s",  i == _currentMenuItem?">":" ",
+			sprintf(buffer, "%s %.-*s %s",  i == _currentMenuItem?">":" ",
 					  maxCol-4 ,	_menuItems[i].c_str(),
  					  i == 0? "U": i == _menuItems.size()?"V": " ");
 			TRY(_vfd.setCursor(0,cursorV));
@@ -237,13 +237,6 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			cursorV += lineHeight;
 		}
 	}
-//
-//
-//
-//	char buffer[64] = {0};
-//	sprintf(buffer, "%2d %-16s", _currentMenuItem, _menuItems[_currentMenuItem].c_str()  );
-//	TRY(_vfd.setCursor(0,20));
-//	TRY(_vfd.write(buffer ));
 
 }
 

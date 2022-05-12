@@ -222,7 +222,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			_menuCursor = max(_currentMenuItem - maxLines, 0);
 		}
 		else if(_currentMenuItem < _menuCursor) {
-			_menuCursor = max(_currentMenuItem - maxLines, 0);
+			_menuCursor = max(_menuCursor - 1,  0);
 		}
 	 
 		uint8_t cursorV = startV;

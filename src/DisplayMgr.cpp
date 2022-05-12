@@ -163,7 +163,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, uint16_t event){
 	}
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,0));
+	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("MENU SCREEN"));
 }
 
@@ -297,6 +297,11 @@ void DisplayMgr::DisplayUpdate(){
 				if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 					if(!isStickyMode(_current_mode)){
 						popMode();
+						
+						if(_menuCB) {
+							_menuCB(false, 0);
+						}
+						resetMenu();
 						shouldRedraw = true;
 					}
 				}

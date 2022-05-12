@@ -25,6 +25,8 @@ printf("FAIL AT line: %d\n", __LINE__ ); \
 
  
 DisplayMgr::DisplayMgr(){
+	_eventQueue = {};
+
 }
 
 DisplayMgr::~DisplayMgr(){
@@ -49,6 +51,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_isSetup = true;
 	
 	if(_isSetup) {
+		_eventQueue = {};
+		
 		resetMenu();
 		pthread_create(&_updateTID, NULL,
 									  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
@@ -65,8 +69,7 @@ void DisplayMgr::stop(){
 		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
-		_event |= DISPLAY_EVENT_EXIT;
-		pthread_cond_signal(&_cond);
+ 		pthread_cond_signal(&_cond);
 		pthread_join(_updateTID, NULL);
 
 		_vfd.stop();
@@ -92,35 +95,36 @@ bool DisplayMgr::setBrightness(uint8_t level) {
 
  
 void DisplayMgr::showStartup(){
-	setEvent(DISPLAY_EVENT_STARTUP);
+	setEvent(EVT_PUSH, MODE_STARTUP );
  }
 
 
 void DisplayMgr::showTime(){
-	setEvent(DISPLAY_EVENT_TIME);
- }
+	setEvent(EVT_PUSH, MODE_TIME );
+  }
 
 void DisplayMgr::showDiag(){
-	setEvent(DISPLAY_EVENT_DIAG);
- }
+	setEvent(EVT_PUSH, MODE_DIAG );
+}
 
 
 void DisplayMgr::showVolumeChange(){
-	setEvent(DISPLAY_EVENT_VOLUME);
+	setEvent(EVT_PUSH, MODE_VOLUME );
 }
 
 
 void DisplayMgr::showBalanceChange(){
-	setEvent(DISPLAY_EVENT_BALANCE);
+	setEvent(EVT_PUSH, MODE_BALANCE );
 }
 
 void DisplayMgr::showRadioChange(){
-	setEvent(DISPLAY_EVENT_RADIO);
- }
+	setEvent(EVT_PUSH, MODE_RADIO );
+	
+}
 
-void DisplayMgr::setEvent(uint16_t evt){
+void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	pthread_mutex_lock (&_mutex);
-	_event |= evt;
+	_eventQueue.push({evt,mod});
 	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);
 
@@ -144,8 +148,8 @@ void DisplayMgr::showMenuScreen(menuItems_t items, uint intitialItem, time_t tim
 	_currentMenuItem = intitialItem;
 	_menuTimeout = timeout;
 	_menuCB = cb;
-	
-	setEvent(DISPLAY_EVENT_MENU);
+
+	setEvent(EVT_PUSH,MODE_MENU);
 }
  
 void DisplayMgr::menuSelectAction(menu_action action){
@@ -153,36 +157,33 @@ void DisplayMgr::menuSelectAction(menu_action action){
 	if(isMenuDisplayed()) {
 		
 		printf("menuSelectAction %d\n",action);
-
-		pthread_mutex_lock (&_mutex);
 		if(action == MENU_EXIT){
 			_currentMenuItem = 0;
 		}
-		_event |= DISPLAY_EVENT_MENU_CHANGED;
-		pthread_cond_signal(&_cond);
-		pthread_mutex_unlock (&_mutex);
+		
+		setEvent(EVT_NONE,MODE_MENU);
 	}
 }
 
 
-void DisplayMgr::drawMenuScreen(bool redraw, uint16_t lastEvent){
+void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
-	printf("drawMenuScreen %s %04x\n",redraw?"REDRAW":"", lastEvent);
+	printf("drawMenuScreen %s  %s\n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
 
 	if(redraw){
 		_vfd.clearScreen();
 	}
 
 	// did something change?
-	if((lastEvent & DISPLAY_EVENT_MENU_CHANGED ) != 0){
+	if(shouldUpdate){
 		
 		printf("menu changed\n");
 		
 		if(_currentMenuItem	== 0){
-			setEvent(DISPLAY_EVENT_POP);
-		}
+			setEvent(EVT_POP, MODE_UNKNOWN);
+ 		}
 	}
-		
+ 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("MENU SCREEN"));
@@ -238,12 +239,10 @@ void DisplayMgr::DisplayUpdate(){
 	
 	constexpr time_t sleepTime = 1;
 	
-//	printf("start DisplayUpdate\n");
+	//	printf("start DisplayUpdate\n");
 	
 	while(!shouldQuit){
 		
-		bool shouldRedraw = false;
-		uint16_t lastEvent;
 		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
@@ -251,107 +250,97 @@ void DisplayMgr::DisplayUpdate(){
 		ts.tv_sec += sleepTime;
 		
 		pthread_mutex_lock (&_mutex);
-		if (_event == 0)
+		if (_eventQueue.size() == 0)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
 		
-		// daved the event
-		lastEvent = _event;
+		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
+		if(_eventQueue.size()){
+			item = _eventQueue.front();
+			_eventQueue.pop();
+		}
 		
-		// get a new mode for the event. and reset that event bit
-		mode_state_t newMode = MODE_UNKNOWN;
-		
-		if((_event & DISPLAY_EVENT_STARTUP ) != 0){
-			newMode = MODE_STARTUP;
-			_event &= ~DISPLAY_EVENT_STARTUP;
-		}
- 		if((_event & DISPLAY_EVENT_POP ) != 0){
-			if(!isStickyMode(_current_mode)){
-				popMode();
-				newMode = _current_mode;
-				shouldRedraw = true;
-			}
-			_event &= ~DISPLAY_EVENT_POP;
-		}
- 		else if((_event & DISPLAY_EVENT_VOLUME ) != 0){
-			newMode = MODE_VOLUME;
-			_event &= ~DISPLAY_EVENT_VOLUME;
-		}
-		else if((_event & DISPLAY_EVENT_BALANCE ) != 0){
-				newMode = MODE_BALANCE;
-				_event &= ~DISPLAY_EVENT_BALANCE;
-		}
-		else if((_event & DISPLAY_EVENT_RADIO ) != 0){
-			newMode = handleRadioEvent();
-			_event &= ~DISPLAY_EVENT_RADIO;
-		}
-		else if((_event & DISPLAY_EVENT_TIME ) != 0){
-			newMode = MODE_TIME;
-			_event &= ~DISPLAY_EVENT_TIME;
-		}
-		else if((_event & DISPLAY_EVENT_DIAG ) != 0){
-			newMode = MODE_DIAG;
-			_event &= ~DISPLAY_EVENT_DIAG;
-		}
-		 else if((_event & DISPLAY_EVENT_EXIT ) != 0){
-			 _event &= ~DISPLAY_EVENT_EXIT;
-			 shouldQuit = true;
-		 }
-		 else if((_event & DISPLAY_EVENT_MENU ) != 0){
-			 newMode = MODE_MENU;
-			 _event &= ~DISPLAY_EVENT_MENU;
-		}
-		 else if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
-			 newMode = MODE_MENU;
-			 _event &= ~DISPLAY_EVENT_MENU_CHANGED;
-		}
-	 
 		pthread_mutex_unlock (&_mutex);
- 
-		if(newMode != MODE_UNKNOWN){
-			if(pushMode(newMode)){
-				gettimeofday(&_lastEventTime, NULL);
-				shouldRedraw = true;
-			}
-		}
-
-		// no event is a timeout so  update the current mode
-		if(newMode == MODE_UNKNOWN ){
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &_lastEventTime, &diff);
-			
-			if(_current_mode == MODE_STARTUP) {
-				if(diff.tv_sec >=  3) {
-					pushMode(MODE_TIME);
-					shouldRedraw = true;
-				}
-			}
-			if(_current_mode == MODE_MENU) {
-				if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
-					if(!isStickyMode(_current_mode)){
-						popMode();
-						
-						if(_menuCB) {
-							_menuCB(false, 0);
-						}
-						resetMenu();
+		
+		bool shouldRedraw = false;			// needs complete redraw
+		bool shouldUpdate = false;			// needs update of data
+	
+		switch(item.evt){
+				
+				// timeout - nothing happened
+			case EVT_NONE:
+				timeval now, diff;
+				gettimeofday(&now, NULL);
+				timersub(&now, &_lastEventTime, &diff);
+	
+				// check for startup timeout delay
+				if(_current_mode == MODE_STARTUP) {
+					if(diff.tv_sec >=  3) {
+						pushMode(MODE_TIME);
 						shouldRedraw = true;
+						shouldUpdate = true;
 					}
 				}
-			}
-			else if(diff.tv_sec >=  2){
-				// should we pop the mode?
+				else if(_current_mode == MODE_MENU) {
+					
+					// check for {EVT_NONE,MODE_MENU}  which is a menu change
+					if(item.mode == MODE_MENU_CHANGE) {
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					
+					// check for menu timeout delay
+ 				else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+						if(!isStickyMode(_current_mode)){
+							popMode();
+							
+							if(_menuCB) {
+								_menuCB(false, 0);
+							}
+							resetMenu();
+							shouldRedraw = true;
+							shouldUpdate = true;
+						}
+					}
+				}
+				// check for ay other timeout delay
+				
+				else if(diff.tv_sec >=  2){
+					// should we pop the mode?
+					if(!isStickyMode(_current_mode)){
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+ 					}
+				}
+				break;
+				
+			case EVT_PUSH:
+				if(item.mode == MODE_SHUTDOWN){
+					shouldQuit = true;		// bail now
+					continue;
+				}
+				else if(pushMode(item.mode)){
+					gettimeofday(&_lastEventTime, NULL);
+					shouldRedraw = true;
+					shouldUpdate = true;
+ 				}
+				break;
+				
+			case EVT_POP:
 				if(!isStickyMode(_current_mode)){
 					popMode();
 					shouldRedraw = true;
+					shouldUpdate = true;
 				}
-			}
+				break;
+				
 		}
 		
-		drawCurrentMode(shouldRedraw, lastEvent);
+		drawCurrentMode(shouldRedraw, shouldUpdate);
+		
 	}
-	
 }
+
 
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
@@ -387,18 +376,14 @@ void* DisplayMgr::DisplayUpdateThread(void *context){
 
  
 void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
-	DisplayMgr* d = (DisplayMgr*)context;
-
-	if(d->_event){
-		
-	}
-
+//	DisplayMgr* d = (DisplayMgr*)context;
+ 
 //	printf("cleanup display\n");
 }
 
 // MARK: -  Display Draw code
 
-void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
+void DisplayMgr::drawCurrentMode(bool redraw, bool shouldUpdate){
 	
 	if(!_isSetup)
 		return;
@@ -406,35 +391,35 @@ void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
 		switch (_current_mode) {
 				
 			case MODE_STARTUP:
-				drawStartupScreen(redraw,event);
+				drawStartupScreen(redraw,shouldUpdate);
 				break;
 				
 			case MODE_TIME:
-				drawTimeScreen(redraw,event);
+				drawTimeScreen(redraw,shouldUpdate);
 				break;
 				
 			case MODE_VOLUME:
-				drawVolumeScreen(redraw,event);
+				drawVolumeScreen(redraw,shouldUpdate);
 				break;
 
 			case MODE_BALANCE:
-				drawBalanceScreen(redraw,event);
+				drawBalanceScreen(redraw,shouldUpdate);
 				break;
 
 			case MODE_RADIO:
-				drawRadioScreen(redraw,event);
+				drawRadioScreen(redraw,shouldUpdate);
 				break;
 				
 			case MODE_DIAG:
-				drawDiagScreen(redraw,event);
+				drawDiagScreen(redraw,shouldUpdate);
 				break;
 				
 			case MODE_MENU:
-				drawMenuScreen(redraw,event);
+				drawMenuScreen(redraw, shouldUpdate);
 				break;
 				
 			default:
-				drawInternalError(redraw,event);
+				drawInternalError(redraw,shouldUpdate);
 		}
 		
 	}
@@ -456,7 +441,7 @@ static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 
-void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawStartupScreen(bool redraw, bool shouldUpdate){
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
  
@@ -477,7 +462,7 @@ void DisplayMgr::drawStartupScreen(bool redraw, uint16_t event){
 //	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
-void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -523,7 +508,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 }
 
 
-void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -586,7 +571,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 }
 
 
-void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -650,7 +635,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 }
 
 	
-void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	//	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
@@ -661,7 +646,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(event != 0) {
+	if(shouldUpdate) {
 		uint32_t freq = 0;
 		RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
 		RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
@@ -741,13 +726,13 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 	
 }
 
-void DisplayMgr::drawDiagScreen(bool redraw, uint16_t event){
+void DisplayMgr::drawDiagScreen(bool redraw, bool shouldUpdate){
 	printf("displayDiagScreen %s\n",redraw?"REDRAW":"");
 
 }
 
 
-void DisplayMgr::drawInternalError(bool redraw, uint16_t event){
+void DisplayMgr::drawInternalError(bool redraw, bool shouldUpdate){
 	
 	printf("displayInternalError %s\n",redraw?"REDRAW":"");
 }

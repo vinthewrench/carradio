@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <mutex>
 #include <bitset>
+#include <utility>      // std::pair, std::make_pair
+#include <string>       // std::string
+
 #include <sys/time.h>
 
 #include "VFD.hpp"
@@ -19,34 +22,9 @@
 #include "CommonDefs.hpp"
 
 using namespace std;
- 
-
-class DisplayDataSource {
-public:
-
-	DisplayDataSource(){}
-	virtual ~DisplayDataSource() {}
- 
-	virtual bool getStringForKey(string_view key,  string &result) { return false;};
-	virtual bool getFloatForKey(string_view key,  float &result) { return false;};
-	virtual bool getIntForKey(string_view key,  int &result) { return false;};
-	virtual bool getDoubleForKey(string_view key,  double &result)  { return false;};
-};
 
 
 class DisplayMgr {
-	
-	typedef enum  {
-		MODE_UNKNOWN = 0,
-		MODE_STARTUP,
-		MODE_TIME,
-		MODE_VOLUME,
-		MODE_BALANCE,
-		MODE_RADIO,
-		MODE_DIAG,
-		MODE_SHUTDOWN,		// shutdown
-	}mode_state_t;
-
 	
 public:
 
@@ -69,10 +47,23 @@ public:
 	void showBalanceChange();
 	void showRadioChange();
 
-	void drawCurrentMode(bool redraw, uint16_t event);
+ 	// Menu Screen Management
+	typedef vector< pair <uint, string>>  menuItems_t;
+	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
+	void showMenuScreen(menuItems_t items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
+ 
+	typedef enum  {
+		MENU_EXIT = 0,
+		MENU_UP,
+		MENU_DOWN,
+		MENU_CLICK
+	}menu_action;
+	void menuSelectAction(menu_action action);
+	bool isMenuDisplayed() {return _current_mode == MODE_MENU;};
+	
 	
 private:
-  
+	void drawCurrentMode(bool redraw, uint16_t event);
 	void drawStartupScreen(bool redraw, uint16_t event);
 	void drawTimeScreen(bool redraw, uint16_t event);
 	void drawVolumeScreen(bool redraw, uint16_t event);
@@ -80,6 +71,27 @@ private:
 	void drawRadioScreen(bool redraw, uint16_t event);
 	void drawDiagScreen(bool redraw, uint16_t event);
 	void drawInternalError(bool redraw, uint16_t event);
+
+//Menu stuff
+	void resetMenu();
+	void drawMenuScreen(bool redraw, uint16_t event);
+	menuItems_t				 _menuItems;
+	uint						 _currentMenuItem;
+	time_t					 _menuTimeout;
+	menuSelectedCallBack_t _menuCB;
+//
+	
+	typedef enum  {
+		MODE_UNKNOWN = 0,
+		MODE_STARTUP,
+		MODE_TIME,
+		MODE_VOLUME,
+		MODE_BALANCE,
+		MODE_RADIO,
+		MODE_DIAG,
+		MODE_MENU,
+		MODE_SHUTDOWN,		// shutdown
+	}mode_state_t;
 
 	mode_state_t _current_mode = MODE_UNKNOWN;
 	mode_state_t _saved_mode   = MODE_UNKNOWN;
@@ -108,6 +120,8 @@ private:
 #define DISPLAY_EVENT_RADIO 	0x0040
 	
 #define DISPLAY_EVENT_DIAG 	0x0100
+
+#define DISPLAY_EVENT_MENU 	0x1000
 
 	uint16_t				_event = 0;
 	 

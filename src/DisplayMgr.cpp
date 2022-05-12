@@ -49,9 +49,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_isSetup = true;
 	
 	if(_isSetup) {
+		resetMenu();
 		pthread_create(&_updateTID, NULL,
 									  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
-
 		showStartup();
  	}
  
@@ -63,6 +63,8 @@ void DisplayMgr::stop(){
  
 	if(_isSetup){
 		
+		if(_menuCB) _menuCB(false, 0);
+		resetMenu();
 		_event |= DISPLAY_EVENT_EXIT;
 		pthread_cond_signal(&_cond);
 		pthread_join(_updateTID, NULL);
@@ -124,24 +126,48 @@ void DisplayMgr::setEvent(uint16_t evt){
 
 }
 
+// MARK: -  Menu Mode
+ 
+void DisplayMgr::resetMenu() {
+	_menuItems.clear();
+	_currentMenuItem = 0;
+	_menuTimeout = 0;
+	_menuCB = nullptr;
+
+}
+
+void DisplayMgr::showMenuScreen(menuItems_t items, uint intitialItem, time_t timeout,
+										  menuSelectedCallBack_t cb){
+	
+	resetMenu();
+	_menuItems = items;
+	_currentMenuItem = intitialItem;
+	_menuTimeout = timeout;
+	_menuCB = cb;
+	
+	setEvent(DISPLAY_EVENT_MENU);
+
+}
+ 
+void DisplayMgr::menuSelectAction(menu_action action){
+	
+}
+
+
+void DisplayMgr::drawMenuScreen(bool redraw, uint16_t event){
+	
+	printf("drawMenuScreen %s\n",redraw?"REDRAW":"");
+
+	if(redraw){
+		_vfd.clearScreen();
+	}
+
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,0));
+	TRY(_vfd.write("MENU SCREEN"));
+}
+
 // MARK: -  mode utils
-//
-//string DisplayMgr::modeString(){
-//
-//	switch (_current_mode) {
-//		case MODE_UNKNOWN: return("MODE_UNKNOWN");
-//		case MODE_STARTUP: return("MODE_STARTUP");
-//		case MODE_TIME: return("MODE_TIME");
-//		case MODE_VOLUME: return("MODE_VOLUME");
-//		case MODE_BALANCE: return("MODE_BALANCE");
-//		case MODE_RADIO: return("MODE_RADIO");
-//		case MODE_DIAG: return("MODE_DIAG");
-//		case MODE_SHUTDOWN: return("MODE_SHUTDOWN");
-//
-//	}
-//	return "";
-//}
-//
 
 bool DisplayMgr::isStickyMode(mode_state_t md){
 	bool isSticky = false;
@@ -240,6 +266,11 @@ void DisplayMgr::DisplayUpdate(){
 			 _event &= ~DISPLAY_EVENT_EXIT;
 			 shouldQuit = true;
 		 }
+		 else if((_event & DISPLAY_EVENT_MENU ) != 0){
+			 newMode = MODE_MENU;
+			 _event &= ~DISPLAY_EVENT_MENU;
+			}
+ 
 		
 		pthread_mutex_unlock (&_mutex);
  
@@ -260,6 +291,14 @@ void DisplayMgr::DisplayUpdate(){
 				if(diff.tv_sec >=  3) {
 					pushMode(MODE_TIME);
 					shouldRedraw = true;
+				}
+			}
+			if(_current_mode == MODE_MENU) {
+				if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+					if(!isStickyMode(_current_mode)){
+						popMode();
+						shouldRedraw = true;
+					}
 				}
 			}
 			else if(diff.tv_sec >=  2){
@@ -350,6 +389,11 @@ void DisplayMgr::drawCurrentMode(bool redraw, uint16_t event){
 				
 			case MODE_DIAG:
 				drawDiagScreen(redraw,event);
+				break;
+				
+			case MODE_MENU:
+				drawMenuScreen(redraw,event);
+				break;
 				
 			default:
 				drawInternalError(redraw,event);
@@ -444,137 +488,128 @@ void DisplayMgr::drawTimeScreen(bool redraw, uint16_t event){
 void DisplayMgr::drawVolumeScreen(bool redraw, uint16_t event){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
-
+	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
 	uint8_t midY = height/2;
-		
+	
 	uint8_t leftbox 	= 20;
 	uint8_t rightbox 	= width - 20;
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
-
-	try{
-		if(redraw){
-			_vfd.clearScreen();
-			
-			// draw centered heading
-			_vfd.setFont(VFD::FONT_5x7);
-			string str = "Volume";
-			_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-			_vfd.write(str);
 	
-			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-			_vfd.writePacket(buff1, sizeof(buff1), 0);
-			}
+	if(redraw){
+		_vfd.clearScreen();
 		
-		float volume = 0;
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = "Volume";
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
 		
-	 
-		if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-	 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
-
-			// clear rest of inside of box
-			if(volume < 1){
-				uint8_t buff2[] = {VFD_CLEAR_AREA,
-					static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-					static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-				_vfd.writePacket(buff2, sizeof(buff2), 20);
-			 }
+		//draw box outline
+		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+	}
 	
+	float volume = 0;
+	
+	
+	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
+		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
+		
+		// clear rest of inside of box
+		if(volume < 1){
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+			_vfd.writePacket(buff2, sizeof(buff2), 20);
+		}
+		
 		usleep(200000);
 		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
-			// fill volume area box
-			uint8_t buff3[] = {VFD_SET_AREA,
-				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-				static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
-			 _vfd.writePacket(buff3, sizeof(buff3), 20);
-			
-		 usleep(200000);
-			
-			// TRY(_vfd.setCursor(10, 55));
-			// TRY(_vfd.setFont(VFD::FONT_5x7));
-			// char buffer[16] = {0};
-			// sprintf(buffer, "Volume: %.2f  ", volume);
-			// TRY(_vfd.write(buffer));
- 
-			
-		}
-	} catch (...) {
-		// ignore fail
+		// fill volume area box
+		uint8_t buff3[] = {VFD_SET_AREA,
+			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
+		_vfd.writePacket(buff3, sizeof(buff3), 20);
+		
+		usleep(200000);
+		
+		// TRY(_vfd.setCursor(10, 55));
+		// TRY(_vfd.setFont(VFD::FONT_5x7));
+		// char buffer[16] = {0};
+		// sprintf(buffer, "Volume: %.2f  ", volume);
+		// TRY(_vfd.write(buffer));
+		
+		
 	}
- }
+}
 
 
 void DisplayMgr::drawBalanceScreen(bool redraw, uint16_t event){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
-
+	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
 	uint8_t midY = height/2;
-		
+	
 	uint8_t leftbox 	= 20;
 	uint8_t rightbox 	= width - 20;
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
- 
-	try{
-		if(redraw){
-			_vfd.clearScreen();
-			
-			// draw centered heading
-			_vfd.setFont(VFD::FONT_5x7);
-			string str = "Balance";
-			_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-			_vfd.write(str);
-			
-			//draw box outline
-			uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-			_vfd.writePacket(buff1, sizeof(buff1), 0);
-			
-			_vfd.setCursor(leftbox - 10, bottombox -1 );
-			_vfd.write("L");
-			_vfd.setCursor(rightbox + 5, bottombox -1 );
-			_vfd.write("R");
-		}
+	if(redraw){
+		_vfd.clearScreen();
 		
-		float balance = 0;
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = "Balance";
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
 		
-		if(db->getFloatValue(VAL_AUDIO_BALANCE, balance)){
-
-			uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
-			itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-			itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-	
-			// clear inside of box
-			uint8_t buff2[] = {VFD_CLEAR_AREA,
-						static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-						static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-						VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-			// draw marker
-						VFD_SET_WRITEMODE, 0x03, 	// XOR
-						VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-						VFD_SET_WRITEMODE, 0x00,};	// Normal
-						 
-			_vfd.writePacket(buff2, sizeof(buff2), 0);
- 
-
-			TRY(_vfd.setCursor(10, 55));
-			TRY(_vfd.setFont(VFD::FONT_5x7));
-			char buffer[16] = {0};
-			sprintf(buffer, "Balance: %.2f  ", balance);
-			TRY(_vfd.write(buffer));
- 
-		}
-	} catch (...) {
-		// ignore fail
+		//draw box outline
+		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+		
+		_vfd.setCursor(leftbox - 10, bottombox -1 );
+		_vfd.write("L");
+		_vfd.setCursor(rightbox + 5, bottombox -1 );
+		_vfd.write("R");
 	}
- }
+	
+	float balance = 0;
+	
+	if(db->getFloatValue(VAL_AUDIO_BALANCE, balance)){
+		
+		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
+		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+		
+		// clear inside of box
+		uint8_t buff2[] = {VFD_CLEAR_AREA,
+			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			// draw marker
+			VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD_SET_WRITEMODE, 0x00,};	// Normal
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 0);
+		
+		
+		TRY(_vfd.setCursor(10, 55));
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		char buffer[16] = {0};
+		sprintf(buffer, "Balance: %.2f  ", balance);
+		TRY(_vfd.write(buffer));
+		
+	}
+}
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
@@ -583,92 +618,89 @@ void DisplayMgr::drawRadioScreen(bool redraw, uint16_t event){
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	PiCarDB*	db 	= mgr->db();
 	
-	try{
-		if(redraw){
-			_vfd.clearScreen();
-		}
+	if(redraw){
+		_vfd.clearScreen();
+	}
+	
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(event != 0) {
+		uint32_t freq = 0;
+		RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
+		RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
 		
-		// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-		if(event != 0) {
-			uint32_t freq = 0;
-			RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
-			RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
+		if(   db->getUInt32Value(VAL_RADIO_FREQ, freq)
+			&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
+			&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {
 			
-			if(   db->getUInt32Value(VAL_RADIO_FREQ, freq)
-				&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
-				&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {
-				
-				int precision = 0;
-				int centerX = _vfd.width() /2;
-				int centerY = _vfd.height() /2;
-				
-				switch (mode) {
-					case RadioMgr::BROADCAST_AM: precision = 0;break;
-					case RadioMgr::BROADCAST_FM: precision = 1;break;
-					default :
-						precision = 3; break;
-				}
-				
-				string str = 	RadioMgr::hertz_to_string(freq, precision);
-				string hzstr =	RadioMgr::freqSuffixString(freq);
-				string modStr = RadioMgr::modeString(mode);
-				string muxstring = RadioMgr::muxstring(mux);
-				
-				auto freqCenter =  centerX - (str.size() * 11) + 18;
-				if(precision > 1)  freqCenter += 10*2;
-				
-				auto modeStart = 5;
-				if(precision == 0)
-					modeStart += 15;
-				else if  (precision == 1)
-					modeStart += 5;
-				
+			int precision = 0;
+			int centerX = _vfd.width() /2;
+			int centerY = _vfd.height() /2;
+			
+			switch (mode) {
+				case RadioMgr::BROADCAST_AM: precision = 0;break;
+				case RadioMgr::BROADCAST_FM: precision = 1;break;
+				default :
+					precision = 3; break;
+			}
+			
+			string str = 	RadioMgr::hertz_to_string(freq, precision);
+			string hzstr =	RadioMgr::freqSuffixString(freq);
+			string modStr = RadioMgr::modeString(mode);
+			string muxstring = RadioMgr::muxstring(mux);
+			
+			auto freqCenter =  centerX - (str.size() * 11) + 18;
+			if(precision > 1)  freqCenter += 10*2;
+			
+			auto modeStart = 5;
+			if(precision == 0)
+				modeStart += 15;
+			else if  (precision == 1)
+				modeStart += 5;
+			
+			TRY(_vfd.setFont(VFD::FONT_5x7));
+			TRY(_vfd.setCursor(modeStart, centerY-3));
+			TRY(_vfd.write(modStr));
+			
+			TRY(_vfd.setFont(VFD::FONT_MINI));
+			TRY(_vfd.setCursor(modeStart+3, centerY+5));
+			TRY(_vfd.write(muxstring));
+			
+			TRY(_vfd.setFont(VFD::FONT_10x14));
+			TRY(_vfd.setCursor( freqCenter ,centerY+5));
+			TRY(_vfd.write(str));
+			
+			TRY(_vfd.setFont(VFD::FONT_5x7));
+			TRY(_vfd.write( " " + hzstr));
+			
+			// Draw title
+			int titleBottom = centerY -14;
+			uint8_t buff1[] = {VFD_CLEAR_AREA,
+				0,  static_cast<uint8_t> (titleBottom-7),
+				static_cast<uint8_t> (_vfd.width()),static_cast<uint8_t> (titleBottom)};
+			_vfd.writePacket(buff1, sizeof(buff1), 20);
+			
+			PiCarMgr::station_info_t info;
+			if(mgr->getStationInfo(mode, freq, info)
+				&& !info.title.empty()) {
+				string title = truncate(info.title, 20);
+				auto titleStart =  centerX - ((title.size() * 6)/2);
 				TRY(_vfd.setFont(VFD::FONT_5x7));
-				TRY(_vfd.setCursor(modeStart, centerY-3));
-				TRY(_vfd.write(modStr));
-				
-				TRY(_vfd.setFont(VFD::FONT_MINI));
-				TRY(_vfd.setCursor(modeStart+3, centerY+5));
-				TRY(_vfd.write(muxstring));
-				
-				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+5));
-				TRY(_vfd.write(str));
-				
-				TRY(_vfd.setFont(VFD::FONT_5x7));
-				TRY(_vfd.write( " " + hzstr));
-				
-				// Draw title
-				int titleBottom = centerY -14;
-				uint8_t buff1[] = {VFD_CLEAR_AREA,
-					0,  static_cast<uint8_t> (titleBottom-7),
-						static_cast<uint8_t> (_vfd.width()),static_cast<uint8_t> (titleBottom)};
-	 			_vfd.writePacket(buff1, sizeof(buff1), 20);
-
-				PiCarMgr::station_info_t info;
-				if(mgr->getStationInfo(mode, freq, info)
-					&& !info.title.empty()) {
-					string title = truncate(info.title, 20);
-	 				auto titleStart =  centerX - ((title.size() * 6)/2);
-					TRY(_vfd.setFont(VFD::FONT_5x7));
-					TRY(_vfd.setCursor( titleStart ,titleBottom ));
-					TRY(_vfd.write( title));
-				}
+				TRY(_vfd.setCursor( titleStart ,titleBottom ));
+				TRY(_vfd.write( title));
 			}
 		}
-		
-		time_t now = time(NULL);
-		struct tm *t = localtime(&now);
-		char buffer[16] = {0};
-		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
-		TRY(_vfd.write(buffer));
-		
-		
-	} catch (...) {
-		// ignore fail
 	}
+	
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char buffer[16] = {0};
+	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
+	TRY(_vfd.write(buffer));
+	
+	
+	
 }
 
 void DisplayMgr::drawDiagScreen(bool redraw, uint16_t event){

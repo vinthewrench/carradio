@@ -366,6 +366,7 @@ void PiCarMgr::triggerEvent(uint16_t evt ){
 	pthread_mutex_unlock (&_mutex);
 }
 
+
 void PiCarMgr::PiCanLoop(){
 	
 	constexpr struct timespec sleepTime  =  {0, 50 * 1000000};  // idle sleep in 50 millisconds
@@ -401,7 +402,24 @@ void PiCarMgr::PiCanLoop(){
 			pthread_mutex_unlock (&_mutex);
  
 			if(shouldQuit) continue;
-	
+
+#if 1
+			if(_volKnob.wasClicked()){
+				if(_display->isMenuDisplayed()){
+					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
+				}
+				else{
+					DisplayMgr::menuItems_t items = {{0,"One"}, {1,"Two"}, {2,"Three"}};
+					_display->showMenuScreen(items, 0, 10,
+													[=](bool didSucceed, uint selectedItemID ){
+						
+						printf("Menu Completed %d, %d\n", didSucceed, selectedItemID );
+						
+					});
+				}
+			}
+
+#else
 			// handle the fast stuff
 			if(_volKnob.wasClicked()){
 				bool isOn = _radio.isOn();
@@ -409,6 +427,8 @@ void PiCarMgr::PiCanLoop(){
 				saveRadioSettings();
 				_db.savePropertiesToFile();
 			}
+
+#endif
 			
 			bool movedUp = false;
 			if(_volKnob.wasMoved(movedUp)){

@@ -175,7 +175,6 @@ void DisplayMgr::menuSelectAction(menu_action action){
 			case MENU_UP:
 				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<uint>( _menuItems.size()));
 				setEvent(EVT_NONE,MODE_MENU);
-
 				break;
 				
 			case MENU_DOWN:
@@ -207,15 +206,18 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	// did something change?
 	if(shouldUpdate){
 		
-		if(_currentMenuItem	== 0){
-			setEvent(EVT_POP, MODE_UNKNOWN);
- 		}
 	}
  
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("MENU SCREEN"));
 	
+	
+	char buffer[64] = {0};
+	sprintf(buffer, "%2d %10s", _currentMenuItem, _menuItems[_currentMenuItem].second.c_str()  );
+	TRY(_vfd.setCursor(0,20));
+	TRY(_vfd.write(buffer ));
+
 }
 
 // MARK: -  mode utils

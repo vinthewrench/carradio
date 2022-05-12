@@ -77,7 +77,7 @@ private:
 		MODE_MENU,
  
 		// modified modes
-		MODE_MENU_CHANGE,
+//		MODE_MENU_CHANGE,
 		MODE_SHUTDOWN,		// shutdown
 	}mode_state_t;
 

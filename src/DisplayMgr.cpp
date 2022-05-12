@@ -283,7 +283,7 @@ void DisplayMgr::DisplayUpdate(){
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
-					if(item.mode == MODE_MENU_CHANGE) {
+					if(item.mode == MODE_MENU) {
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}

@@ -200,13 +200,13 @@ void DisplayMgr::menuSelectAction(menu_action action){
 void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	
  
- 	uint8_t width = _vfd.width();
+ //	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
  
 	uint8_t startV =  25;
 	uint8_t lineHeight = 9;
  	uint8_t maxLines =  (height - startV) / lineHeight ;
-	uint8_t maxCol = width / 7;
+//	uint8_t maxCol = width / 7;
 	
 	if(redraw){
 		_vfd.clearScreen();
@@ -229,9 +229,14 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
 			char buffer[64] = {0};
-			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ",
-					_menuItems[i].c_str(),
- 					  i == 0? "U": i == _menuItems.size()?"V": " ");
+			char* moreIndicator = (char*)" ";
+			
+			auto lastLine = _menuCursor + maxLines;
+			
+			if(i == _menuCursor && _menuCursor != 0) moreIndicator = (char*)"+";
+			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = (char*) "v";
+			
+			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
 			TRY(_vfd.setCursor(0,cursorV));
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;

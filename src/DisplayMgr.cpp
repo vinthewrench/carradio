@@ -211,8 +211,8 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 	if(redraw){
 		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
-		TRY(_vfd.setCursor(0,10));
-		TRY(_vfd.write("MENU SCREEN"));
+		TRY(_vfd.setCursor(20,10));
+		TRY(_vfd.write("Select Screen"));
  	}
  
 	// did something change?

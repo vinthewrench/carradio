@@ -200,8 +200,32 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			delete _fmDecoder;
 			_fmDecoder = NULL;
 		}
-		
-		if(_mode == BROADCAST_FM) {
+		if(_mode == PS) {
+	 
+			// changing FM frequencies means recreating the decoder
+			
+			// The baseband signal is empty above 100 kHz, so we can
+			// downsample to ~ 200 kS/s without loss of information.
+			// This will speed up later processing stages.
+			unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
+			fprintf(stderr, "baseband downsampling factor %u\n", downsample);
+			
+			// Prevent aliasing at very low output sample rates.
+			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
+												0.45 * _pcmrate);
+			
+			_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
+												newFreq - tuner_freq,
+												_pcmrate,
+												false,  // stereo
+												FmDecoder::default_deemphasis,     // deemphasis,
+												FmDecoder::default_bandwidth_if,   // bandwidth_if
+												FmDecoder::default_freq_dev,       // freq_dev
+												bandwidth_pcm,
+												downsample
+												);
+		}
+ 		else if(_mode == BROADCAST_FM) {
 	 
 			// changing FM frequencies means recreating the decoder
 			
@@ -469,7 +493,7 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
  
-		if(_mode == BROADCAST_FM
+		if((_mode == BROADCAST_FM  || _mode == PS)
 			&& _fmDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
@@ -508,7 +532,7 @@ void RadioMgr::SDRProcessor(){
 			
 //			// Show stereo status.
 //	 			if (_fmDecoder->stereo_detected() != got_stereo) {
-//				
+//
 //		 		got_stereo = _fmDecoder->stereo_detected();
 //				if (got_stereo)
 //					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",

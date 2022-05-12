@@ -245,7 +245,7 @@ void PiCarMgr::restoreRadioSettings(){
  
 	// SET ON/OFF
 	bool isOn = false;
-	if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn)){
+	if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn) && isOn){
 		_radio.setON(isOn);
 	}
  }

@@ -339,7 +339,8 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
-						shouldRedraw = false;
+						gettimeofday(&_lastEventTime, NULL);
+ 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
 					

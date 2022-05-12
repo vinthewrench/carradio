@@ -200,7 +200,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			delete _fmDecoder;
 			_fmDecoder = NULL;
 		}
-		if(_mode == PS) {
+		if(_mode == VHF) {
 	 
 			// changing FM frequencies means recreating the decoder
 			
@@ -302,7 +302,6 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 if(str == "AM") mode = BROADCAST_AM;
 	 else  if(str == "FM") mode = BROADCAST_FM;
 	 else if(str == "VHF") mode = VHF;
-	 else if(str == "PS") mode = PS;
 		return mode;
 		
 }
@@ -493,7 +492,7 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
  
-		if((_mode == BROADCAST_FM  || _mode == PS)
+		if((_mode == BROADCAST_FM  || _mode == VHF)
 			&& _fmDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.

@@ -1,6 +1,6 @@
 {
 	 "cputemp-query-delay": 4,
-	 "on-off": true,
+	 "on-off": false,
 	 "radio_setting": {
 		  "freq": 155805000,
 		  "mode": "VHF"

@@ -425,9 +425,10 @@ void PiCarMgr::PiCanLoop(){
 					_display->showMenuScreen(items, 0, 10,
 													[=](bool didSucceed, uint selectedItem ){
 						
-						
-						printf("Menu Completed %d, %d\n", didSucceed, selectedItem );
-						
+						if(didSucceed){
+							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
+						}
+	 
 					});
 				}
 			}

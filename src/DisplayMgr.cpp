@@ -302,6 +302,7 @@ void DisplayMgr::DisplayUpdate(){
 		}
 		 else if((_event & DISPLAY_EVENT_MENU_CHANGED ) != 0){
 			 newMode = MODE_MENU;
+			 printf("DISPLAY_EVENT_MENU_CHANGED\n");
 			 _event &= ~DISPLAY_EVENT_MENU_CHANGED;
 		}
 	 

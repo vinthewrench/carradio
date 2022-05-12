@@ -151,7 +151,8 @@ void DisplayMgr::showMenuScreen(menuItems_t items, uint intitialItem, time_t tim
 	
 	resetMenu();
 	_menuItems = items;
-	_currentMenuItem = intitialItem;
+	_currentMenuItem =  min( max( static_cast<int>(intitialItem), 0),static_cast<int>( _menuItems.size()) -1);
+ 
 	_menuTimeout = timeout;
 	_menuCB = cb;
 
@@ -173,12 +174,12 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				break;
 				
 			case MENU_UP:
-				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<uint>( _menuItems.size() -1));
+				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<int>( _menuItems.size() -1));
 				setEvent(EVT_NONE,MODE_MENU);
 				break;
 				
 			case MENU_DOWN:
-				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<uint>(0));
+				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
 				setEvent(EVT_NONE,MODE_MENU);
  				break;
 				

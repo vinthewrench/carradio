@@ -99,7 +99,7 @@ private:
 	void resetMenu();
 	void drawMenuScreen(bool redraw, bool shouldUpdate);
 	menuItems_t				 _menuItems;
-	uint						 _currentMenuItem;
+	int						 _currentMenuItem;
 	uint						 _menuCursor;
 
 	time_t					 _menuTimeout;

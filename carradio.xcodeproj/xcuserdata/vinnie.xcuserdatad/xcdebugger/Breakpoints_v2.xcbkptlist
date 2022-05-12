@@ -30,8 +30,8 @@
             filePath = "src/DisplayMgr.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "529"
-            endingLineNumber = "529"
+            startingLineNumber = "530"
+            endingLineNumber = "530"
             landmarkName = "DisplayMgr::drawTimeScreen(redraw, shouldUpdate)"
             landmarkType = "7">
          </BreakpointContent>

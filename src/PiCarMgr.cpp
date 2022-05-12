@@ -406,7 +406,7 @@ void PiCarMgr::PiCanLoop(){
 #if 1
 			if(_volKnob.wasClicked()){
 				if(_display->isMenuDisplayed()){
-					_display->menuSelectAction(DisplayMgr::MENU_EXIT);
+					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
 				}
 				else{
 				

@@ -185,8 +185,7 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				
 			case MENU_CLICK:
 					if(_menuCB) {
-						printf("click %d\n",  _menuItems[_currentMenuItem].first);
-					_menuCB(true, _menuItems[_currentMenuItem].first);
+	 				_menuCB(true, _menuItems[_currentMenuItem].first);
 				}
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();

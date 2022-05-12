@@ -409,7 +409,7 @@ void PiCarMgr::PiCanLoop(){
 					_display->menuSelectAction(DisplayMgr::MENU_EXIT);
 				}
 				else{
-					
+				
 					
 					DisplayMgr::menuItems_t items = {
 						{1,"Time"},

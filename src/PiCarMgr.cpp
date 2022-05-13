@@ -286,18 +286,13 @@ void PiCarMgr::getFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &f
 		if( _lastFreqForMode.count(mode)){
 			modeOut = mode;
 			freqOut = _lastFreqForMode[mode];
-		}
-		else
-		{
-			// set it to something;
-			_lastRadioMode = RadioMgr::BROADCAST_FM;
-			_lastFreqForMode[_lastRadioMode] = 101500000;
-			
-			modeOut = mode;
-			freqOut = _lastFreqForMode[mode];
-		}
-	}
-}
+			return;
+		}}
+	
+	// set it to something;
+	modeOut =  _lastRadioMode = RadioMgr::BROADCAST_FM;
+	freqOut = _lastFreqForMode[_lastRadioMode] = 101500000;
+ }
 
 
 // MARK: - stations File
@@ -494,7 +489,7 @@ void PiCarMgr::PiCanLoop(){
 					
 					getFrequencyandMode(mode,freq);
 				 	_radio.setFrequencyandMode(mode, freq);
-		 			_radio.setON(isOn);
+		 			_radio.setON(true);
 				}
 			}
 			

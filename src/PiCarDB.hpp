@@ -55,6 +55,7 @@ class PiCarDB  {
 	void updateValues(map<string,string>  values, time_t when = 0);
 	void updateValue(string key, string value, time_t when);
 	
+	void updateValue(string key, bool value, time_t  when = 0);
 	void updateValue(string key, int value, time_t  when = 0);
 	void updateValue(string key, float value, time_t  when = 0);
 	void updateValue(string key, double value, time_t  when = 0);
@@ -73,6 +74,7 @@ class PiCarDB  {
 	bool getDoubleValue(string key,  double &result);
 	bool getIntValue(string key,  int &result);
 	bool getUInt32Value(string key,  uint32_t &result);
+	bool getBoolValue(string key,  bool &result);
 
 private:
 	

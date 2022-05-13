@@ -698,8 +698,11 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	//	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
-	PiCarDB*	db 	= mgr->db();
+	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
+	int centerX = _vfd.width() /2;
+	int centerY = _vfd.height() /2;
+
 	if(redraw){
 		_vfd.clearScreen();
 	}
@@ -707,16 +710,21 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(shouldUpdate) {
 		uint32_t freq = 0;
-		RadioMgr::radio_mode_t  mode  = RadioMgr::MODE_UNKNOWN;
-		RadioMgr::radio_mux_t 	mux  = RadioMgr::MUX_UNKNOWN;
+		RadioMgr::radio_mode_t  mode  = radio->radioMode();
+		RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+		bool 							isON  = radio->isOn();
+	 
+		if(!isON){
+			string str = "OFF";
+ 			auto textCenter =  centerX - (str.size() * 11);
 		
-		if(   db->getUInt32Value(VAL_RADIO_FREQ, freq)
-			&& db->getIntValue(VAL_MODULATION_MODE, (int&)mode)
-			&& db->getIntValue(VAL_MODULATION_MUX,  (int&)mux)) {
+			TRY(_vfd.setFont(VFD::FONT_10x14));
+			TRY(_vfd.setCursor( textCenter ,centerY+5));
+			TRY(_vfd.write(str));
+		}
+		else {
 			
 			int precision = 0;
-			int centerX = _vfd.width() /2;
-			int centerY = _vfd.height() /2;
 			
 			switch (mode) {
 				case RadioMgr::BROADCAST_AM: precision = 0;break;

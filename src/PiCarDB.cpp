@@ -97,9 +97,10 @@ void PiCarDB::updateValue(string key, double value, time_t  when){
 	updateValue(key, to_string(value), when);
 }
 
+void PiCarDB::updateValue(string key, bool value, time_t  when){
+	updateValue(key, to_string(value), when);
+}
  
-
-
 vector<string> PiCarDB::allValueKeys(){
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -184,6 +185,40 @@ bool PiCarDB::getDoubleValue(string key,  double &result){
 		}
 	}
 	return false;
+}
+
+bool PiCarDB::getBoolValue(string key,  bool &result){
+	
+	bool valid = false;
+	
+	string str;
+	if(valueWithKey(key,str)) {
+		
+		if(!empty(str)){
+			const char * param1 = str.c_str();
+			int intValue = atoi(param1);
+			
+			// check for level
+			if(std::regex_match(param1, std::regex("^[0-1]$"))){
+				result = bool(intValue);
+				valid = true;
+			}
+			else {
+				if(caseInSensStringCompare(str,"off")) {
+					result = false;
+					valid = true;
+				}
+				else if(caseInSensStringCompare(str,"on")) {
+					result = true;
+					valid = true;
+				}
+			}
+		}
+		
+	}
+ 
+	return valid;
+	
 }
 
  

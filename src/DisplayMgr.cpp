@@ -318,7 +318,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
-	
+		
 		switch(item.evt){
 				
 				// timeout - nothing happened
@@ -326,7 +326,7 @@ void DisplayMgr::DisplayUpdate(){
 				timeval now, diff;
 				gettimeofday(&now, NULL);
 				timersub(&now, &_lastEventTime, &diff);
-	
+				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
 					if(diff.tv_sec >=  3) {
@@ -340,12 +340,12 @@ void DisplayMgr::DisplayUpdate(){
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
 						gettimeofday(&_lastEventTime, NULL);
- 						shouldRedraw = false;
+						shouldRedraw = false;
 						shouldUpdate = true;
 					}
 					
 					// check for menu timeout delay
- 				else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						if(!isStickyMode(_current_mode)){
 							popMode();
 							
@@ -366,7 +366,7 @@ void DisplayMgr::DisplayUpdate(){
 						popMode();
 						shouldRedraw = true;
 						shouldUpdate = true;
- 					}
+					}
 				}
 				break;
 				
@@ -378,8 +378,9 @@ void DisplayMgr::DisplayUpdate(){
 				else if(pushMode(item.mode)){
 					gettimeofday(&_lastEventTime, NULL);
 					shouldRedraw = true;
-					shouldUpdate = true;
- 				}
+				}
+				shouldUpdate = true;
+				
 				break;
 				
 			case EVT_POP:

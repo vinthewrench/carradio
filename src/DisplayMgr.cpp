@@ -371,6 +371,8 @@ void DisplayMgr::DisplayUpdate(){
 				break;
 				
 			case EVT_PUSH:
+				printf("\nEVT_PUSH %d\n ", item.mode);
+				
 				if(item.mode == MODE_SHUTDOWN){
 					shouldQuit = true;		// bail now
 					continue;

@@ -376,11 +376,10 @@ void DisplayMgr::DisplayUpdate(){
 					continue;
 				}
 				else if(pushMode(item.mode)){
-					gettimeofday(&_lastEventTime, NULL);
-					shouldRedraw = true;
+						shouldRedraw = true;
 				}
-				shouldUpdate = true;
-				
+				gettimeofday(&_lastEventTime, NULL);
+ 				shouldUpdate = true;
 				break;
 				
 			case EVT_POP:
@@ -696,7 +695,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
-	//	printf("display RadioScreen %s\n",redraw?"REDRAW":"");
+	 printf("display RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
@@ -704,6 +703,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 
+	
 	if(redraw){
 		_vfd.clearScreen();
 	}

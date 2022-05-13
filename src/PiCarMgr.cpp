@@ -421,7 +421,7 @@ void PiCarMgr::PiCanLoop(){
 						"VHF",
 						"GPRS",
 						"GPS",
-						"-"
+						"-",
 						"Time",
 						"Diagnostics",
 						"Settings",

@@ -119,7 +119,7 @@ void DisplayMgr::showBalanceChange(){
 }
 
 void DisplayMgr::showRadioChange(){
-	setEvent(EVT_PUSH, MODE_RADIO , true);
+	setEvent(EVT_PUSH, MODE_RADIO );
 	
 }
 void DisplayMgr::showGPS(){

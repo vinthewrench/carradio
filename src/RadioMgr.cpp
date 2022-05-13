@@ -130,7 +130,6 @@ bool RadioMgr::setON(bool isOn) {
 	}
 	else {
 		setFrequencyandMode(_mode,_frequency, true);
-		display->showRadioChange();
 	}
 	
 	return true;

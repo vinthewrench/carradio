@@ -378,7 +378,10 @@ void PiCarMgr::PiCanLoop(){
 	try{
 		
 		while(!shouldQuit){
-			
+			bool movedUp = false;
+			bool wasClicked = _volKnob.wasClicked();
+			bool wasMoved = _volKnob.wasMoved(movedUp);
+	 
 			// --check if any events need processing else wait for a timeout
 			struct timespec ts = {0, 0};
 			clock_gettime(CLOCK_REALTIME, &ts);
@@ -386,7 +389,8 @@ void PiCarMgr::PiCanLoop(){
 			ts.tv_nsec += sleepTime.tv_nsec;
 
 			pthread_mutex_lock (&_mutex);
-			if (_event == 0)
+			// dont' wait if something is pending
+			if (_event == 0 && !wasMoved && !wasClicked)
 				pthread_cond_timedwait(&_cond, &_mutex, &ts);
 	 
 			// startEvent is used for ignoring the pthread_cond_timedwait
@@ -404,7 +408,7 @@ void PiCarMgr::PiCanLoop(){
 			if(shouldQuit) continue;
 
 #if 1
-			if(_volKnob.wasClicked()){
+			if(wasClicked){
 				if(_display->isMenuDisplayed()){
 					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
 				}
@@ -435,7 +439,7 @@ void PiCarMgr::PiCanLoop(){
 
 #else
 			// handle the fast stuff
-			if(_volKnob.wasClicked()){
+			if(wasClicked){
 				bool isOn = _radio.isOn();
 				_radio.setON(!isOn);
 				saveRadioSettings();
@@ -444,8 +448,7 @@ void PiCarMgr::PiCanLoop(){
 
 #endif
 			
-			bool movedUp = false;
-			if(_volKnob.wasMoved(movedUp)){
+			if(wasMoved){
 				
 				if(_display->isMenuDisplayed()){
 					_display->menuSelectAction(movedUp?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);

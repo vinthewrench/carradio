@@ -290,6 +290,11 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "VHF";
 			break;
  
+		case GMRS:
+			str = "GMRS";
+			break;
+  
+			
 		default: ;
 	}
  
@@ -302,6 +307,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 if(str == "AM") mode = BROADCAST_AM;
 	 else  if(str == "FM") mode = BROADCAST_FM;
 	 else if(str == "VHF") mode = VHF;
+	 else if(str == "GMRS") mode = GMRS;
 		return mode;
 		
 }

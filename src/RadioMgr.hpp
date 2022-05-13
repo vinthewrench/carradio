@@ -35,7 +35,7 @@ public:
 		BROADCAST_AM,
 		BROADCAST_FM,
 		VHF,
-		PS,
+		GMRS
 	}radio_mode_t;
 	
 	typedef enum  {

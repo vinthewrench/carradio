@@ -349,7 +349,7 @@ bool  PiCarDB::getBoolProperty(string key, bool * valOut){
 bool PiCarDB::getJSONProperty(string key, nlohmann::json  *valOut){
 	
 	if( _props.contains(key)
-		&&  _props.at(key).is_object())
+		&& ( _props.at(key).is_object() ||  _props.at(key).is_array()) )
 	{
 		auto val = _props.at(key);
 		if(valOut)
@@ -359,8 +359,7 @@ bool PiCarDB::getJSONProperty(string key, nlohmann::json  *valOut){
  
 	return  false;
 }
-
-
+ 
 
 //MARK: - Database Persistent operations
 

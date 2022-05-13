@@ -129,8 +129,7 @@ bool RadioMgr::setON(bool isOn) {
 	else {
 		setFrequencyandMode(_mode,_frequency, true);
 	}
-	
-	db->setProperty(PROP_LAST_RADIO_SETTING_ONOFF,isOn);
+
 	display->showRadioChange();
 
 	return true;

@@ -93,8 +93,11 @@ private:
 #define PGMR_EVENT_START	0x0001
 #define PGMR_EVENT_EXIT		0x0002
 	
-	nlohmann::json GetRadioJSON();
-	bool SetRadio(nlohmann::json j);
+//	nlohmann::json GetRadioJSON();
+	nlohmann::json GetRadioModesJSON();
+	bool updateRadioPrefs();
+	
+//	bool SetRadio(nlohmann::json j);
 
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
@@ -110,9 +113,11 @@ private:
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
 		
-	uint32_t 						_lastFreq;
 	RadioMgr::radio_mode_t		_lastRadioMode;
- 
+ 	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
+	
+	
+	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	
 	DisplayMgr* 		_display;
@@ -122,6 +127,7 @@ private:
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
 	QTKnob				_volKnob;
-	
+	QTKnob				_tunerKnob;
+
 };
 

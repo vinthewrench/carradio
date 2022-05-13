@@ -82,9 +82,9 @@ private:
 
 	nlohmann::json					_props;
 	
-//	map<string,string> 			_properties;
 	string 							_propertyFilePath;
 	bool								_didChangeProperties;
+	
 	
 	// value database
 	eTag_t 		_lastEtag;

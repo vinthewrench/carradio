@@ -1,11 +1,13 @@
 {
 	 "cputemp-query-delay": 4,
-	 "on-off": false,
-	 "radio_setting": {
-		  "freq": 155805000,
-		  "mode": "VHF"
-		 },
-	 
+ 
+	 "last_radio_mode":"FM",
+	 "last_radio_modes" : [
+		 {"mode" :"VHF", "freq": 155805000} ,
+		 {"mode" :"FM", "freq":  101500000} ,
+		 {"mode" :"AM", "freq":	  144000} ,
+		 {"mode" :"GMRS", "freq":  462662500} ],
+
 	 "audio_setting" : {
 		 "bal": 0.0,
 		 "vol": 0.5

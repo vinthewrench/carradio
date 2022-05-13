@@ -67,7 +67,9 @@ bool PiCarMgr::begin(){
 	_isSetup = false;
 		
 	try {
- 
+  		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
+		_lastFreqForMode.clear();
+		
 		_display = new DisplayMgr();
 
 		// clear DB
@@ -157,37 +159,7 @@ void PiCarMgr::stop(){
 
 
 // MARK: -  convert to/from JSON
-
-nlohmann::json PiCarMgr::GetRadioJSON(){
-	json j;
-	
-	j[PROP_LAST_RADIO_SETTING_FREQ] =  _radio.frequency();
-	j[PROP_LAST_RADIO_SETTING_MODE] =  _radio.modeString (_radio.radioMode());
  
-	return j;
-}
-
-
-bool PiCarMgr::SetRadio(nlohmann::json j){
-	bool success = false;
-	
-	if( j.is_object()
-		&&  j.contains(PROP_LAST_RADIO_SETTING_FREQ)
-		&&  j.at(PROP_LAST_RADIO_SETTING_FREQ).is_number()
-		&&  j.contains(PROP_LAST_RADIO_SETTING_MODE)
-		&&  j.at(PROP_LAST_RADIO_SETTING_MODE).is_string() ){
-		
-		auto freq = j[PROP_LAST_RADIO_SETTING_FREQ];
-		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_SETTING_MODE]);
-		
-		_lastFreq = freq;
-		_lastRadioMode = mode;
-		_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
-		success = true;
-	}
-	
-	return success;
-}
  
 nlohmann::json PiCarMgr::GetAudioJSON(){
 	json j;
@@ -218,10 +190,49 @@ bool PiCarMgr::SetAudio(nlohmann::json j){
 	return success;
 }
 
+nlohmann::json PiCarMgr::GetRadioModesJSON(){
+	json j;
+ 
+	for (auto& entry : _lastFreqForMode) {
+ 		json j1;
+		j1[PROP_LAST_RADIO_MODES_MODE] = RadioMgr::modeString(entry.first);
+		j1[PROP_LAST_RADIO_MODES_FREQ] =  entry.second;
+ 		j.push_back(j1);
+ 	}
+	
+	return j;
+}
+
+bool PiCarMgr::updateRadioPrefs() {
+	bool didUpdate = false;
+
+	if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
+		&&  _radio.frequency() != 0) {
+		
+		auto mode = _radio.radioMode();
+		
+		if( _lastFreqForMode.count(mode)
+			&& _lastFreqForMode[mode] == _radio.frequency() ){
+			didUpdate = false;
+		}
+		else
+		{
+	 	_lastFreqForMode[mode] = _radio.frequency();
+		_lastRadioMode = mode;
+		didUpdate = true;
+ 		}
+	}
+
+	return didUpdate;
+}
+
 void PiCarMgr::saveRadioSettings(){
- 	_db.setProperty(PROP_LAST_RADIO_SETTING_ONOFF, _radio.isOn());
-  	_db.setProperty(PROP_LAST_RADIO_SETTING, GetRadioJSON());
-	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
+
+	updateRadioPrefs();
+	
+	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
+	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
+ 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
  }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -236,19 +247,36 @@ void PiCarMgr::restoreRadioSettings(){
 	}
 	
 	// SET RADIO
-	if(!( _db.getJSONProperty(PROP_LAST_RADIO_SETTING,&j)
-		  && SetRadio(j))){
-		_lastFreq = 104700000;
-		_lastRadioMode = RadioMgr::BROADCAST_FM;
- 		_radio.setFrequencyandMode(_lastRadioMode, _lastFreq);
+	
+	_lastFreqForMode.clear();
+
+	if(_db.getJSONProperty(PROP_LAST_RADIO_MODES,&j)
+		&&  j.is_array()){
+	 
+ 		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_LAST_RADIO_MODES_MODE)
+				&&  item[PROP_LAST_RADIO_MODES_MODE].is_string()
+				&&  item.contains(PROP_LAST_RADIO_MODES_FREQ)
+				&&  item[(PROP_LAST_RADIO_MODES_FREQ)].is_number()){
+				
+ 				auto mode = RadioMgr::stringToMode( item[PROP_LAST_RADIO_MODES_MODE]);
+				auto freq = item[PROP_LAST_RADIO_MODES_FREQ] ;
+				_lastFreqForMode[mode] = freq;
+			}
+		}
 	}
  
-	// SET ON/OFF
-	bool isOn = false;
-	if(_db.getBoolProperty(PROP_LAST_RADIO_SETTING_ONOFF, &isOn) && isOn){
-		_radio.setON(isOn);
+	if(_db.getJSONProperty(PROP_LAST_RADIO_MODE,&j)
+		&&  j.is_string()){
+ 		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_MODE]);
+		_lastRadioMode = mode;
 	}
- }
+ 
+	// WRITE CODE TO HANDLE NO PRESETS
+	
+	
+}
 
 // MARK: - stations File
  
@@ -378,9 +406,23 @@ void PiCarMgr::PiCanLoop(){
 	try{
 		
 		while(!shouldQuit){
-			bool movedUp = false;
-			bool wasClicked = _volKnob.wasClicked();
-			bool wasMoved = _volKnob.wasMoved(movedUp);
+			bool volMovedUp 		= false;
+			bool volWasClicked 	= false;
+			bool volWasMoved 		= false;
+ 			bool tunerMovedUp 	= false;
+			bool tunerWasClicked = false;
+			bool tunerWasMoved 	= false;
+	
+#if 1
+			volWasClicked = _volKnob.wasClicked();
+			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
+
+#else
+			tunerWasClicked = _volKnob.wasClicked();
+			tunerWasMoved 	= _volKnob.wasMoved(tunerMovedUp);
+
+#endif
+			
 	 
 			// --check if any events need processing else wait for a timeout
 			struct timespec ts = {0, 0};
@@ -390,7 +432,12 @@ void PiCarMgr::PiCanLoop(){
 
 			pthread_mutex_lock (&_mutex);
 			// dont' wait if something is pending
-			if (_event == 0 && !wasMoved && !wasClicked)
+			
+			bool shouldWait = (_event == 0)
+									&& !volWasClicked && !volWasMoved
+									&& !tunerWasClicked && !tunerWasMoved;
+			
+			if (shouldWait)
 				pthread_cond_timedwait(&_cond, &_mutex, &ts);
 	 
 			// startEvent is used for ignoring the pthread_cond_timedwait
@@ -407,120 +454,182 @@ void PiCarMgr::PiCanLoop(){
  
 			if(shouldQuit) continue;
 
-#if 1
-			if(wasClicked){
-				if(_display->isMenuDisplayed()){
-					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
-				}
-				else{
-				
-					
-					vector<DisplayMgr::menuItem_t> items = {
-						"AM",
-						"FM",
-						"VHF",
-						"GPRS",
-						"GPS",
-						"-",
-						"Time",
-						"Diagnostics",
-						"Settings",
-						"Exit",
-					};
-					 
-					_display->showMenuScreen(items, 0, 10,
-													[=](bool didSucceed, uint selectedItem ){
-						
-						if(didSucceed){
-							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
-						}
-	 
-					});
-				}
-			}
-
-#else
-			// handle the fast stuff
-			if(wasClicked){
+			// Volume button Clicked
+			if(volWasClicked){
 				bool isOn = _radio.isOn();
-				_radio.setON(!isOn);
-				saveRadioSettings();
-				_db.savePropertiesToFile();
-			}
-
-#endif
-			
-			if(wasMoved){
 				
-				if(_display->isMenuDisplayed()){
-					_display->menuSelectAction(movedUp?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
-		 		}
-				else
-				{
-#if 1
-					// change  channel
-					bool shouldConstrain = false;
-					if(_radio.isOn()){
-						auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
-						auto mode  = _radio.radioMode();
-						
-						_lastRadioMode = mode;
-						_lastFreq = newfreq;
-						_radio.setFrequencyandMode(mode, newfreq);
-						saveRadioSettings();
-						
-					}
+				if(isOn){
+					// just turn it off
+					_radio.setON(false);
 					
-#elif 1
-					// change  volume
-					auto volume = _audio.volume();
+					// turn it off forces save of stations.
+					saveRadioSettings();
+					_db.savePropertiesToFile();
+				}
+				else {
+					// if it has no setting we need to create something
 					
-					if(movedUp){
-						if(volume < 1) {						// twist up
-							volume +=.04;
-							if(volume > 1) volume = 1.0;	// pin volume
-							_audio.setVolume(volume);
-							_db.updateValue(VAL_AUDIO_VOLUME, volume);
-						}
+					_radio.setON(isOn);
+				}
+			}
+			
+			if(volWasMoved && _radio.isOn() ){
+				// change  volume
+				auto volume = _audio.volume();
+				
+				if(volMovedUp){
+					if(volume < 1) {						// twist up
+						volume +=.04;
+						if(volume > 1) volume = 1.0;	// pin volume
+						_audio.setVolume(volume);
+						_db.updateValue(VAL_AUDIO_VOLUME, volume);
 					}
-					else {
-						if(volume > 0) {							// twist down
-							volume -=.04;
-							if(volume < 0) volume = 0.0;		// twist down
-							_audio.setVolume(volume);
-							_db.updateValue(VAL_AUDIO_VOLUME, volume);
-						}
+				}
+				else {
+					if(volume > 0) {							// twist down
+						volume -=.04;
+						if(volume < 0) volume = 0.0;		// twist down
+						_audio.setVolume(volume);
+						_db.updateValue(VAL_AUDIO_VOLUME, volume);
 					}
-					
-					_display->showVolumeChange();
-#else
-					// change  balance
-					auto balance = _audio.balance();
-					
-					if(movedUp){
-						if(balance < 1) {						// twist up
-							balance +=.04;
-							if(balance > 1) balance = 1.0;	// pin volume
-							_audio.setBalance(balance);
-							_db.updateValue(VAL_AUDIO_BALANCE, balance);
-						}
-					}
-					else {
-						
-						if(balance > -1) {							// twist down
-							balance -=.04;
-							if(balance < -1) balance = -1.;		// twist down
-							_audio.setBalance(balance);
-							_db.updateValue(VAL_AUDIO_BALANCE, balance);
-						}
-					}
-					_display->showBalanceChange();
-#endif
 				}
 				
+				_display->showVolumeChange();
+				
 			}
 			
-			
+		
+				
+//#if 0
+//			if(wasClicked){
+//				if(_display->isMenuDisplayed()){
+//					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
+//				}
+//				else{
+//
+//
+//					vector<DisplayMgr::menuItem_t> items = {
+//						"AM",
+//						"FM",
+//						"VHF",
+//						"GPRS",
+//						"-",
+//						"GPS",
+//						"Time",
+//						"Diagnostics",
+//						"Settings",
+//						"Exit",
+//					};
+//
+//					_display->showMenuScreen(items, 0, 10,
+//													[=](bool didSucceed, uint selectedItem ){
+//
+//						if(didSucceed){
+//							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
+//						}
+//
+//					});
+//				}
+//			}
+//
+//#else
+//			// handle the fast stuff
+//			if(wasClicked){
+//				bool isOn = _radio.isOn();
+//
+//				if(isOn){
+//					// just turn it off
+//					_radio.setON(false);
+//
+//					// turn it off forces save of stations.
+//					saveRadioSettings();
+//					_db.savePropertiesToFile();
+// 				}
+//				else {
+//					// if it has no setting we need to create something
+//
+//					_radio.setON(isOn);
+//				}
+////				_radio.setON(!isOn);
+////				saveRadioSettings();
+////				_db.savePropertiesToFile();
+//			}
+//
+//#endif
+//
+//			if(wasMoved){
+//
+//				if(_display->isMenuDisplayed()){
+//					_display->menuSelectAction(movedUp?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
+//		 		}
+//				else
+//				{
+//#if 1
+//					// change  channel
+//					bool shouldConstrain = false;
+//					if(_radio.isOn()){
+//						auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
+//						auto mode  = _radio.radioMode();
+//						_radio.setFrequencyandMode(mode, newfreq);
+//						saveRadioSettings();
+//
+////						_lastRadioMode = mode;
+////						_lastFreq = newfreq;
+////						_radio.setFrequencyandMode(mode, newfreq);
+////						saveRadioSettings();
+//
+//					}
+//
+//#elif 1
+//					// change  volume
+//					auto volume = _audio.volume();
+//
+//					if(movedUp){
+//						if(volume < 1) {						// twist up
+//							volume +=.04;
+//							if(volume > 1) volume = 1.0;	// pin volume
+//							_audio.setVolume(volume);
+//							_db.updateValue(VAL_AUDIO_VOLUME, volume);
+//						}
+//					}
+//					else {
+//						if(volume > 0) {							// twist down
+//							volume -=.04;
+//							if(volume < 0) volume = 0.0;		// twist down
+//							_audio.setVolume(volume);
+//							_db.updateValue(VAL_AUDIO_VOLUME, volume);
+//						}
+//					}
+//
+//					_display->showVolumeChange();
+//#else
+//					// change  balance
+//					auto balance = _audio.balance();
+//
+//					if(movedUp){
+//						if(balance < 1) {						// twist up
+//							balance +=.04;
+//							if(balance > 1) balance = 1.0;	// pin volume
+//							_audio.setBalance(balance);
+//							_db.updateValue(VAL_AUDIO_BALANCE, balance);
+//						}
+//					}
+//					else {
+//
+//						if(balance > -1) {							// twist down
+//							balance -=.04;
+//							if(balance < -1) balance = -1.;		// twist down
+//							_audio.setBalance(balance);
+//							_db.updateValue(VAL_AUDIO_BALANCE, balance);
+//						}
+//					}
+//					_display->showBalanceChange();
+//#endif
+//				}
+//
+//			}
+//
+//
 			// handle slower stuff like polling
 			timeval now, diff;
 			gettimeofday(&now, NULL);
@@ -610,6 +719,8 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 	uint8_t deviceAddress = 0x3F;
  
 	didSucceed =  _volKnob.begin(deviceAddress, errnum);
+//   _tunerKnob.begin(deviceAddress, errnum);
+	
 	if(didSucceed){
 	 
 	}

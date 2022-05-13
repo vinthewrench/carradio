@@ -237,7 +237,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			TRY(_vfd.setCursor(0,cursorV));
 
 			if(_menuItems[i] == "-"){
-				sprintf(buffer, "%s --------------------  %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
+				sprintf(buffer, "%s --------------------  %s",  i == _currentMenuItem?">":" ", moreIndicator);
 
 			}
 			else  {

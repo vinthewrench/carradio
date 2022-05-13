@@ -246,7 +246,7 @@ void PiCarMgr::restoreRadioSettings(){
 		_audio.setBalance(0.0);
 	}
 	
-	// SET RADIO
+	// SET RADIO Info
 	
 	_lastFreqForMode.clear();
 
@@ -274,9 +274,31 @@ void PiCarMgr::restoreRadioSettings(){
 	}
  
 	// WRITE CODE TO HANDLE NO PRESETS
-	
-	
+ 
 }
+
+void PiCarMgr::getFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &freqOut){
+	
+	if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
+		&&  _radio.frequency() != 0) {
+		
+		auto mode = _radio.radioMode();
+		if( _lastFreqForMode.count(mode)){
+			modeOut = mode;
+			freqOut = _lastFreqForMode[mode];
+		}
+		else
+		{
+			// set it to something;
+			_lastRadioMode = RadioMgr::BROADCAST_FM;
+			_lastFreqForMode[_lastRadioMode] = 101500000;
+			
+			modeOut = mode;
+			freqOut = _lastFreqForMode[mode];
+		}
+	}
+}
+
 
 // MARK: - stations File
  
@@ -467,9 +489,12 @@ void PiCarMgr::PiCanLoop(){
 					_db.savePropertiesToFile();
 				}
 				else {
-					// if it has no setting we need to create something
+		 			RadioMgr::radio_mode_t mode ;
+					uint32_t freq;
 					
-					_radio.setON(isOn);
+					getFrequencyandMode(mode,freq);
+				 	_radio.setFrequencyandMode(mode, freq);
+		 			_radio.setON(isOn);
 				}
 			}
 			

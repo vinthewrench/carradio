@@ -104,7 +104,6 @@ bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
 
 bool RadioMgr::setON(bool isOn) {
 
-	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 
 	if(!_isSetup)
@@ -134,6 +133,8 @@ bool RadioMgr::setON(bool isOn) {
 
 	return true;
 }
+
+
 // MARK: -  utilities
 
 uint32_t RadioMgr::stringToFreq(string str ){

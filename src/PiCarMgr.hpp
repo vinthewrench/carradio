@@ -84,6 +84,8 @@ class PiCarMgr {
 								bool up,
 								station_info_t &info);
 
+	
+	
 private:
 	
 	static PiCarMgr *sharedInstance;
@@ -96,9 +98,8 @@ private:
 //	nlohmann::json GetRadioJSON();
 	nlohmann::json GetRadioModesJSON();
 	bool updateRadioPrefs();
-	
-//	bool SetRadio(nlohmann::json j);
-
+	void getFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
+ 
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
  
@@ -115,9 +116,7 @@ private:
 		
 	RadioMgr::radio_mode_t		_lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
-	
-	
-	
+	 
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	
 	DisplayMgr* 		_display;

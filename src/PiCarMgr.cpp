@@ -515,7 +515,6 @@ void PiCarMgr::PiCanLoop(){
 				}
 				
 				_display->showVolumeChange();
-				
 			}
 			
 		

@@ -217,8 +217,7 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
  
 	// did something change?
 	if(shouldUpdate){
-		
-		
+	 
 		if( (_currentMenuItem - maxLines) > _menuCursor) {
 			_menuCursor = max(_currentMenuItem - maxLines, 0);
 		}
@@ -235,9 +234,16 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			
 			if(i == _menuCursor && _menuCursor != 0) moreIndicator = (char*)"+";
 			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = (char*) "v";
-			
-			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
 			TRY(_vfd.setCursor(0,cursorV));
+
+			if(_menuItems[i] == "-"){
+				sprintf(buffer, "%s --------------------  %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
+
+			}
+			else  {
+				
+			}
+			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

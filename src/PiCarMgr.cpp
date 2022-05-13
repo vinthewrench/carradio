@@ -416,11 +416,13 @@ void PiCarMgr::PiCanLoop(){
 				
 					
 					vector<DisplayMgr::menuItem_t> items = {
-						"Time",
 						"AM",
 						"FM",
 						"VHF",
+						"GPRS",
 						"GPS",
+						"-"
+						"Time",
 						"Diagnostics",
 						"Settings",
 						"Exit",

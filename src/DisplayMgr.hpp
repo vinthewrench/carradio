@@ -116,7 +116,7 @@ private:
 	bool pushMode(mode_state_t);
 	void popMode();
 	
-	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN);
+	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN, bool shouldFlush = false);
  
 	void DisplayUpdate();		// C++ version of thread
 	// C wrappers for DisplayUpdate;

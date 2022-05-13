@@ -101,11 +101,11 @@ void DisplayMgr::showStartup(){
 
 
 void DisplayMgr::showTime(){
-	setEvent(EVT_PUSH, MODE_TIME );
+	setEvent(EVT_PUSH, MODE_TIME, true);
   }
 
 void DisplayMgr::showDiag(){
-	setEvent(EVT_PUSH, MODE_DIAG );
+	setEvent(EVT_PUSH, MODE_DIAG , true);
 }
 
 
@@ -119,17 +119,20 @@ void DisplayMgr::showBalanceChange(){
 }
 
 void DisplayMgr::showRadioChange(){
-	setEvent(EVT_PUSH, MODE_RADIO );
+	setEvent(EVT_PUSH, MODE_RADIO , true);
 	
 }
 void DisplayMgr::showGPS(){
-	setEvent(EVT_PUSH, MODE_GPS);
+	setEvent(EVT_PUSH, MODE_GPS, true);
  }
 
  
 
-void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
+void DisplayMgr::setEvent(event_t evt, mode_state_t mod, bool shouldFlush){
 	pthread_mutex_lock (&_mutex);
+	if(shouldFlush){
+		_eventQueue = {};
+	}
 	_eventQueue.push({evt,mod});
 	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);

@@ -371,8 +371,6 @@ void DisplayMgr::DisplayUpdate(){
 				break;
 				
 			case EVT_PUSH:
-				printf("\nEVT_PUSH %d\n ", item.mode);
-				
 				if(item.mode == MODE_SHUTDOWN){
 					shouldQuit = true;		// bail now
 					continue;
@@ -697,7 +695,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
-	 printf("\ndisplay RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
+//	 printf("\ndisplay RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
@@ -712,12 +710,8 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(shouldUpdate) {
-		uint32_t freq = 0;
-		RadioMgr::radio_mode_t  mode  = radio->radioMode();
-		RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
-		bool 							isON  = radio->isOn();
-	 
-		if(!isON){
+ 
+		if(! radio->isOn()){
 			string str = "OFF";
  			auto textCenter =  centerX - (str.size() * 11);
 		
@@ -726,7 +720,10 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 			TRY(_vfd.write(str));
 		}
 		else {
-			
+			RadioMgr::radio_mode_t  mode  = radio->radioMode();
+			RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+			uint32_t 					freq =  radio->frequency();
+
 			int precision = 0;
 			
 			switch (mode) {

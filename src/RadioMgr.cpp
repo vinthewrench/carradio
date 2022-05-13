@@ -103,20 +103,20 @@ bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
 }
 
 bool RadioMgr::setON(bool isOn) {
-
+	
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 	PiCarDB*			db 		= PiCarMgr::shared()->db();
-
+	
 	if(!_isSetup)
 		return false;
-	 
+	
 	_isOn = isOn;
 	
 	db->updateValue(VAL_RADIO_ON, isOn);
- 
+	
 	if(!isOn){
 		std::lock_guard<std::mutex> lock(_mutex);
-
+		
 		_shouldRead = false;
 		_sdr.resetBuffer();
 		_output_buffer.flush();
@@ -126,13 +126,13 @@ bool RadioMgr::setON(bool isOn) {
 			delete _fmDecoder;
 			_fmDecoder = NULL;
 		}
- 	}
+		display->showTime();
+	}
 	else {
 		setFrequencyandMode(_mode,_frequency, true);
+		display->showRadioChange();
 	}
-
-	display->showRadioChange();
-
+	
 	return true;
 }
 

@@ -414,7 +414,7 @@ void PiCarMgr::triggerEvent(uint16_t evt ){
 
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr struct timespec sleepTime  =  {0, 100 * 1000000};  // idle sleep in 50 millisconds
+	constexpr struct timespec sleepTime  =  {0, 10000000};  // idle sleep in 100 hz 
 	constexpr time_t pollTime	= 5;  // poll sleep in seconds
 
 	bool		 shouldQuit = false;

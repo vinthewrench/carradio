@@ -98,7 +98,7 @@ private:
 //	nlohmann::json GetRadioJSON();
 	nlohmann::json GetRadioModesJSON();
 	bool updateRadioPrefs();
-	void getFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
+	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
  
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);

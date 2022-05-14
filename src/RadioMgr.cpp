@@ -328,7 +328,7 @@ string RadioMgr::muxstring(radio_mux_t mux){
 			break;
 			
 		default:
-			str = "     ";
+			str = "       ";
 	}
  
 	return str;

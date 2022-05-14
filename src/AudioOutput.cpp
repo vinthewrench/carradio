@@ -160,7 +160,7 @@ bool AudioOutput::write(const SampleVector& samples)
 		int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
 		
 		if (k < 0) {
-			ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+	//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
 			// After an underrun, ALSA keeps returning error codes until we
 			// explicitly fix the stream.
 			snd_pcm_recover(_pcm, k, 0);

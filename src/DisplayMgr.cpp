@@ -715,7 +715,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 
-	printf("display RadioScreen %s %s %d %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
+	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
 			 radio->radioMuxMode(),
 			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
 

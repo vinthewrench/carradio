@@ -303,16 +303,16 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 	// create a file path
 	if(filePath.size() == 0)
 		filePath = "stations.tsv";
-
+	
 	try{
 		string line;
-	 
-		 _stations.clear();
 		
-  		// open the file
+		_stations.clear();
+		
+		// open the file
 		ifs.open(filePath, ios::in);
 		if(!ifs.is_open()) return false;
-	
+		
 		while ( std::getline(ifs, line) ) {
 			
 			// split the line looking for a token: and rest and ignore comments
@@ -328,29 +328,26 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			
 			string title = trimCNTRL(v[2]);
 			string location = trimCNTRL((v.size() >2) ?v[3]: string());
-		 
-	 
+			
 			if(freq != 0
 				&& mode != RadioMgr::MODE_UNKNOWN){
-				
 				station_info_t info = {mode, freq, title, location};
-				
 				_stations[mode].push_back(info);
-	 
-	 		}
+				
+			}
 		}
 		for( auto &[mode, items]: _stations){
 			sort(items.begin(), items.end(),
 				  [] (const station_info_t& a,
 						const station_info_t& b) { return a.frequency < b.frequency; });
- 		}
+		}
 		
 		
 		success = _stations.size() > 0;
 		ifs.close();
 	}
 	catch(std::ifstream::failure &err) {
- 		ELOG_MESSAGE("READ stations:FAIL: %s", err.what());
+		ELOG_MESSAGE("READ stations:FAIL: %s", err.what());
 		success = false;
 	}
 	return success;

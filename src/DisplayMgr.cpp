@@ -708,7 +708,7 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
-//	 printf("\ndisplay RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
+ 	 printf("\ndisplay RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();

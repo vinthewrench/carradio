@@ -518,12 +518,12 @@ void RadioMgr::SDRProcessor(){
 			adjust_gain(audiosamples, 0.5);
 			
 			// Stereo indicator change
-			if (_fmDecoder->stereo_detected() != got_stereo) {
-				got_stereo = _fmDecoder->stereo_detected();
+			bool detect = _fmDecoder->stereo_detected();
+	 		if (detect != got_stereo) {
+				got_stereo = detect;
+ 				_mux = detect? MUX_STEREO:MUX_MONO;
 				
-				_mux = got_stereo? MUX_STEREO:MUX_MONO;
-				
-				if (got_stereo)
+				if (detect)
 					printf( "got stereo signal (pilot level = %f)\n",
 							 _fmDecoder->get_pilot_level());
 				else

@@ -520,20 +520,28 @@ void RadioMgr::SDRProcessor(){
 			if (_fmDecoder->stereo_detected() != got_stereo) {
 				_mux = _fmDecoder->stereo_detected()? MUX_STEREO:MUX_MONO;
 		
+				if (got_stereo)
+								fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
+										  _fmDecoder->get_pilot_level());
+							else
+								fprintf(stderr, "\nlost stereo signal\n");
+				
+				
 				db->updateValue(VAL_MODULATION_MUX, _mux);
 	 			display->showRadioChange();
+				
  			}
 			
 #if DEBUG_DEMOD
 			
 			// Show statistics.
-			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
-					  block,
-					  _frequency *  1.0e-6,
-					  //					  (tuner_freq + _fmDecoder->get_tuning_offset()) * 1.0e-6,
-					  20*log10(_fmDecoder->get_if_level()),
-					  20*log10(_fmDecoder->get_baseband_level()) + 3.01,
-					  20*log10(audio_level) + 3.01);
+//			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
+//					  block,
+//					  _frequency *  1.0e-6,
+//					  //					  (tuner_freq + _fmDecoder->get_tuning_offset()) * 1.0e-6,
+//					  20*log10(_fmDecoder->get_if_level()),
+//					  20*log10(_fmDecoder->get_baseband_level()) + 3.01,
+//					  20*log10(audio_level) + 3.01);
 			
 			
 //			// Show stereo status.

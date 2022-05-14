@@ -127,11 +127,8 @@ void DisplayMgr::showGPS(){
  }
  
 
-void DisplayMgr::setEvent(event_t evt, mode_state_t mod, bool shouldFlush){
+void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	pthread_mutex_lock (&_mutex);
-	if(shouldFlush){
-		_eventQueue = {};
-	}
  
 	// dont keep pushing the same thing
 	bool shouldPush = true;

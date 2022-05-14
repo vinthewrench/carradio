@@ -15,6 +15,16 @@
 
  
 namespace Utils {
+
+
+inline  std::string trimCNTRL(std::string source) {
+	  source.erase(std::find_if(source.rbegin(), source.rend(), [](char c) {
+			return !std::iscntrl(static_cast<unsigned char>(c));
+	  }).base(), source.end());
+	  return source;
+ }
+
+
 	 /**
 	 * FUNCTION: trimEnd
 	 * USE: Returns a new string with all trailing whitespace characters removed

@@ -13,7 +13,10 @@
 #include <filesystem> // C++17
 #include <fstream>
 
+#include "Utils.hpp"
+
 using namespace nlohmann;
+using namespace Utils;
 
 const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
 
@@ -291,6 +294,7 @@ void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32
 
 // MARK: - stations File
  
+
 bool PiCarMgr::restoreStationsFromFile(string filePath){
 	bool success = false;
 	
@@ -322,9 +326,10 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			RadioMgr::radio_mode_t mode =  RadioMgr::stringToMode(v[0]);
 			auto freq = RadioMgr::stringToFreq(v[1]);
 			
-			string title = v[2];
-			string location = v.size() >2 ?v[3]:"";
-			
+			string title = trimCNTRL(v[2]);
+			string location = trimCNTRL((v.size() >2) ?v[3]: string());
+		 
+	 
 			if(freq != 0
 				&& mode != RadioMgr::MODE_UNKNOWN){
 				

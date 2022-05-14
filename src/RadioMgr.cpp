@@ -203,7 +203,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			delete _fmDecoder;
 			_fmDecoder = NULL;
 		}
-		if(_mode == VHF) {
+		if(_mode == VHF || _mode == GMRS) {
 	 
 			// changing FM frequencies means recreating the decoder
 			

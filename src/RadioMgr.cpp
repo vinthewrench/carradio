@@ -327,7 +327,7 @@ string RadioMgr::muxstring(radio_mux_t mux){
 			str = "QD";
 			break;
 			
-		default: str = "  ";
+		default: str = "    ";
 	}
  
 	return str;
@@ -519,18 +519,19 @@ void RadioMgr::SDRProcessor(){
 			
 			// Stereo indicator change
 			if (_fmDecoder->stereo_detected() != got_stereo) {
-				_mux = _fmDecoder->stereo_detected()? MUX_STEREO:MUX_MONO;
-		
+				got_stereo = _fmDecoder->stereo_detected();
+				
+				_mux = got_stereo? MUX_STEREO:MUX_MONO;
+				
 				if (got_stereo)
-								printf( "got stereo signal (pilot level = %f)\n",
-										  _fmDecoder->get_pilot_level());
-							else
-								printf( "lost stereo signal\n");
+					printf( "got stereo signal (pilot level = %f)\n",
+							 _fmDecoder->get_pilot_level());
+				else
+					printf( "lost stereo signal\n");
 				
-	//			db->updateValue(VAL_MODULATION_MUX, _mux);
-	 			display->showRadioChange();
-				
- 			}
+				//			db->updateValue(VAL_MODULATION_MUX, _mux);
+				display->showRadioChange();
+			}
 			
 #if DEBUG_DEMOD
 			

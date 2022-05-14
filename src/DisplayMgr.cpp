@@ -708,15 +708,16 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 
 	
 void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
- 	 printf("\ndisplay RadioScreen %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"");
-	
+ 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 
-	
+	printf("display RadioScreen %s %s %s \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
+			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
+
 	if(redraw){
 		_vfd.clearScreen();
 	}

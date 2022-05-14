@@ -317,7 +317,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 
 string RadioMgr::muxstring(radio_mux_t mux){
  
-	string str = "  ";
+	string str ;
 	switch (mux) {
 		case MUX_STEREO:
 			str = "ST";
@@ -327,7 +327,8 @@ string RadioMgr::muxstring(radio_mux_t mux){
 			str = "QD";
 			break;
 			
-		default: str = "    ";
+		default:
+			str = "     ";
 	}
  
 	return str;

@@ -501,7 +501,7 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
  
-		if((_mode == BROADCAST_FM  || _mode == VHF)
+		if((_mode == BROADCAST_FM  || _mode == VHF ||  _mode == GMRS)
 			&& _fmDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.

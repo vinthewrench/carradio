@@ -136,7 +136,7 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod, bool shouldFlush){
 	// dont keep pushing the same thing
 	if(!_eventQueue.empty()){
 		auto item = _eventQueue.back();
-		if(item.evt != evt||  item.mode != mod  )
+		if(item.evt != evt &&  item.mode != mod  )
 			_eventQueue.push({evt,mod});
 		pthread_cond_signal(&_cond);
  	}

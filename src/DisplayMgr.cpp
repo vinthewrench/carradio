@@ -125,7 +125,6 @@ void DisplayMgr::showRadioChange(){
 void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS, true);
  }
-
  
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod, bool shouldFlush){
@@ -133,10 +132,16 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod, bool shouldFlush){
 	if(shouldFlush){
 		_eventQueue = {};
 	}
-	_eventQueue.push({evt,mod});
-	pthread_cond_signal(&_cond);
+	
+	// dont keep pushing the same thing
+	if(!_eventQueue.empty()){
+		auto item = _eventQueue.back();
+		if(item.evt != evt||  item.mode != mod  )
+			_eventQueue.push({evt,mod});
+		pthread_cond_signal(&_cond);
+ 	}
+	
 	pthread_mutex_unlock (&_mutex);
-
 }
 
 // MARK: -  Menu Mode

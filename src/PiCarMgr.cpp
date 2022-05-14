@@ -267,9 +267,9 @@ void PiCarMgr::restoreRadioSettings(){
 		}
 	}
  
-	if(_db.getJSONProperty(PROP_LAST_RADIO_MODE,&j)
-		&&  j.is_string()){
- 		auto mode = RadioMgr::stringToMode( j[PROP_LAST_RADIO_MODE]);
+	string str;
+	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
+ 		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
  

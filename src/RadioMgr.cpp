@@ -524,14 +524,13 @@ void RadioMgr::SDRProcessor(){
 				got_stereo = detect;
  				_mux = detect? MUX_STEREO:MUX_MONO;
 				
-				if (detect)
-					printf( "got stereo signal (pilot level = %f)\n",
-							 _fmDecoder->get_pilot_level());
-				else
-					printf( "lost stereo signal\n");
+//				if (detect)
+//					printf( "got stereo signal (pilot level = %f)\n",
+//							 _fmDecoder->get_pilot_level());
+//				else
+//					printf( "lost stereo signal\n");
 				
-				//			db->updateValue(VAL_MODULATION_MUX, _mux);
-				display->showRadioChange();
+ 				display->showRadioChange();
 			}
 			
 #if DEBUG_DEMOD

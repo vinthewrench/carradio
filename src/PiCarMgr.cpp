@@ -272,19 +272,10 @@ void PiCarMgr::restoreRadioSettings(){
  		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
- 
-	printf("restore mode: %s freq %d\n",
-			 RadioMgr::modeString(	_lastRadioMode).c_str(),
-			 _lastFreqForMode[_lastRadioMode]  );
-
 }
 
 void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &freqOut){
 	
-	printf("set mode: %s freq %d\n",
-			 RadioMgr::modeString(	_lastRadioMode).c_str(),
-			 _lastFreqForMode[_lastRadioMode]  );
-
 	if(_lastRadioMode != RadioMgr::MODE_UNKNOWN
 		&& _lastFreqForMode.count(_lastRadioMode)){
  		modeOut = _lastRadioMode;

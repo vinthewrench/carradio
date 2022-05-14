@@ -190,6 +190,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  
 		_frequency = newFreq;
 		_mode = newMode;
+		_mux =  MUX_MONO;
 
 		// Intentionally tune at a higher frequency to avoid DC offset.
 		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
@@ -263,7 +264,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	if(didUpdate){
 		db->updateValue(VAL_MODULATION_MODE, _mode);
 		db->updateValue(VAL_RADIO_FREQ, _frequency);
-		db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
+	//	db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
 		display->showRadioChange();
 	}
 	
@@ -472,7 +473,7 @@ void adjust_gain(SampleVector& samples, double gain)
 void RadioMgr::SDRProcessor(){
 	
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-	PiCarDB*			db 		= PiCarMgr::shared()->db();
+//	PiCarDB*			db 		= PiCarMgr::shared()->db();
 
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
@@ -526,8 +527,7 @@ void RadioMgr::SDRProcessor(){
 							else
 								printf( "lost stereo signal\n");
 				
-				
-				db->updateValue(VAL_MODULATION_MUX, _mux);
+	//			db->updateValue(VAL_MODULATION_MUX, _mux);
 	 			display->showRadioChange();
 				
  			}

@@ -324,8 +324,8 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			if(v.size() < 3)  continue;
 			
 			RadioMgr::radio_mode_t mode =  RadioMgr::stringToMode(v[0]);
-			auto freq = RadioMgr::stringToFreq(v[1]);
-			
+			uint32_t freq = atoi(v[1].c_str());
+	 
 			string title = trimCNTRL(v[2]);
 			string location = trimCNTRL((v.size() >2) ?v[3]: string());
 			

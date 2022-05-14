@@ -776,22 +776,22 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 			TRY(_vfd.write( " " + hzstr));
 			
 			// Draw title
-			int titleBottom = centerY -14;
-			uint8_t buff1[] = {VFD_CLEAR_AREA,
-				0,  static_cast<uint8_t> (titleBottom-7),
-				static_cast<uint8_t> (_vfd.width()),static_cast<uint8_t> (titleBottom)};
-			_vfd.writePacket(buff1, sizeof(buff1), 20);
 			
+			constexpr int  titleMaxSize = 20;
+			char titlebuff[titleMaxSize + 1] = {' '};
+			titlebuff[titleMaxSize] = '\0';
+			int titleStart =  centerX - ((titleMaxSize * 6)/2);
+			int titleBottom = centerY -14;
+ 
 			PiCarMgr::station_info_t info;
-			if(mgr->getStationInfo(mode, freq, info)
-				&& !info.title.empty()) {
-				string title = truncate(info.title, 20);
-				auto titleStart =  centerX - ((title.size() * 6)/2);
-				TRY(_vfd.setFont(VFD::FONT_5x7));
-				TRY(_vfd.setCursor( titleStart ,titleBottom ));
-				TRY(_vfd.write( title));
-			}
-		}
+			if(mgr->getStationInfo(mode, freq, info)){
+				string title = truncate(info.title, titleMaxSize);
+				memcpy( &titlebuff[ titleMaxSize /2 - title.size()/2], title.c_str(), title.size() );
+			};
+			TRY(_vfd.setCursor( titleStart ,titleBottom ));
+			TRY(_vfd.write( titlebuff));
+ 			}
+	 
 	}
 	
 	time_t now = time(NULL);

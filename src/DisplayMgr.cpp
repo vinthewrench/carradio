@@ -723,11 +723,11 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(shouldUpdate) {
- 
+		
 		if(! radio->isOn()){
 			string str = "OFF";
- 			auto textCenter =  centerX - (str.size() * 11);
-		
+			auto textCenter =  centerX - (str.size() * 11);
+			
 			TRY(_vfd.setFont(VFD::FONT_10x14));
 			TRY(_vfd.setCursor( textCenter ,centerY+5));
 			TRY(_vfd.write(str));
@@ -736,7 +736,7 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 			RadioMgr::radio_mode_t  mode  = radio->radioMode();
 			RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 			uint32_t 					freq =  radio->frequency();
-
+			
 			int precision = 0;
 			
 			switch (mode) {
@@ -775,23 +775,24 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 			TRY(_vfd.setFont(VFD::FONT_5x7));
 			TRY(_vfd.write( " " + hzstr));
 			
-			// Draw title
-			
+			// Draw title centered inb char buffer
 			constexpr int  titleMaxSize = 20;
-			char titlebuff[titleMaxSize + 1] = {' '};
+			char titlebuff[titleMaxSize + 1];
+			memset(titlebuff,' ', titleMaxSize);
 			titlebuff[titleMaxSize] = '\0';
 			int titleStart =  centerX - ((titleMaxSize * 6)/2);
 			int titleBottom = centerY -14;
- 
 			PiCarMgr::station_info_t info;
 			if(mgr->getStationInfo(mode, freq, info)){
 				string title = truncate(info.title, titleMaxSize);
-				memcpy( &titlebuff[ titleMaxSize /2 - title.size()/2], title.c_str(), title.size() );
+				int titleLen = (int)title.size();
+				int offset  = (titleMaxSize /2) - (titleLen/2);
+				memcpy( titlebuff+offset , title.c_str(), titleLen );
 			};
 			TRY(_vfd.setCursor( titleStart ,titleBottom ));
 			TRY(_vfd.write( titlebuff));
- 			}
-	 
+		}
+		
 	}
 	
 	time_t now = time(NULL);

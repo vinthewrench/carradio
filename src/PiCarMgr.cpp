@@ -414,7 +414,7 @@ void PiCarMgr::triggerEvent(uint16_t evt ){
 
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr struct timespec sleepTime  =  {0, 10000000};  // idle sleep in 100 hz 
+	constexpr struct timespec sleepTime  =  {0, 10000000};  // idle sleep in 100 hz
 	constexpr time_t pollTime	= 5;  // poll sleep in seconds
 
 	bool		 shouldQuit = false;
@@ -432,7 +432,8 @@ void PiCarMgr::PiCanLoop(){
 	
 #if 1
 			volWasClicked = _volKnob.wasClicked();
-			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
+//			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
+			tunerWasMoved 	= _volKnob.wasMoved(tunerMovedUp);
 
 #else
 			tunerWasClicked = _volKnob.wasClicked();
@@ -517,7 +518,14 @@ void PiCarMgr::PiCanLoop(){
 				_display->showVolumeChange();
 			}
 			
-		
+			if(tunerWasMoved && _radio.isOn() ){
+				// change  stations
+				bool shouldConstrain = false;
+				
+				auto newfreq = _radio.nextFrequency(tunerMovedUp, shouldConstrain);
+				auto mode  = _radio.radioMode();
+				_radio.setFrequencyandMode(mode, newfreq);
+			}
 				
 //#if 0
 //			if(wasClicked){

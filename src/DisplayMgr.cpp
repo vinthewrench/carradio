@@ -762,7 +762,8 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 			else if  (precision == 1)
 				modeStart += 5;
 			
-			TRY(_vfd.setFont(VFD::FONT_5x7));
+			
+			TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
 			TRY(_vfd.setCursor(modeStart, centerY-3));
 			TRY(_vfd.write(modStr));
 			

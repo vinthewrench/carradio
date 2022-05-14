@@ -367,7 +367,7 @@ bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
 	return false;
 }
 
-bool PiCarMgr::nextStation(RadioMgr::radio_mode_t band,
+bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 								  uint32_t frequency,
 								  bool up,
 									station_info_t &info){
@@ -514,7 +514,7 @@ void PiCarMgr::PiCanLoop(){
 			
 			if(tunerWasMoved && _radio.isOn() ){
 				// change  stations
-				bool shouldConstrain = true;
+				bool shouldConstrain = false;
 				
 				auto newfreq = _radio.nextFrequency(tunerMovedUp, shouldConstrain);
 				auto mode  = _radio.radioMode();

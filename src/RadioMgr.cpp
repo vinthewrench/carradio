@@ -139,32 +139,32 @@ bool RadioMgr::setON(bool isOn) {
 
 // MARK: -  utilities
 
-uint32_t RadioMgr::stringToFreq(string str ){
-
-	uint32_t  freq =0;
-	uint32_t  suff = 1;
-	
-	auto suffix = str.back();
-	switch (suffix) {
-		case 'g':
-		case 'G':
-			suff *= 1e3;
-			/* fall-through */
-		case 'm':
-		case 'M':
-			suff *= 1e3;
-			/* fall-through */
-		case 'k':
-		case 'K':
-			suff *= 1e3;
-			str.pop_back();
-		default:
- 			freq  = std::stof(str) * suff;
-			break;
-	}
-	
-	return freq;
-}
+//uint32_t RadioMgr::stringToFreq(string str ){
+//
+//	uint32_t  freq =0;
+//	uint32_t  suff = 1;
+//	
+//	auto suffix = str.back();
+//	switch (suffix) {
+//		case 'g':
+//		case 'G':
+//			suff *= 1e3;
+//			/* fall-through */
+//		case 'm':
+//		case 'M':
+//			suff *= 1e3;
+//			/* fall-through */
+//		case 'k':
+//		case 'K':
+//			suff *= 1e3;
+//			str.pop_back();
+//		default:
+// 			freq  = std::stof(str) * suff;
+//			break;
+//	}
+//	
+//	return freq;
+//}
 
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	

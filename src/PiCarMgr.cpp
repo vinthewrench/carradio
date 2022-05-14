@@ -516,7 +516,7 @@ void PiCarMgr::PiCanLoop(){
 			
 			if(tunerWasMoved && _radio.isOn() ){
 				// change  stations
-				bool shouldConstrain = false;
+				bool shouldConstrain = true;
 				
 				auto newfreq = _radio.nextFrequency(tunerMovedUp, shouldConstrain);
 				auto mode  = _radio.radioMode();

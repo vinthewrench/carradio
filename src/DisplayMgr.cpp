@@ -101,11 +101,11 @@ void DisplayMgr::showStartup(){
 
 
 void DisplayMgr::showTime(){
-	setEvent(EVT_PUSH, MODE_TIME, true);
+	setEvent(EVT_PUSH, MODE_TIME);
   }
 
 void DisplayMgr::showDiag(){
-	setEvent(EVT_PUSH, MODE_DIAG , true);
+	setEvent(EVT_PUSH, MODE_DIAG);
 }
 
 
@@ -123,7 +123,7 @@ void DisplayMgr::showRadioChange(){
 	
 }
 void DisplayMgr::showGPS(){
-	setEvent(EVT_PUSH, MODE_GPS, true);
+	setEvent(EVT_PUSH, MODE_GPS);
  }
  
 

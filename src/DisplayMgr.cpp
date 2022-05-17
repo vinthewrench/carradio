@@ -792,7 +792,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	}
 	
 	if(transition == TRANS_IDLE) {
-		_vfd.clearScreen();
+		_rightRing.clearAll();
 		didSetRing = false;
 	}
 

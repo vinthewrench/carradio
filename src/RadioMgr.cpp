@@ -354,13 +354,13 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 	switch (mode) {
 		case BROADCAST_AM:
 			minFreq = 530e3;
-			minFreq = 1710e3;
+			maxFreq = 1710e3;
 			success = true;
 			break;
 			
 		case BROADCAST_FM:
 			minFreq = 87.9e6;
-			minFreq = 107.9e6;
+			maxFreq = 107.9e6;
 			success = true;
   			break;
 			 

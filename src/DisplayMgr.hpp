@@ -21,6 +21,7 @@
 #include "VFD.hpp"
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
+#include "DuppaLEDRing.hpp"
 
 using namespace std;
 
@@ -137,6 +138,9 @@ private:
  	// display
 	bool 					_isSetup = false;
 	VFD 					_vfd;
+	
+	DuppaLEDRing		_rightRing;
+	DuppaLEDRing		_leftRing;
 	// debug stuff
 	
 //	string modeString();

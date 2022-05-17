@@ -48,10 +48,30 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	if(!_vfd.begin(path,speed,error))
 		throw Exception("failed to setup VFD ");
 	
-	if(_vfd.reset())
-		_isSetup = true;
+	if( !(_rightRing.begin(0x61, error)
+			&& _leftRing.begin(0x60, error))){
+		throw Exception("failed to setup LEDrings ");
+	}
+  
+	if( _vfd.reset()
+		&& _rightRing.reset()
+		&& _leftRing.reset()
+		&& _rightRing.clearAll()
+		&& _leftRing.clearAll())
+				_isSetup = true;
 	
 	if(_isSetup) {
+		
+		_rightRing.setConfig(0x01);
+		_rightRing.SetScaling(0xFF);
+		_rightRing.GlobalCurrent(010);
+		_rightRing.PWM_MODE();
+
+		_leftRing.setConfig(0x01);
+		_leftRing.SetScaling(0xFF);
+		_leftRing.GlobalCurrent(010);
+		_leftRing.PWM_MODE();
+ 
 		_eventQueue = {};
 		
 		resetMenu();
@@ -74,6 +94,8 @@ void DisplayMgr::stop(){
 		pthread_join(_updateTID, NULL);
 
 		_vfd.stop();
+		_rightRing.stop();
+		_leftRing.stop();
  	}
 	
 	_isSetup = false;
@@ -612,6 +634,11 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 	
 	
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
+		
+		// volume LED scales between 1 and 24
+		
+		
+		
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 		
 		// clear rest of inside of box

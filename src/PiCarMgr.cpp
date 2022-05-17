@@ -109,7 +109,7 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-		if(!_display->setBrightness(5))
+		if(!_display->setBrightness(7))
 			throw Exception("failed to set brightness ");
 
 		pthread_create(&_piCanLoopTID, NULL,

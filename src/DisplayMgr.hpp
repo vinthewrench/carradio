@@ -86,19 +86,28 @@ private:
 		EVT_POP,
  	}event_t;
 
-	void drawCurrentMode(bool redraw, bool shouldUpdate);
-	void drawStartupScreen(bool redraw, bool shouldUpdate);
-	void drawTimeScreen(bool redraw, bool shouldUpdate);
-	void drawVolumeScreen(bool redraw, bool shouldUpdate);
-	void drawBalanceScreen(bool redraw, bool shouldUpdate);
-	void drawRadioScreen(bool redraw, bool shouldUpdate);
-	void drawDiagScreen(bool redraw, bool shouldUpdate);
-	void drawGPSScreen(bool redraw, bool shouldUpdate);
-	void drawInternalError(bool redraw, bool shouldUpdate);
+	typedef enum  {
+		TRANS_ENTERING = 0,
+		TRANS_REFRESH,
+		TRANS_IDLE,
+		TRANS_LEAVING,
+		
+	}modeTransition_t;
 
+	void drawMode(modeTransition_t transition, mode_state_t mode);
+	
+	void drawStartupScreen(modeTransition_t transition);
+	void drawTimeScreen(modeTransition_t transition);
+	void drawVolumeScreen(modeTransition_t transition);
+	void drawBalanceScreen(modeTransition_t transition);
+	void drawRadioScreen(modeTransition_t transition);
+	void drawDiagScreen(modeTransition_t transition);
+	void drawGPSScreen(modeTransition_t transition);
+	void drawInternalError(modeTransition_t transition);
+ 
 //Menu stuff
 	void resetMenu();
-	void drawMenuScreen(bool redraw, bool shouldUpdate);
+	void drawMenuScreen(modeTransition_t transition);
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;
 	int						_menuCursor;			// item at top of screen
@@ -106,7 +115,6 @@ private:
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;
 //
-
 	
 	mode_state_t _current_mode = MODE_UNKNOWN;
 	mode_state_t _saved_mode   = MODE_UNKNOWN;

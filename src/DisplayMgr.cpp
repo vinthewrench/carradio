@@ -21,13 +21,13 @@
 #define TRY(_statement_) if(!(_statement_)) { \
 printf("FAIL AT line: %d\n", __LINE__ ); \
 }
- 
- typedef void * (*THREADFUNCPTR)(void *);
 
- 
+typedef void * (*THREADFUNCPTR)(void *);
+
+
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
-
+	
 }
 
 DisplayMgr::~DisplayMgr(){
@@ -37,7 +37,7 @@ DisplayMgr::~DisplayMgr(){
 
 bool DisplayMgr::begin(const char* path, speed_t speed){
 	int error = 0;
-
+	
 	return begin(path, speed, error);
 }
 
@@ -48,32 +48,32 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	if(!_vfd.begin(path,speed,error))
 		throw Exception("failed to setup VFD ");
 	
-	if( !(_rightRing.begin(0x61, error)
-			&& _leftRing.begin(0x60, error))){
+	if( !(_rightRing.begin(0x60, error)
+			&& _leftRing.begin(0x61, error))){
 		throw Exception("failed to setup LEDrings ");
 	}
-  
+	
 	if( _vfd.reset()
 		&& _rightRing.reset()
 		&& _leftRing.reset()
 		&& _rightRing.clearAll()
 		&& _leftRing.clearAll())
-				_isSetup = true;
+		_isSetup = true;
 	
 	if(_isSetup) {
 		
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
 		_leftRing.setConfig(0x01);
-
+		
 		// full scaling -- control current with global curent
 		_rightRing.SetScaling(0xFF);
 		_leftRing.SetScaling(0xFF);
-
+		
 		// dont fool with this.
 		_rightRing.GlobalCurrent(010);
 		_leftRing.GlobalCurrent(010);
-
+		
 		// clear all values
 		_rightRing.clearAll();
 		_rightRing.clearAll();
@@ -82,27 +82,27 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		resetMenu();
 		pthread_create(&_updateTID, NULL,
-									  (THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
+							(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
 		showStartup();
- 	}
- 
+	}
+	
 	return _isSetup;
 }
 
 
 void DisplayMgr::stop(){
- 
+	
 	if(_isSetup){
 		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
- 		pthread_cond_signal(&_cond);
+		pthread_cond_signal(&_cond);
 		pthread_join(_updateTID, NULL);
-
+		
 		_vfd.stop();
 		_rightRing.stop();
 		_leftRing.stop();
- 	}
+	}
 	
 	_isSetup = false;
 }
@@ -122,15 +122,15 @@ bool DisplayMgr::setBrightness(uint8_t level) {
 
 // MARK: -  change modes
 
- 
+
 void DisplayMgr::showStartup(){
 	setEvent(EVT_PUSH, MODE_STARTUP );
- }
+}
 
 
 void DisplayMgr::showTime(){
 	setEvent(EVT_PUSH, MODE_TIME);
-  }
+}
 
 void DisplayMgr::showDiag(){
 	setEvent(EVT_PUSH, MODE_DIAG);
@@ -152,36 +152,36 @@ void DisplayMgr::showRadioChange(){
 }
 void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
- }
- 
+}
+
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	pthread_mutex_lock (&_mutex);
- 
+	
 	// dont keep pushing the same thing
 	bool shouldPush = true;
 	if(!_eventQueue.empty()){
 		auto item = _eventQueue.back();
 		if(item.evt == evt &&  item.mode == mod ){
 			shouldPush = false;
-	 	}
+		}
 	}
 	
 	if(shouldPush){
 		_eventQueue.push({evt,mod});
 		pthread_cond_signal(&_cond);
- 	}
+	}
 	pthread_mutex_unlock (&_mutex);
 }
 
 // MARK: -  Menu Mode
- 
+
 void DisplayMgr::resetMenu() {
 	_menuItems.clear();
 	_currentMenuItem = 0;
 	_menuTimeout = 0;
 	_menuCB = nullptr;
-
+	
 }
 
 void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, time_t timeout,
@@ -194,10 +194,10 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	
 	_menuTimeout = timeout;
 	_menuCB = cb;
-
+	
 	setEvent(EVT_PUSH,MODE_MENU);
 }
- 
+
 void DisplayMgr::menuSelectAction(menu_action action){
 	
 	if(isMenuDisplayed()) {
@@ -220,11 +220,11 @@ void DisplayMgr::menuSelectAction(menu_action action){
 			case MENU_DOWN:
 				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
 				setEvent(EVT_NONE,MODE_MENU);
- 				break;
+				break;
 				
 			case MENU_CLICK:
-					if(_menuCB) {
-	 				_menuCB(true,  _currentMenuItem);
+				if(_menuCB) {
+					_menuCB(true,  _currentMenuItem);
 				}
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
@@ -235,34 +235,38 @@ void DisplayMgr::menuSelectAction(menu_action action){
 }
 
 
-void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
- 
- //	uint8_t width = _vfd.width();
+	
+	//	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
- 
+	
 	uint8_t startV =  25;
 	uint8_t lineHeight = 9;
- 	uint8_t maxLines =  (height - startV) / lineHeight ;
-//	uint8_t maxCol = width / 7;
+	uint8_t maxLines =  (height - startV) / lineHeight ;
+	//	uint8_t maxCol = width / 7;
 	
-	if(redraw){
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
 		TRY(_vfd.write("Select Screen"));
- 	}
- 
+	}
+	
 	// did something change?
-	if(shouldUpdate){
-	 
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		
 		if( (_currentMenuItem - maxLines) > _menuCursor) {
 			_menuCursor = max(_currentMenuItem - maxLines, 0);
 		}
 		else if(_currentMenuItem < _menuCursor) {
 			_menuCursor = max(_menuCursor - 1,  0);
 		}
-	 
+		
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
 			char buffer[64] = {0};
@@ -273,13 +277,13 @@ void DisplayMgr::drawMenuScreen(bool redraw, bool shouldUpdate){
 			if(i == _menuCursor && _menuCursor != 0) moreIndicator = (char*)"+";
 			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = (char*) "v";
 			TRY(_vfd.setCursor(0,cursorV));
-
+			
 			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}
 	}
-
+	
 }
 
 // MARK: -  mode utils
@@ -298,7 +302,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		default:
 			isSticky = false;
 	}
-		
+	
 	return isSticky;
 }
 
@@ -311,7 +315,7 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 			_saved_mode = _current_mode;
 		_current_mode = newMode;
 		didChange = true;
-
+		
 	}
 	return didChange;
 }
@@ -319,10 +323,10 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 void  DisplayMgr::popMode(){
 	_current_mode = _saved_mode==MODE_UNKNOWN ? MODE_TIME:_saved_mode;
 	_saved_mode = MODE_UNKNOWN;
-
+	
 }
 
- 
+
 
 // MARK: -  DisplayUpdate thread
 
@@ -352,6 +356,7 @@ void DisplayMgr::DisplayUpdate(){
 			_eventQueue.pop();
 		}
 		
+		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
 		
 		bool shouldRedraw = false;			// needs complete redraw
@@ -410,17 +415,17 @@ void DisplayMgr::DisplayUpdate(){
 				
 			case EVT_PUSH:
 				
-//			printf("\nEVT_PUSH %d \n", item.mode);
-
+				//			printf("\nEVT_PUSH %d \n", item.mode);
+				
 				if(item.mode == MODE_SHUTDOWN){
 					shouldQuit = true;		// bail now
 					continue;
 				}
 				else if(pushMode(item.mode)){
-						shouldRedraw = true;
+					shouldRedraw = true;
 				}
 				gettimeofday(&_lastEventTime, NULL);
- 				shouldUpdate = true;
+				shouldUpdate = true;
 				break;
 				
 			case EVT_POP:
@@ -433,8 +438,15 @@ void DisplayMgr::DisplayUpdate(){
 				
 		}
 		
-		drawCurrentMode(shouldRedraw, shouldUpdate);
+		if(lastMode != _current_mode)
+			drawMode(TRANS_LEAVING, lastMode );
 		
+		if(shouldRedraw)
+			drawMode(TRANS_ENTERING, _current_mode );
+		else if(shouldUpdate)
+			drawMode(TRANS_REFRESH, _current_mode );
+		else
+			drawMode(TRANS_IDLE, _current_mode );
 	}
 }
 
@@ -442,15 +454,15 @@ void DisplayMgr::DisplayUpdate(){
 DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	mode_state_t newState = MODE_UNKNOWN;
 	
-//	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	//	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
- 
-		if(radio->isOn()){
-			newState = MODE_RADIO;
-		}else {
-			newState = MODE_TIME;
-		}
-	 
+	
+	if(radio->isOn()){
+		newState = MODE_RADIO;
+	}else {
+		newState = MODE_TIME;
+	}
+	
 	
 	return newState;
 	
@@ -459,10 +471,10 @@ DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 
 void* DisplayMgr::DisplayUpdateThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;
-
+	
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::DisplayUpdateThreadCleanup ,context);
- 
+	
 	d->DisplayUpdate();
 	
 	pthread_exit(NULL);
@@ -471,69 +483,72 @@ void* DisplayMgr::DisplayUpdateThread(void *context){
 	return((void *)1);
 }
 
- 
+
 void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
-//	DisplayMgr* d = (DisplayMgr*)context;
- 
-//	printf("cleanup display\n");
+	//	DisplayMgr* d = (DisplayMgr*)context;
+	
+	//	printf("cleanup display\n");
 }
 
 // MARK: -  Display Draw code
 
-void DisplayMgr::drawCurrentMode(bool redraw, bool shouldUpdate){
+
+void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	
 	if(!_isSetup)
 		return;
+	
 	try {
-		switch (_current_mode) {
+		switch (mode) {
 				
 			case MODE_STARTUP:
-				drawStartupScreen(redraw,shouldUpdate);
+				drawStartupScreen(transition);
 				break;
 				
 			case MODE_TIME:
-				drawTimeScreen(redraw,shouldUpdate);
+				drawTimeScreen(transition);
 				break;
 				
 			case MODE_VOLUME:
-				drawVolumeScreen(redraw,shouldUpdate);
+				drawVolumeScreen(transition);
 				break;
-
+				
 			case MODE_BALANCE:
-				drawBalanceScreen(redraw,shouldUpdate);
+				drawBalanceScreen(transition);
 				break;
-
+				
 			case MODE_RADIO:
-				drawRadioScreen(redraw,shouldUpdate);
+				drawRadioScreen(transition);
 				break;
 				
 			case MODE_DIAG:
-				drawDiagScreen(redraw,shouldUpdate);
+				drawDiagScreen(transition);
 				break;
 				
 			case MODE_MENU:
-				drawMenuScreen(redraw, shouldUpdate);
+				drawMenuScreen(transition);
 				break;
 				
 			case MODE_GPS:
-				drawGPSScreen(redraw, shouldUpdate);
+				drawGPSScreen(transition);
 				break;
 				
 			default:
-				drawInternalError(redraw,shouldUpdate);
+				drawInternalError(transition);
 		}
 		
 	}
 	catch ( const Exception& e)  {
 		printf("\tError %d %s\n\n", e.getErrorNumber(), e.what());
-		 
+		
 	}
 	catch (std::invalid_argument& e)
 	{
 		printf("EXCEPTION: %s ",e.what() );
-	 
+		
 	}
 }
+
 
 static constexpr uint8_t VFD_OUTLINE = 0x14;
 static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
@@ -542,13 +557,13 @@ static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 
-void DisplayMgr::drawStartupScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
- 
+	
 	RtlSdr::device_info_t info;
 	
-	if(redraw)
+	if(transition == TRANS_ENTERING)
 		_vfd.clearScreen();
 	
 	TRY(_vfd.setCursor(0,10));
@@ -560,10 +575,10 @@ void DisplayMgr::drawStartupScreen(bool redraw, bool shouldUpdate){
 		TRY(_vfd.write(info.name));
 	}
 	
-//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
-void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -571,7 +586,11 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
 	
-	if(redraw){
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
 		_leftRing.clearAll();
 	}
@@ -587,7 +606,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 	
 	float cTemp = 0;
 	if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
-
+		
 		float fTemp = cTemp *9.0/5.0 + 32.0;
 		char buffer[64] = {0};
 		
@@ -596,7 +615,6 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 		sprintf(buffer, "%3d\xa0" "F", (int) round(fTemp) );
 		TRY(_vfd.write(buffer));
 	}
-	
 	
 	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 		char buffer[64] = {0};
@@ -610,7 +628,7 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 }
 
 
-void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -624,9 +642,14 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
-	if(redraw){
+	if(transition == TRANS_LEAVING) {
+		_leftRing.clearAll();
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
-		_rightRing.clearAll();
+		_leftRing.clearAll();
 		
 		// draw centered heading
 		_vfd.setFont(VFD::FONT_5x7);
@@ -647,9 +670,8 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 		// volume LED scales between 1 and 24
 		int ledvol = volume*23;
 		for (int i = 0 ; i < 24; i++) {
-			_rightRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
+			_leftRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
 		}
- 
 		
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 		
@@ -682,7 +704,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 }
 
 
-void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -696,7 +718,11 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
-	if(redraw){
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		
 		// draw centered heading
@@ -735,7 +761,6 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 		
-		
 		TRY(_vfd.setCursor(10, 55));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		char buffer[16] = {0};
@@ -745,25 +770,29 @@ void DisplayMgr::drawBalanceScreen(bool redraw, bool shouldUpdate){
 	}
 }
 
+
+void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
-void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
- 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
-
-//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
-//			 radio->radioMuxMode(),
-//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
-
-	if(redraw){
+	
+	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
+	//			 radio->radioMuxMode(),
+	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(shouldUpdate) {
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		if(! radio->isOn()){
 			string str = "OFF";
@@ -844,28 +873,42 @@ void DisplayMgr::drawRadioScreen(bool redraw, bool shouldUpdate){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
 	TRY(_vfd.write(buffer));
- }
+}
 
-void DisplayMgr::drawDiagScreen(bool redraw, bool shouldUpdate){
-	printf("displayDiagScreen %s\n",redraw?"REDRAW":"");
+void DisplayMgr::drawDiagScreen(modeTransition_t transition){
+	printf("displayDiagScreen %d\n",transition);
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
 	TRY(_vfd.write("Diagnostics"));
-
+	
 }
 
 
-void DisplayMgr::drawInternalError(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawInternalError(modeTransition_t transition){
 	
-	printf("displayInternalError %s\n",redraw?"REDRAW":"");
+	printf("displayInternalError  %d\n",transition);
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
 }
 
-void DisplayMgr::drawGPSScreen(bool redraw, bool shouldUpdate){
+void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
-	printf("GPS %s\n",redraw?"REDRAW":"");
+	printf("GPS  %d\n",transition);
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("GPS"));
-
+	
 }
 
 

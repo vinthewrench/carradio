@@ -533,6 +533,12 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				drawGPSScreen(transition);
 				break;
 				
+			case MODE_UNKNOWN:
+				
+				// we will always leave the UNKNOWN state at start
+				if(transition == TRANS_LEAVING)
+					break;
+				
 			default:
 				drawInternalError(transition);
 		}
@@ -801,7 +807,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
 			
 			if(hasRange){
-				int offset = (int) (float (freq-minFreq)  / float( maxFreq-minFreq) * 23) ;
+				int offset =   ( float(freq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+				
+				printf("freq:%u  min:%u max:%u offset: %d\n", freq, minFreq, maxFreq, offset);
+				
 				for (int i = 0 ; i < 24; i++) {
 					_rightRing.setBLUE(23 -i, i == offset ?0xff:0 );
 				}

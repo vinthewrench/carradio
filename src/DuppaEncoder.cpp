@@ -154,10 +154,10 @@ bool DuppaEncoder::wasPressed() {
 	return  (_lastStatus & PUSHP) != 0;
 }
 
-bool DuppaEncoder::wasMoved(bool &movedRight) {
+bool DuppaEncoder::wasMoved(bool &cw) {
 	
 	if( (_lastStatus & (RINC | RDEC)) != 0){
-		movedRight = (_lastStatus &  RINC) != 0;
+		cw = (_lastStatus &  RDEC) != 0;
 		return true;
 	}
 	

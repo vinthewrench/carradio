@@ -419,20 +419,20 @@ void PiCarMgr::PiCanLoop(){
 	try{
 		
 		while(!shouldQuit){
-			bool volMovedUp 		= false;
+			bool volMovedCW 		= false;
 			bool volWasClicked 	= false;
 			bool volWasMoved 		= false;
- 			bool tunerMovedUp 	= false;
+ 			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
 			bool tunerWasMoved 	= false;
 	
 			_volKnob.updateStatus();
 			volWasClicked = _volKnob.wasClicked();
-			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
+			volWasMoved = 	_volKnob.wasMoved(volMovedCW);
 			
 			_tunerKnob.updateStatus();
 			tunerWasClicked = _tunerKnob.wasClicked();
-			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedUp);
+			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedCW);
 
 			// --check if any events need processing else wait for a timeout
 			struct timespec ts = {0, 0};
@@ -490,7 +490,7 @@ void PiCarMgr::PiCanLoop(){
 				// change  volume
 				auto volume = _audio.volume();
 				
-				if(volMovedUp){
+				if(volMovedCW){
 					if(volume < 1) {						// twist up
 						volume +=.04;
 						if(volume > 1) volume = 1.0;	// pin volume
@@ -514,7 +514,7 @@ void PiCarMgr::PiCanLoop(){
 				// change  stations
 				bool shouldConstrain = true;
 				
-				auto newfreq = _radio.nextFrequency(tunerMovedUp, shouldConstrain);
+				auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
 				auto mode  = _radio.radioMode();
 				_radio.setFrequencyandMode(mode, newfreq);
 			}

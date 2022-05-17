@@ -773,20 +773,29 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 	
+	static bool didSetRing = false;
+	
 	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
 	//			 radio->radioMuxMode(),
 	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
 	
 	if(transition == TRANS_LEAVING) {
 		_rightRing.clearAll();
+		didSetRing = false;
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		_rightRing.clearAll();
+		didSetRing = false;
 	}
 	
+	if(transition == TRANS_IDLE) {
+		_vfd.clearScreen();
+		didSetRing = false;
+	}
+
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
@@ -810,14 +819,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
  				int offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
 				
-				printf("freq:%u  min:%u max:%u offset: %d\n", newfreq, minFreq, maxFreq, offset);
-				
 				for (int i = 0 ; i < 24; i++) {
 					_rightRing.setBLUE(23 -i, i == offset ?0xff:0 );
 				}
+				
+				didSetRing = true;
 			}
-		
-			
+				
 			int precision = 0;
 			
 			switch (mode) {
@@ -840,7 +848,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				modeStart += 15;
 			else if  (precision == 1)
 				modeStart += 5;
-			
 			
 			TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
 			TRY(_vfd.setCursor(modeStart, centerY-3));
@@ -874,8 +881,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			TRY(_vfd.setCursor( titleStart ,titleBottom ));
 			TRY(_vfd.write( titlebuff));
 		}
-		
-	}
+ 	}
 	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
@@ -884,6 +890,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
 	TRY(_vfd.write(buffer));
+	
 }
 
 void DisplayMgr::drawDiagScreen(modeTransition_t transition){

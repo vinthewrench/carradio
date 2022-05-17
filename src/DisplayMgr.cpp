@@ -340,7 +340,6 @@ void DisplayMgr::DisplayUpdate(){
 	
 	while(!shouldQuit){
 		
-		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_REALTIME, &ts);

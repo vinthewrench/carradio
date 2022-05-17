@@ -498,7 +498,7 @@ void adjust_gain(SampleVector& samples, double gain)
 
 void RadioMgr::SDRProcessor(){
 	
-	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+//	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 //	PiCarDB*			db 		= PiCarMgr::shared()->db();
 
 	bool inbuf_length_warning = false;
@@ -549,11 +549,11 @@ void RadioMgr::SDRProcessor(){
 				got_stereo = detect;
  				_mux = detect? MUX_STEREO:MUX_MONO;
 				
-//				if (detect)
-//					printf( "got stereo signal (pilot level = %f)\n",
-//							 _fmDecoder->get_pilot_level());
-//				else
-//					printf( "lost stereo signal\n");
+				if (detect)
+					printf( "got stereo signal (pilot level = %f)\n",
+							 _fmDecoder->get_pilot_level());
+				else
+					printf( "lost stereo signal\n");
 				
  //				display->showRadioChange();
 			}

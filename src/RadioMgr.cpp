@@ -555,7 +555,7 @@ void RadioMgr::SDRProcessor(){
 //				else
 //					printf( "lost stereo signal\n");
 				
- 				display->showRadioChange();
+ //				display->showRadioChange();
 			}
 			
 #if DEBUG_DEMOD

@@ -809,7 +809,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		}
 		else {
 			RadioMgr::radio_mode_t  mode  = radio->radioMode();
-			RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 			uint32_t 					freq =  radio->frequency();
 			
 			uint32_t 	maxFreq, minFreq;
@@ -838,7 +837,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			string str = 	RadioMgr::hertz_to_string(freq, precision);
 			string hzstr =	RadioMgr::freqSuffixString(freq);
 			string modStr = RadioMgr::modeString(mode);
-			string muxstring = RadioMgr::muxstring(mux);
 			
 			auto freqCenter =  centerX - (str.size() * 11) + 18;
 			if(precision > 1)  freqCenter += 10*2;
@@ -852,11 +850,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
 			TRY(_vfd.setCursor(modeStart, centerY-3));
 			TRY(_vfd.write(modStr));
-			
-			TRY(_vfd.setFont(VFD::FONT_MINI));
-			TRY(_vfd.setCursor(modeStart+3, centerY+5));
-			TRY(_vfd.write(muxstring));
-			
+						
 			TRY(_vfd.setFont(VFD::FONT_10x14));
 			TRY(_vfd.setCursor( freqCenter ,centerY+5));
 			TRY(_vfd.write(str));
@@ -883,6 +877,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		}
  	}
 	
+	
+	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+	string muxstring = RadioMgr::muxstring(mux);
+	
+	TRY(_vfd.setFont(VFD::FONT_MINI));
+	TRY(_vfd.setCursor(8, centerY+5));
+	TRY(_vfd.write(muxstring));
+
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[16] = {0};

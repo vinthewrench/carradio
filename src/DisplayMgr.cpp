@@ -920,6 +920,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	printf("GPS  %d\n",transition);
 	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+	}
+
 	if(transition == TRANS_LEAVING) {
 		return;
 	}

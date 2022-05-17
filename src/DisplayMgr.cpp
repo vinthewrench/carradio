@@ -807,9 +807,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
 			
 			if(hasRange){
-				int offset =   ( float(freq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+				uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
+ 				int offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
 				
-				printf("freq:%u  min:%u max:%u offset: %d\n", freq, minFreq, maxFreq, offset);
+				printf("freq:%u  min:%u max:%u offset: %d\n", newfreq, minFreq, maxFreq, offset);
 				
 				for (int i = 0 ; i < 24; i++) {
 					_rightRing.setBLUE(23 -i, i == offset ?0xff:0 );

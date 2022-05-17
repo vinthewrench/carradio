@@ -519,6 +519,37 @@ void PiCarMgr::PiCanLoop(){
 				_radio.setFrequencyandMode(mode, newfreq);
 			}
 				
+			if(tunerWasClicked){
+				
+				if(_display->isMenuDisplayed()){
+					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
+				}
+				else{
+					
+					
+					vector<DisplayMgr::menuItem_t> items = {
+						"AM",
+						"FM",
+						"VHF",
+						"GPRS",
+						"-",
+						"GPS",
+						"Time",
+						"Diagnostics",
+						"Settings",
+						"Exit",
+					};
+					
+					_display->showMenuScreen(items, 0, 10,
+													 [=](bool didSucceed, uint selectedItem ){
+						
+						if(didSucceed){
+							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
+						}
+						
+					});
+				}
+			}
 //#if 0
 //			if(wasClicked){
 //				if(_display->isMenuDisplayed()){

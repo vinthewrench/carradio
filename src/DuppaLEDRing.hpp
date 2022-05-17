@@ -35,8 +35,7 @@ public:
 	uint8_t	getDevAddr();
  
 	bool  setConfig(uint8_t b);
-	bool	PWM_MODE(void) ;
-	bool 	PWMFrequencyEnable(uint8_t PWMenable);
+	bool	PWM_MODE(void) ;	bool 	PWMFrequencyEnable(uint8_t PWMenable);
 	bool  SpreadSpectrum(uint8_t spread);
 	bool  SetScaling(uint8_t scal);
 	bool  GlobalCurrent(uint8_t curr);

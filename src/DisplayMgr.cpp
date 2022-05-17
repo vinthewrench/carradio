@@ -62,16 +62,22 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	
 	if(_isSetup) {
 		
+		// Set for normal operation
 		_rightRing.setConfig(0x01);
-		_rightRing.SetScaling(0xFF);
-		_rightRing.GlobalCurrent(010);
-		_rightRing.PWM_MODE();
-
 		_leftRing.setConfig(0x01);
+
+		// full scaling -- control current with global curent
+		_rightRing.SetScaling(0xFF);
 		_leftRing.SetScaling(0xFF);
+
+		// dont fool with this.
+		_rightRing.GlobalCurrent(010);
 		_leftRing.GlobalCurrent(010);
-		_leftRing.PWM_MODE();
- 
+
+		// clear all values
+		_rightRing.clearAll();
+		_rightRing.clearAll();
+		
 		_eventQueue = {};
 		
 		resetMenu();
@@ -565,8 +571,10 @@ void DisplayMgr::drawTimeScreen(bool redraw, bool shouldUpdate){
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
 	
-	if(redraw)
+	if(redraw){
 		_vfd.clearScreen();
+		_leftRing.clearAll();
+	}
 	
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
@@ -618,6 +626,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 	
 	if(redraw){
 		_vfd.clearScreen();
+		_rightRing.clearAll();
 		
 		// draw centered heading
 		_vfd.setFont(VFD::FONT_5x7);
@@ -636,8 +645,11 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
 		
 		// volume LED scales between 1 and 24
-		
-		
+		int ledvol = volume*23;
+		for (int i = 0 ; i < 24; i++) {
+			_rightRing.setGREEN(i, i <= ledvol?0xff:0 );
+		}
+ 
 		
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 		

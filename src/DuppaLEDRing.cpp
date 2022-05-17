@@ -112,7 +112,7 @@ bool DuppaLEDRing::clearAll(void) {
 	bool success = false;
 	
 	if(_i2cPort.isAvailable()
-		&& PWM_MODE()) {
+		&& selectBank(PAGE0)) {
 		
 		for (int i = 1; i < 73; i++) {
 			success = _i2cPort.writeByte(i, 0);
@@ -122,16 +122,7 @@ bool DuppaLEDRing::clearAll(void) {
 	return success;
 	
 }
-
-bool DuppaLEDRing::PWM_MODE(void) {
-	bool success = false;
-	
-	success =	selectBank(PAGE0);
-	
-	return success;
-	
-}
-
+ 
 bool DuppaLEDRing::PWMFrequencyEnable(uint8_t PWMenable) {
 	bool success = false;
 
@@ -204,7 +195,8 @@ bool  DuppaLEDRing::selectBank(uint8_t b){
 bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue ){
 	bool success = false;
 	
-	if(_i2cPort.isAvailable()){
+	if(_i2cPort.isAvailable()
+		&& selectBank(PAGE0) ){
 		success =	_i2cPort.writeByte(issi_led_map[0][led_n], red)
 		&& 	_i2cPort.writeByte(issi_led_map[1][led_n], green)
 		&& 	_i2cPort.writeByte(issi_led_map[2][led_n], blue);
@@ -216,7 +208,8 @@ bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t 
 bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
-	if(_i2cPort.isAvailable()){
+	if(_i2cPort.isAvailable()
+		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[0][led_n], color);
 	}
 	
@@ -226,7 +219,8 @@ bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
-	if(_i2cPort.isAvailable()){
+	if(_i2cPort.isAvailable()
+		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[1][led_n], color);
 	}
 	
@@ -236,7 +230,8 @@ bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 bool  DuppaLEDRing::setBLUE(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
-	if(_i2cPort.isAvailable()){
+	if(_i2cPort.isAvailable()
+		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[2][led_n], color);
 	}
 	

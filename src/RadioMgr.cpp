@@ -303,6 +303,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	return str;
 }
 
+
  RadioMgr::radio_mode_t RadioMgr::stringToMode(string str){
 	 radio_mode_t mode = MODE_UNKNOWN;
 	 

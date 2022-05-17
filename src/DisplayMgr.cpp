@@ -621,7 +621,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		
 		TRY(_vfd.setCursor(64, 55));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
-		sprintf(buffer, "CPU:%dC  ", (int) round(cTemp) );
+		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
 		TRY(_vfd.write(buffer));
 	}
 	
@@ -663,16 +663,9 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	}
 	
 	float volume = 0;
-	
-	
+		
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-		
-		// volume LED scales between 1 and 24
-		int ledvol = volume*23;
-		for (int i = 0 ; i < 24; i++) {
-			_leftRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
-		}
-		
+				
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 		
 		// clear rest of inside of box
@@ -683,15 +676,21 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 			_vfd.writePacket(buff2, sizeof(buff2), 20);
 		}
 		
-		usleep(200000);
+	//	usleep(200000);
 		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
 		// fill volume area box
 		uint8_t buff3[] = {VFD_SET_AREA,
 			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
 		_vfd.writePacket(buff3, sizeof(buff3), 20);
-		
-		usleep(200000);
+	
+		// volume LED scales between 1 and 24
+		int ledvol = volume*23;
+		for (int i = 0 ; i < 24; i++) {
+			_leftRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
+		}
+
+//		usleep(200000);
 		
 		// TRY(_vfd.setCursor(10, 55));
 		// TRY(_vfd.setFont(VFD::FONT_5x7));
@@ -789,6 +788,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
+		_rightRing.clearAll();
 	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time

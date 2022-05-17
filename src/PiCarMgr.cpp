@@ -510,15 +510,22 @@ void PiCarMgr::PiCanLoop(){
 				_display->showVolumeChange();
 			}
 			
-			if(tunerWasMoved && _radio.isOn() ){
-				// change  stations
-				bool shouldConstrain = true;
-				
-				auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
-				auto mode  = _radio.radioMode();
-				_radio.setFrequencyandMode(mode, newfreq);
+			if(tunerWasMoved) {
+				if(_display->isMenuDisplayed()){
+						_display->menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
+			//
+				}
+				else if(_radio.isOn() ){
+						// change  stations
+						bool shouldConstrain = true;
+						
+						auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
+						auto mode  = _radio.radioMode();
+						_radio.setFrequencyandMode(mode, newfreq);
+					}
 			}
-				
+		
+		 
 			if(tunerWasClicked){
 				
 				if(_display->isMenuDisplayed()){

@@ -347,6 +347,30 @@ string  RadioMgr::freqSuffixString(double hz){
 	return "";
 }
 
+
+bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t &maxFreq){
+	bool success = false;
+	
+	switch (mode) {
+		case BROADCAST_AM:
+			minFreq = 530e3;
+			minFreq = 1710e3;
+			success = true;
+			break;
+			
+		case BROADCAST_FM:
+			minFreq = 87.9e6;
+			minFreq = 107.9e6;
+			success = true;
+  			break;
+			 
+		default: ;
+	}
+ 
+	return success;
+}
+
+
 uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
 	
 	uint32_t newfreq = _frequency;

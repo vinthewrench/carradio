@@ -60,10 +60,8 @@ public:
 	static string modeString(radio_mode_t);
 	static radio_mode_t stringToMode(string);
 	static string muxstring(radio_mux_t);
-	//static uint32_t stringToFreq(string);
-	
-	
-	
+	static bool freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t &maxFreq);
+
  	bool setON(bool);
 	bool isOn() {return _isOn;};
 	
@@ -74,7 +72,8 @@ public:
 	radio_mux_t radioMuxMode() {return _mux;};
 
 	uint32_t nextFrequency(bool up, bool constrain = false);
-		
+	
+
 private:
 
 

@@ -676,7 +676,6 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 			_vfd.writePacket(buff2, sizeof(buff2), 20);
 		}
 		
-	//	usleep(200000);
 		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
 		// fill volume area box
 		uint8_t buff3[] = {VFD_SET_AREA,
@@ -688,17 +687,7 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 		int ledvol = volume*23;
 		for (int i = 0 ; i < 24; i++) {
 			_leftRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
-		}
-
-//		usleep(200000);
-		
-		// TRY(_vfd.setCursor(10, 55));
-		// TRY(_vfd.setFont(VFD::FONT_5x7));
-		// char buffer[16] = {0};
-		// sprintf(buffer, "Volume: %.2f  ", volume);
-		// TRY(_vfd.write(buffer));
-		
-		
+		}		
 	}
 }
 
@@ -783,6 +772,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
 	
 	if(transition == TRANS_LEAVING) {
+		_rightRing.clearAll();
 		return;
 	}
 	
@@ -806,6 +796,17 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			RadioMgr::radio_mode_t  mode  = radio->radioMode();
 			RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 			uint32_t 					freq =  radio->frequency();
+			
+			uint32_t 	maxFreq, minFreq;
+			bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
+			
+			if(hasRange){
+				int offset = (int) (float (freq-minFreq)  / float( maxFreq-minFreq) * 23) ;
+				for (int i = 0 ; i < 24; i++) {
+					_rightRing.setBLUE(23 -i, i == offset ?0xff:0 );
+				}
+			}
+		
 			
 			int precision = 0;
 			

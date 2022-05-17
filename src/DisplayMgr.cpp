@@ -647,7 +647,7 @@ void DisplayMgr::drawVolumeScreen(bool redraw, bool shouldUpdate){
 		// volume LED scales between 1 and 24
 		int ledvol = volume*23;
 		for (int i = 0 ; i < 24; i++) {
-			_rightRing.setGREEN(i, i <= ledvol?0xff:0 );
+			_rightRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
 		}
  
 		

@@ -1,7 +1,7 @@
 {
 	 "cputemp-query-delay": 4,
  
-	 "last_radio_mode":"GMRS",
+	 "last_radio_mode":"FM",
 	 "last_radio_modes" : [
 		 {"mode" :"VHF", "freq": 155805000} ,
 		 {"mode" :"FM", "freq":  101500000} ,

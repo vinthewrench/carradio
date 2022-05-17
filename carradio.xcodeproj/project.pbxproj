@@ -12,7 +12,6 @@
 		2E62A8622807375300F5066B /* TMP117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A85D2807375300F5066B /* TMP117.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
-		2E62A8712807908900F5066B /* QwiicTwist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */; };
 		2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */; };
 		2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8E92817008500F5066B /* DisplayMgr.cpp */; };
 		2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F02822E16900F5066B /* RadioMgr.cpp */; };
@@ -21,8 +20,10 @@
 		2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */; };
 		2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A907282465B500F5066B /* AudioOutput.cpp */; };
 		2E821034282884B1003D074C /* carradio.props.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E8210332828848E003D074C /* carradio.props.json */; };
-		2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E82103B28298A5A003D074C /* QTKnob.cpp */; };
 		2E821040282AC43D003D074C /* stations.tsv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E82103F282AC43A003D074C /* stations.tsv */; };
+		2E82106E2833EF5D003D074C /* DuppaLEDRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E82106B2833EF5C003D074C /* DuppaLEDRing.cpp */; };
+		2E82106F2833EF5D003D074C /* DuppaEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E82106C2833EF5C003D074C /* DuppaEncoder.cpp */; };
+		2E8210722833EFA6003D074C /* DuppaKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210702833EFA6003D074C /* DuppaKnob.cpp */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
@@ -59,8 +60,6 @@
 		2E62A868280738BA00F5066B /* VFD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VFD.cpp; sourceTree = "<group>"; };
 		2E62A869280738BA00F5066B /* VFD.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VFD.hpp; sourceTree = "<group>"; };
 		2E62A86B28073C4300F5066B /* CommonDefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CommonDefs.hpp; sourceTree = "<group>"; };
-		2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QwiicTwist.cpp; sourceTree = "<group>"; };
-		2E62A87028078D9F00F5066B /* QwiicTwist.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QwiicTwist.hpp; sourceTree = "<group>"; };
 		2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MicroNMEA.cpp; sourceTree = "<group>"; };
 		2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MicroNMEA.hpp; sourceTree = "<group>"; };
 		2E62A8E92817008500F5066B /* DisplayMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayMgr.cpp; sourceTree = "<group>"; };
@@ -82,9 +81,13 @@
 		2E8210332828848E003D074C /* carradio.props.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = carradio.props.json; path = Assets/carradio.props.json; sourceTree = "<group>"; };
 		2E82103528296D95003D074C /* PropValKeys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PropValKeys.hpp; sourceTree = "<group>"; };
 		2E82103928298734003D074C /* RotaryKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotaryKnob.hpp; sourceTree = "<group>"; };
-		2E82103B28298A5A003D074C /* QTKnob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QTKnob.cpp; sourceTree = "<group>"; };
-		2E82103C28298A5A003D074C /* QTKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QTKnob.hpp; sourceTree = "<group>"; };
 		2E82103F282AC43A003D074C /* stations.tsv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stations.tsv; path = Assets/stations.tsv; sourceTree = "<group>"; };
+		2E82106A2833EF5C003D074C /* DuppaLEDRing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DuppaLEDRing.hpp; sourceTree = "<group>"; };
+		2E82106B2833EF5C003D074C /* DuppaLEDRing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DuppaLEDRing.cpp; sourceTree = "<group>"; };
+		2E82106C2833EF5C003D074C /* DuppaEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DuppaEncoder.cpp; sourceTree = "<group>"; };
+		2E82106D2833EF5C003D074C /* DuppaEncoder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DuppaEncoder.hpp; sourceTree = "<group>"; };
+		2E8210702833EFA6003D074C /* DuppaKnob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DuppaKnob.cpp; sourceTree = "<group>"; };
+		2E8210712833EFA6003D074C /* DuppaKnob.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DuppaKnob.hpp; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -166,8 +169,12 @@
 				2E9F9EAD282879C100E12F5D /* CPUInfo.cpp */,
 				2E9F9EAE282879C100E12F5D /* CPUInfo.hpp */,
 				2E82103928298734003D074C /* RotaryKnob.hpp */,
-				2E82103C28298A5A003D074C /* QTKnob.hpp */,
-				2E82103B28298A5A003D074C /* QTKnob.cpp */,
+				2E8210712833EFA6003D074C /* DuppaKnob.hpp */,
+				2E8210702833EFA6003D074C /* DuppaKnob.cpp */,
+				2E82106C2833EF5C003D074C /* DuppaEncoder.cpp */,
+				2E82106D2833EF5C003D074C /* DuppaEncoder.hpp */,
+				2E82106B2833EF5C003D074C /* DuppaLEDRing.cpp */,
+				2E82106A2833EF5C003D074C /* DuppaLEDRing.hpp */,
 				2E9F9EA92828777200E12F5D /* TempSensor.cpp */,
 				2E9F9EAA2828777200E12F5D /* TempSensor.hpp */,
 				2E62A85D2807375300F5066B /* TMP117.cpp */,
@@ -176,8 +183,6 @@
 				2E62A85C2807375300F5066B /* I2C.hpp */,
 				2E62A868280738BA00F5066B /* VFD.cpp */,
 				2E62A869280738BA00F5066B /* VFD.hpp */,
-				2E62A86F28078D9F00F5066B /* QwiicTwist.cpp */,
-				2E62A87028078D9F00F5066B /* QwiicTwist.hpp */,
 				2E62A86B28073C4300F5066B /* CommonDefs.hpp */,
 				2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */,
 				2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */,
@@ -286,13 +291,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E62A86A280738BA00F5066B /* VFD.cpp in Sources */,
+				2E82106E2833EF5D003D074C /* DuppaLEDRing.cpp in Sources */,
 				2E62A8622807375300F5066B /* TMP117.cpp in Sources */,
 				2E9F9EAF282879C100E12F5D /* CPUInfo.cpp in Sources */,
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
+				2E82106F2833EF5D003D074C /* DuppaEncoder.cpp in Sources */,
+				2E8210722833EFA6003D074C /* DuppaKnob.cpp in Sources */,
 				2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */,
-				2E82103D28298A5A003D074C /* QTKnob.cpp in Sources */,
 				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
 				2E62A909282465B500F5066B /* AudioOutput.cpp in Sources */,
 				2E62A8612807375300F5066B /* I2C.cpp in Sources */,
@@ -303,7 +310,6 @@
 				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,
 				2E9F9EAB2828777200E12F5D /* TempSensor.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
-				2E62A8712807908900F5066B /* QwiicTwist.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

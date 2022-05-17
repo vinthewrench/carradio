@@ -18,7 +18,7 @@
 
 
 //#define GU128x64D  1
-#define GU126x64F  1
+#define GU128x64D  1
 
 using namespace std;
 

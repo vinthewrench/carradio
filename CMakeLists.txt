@@ -44,7 +44,8 @@ set(SOURCES
 	src/ErrorMgr.cpp
 	src/I2C.cpp
 	src/TMP117.cpp
-	src/QTKnob.cpp
+	src/DuppaEncoder.cpp
+	src/DuppaLEDRing.cpp
 	src/QwiicTwist.cpp
 	src/VFD.cpp
 	src/DisplayMgr.cpp

@@ -426,18 +426,14 @@ void PiCarMgr::PiCanLoop(){
 			bool tunerWasClicked = false;
 			bool tunerWasMoved 	= false;
 	
-#if 1
+			_volKnob.updateStatus();
 			volWasClicked = _volKnob.wasClicked();
-//			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
-			tunerWasMoved 	= _volKnob.wasMoved(tunerMovedUp);
-
-#else
-			tunerWasClicked = _volKnob.wasClicked();
-			tunerWasMoved 	= _volKnob.wasMoved(tunerMovedUp);
-
-#endif
+			volWasMoved = 	_volKnob.wasMoved(volMovedUp);
 			
-	 
+			_tunerKnob.updateStatus();
+			tunerWasClicked = _tunerKnob.wasClicked();
+			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedUp);
+
 			// --check if any events need processing else wait for a timeout
 			struct timespec ts = {0, 0};
 			clock_gettime(CLOCK_REALTIME, &ts);
@@ -739,18 +735,22 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 	bool didSucceed = false;
 
 	
-	uint8_t deviceAddress = 0x3F;
+	uint8_t leftAddress = 0x40;
+	uint8_t rightAddress = 0x41;
  
-	didSucceed =  _volKnob.begin(deviceAddress, errnum);
-//   _tunerKnob.begin(deviceAddress, errnum);
 	
-	if(didSucceed){
+	didSucceed =  _volKnob.begin(leftAddress, errnum)
+			&&  	 _tunerKnob.begin(rightAddress, errnum);
+	
 	 
+	if(didSucceed) {
+ 		_volKnob.setColor(0, 255, 0);
+		_tunerKnob.setColor(0, 0, 255);
+
 	}
 	else {
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, deviceAddress, errnum,  "Start Controls");
+		ELOG_MESSAGE("Could not start control knobs");
 	}
-	
 	
 	if(cb)
 		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
@@ -759,7 +759,7 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 
 void PiCarMgr::stopControls(){
 	_volKnob.stop();
-	
+	_tunerKnob.stop();
 }
 
 

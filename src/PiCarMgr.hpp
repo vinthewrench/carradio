@@ -31,7 +31,7 @@
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
-#include "QTKnob.hpp"
+#include "DuppaKnob.hpp"
 #include "json.hpp"
 
 using namespace std;
@@ -125,8 +125,8 @@ private:
 	PiCarDB 				_db;
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
-	QTKnob				_volKnob;
-	QTKnob				_tunerKnob;
+	DuppaKnob			_volKnob;
+	DuppaKnob			_tunerKnob;
 
 };
 

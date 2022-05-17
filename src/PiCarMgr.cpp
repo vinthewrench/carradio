@@ -552,6 +552,27 @@ void PiCarMgr::PiCanLoop(){
 						
 						if(didSucceed){
 							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
+							
+							switch(selectedItem){
+								case 1: { // FM
+									
+									RadioMgr::radio_mode_t mode ;
+									uint32_t freq;
+					
+									getSavedFrequencyandMode(mode,freq);
+									_radio.setFrequencyandMode(mode, freq);
+									_radio.setON(true);
+								}
+									break;
+									
+								case 5: { // GPS
+									_display->showGPS();
+									
+								}
+									break;
+									
+							};
+	
 						}
 						
 					});

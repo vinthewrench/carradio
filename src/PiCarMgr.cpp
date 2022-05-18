@@ -26,7 +26,7 @@ const char* path_display  = "/dev/ttyUSB0";
 #if defined(__APPLE__)
 const char* path_gps  = "/dev/cu.usbmodem14101";
 #else
-const char* path_gps  = "/dev/ttyUSB0";
+const char* path_gps  = "/dev/ttyACM0";
 #endif
 
 

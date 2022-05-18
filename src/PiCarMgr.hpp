@@ -28,6 +28,8 @@
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 #include "RadioMgr.hpp"
+#include "GPSmgr.hpp"
+
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
@@ -123,6 +125,7 @@ private:
 	AudioOutput 		_audio;
 	RadioMgr				_radio;
 	PiCarDB 				_db;
+	GPSmgr				_gps;
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
 	DuppaKnob			_volKnob;

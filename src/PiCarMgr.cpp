@@ -21,7 +21,15 @@ using namespace Utils;
 const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
 
 
-const char* dev_display  = "/dev/ttyUSB0";
+const char* path_display  = "/dev/ttyUSB0";
+
+#if defined(__APPLE__)
+const char* path_gps  = "/dev/cu.usbmodem14101";
+#else
+const char* path_gps  = "/dev/ttyUSB0";
+#endif
+
+
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 const char* dev_audio  = "default";
 
@@ -70,6 +78,8 @@ bool PiCarMgr::begin(){
 	_isSetup = false;
 		
 	try {
+		int error = 0;
+		
   		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		
@@ -103,9 +113,12 @@ bool PiCarMgr::begin(){
 
 		if(!_radio.begin(devices[0].index, pcmrate))
 			throw Exception("failed to setup Radio ");
-	
+	 
+		if(!_gps.begin(path_gps,B9600, error))
+			throw Exception("failed to setup GPS ", error);
+
 		// setup display device
-		if(!_display->begin(dev_display,B9600))
+		if(!_display->begin(path_display,B9600))
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?

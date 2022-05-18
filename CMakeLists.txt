@@ -60,7 +60,11 @@ set(SOURCES
 	src/PiCarMgr.cpp
 	src/TempSensor.cpp
 	src/TimeStamp.cpp
-#	src/MicroNMEA.cpp
+	
+	src/GPSmgr.cpp
+	src/tranmerc.cpp
+	src/utm.cpp
+	src/MicroNMEA.cpp
 	)
 
  

@@ -184,7 +184,8 @@ MicroNMEA::MicroNMEA(void) :
   _talkerID('\0'),
   _messageID{0},
   _badChecksumHandler(nullptr),
-  _unknownSentenceHandler(nullptr)
+  _unknownSentenceHandler(nullptr),
+  _context(nullptr)
 {
   setBuffer(nullptr, 0);
   clear();
@@ -192,15 +193,28 @@ MicroNMEA::MicroNMEA(void) :
 
 
 MicroNMEA::MicroNMEA(void* buf, uint8_t len) :
-  _talkerID('\0'),
-  _messageID{0},
-  _badChecksumHandler(nullptr),
-  _unknownSentenceHandler(nullptr)
+_talkerID('\0'),
+_messageID{0},
+_badChecksumHandler(nullptr),
+_unknownSentenceHandler(nullptr),
+_context(nullptr)
 {
-  setBuffer(buf, len);
-  clear();
+	setBuffer(buf, len);
+	clear();
 }
 
+MicroNMEA::MicroNMEA(void* buf, uint8_t len, void* ctx) :
+_talkerID('\0'),
+_messageID{0},
+_badChecksumHandler(nullptr),
+_unknownSentenceHandler(nullptr),
+_context(nullptr)
+{
+	setBuffer(buf, len);
+	_context = ctx;
+	clear();
+}
+ 
 
 void MicroNMEA::setBuffer(void* buf, uint8_t len)
 {
@@ -231,6 +245,7 @@ void MicroNMEA::clear(void)
 }
 
 
+
 bool MicroNMEA::process(char c)
 {
   if (_buffer == nullptr || _bufferLen == 0)
@@ -256,12 +271,23 @@ bool MicroNMEA::process(char c)
 		  return processGGA(data);
 		else if (data != nullptr && strcmp(&_messageID[0], "RMC") == 0)
 		  return processRMC(data);
+		 
+//		 /* new sentences -- VINNIE */
+//		else if (data != nullptr && strcmp(&_messageID[0], "GSV") == 0)
+//		  return processGSV(data);
+//		else if (data != nullptr && strcmp(&_messageID[0], "VTG") == 0)
+//		  return processVTG(data);
+//		else if (data != nullptr && strcmp(&_messageID[0], "GSA") == 0)
+//		  return processGSA(data);
+//		else if (data != nullptr && strcmp(&_messageID[0], "GLL") == 0)
+//		  return processGLL(data);
+
 		else if (_unknownSentenceHandler)
-		  (*_unknownSentenceHandler)(*this);
+		  (*_unknownSentenceHandler)(*this, _context);
 	 }
 	 else {
 		if (_badChecksumHandler && *_buffer != '\0') // don't send empty buffers as bad checksums!
-		  (*_badChecksumHandler)(*this);
+		  (*_badChecksumHandler)(*this, _context);
 	 }
 	 // Return true for a complete, non-empty, sentence (even if not a valid one).
 	 return *_buffer != '\0'; //
@@ -397,3 +423,30 @@ bool MicroNMEA::processRMC(const char* s)
   // That's all we care about
   return true;
 }
+
+/* new sentences fill in later -- VINNIE */
+
+bool MicroNMEA::processGSV(const char *s)
+{
+	return false;
+}
+
+
+bool MicroNMEA::processVTG(const char *s)
+{
+	 
+	
+	return false;
+}
+
+bool MicroNMEA::processGSA(const char *s)
+{
+	return false;
+}
+
+bool MicroNMEA::processGLL(const char *s)
+{
+	return false;
+}
+
+ 

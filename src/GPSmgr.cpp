@@ -7,6 +7,8 @@
 
 #include "GPSmgr.hpp"
 #include <fcntl.h>
+#include <cassert>
+
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
  

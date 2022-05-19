@@ -615,6 +615,8 @@ void PiCarMgr::PiCanLoop(){
 									
 									uint32_t freq;
 					
+								
+									
 									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
 										uint32_t maxFreq;
 										

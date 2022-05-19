@@ -176,6 +176,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	if(!_isSetup)
 		return false;
 	
+	printf("setFrequencyandMode(%s %u)\n", modeString(newMode).c_str(), newFreq);
 	
 	if(newMode){
 		// SOMETHING ABOUT MODES HERE?

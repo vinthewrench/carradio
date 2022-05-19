@@ -896,8 +896,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 }
 
 void DisplayMgr::drawDiagScreen(modeTransition_t transition){
-	printf("displayDiagScreen %d\n",transition);
+//	printf("displayDiagScreen %d\n",transition);
 	
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+	}
+
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
@@ -909,8 +914,13 @@ void DisplayMgr::drawDiagScreen(modeTransition_t transition){
 
 void DisplayMgr::drawInternalError(modeTransition_t transition){
 	
-	printf("displayInternalError  %d\n",transition);
+//	printf("displayInternalError  %d\n",transition);
 	
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+	}
+
 	if(transition == TRANS_LEAVING) {
 		return;
 	}

@@ -610,12 +610,12 @@ void PiCarMgr::PiCanLoop(){
 									
 									uint32_t freq;
 					
-									if( ! getSavedFrequencyForMode(RadioMgr::GPRS , freq) ){
+									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
 										uint32_t maxFreq;
-										RadioMgr:: freqRangeOfMode(RadioMgr::GPRS, freq,maxFreq );
+										RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
 									}
 									
-									_radio.setFrequencyandMode(RadioMgr::GPRS, freq);
+									_radio.setFrequencyandMode(RadioMgr::GMRS, freq);
 									_radio.setON(true);
 								}
 								break;

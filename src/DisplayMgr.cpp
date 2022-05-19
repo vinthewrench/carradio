@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <algorithm>
+#include "Utils.hpp"
 
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
@@ -936,12 +937,19 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	string utm; 
 	if(db->getStringValue(GPS_UTM, utm)) {
 		
+		vector<string> v = split<string>(utm, " ");
+ 
 		char buffer[64] = {0};
-		sprintf(buffer, "UTM: %-20s ",utm.c_str());
+		sprintf(buffer, "%-3s",v[0].c_str());
 		
-		TRY(_vfd.setCursor(10,20));
- 		TRY(_vfd.write(buffer));
+		TRY(_vfd.setCursor(10,30));
+		TRY(_vfd.write(buffer));
 
-	}
+		TRY(_vfd.setCursor(30,30));
+		TRY(_vfd.write(v[1]));
+
+		TRY(_vfd.setCursor(30,40));
+		TRY(_vfd.write(v[2]));
+ 	}
 	
 }

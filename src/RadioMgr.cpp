@@ -368,7 +368,19 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			maxFreq = 107.9e6;
 			success = true;
   			break;
-			 
+
+		case GMRS:
+			minFreq = 462550000;
+			maxFreq = 467725000;
+			success = true;
+			break;
+			
+		case VHF:
+			minFreq = 30000000;
+			maxFreq = 300000000;
+			success = true;
+			break;
+
 		default: ;
 	}
  

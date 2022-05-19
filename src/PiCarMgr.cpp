@@ -541,7 +541,7 @@ void PiCarMgr::PiCanLoop(){
 				}
 				else if(_radio.isOn() ){
 						// change  stations
-						bool shouldConstrain = true;
+						bool shouldConstrain = _radio.radioMode() == RadioMgr::BROADCAST_FM;
 						
 						auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
 						auto mode  = _radio.radioMode();

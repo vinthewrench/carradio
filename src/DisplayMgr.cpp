@@ -275,11 +275,11 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			
 			auto lastLine = _menuCursor + maxLines;
 			
-			if(i == _menuCursor && _menuCursor != 0) moreIndicator = (char*)"+";
-			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = (char*) "v";
+			if(i == _menuCursor && _menuCursor != 0) moreIndicator = (char*)"\xbc";
+			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = (char*) "\xbd";
 			TRY(_vfd.setCursor(0,cursorV));
 			
-			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?">":" ", _menuItems[i].c_str(), moreIndicator);
+			sprintf(buffer, "%s %-20s %s",  i == _currentMenuItem?"\xb9":" ", _menuItems[i].c_str(), moreIndicator);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

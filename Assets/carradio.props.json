@@ -5,7 +5,7 @@
 	 "last_radio_modes" : [
 		 {"mode" :"VHF", "freq": 155805000} ,
 		 {"mode" :"FM", "freq":  101500000} ,
-		 {"mode" :"AM", "freq":	  144000} ,
+		 {"mode" :"AM", "freq":	  1440000} ,
 		 {"mode" :"GMRS", "freq":  462562500} ],
 
 	 "audio_setting" : {

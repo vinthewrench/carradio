@@ -950,7 +950,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("Global Position System"));
+	TRY(_vfd.write("Global Position"));
 	
 	GPSLocation_t location;
 	if(gps->GetLocation(location)){
@@ -978,12 +978,13 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		sprintf(buffer, "Nav:%c Sats:%2d Hdop:%1f",
 				  location.navSystem, location.numSat, location.HDOP/10.);
+		TRY(_vfd.setFont(VFD::FONT_MINI));
 		TRY(_vfd.setCursor(0,60));
 		TRY(_vfd.write(buffer));
  	}
 	else {
-		TRY(_vfd.setCursor(20,22));
-		TRY(_vfd.write("-- No Data --"));
+//		TRY(_vfd.setCursor(20,22));
+//		TRY(_vfd.write("-- No Data --"));
 
 	}
 }

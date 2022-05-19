@@ -942,14 +942,25 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		char buffer[64] = {0};
 		sprintf(buffer, "%-3s",v[0].c_str());
 		
-		TRY(_vfd.setCursor(10,30));
+		TRY(_vfd.setCursor(10,20));
 		TRY(_vfd.write(buffer));
 
-		TRY(_vfd.setCursor(30,30));
+		TRY(_vfd.setCursor(30,20));
 		TRY(_vfd.write(v[1]));
 
-		TRY(_vfd.setCursor(30,40));
+		TRY(_vfd.setCursor(30,30));
 		TRY(_vfd.write(v[2]));
+		
+		float altitude;
+		if(db->getFloatValue(GPS_ALTITUDE, altitude)){
+			
+			char buffer[64] = {0};
+			sprintf(buffer, "Alt: %.1f ",altitude);
+			
+			TRY(_vfd.setCursor(10,40));
+			TRY(_vfd.write(buffer));
+		}
+		
  	}
 	
 }

@@ -216,8 +216,7 @@ void GPSmgr::processNMEA(){
 			
 			double latRad = (PI/180.) * (_nmea.getLatitude() / 1e6);
 			double lonRad = (PI/180.) * (_nmea.getLongitude() / 1e6);
-			
-			
+				
 			if( Convert_Geodetic_To_UTM(latRad, lonRad,
 												 &Zone,&latBand, &Hemisphere, &Easting, &Northing ) == UTM_NO_ERROR){
 	 
@@ -225,8 +224,13 @@ void GPSmgr::processNMEA(){
 				sprintf(utmBuffer,  "%d%c %ld %ld", (int)Zone, latBand, (long) Easting, (long) Northing);
 					
 				db->updateValue(GPS_UTM, string(utmBuffer));
-			 
-
+	
+				if(_nmea.getAltitude(altitude) ) {
+					db->updateValue(GPS_ALTITUDE,  to_string(altitude));
+ 				}
+				
+				db->updateValue(GPS_GGA_NAVSYSTEM, to_string(_nmea.getNavSystem()));
+				
 //				printf("GGA [%c] ", _nmea.getNavSystem());
 //				printf("  UTM %s  ", utmBuffer);
 //

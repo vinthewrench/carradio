@@ -240,7 +240,7 @@ bool	GPSmgr::GetLocation(GPSLocation_t & location){
 	return success;
 }
 
-// MARK: -  GPSReader thread
+// MARK: -  Utilities
  
 
 string GPSmgr::UTMString(GPSLocation_t location){
@@ -269,6 +269,20 @@ string GPSmgr::UTMString(GPSLocation_t location){
 	
 }
 
+string NavString(char navSystem ){
+	string str = string();
+	switch(navSystem){
+		case 'N' : str = "GNSS"; break;
+		case 'P' : str = "GPS"; break;
+		case 'L' : str = "GLONASS"; break;
+		case 'A' : str = "Galileo"; break;
+		default: break;
+ 	}
+	
+		return str;
+}
+
+// MARK: -  GPSReader thread
 
 
 // call then when _nmea.process  is true

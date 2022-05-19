@@ -102,6 +102,7 @@ public:
 
 	bool GetLocation(GPSLocation_t& location);
 	static string UTMString(GPSLocation_t location);
+	static string NavString(char navSystem );
 	
 private:
 	bool 				_isSetup = false;

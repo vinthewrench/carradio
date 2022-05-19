@@ -625,7 +625,7 @@ void PiCarMgr::PiCanLoop(){
 											RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
 									}
 									
-									_radio.setFrequencyandMode(RadioMgr::GMRS, freq true);
+									_radio.setFrequencyandMode(RadioMgr::GMRS, freq, true);
 									_radio.setON(true);
 								}
 								break;

@@ -110,6 +110,9 @@ bool RadioMgr::setON(bool isOn) {
 	if(!_isSetup)
 		return false;
 	
+	if(isOn == _isOn)
+		return true;
+	
 	_isOn = isOn;
 	
 	db->updateValue(VAL_RADIO_ON, isOn);

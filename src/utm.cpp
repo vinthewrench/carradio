@@ -295,13 +295,13 @@ long Convert_Geodetic_To_UTM(double Latitude,
 
 			  int latz = 0;//Latitude zone: A-B S of -80, C-W -80 to +72, X 72-84, Y,Z N of 84
  
-			  if (Latitude > -80 && Latitude < 72) {
-					latz = floor((Latitude + 80)/8)+2;
+			  if (Lat_Degrees > -80 && Lat_Degrees < 72) {
+					latz = floor((Lat_Degrees + 80)/8)+2;
 			  }
-			  if (Latitude > 72 && Latitude < 84) {
+			  if (Lat_Degrees > 72 && Lat_Degrees < 84) {
 					latz = 21;
 			  }
-			  if (Latitude > 84){
+			  if (Lat_Degrees > 84){
 					latz = 23;
 			  }
 

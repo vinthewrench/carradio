@@ -960,19 +960,19 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		char buffer[64] = {0};
 		
 		sprintf(buffer, "%-3s",v[0].c_str());
-		TRY(_vfd.setCursor(20,22));
+		TRY(_vfd.setCursor(20,25));
 		TRY(_vfd.write(buffer));
 		
-		TRY(_vfd.setCursor(40,22));
+		TRY(_vfd.setCursor(40,25));
 		TRY(_vfd.write(v[1]));
 		
-		TRY(_vfd.setCursor(40,32));
+		TRY(_vfd.setCursor(40,35));
 		TRY(_vfd.write(v[2]));
 		
  		if(location.altitudeIsValid)  {
 #define M2FT 	3.2808399
 			sprintf(buffer, "%.1f ft",location.altitude * M2FT);
-			TRY(_vfd.setCursor(20,45));
+			TRY(_vfd.setCursor(20,48));
 			TRY(_vfd.write(buffer));
 		}
 		

@@ -54,6 +54,10 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		throw Exception("failed to setup LEDrings ");
 	}
 	
+	// flip the ring numbers
+	_rightRing.setOffset(0,true);
+	_leftRing.setOffset(2, true);		// slight offset for volume control of zero
+	
 	if( _vfd.reset()
 		&& _rightRing.reset()
 		&& _leftRing.reset()
@@ -692,7 +696,7 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 		// volume LED scales between 1 and 24
 		int ledvol = volume*23;
 		for (int i = 0 ; i < 24; i++) {
-			_leftRing.setGREEN(23 -i, i <= ledvol?0xff:0 );
+			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 		}		
 	}
 }
@@ -819,7 +823,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
  				int offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
 				
 				for (int i = 0 ; i < 24; i++) {
-					_rightRing.setBLUE(23 -i, i == offset ?0xff:0 );
+					_rightRing.setBLUE(i, i == offset ?0xff:0 );
 				}
 				
 				didSetRing = true;
@@ -907,7 +911,9 @@ void DisplayMgr::drawDiagScreen(modeTransition_t transition){
 		return;
 	}
 	
-	TRY(_vfd.write("Diagnostics"));
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+   TRY(_vfd.write("Diagnostics"));
 	
 }
 

@@ -66,7 +66,8 @@ bool DuppaLEDRing::begin(uint8_t deviceAddress,  int &error){
 	if( _i2cPort.begin(deviceAddress, error)
 		&& setConfig(0x01) //Normal operation
 		) {
-		
+		_ledOffset = 0;
+		_flipOffset = false;
 		_isSetup = true;
 	}
 	
@@ -192,9 +193,21 @@ bool  DuppaLEDRing::selectBank(uint8_t b){
 	return success;
 }
 
+
+uint8_t DuppaLEDRing::ledFromOffset(uint8_t led_n){
+	
+	led_n += _ledOffset;
+	led_n = led_n % 24;
+	if(_flipOffset) led_n = 23-led_n;
+	
+	return led_n;
+}
+
 bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue ){
 	bool success = false;
-	
+ 
+	led_n = ledFromOffset(led_n);
+
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0) ){
 		success =	_i2cPort.writeByte(issi_led_map[0][led_n], red)
@@ -208,6 +221,8 @@ bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t 
 bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
+	led_n = ledFromOffset(led_n);
+	
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[0][led_n], color);
@@ -219,6 +234,8 @@ bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
+	led_n = ledFromOffset(led_n);
+
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[1][led_n], color);
@@ -230,6 +247,8 @@ bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 bool  DuppaLEDRing::setBLUE(uint8_t led_n, uint8_t color){
 	bool success = false;
 	
+	led_n = ledFromOffset(led_n);
+
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[2][led_n], color);

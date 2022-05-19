@@ -49,7 +49,7 @@ public:
 		RMAX = 0x20,
 		RMIN = 0x40,
 		INT_2 = 0x80,
- 	};
+	};
 
 	DuppaEncoder();
 	~DuppaEncoder();

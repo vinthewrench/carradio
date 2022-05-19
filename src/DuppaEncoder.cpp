@@ -91,9 +91,9 @@ bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf,  int &error){
 				_clockstrech = 1;
 			
 			_isSetup = true;
- 		}
- 	}
- 	return _isSetup;
+		}
+	}
+	return _isSetup;
 }
 
 void DuppaEncoder::stop(){

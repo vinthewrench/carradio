@@ -686,7 +686,7 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 			_vfd.writePacket(buff2, sizeof(buff2), 20);
 		}
 		
-		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
+		 printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
 		// fill volume area box
 		uint8_t buff3[] = {VFD_SET_AREA,
 			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),

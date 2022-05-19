@@ -308,7 +308,7 @@ bool PiCarMgr::getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &
 	bool success = false;
 
 	if( _lastFreqForMode.count(mode)){
- 	  freqOut =  _lastFreqForMode[_lastRadioMode];
+ 	  freqOut =  _lastFreqForMode[mode];
 		success = true;
   }
   
@@ -556,7 +556,6 @@ void PiCarMgr::PiCanLoop(){
 					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
 				}
 				else{
-					
 					
 					vector<DisplayMgr::menuItem_t> items = {
 						"AM",

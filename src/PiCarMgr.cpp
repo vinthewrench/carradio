@@ -587,7 +587,7 @@ void PiCarMgr::PiCanLoop(){
 										RadioMgr:: freqRangeOfMode(RadioMgr::BROADCAST_FM, freq,maxFreq );
 									}
 				 					
-									_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM, freq);
+									_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM, freq, true);
 									_radio.setON(true);
 	 							}
 								break;
@@ -606,7 +606,7 @@ void PiCarMgr::PiCanLoop(){
 											RadioMgr:: freqRangeOfMode(RadioMgr::VHF, freq,maxFreq );
 									}
 									
-									_radio.setFrequencyandMode(RadioMgr::VHF, freq);
+									_radio.setFrequencyandMode(RadioMgr::VHF, freq, true);
 									_radio.setON(true);
 								}
 								break;
@@ -614,8 +614,6 @@ void PiCarMgr::PiCanLoop(){
 								case 3: { // GMRS
 									
 									uint32_t freq;
-					
-								
 									
 									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
 										uint32_t maxFreq;
@@ -627,7 +625,7 @@ void PiCarMgr::PiCanLoop(){
 											RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
 									}
 									
-									_radio.setFrequencyandMode(RadioMgr::GMRS, freq);
+									_radio.setFrequencyandMode(RadioMgr::GMRS, freq true);
 									_radio.setON(true);
 								}
 								break;

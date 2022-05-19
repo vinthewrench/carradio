@@ -580,65 +580,48 @@ void PiCarMgr::PiCanLoop(){
 							_db.savePropertiesToFile();
 
 							switch(selectedItem){
-								case 1: { // FM
+								case 0:
+								case 1:   // FM
+								case 2:   // VHF
+								case 3:   // GMRS
+								{
 									
-		 							uint32_t freq;
-					
-									if( ! getSavedFrequencyForMode(RadioMgr::BROADCAST_FM , freq) ){
-										uint32_t maxFreq;
-										RadioMgr:: freqRangeOfMode(RadioMgr::BROADCAST_FM, freq,maxFreq );
-									}
-				 					
-									_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM, freq, true);
-									_radio.setON(true);
-	 							}
-								break;
-									
-								case 2: { // VHF
-									
+									RadioMgr::radio_mode_t  mode = RadioMgr::MODE_UNKNOWN;
 									uint32_t freq;
-					
-									if( ! getSavedFrequencyForMode(RadioMgr::VHF , freq) ){
-										uint32_t maxFreq;
-										
-										if(_stations.count(RadioMgr::VHF)){
-											auto info  = _stations[RadioMgr::VHF].front();
-											freq = info.frequency;
-		 								} else
-											RadioMgr:: freqRangeOfMode(RadioMgr::VHF, freq,maxFreq );
+									switch(selectedItem){
+										case 0: mode = RadioMgr::BROADCAST_AM; break;
+										case 1: mode = RadioMgr::BROADCAST_FM; break;
+										case 2: mode = RadioMgr::VHF; break;
+										case 3: mode = RadioMgr::GMRS; break;
+										default: break;
 									}
 									
-									_radio.setFrequencyandMode(RadioMgr::VHF, freq, true);
+						 
+									if( ! getSavedFrequencyForMode(mode, freq) ){
+										uint32_t maxFreq;
+										RadioMgr:: freqRangeOfMode(mode, freq,maxFreq );
+									}
+									
+									_radio.setFrequencyandMode(mode, freq, true);
 									_radio.setON(true);
 								}
 								break;
-
-								case 3: { // GMRS
-									
-									uint32_t freq;
-									
-									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
-										uint32_t maxFreq;
-										
-										if(_stations.count(RadioMgr::GMRS)){
-											auto info  = _stations[RadioMgr::GMRS].front();
-											freq = info.frequency;
-										} else
-											RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
-									}
-									
-									_radio.setFrequencyandMode(RadioMgr::GMRS, freq, true);
-									_radio.setON(true);
-								}
-								break;
-
-									
+ 
 								case 5: { // GPS
 									_display->showGPS();
+ 								}
+									break;
 									
+								case 6: { // GPS
+									_display->showTime();
 								}
 									break;
 									
+								case 7: { // DIAG
+									_display->showDiag();
+								}
+									break;
+
 							};
 	
 						}
@@ -646,136 +629,7 @@ void PiCarMgr::PiCanLoop(){
 					});
 				}
 			}
-//#if 0
-//			if(wasClicked){
-//				if(_display->isMenuDisplayed()){
-//					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
-//				}
-//				else{
-//
-//
-//					vector<DisplayMgr::menuItem_t> items = {
-//						"AM",
-//						"FM",
-//						"VHF",
-//						"GPRS",
-//						"-",
-//						"GPS",
-//						"Time",
-//						"Diagnostics",
-//						"Settings",
-//						"Exit",
-//					};
-//
-//					_display->showMenuScreen(items, 0, 10,
-//													[=](bool didSucceed, uint selectedItem ){
-//
-//						if(didSucceed){
-//							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
-//						}
-//
-//					});
-//				}
-//			}
-//
-//#else
-//			// handle the fast stuff
-//			if(wasClicked){
-//				bool isOn = _radio.isOn();
-//
-//				if(isOn){
-//					// just turn it off
-//					_radio.setON(false);
-//
-//					// turn it off forces save of stations.
-//					saveRadioSettings();
-//					_db.savePropertiesToFile();
-// 				}
-//				else {
-//					// if it has no setting we need to create something
-//
-//					_radio.setON(isOn);
-//				}
-////				_radio.setON(!isOn);
-////				saveRadioSettings();
-////				_db.savePropertiesToFile();
-//			}
-//
-//#endif
-//
-//			if(wasMoved){
-//
-//				if(_display->isMenuDisplayed()){
-//					_display->menuSelectAction(movedUp?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
-//		 		}
-//				else
-//				{
-//#if 1
-//					// change  channel
-//					bool shouldConstrain = false;
-//					if(_radio.isOn()){
-//						auto newfreq = _radio.nextFrequency(movedUp, shouldConstrain);
-//						auto mode  = _radio.radioMode();
-//						_radio.setFrequencyandMode(mode, newfreq);
-//						saveRadioSettings();
-//
-////						_lastRadioMode = mode;
-////						_lastFreq = newfreq;
-////						_radio.setFrequencyandMode(mode, newfreq);
-////						saveRadioSettings();
-//
-//					}
-//
-//#elif 1
-//					// change  volume
-//					auto volume = _audio.volume();
-//
-//					if(movedUp){
-//						if(volume < 1) {						// twist up
-//							volume +=.04;
-//							if(volume > 1) volume = 1.0;	// pin volume
-//							_audio.setVolume(volume);
-//							_db.updateValue(VAL_AUDIO_VOLUME, volume);
-//						}
-//					}
-//					else {
-//						if(volume > 0) {							// twist down
-//							volume -=.04;
-//							if(volume < 0) volume = 0.0;		// twist down
-//							_audio.setVolume(volume);
-//							_db.updateValue(VAL_AUDIO_VOLUME, volume);
-//						}
-//					}
-//
-//					_display->showVolumeChange();
-//#else
-//					// change  balance
-//					auto balance = _audio.balance();
-//
-//					if(movedUp){
-//						if(balance < 1) {						// twist up
-//							balance +=.04;
-//							if(balance > 1) balance = 1.0;	// pin volume
-//							_audio.setBalance(balance);
-//							_db.updateValue(VAL_AUDIO_BALANCE, balance);
-//						}
-//					}
-//					else {
-//
-//						if(balance > -1) {							// twist down
-//							balance -=.04;
-//							if(balance < -1) balance = -1.;		// twist down
-//							_audio.setBalance(balance);
-//							_db.updateValue(VAL_AUDIO_BALANCE, balance);
-//						}
-//					}
-//					_display->showBalanceChange();
-//#endif
-//				}
-//
-//			}
-//
-//
+
 			// handle slower stuff like polling
 			timeval now, diff;
 			gettimeofday(&now, NULL);

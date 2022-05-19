@@ -677,13 +677,19 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
 				
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
-		
+	
+		// volume LED scales between 1 and 24
+		int ledvol = volume*23;
+		for (int i = 0 ; i < 24; i++) {
+			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+		}
+
 		// clear rest of inside of box
 		if(volume < 1){
 			uint8_t buff2[] = {VFD_CLEAR_AREA,
 				static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
 				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-			_vfd.writePacket(buff2, sizeof(buff2), 20);
+			_vfd.writePacket(buff2, sizeof(buff2), 1000);
 		}
 		
 		 printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
@@ -691,14 +697,9 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 		uint8_t buff3[] = {VFD_SET_AREA,
 			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
-		_vfd.writePacket(buff3, sizeof(buff3), 20);
+		_vfd.writePacket(buff3, sizeof(buff3), 1000);
 	
-		// volume LED scales between 1 and 24
-		int ledvol = volume*23;
-		for (int i = 0 ; i < 24; i++) {
-			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-		}		
-	}
+		}
 }
 
 

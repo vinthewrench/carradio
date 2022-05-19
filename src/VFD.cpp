@@ -224,7 +224,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	// 	success = (::write(_fd, &data[i], 1) == 1);
 	//  	if(!success) break;
 	// }
-	// usleep(waitusec);
+	 usleep(waitusec);
 #endif
 	
 	return success;

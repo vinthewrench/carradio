@@ -562,7 +562,7 @@ void PiCarMgr::PiCanLoop(){
 						"AM",
 						"FM",
 						"VHF",
-						"GPRS",
+						"GMRS",
 						"-",
 						"GPS",
 						"Time",
@@ -611,15 +611,15 @@ void PiCarMgr::PiCanLoop(){
 								}
 								break;
 
-								case 3: { // GPRS
+								case 3: { // GMRS
 									
 									uint32_t freq;
 					
 									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
 										uint32_t maxFreq;
 										
-										if(_stations.count(RadioMgr::VHF)){
-											auto info  = _stations[RadioMgr::VHF].front();
+										if(_stations.count(RadioMgr::GMRS)){
+											auto info  = _stations[RadioMgr::GMRS].front();
 											freq = info.frequency;
 										} else
 											RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );

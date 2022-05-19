@@ -189,7 +189,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
-		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+//		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
  

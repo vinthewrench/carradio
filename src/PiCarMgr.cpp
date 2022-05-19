@@ -576,6 +576,9 @@ void PiCarMgr::PiCanLoop(){
 						if(didSucceed){
 							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
 							
+							saveRadioSettings();
+							_db.savePropertiesToFile();
+
 							switch(selectedItem){
 								case 1: { // FM
 									

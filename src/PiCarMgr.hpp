@@ -101,7 +101,8 @@ private:
 	nlohmann::json GetRadioModesJSON();
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
- 
+	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
+	
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
  

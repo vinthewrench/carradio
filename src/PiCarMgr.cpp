@@ -304,6 +304,17 @@ void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32
 	}
 }
 
+bool PiCarMgr::getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut){
+	bool success = false;
+
+	if( _lastFreqForMode.count(mode)){
+ 	  freqOut =  _lastFreqForMode[_lastRadioMode];
+		success = true;
+  }
+  
+	return success;
+}
+	
 
 // MARK: - stations File
  
@@ -569,14 +580,46 @@ void PiCarMgr::PiCanLoop(){
 							switch(selectedItem){
 								case 1: { // FM
 									
-									RadioMgr::radio_mode_t mode ;
+		 							uint32_t freq;
+					
+									if( ! getSavedFrequencyForMode(RadioMgr::BROADCAST_FM , freq) ){
+										uint32_t maxFreq;
+										RadioMgr:: freqRangeOfMode(RadioMgr::BROADCAST_FM, freq,maxFreq );
+									}
+				 					
+									_radio.setFrequencyandMode(RadioMgr::BROADCAST_FM, freq);
+									_radio.setON(true);
+	 							}
+								break;
+									
+								case 2: { // VHF
+									
 									uint32_t freq;
 					
-									getSavedFrequencyandMode(mode,freq);
-									_radio.setFrequencyandMode(mode, freq);
+									if( ! getSavedFrequencyForMode(RadioMgr::VHF , freq) ){
+										uint32_t maxFreq;
+										RadioMgr:: freqRangeOfMode(RadioMgr::VHF, freq,maxFreq );
+									}
+									
+									_radio.setFrequencyandMode(RadioMgr::VHF, freq);
 									_radio.setON(true);
 								}
-									break;
+								break;
+
+								case 3: { // GPRS
+									
+									uint32_t freq;
+					
+									if( ! getSavedFrequencyForMode(RadioMgr::GPRS , freq) ){
+										uint32_t maxFreq;
+										RadioMgr:: freqRangeOfMode(RadioMgr::GPRS, freq,maxFreq );
+									}
+									
+									_radio.setFrequencyandMode(RadioMgr::GPRS, freq);
+									_radio.setON(true);
+								}
+								break;
+
 									
 								case 5: { // GPS
 									_display->showGPS();

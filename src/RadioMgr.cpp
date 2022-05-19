@@ -176,7 +176,6 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	if(!_isSetup)
 		return false;
 	
-	printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 	
 	if(newMode){
 		// SOMETHING ABOUT MODES HERE?
@@ -185,8 +184,10 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		_frequency = newFreq;
 		_mode = newMode;
  	}
-	else if(force || (newFreq != _frequency)){
+	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
+		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+
 		std::lock_guard<std::mutex> lock(_mutex);
  
 		_frequency = newFreq;

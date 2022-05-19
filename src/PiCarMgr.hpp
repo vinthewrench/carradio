@@ -55,8 +55,9 @@ class PiCarMgr {
 	DisplayMgr* display() {return _display;};
 	AudioOutput* audio() {return &_audio;};
 	RadioMgr* radio() 	{return &_radio;};
-	PiCarDB * db() 	{return &_db;};
-	
+	PiCarDB * db() 		{return &_db;};
+	GPSmgr * gps() 		{return &_gps;};
+
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
 

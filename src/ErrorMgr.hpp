@@ -51,6 +51,7 @@ public:
 		FAC_AUDIO,
 		FAC_RTL,
 		FAC_DB,
+		FAC_GPS,
 	 	}facility_t;
 	
 	

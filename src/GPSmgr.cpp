@@ -8,14 +8,21 @@
 #include "GPSmgr.hpp"
 #include <fcntl.h>
 #include <cassert>
+#include <string.h>
 
+#include <stdlib.h>
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
-#include "PiCarMgr.hpp"
-#include "PiCarDB.hpp"
-#include "PropValKeys.hpp"
+//#include "PiCarMgr.hpp"
+//#include "PiCarDB.hpp"
+//#include "PropValKeys.hpp"
 #include "utm.hpp"
- 
+
+#ifndef PI
+#define PI           3.14159265358979323e0    /* PI                        */
+#endif
+
+
 
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
@@ -44,20 +51,35 @@ typedef void * (*THREADFUNCPTR)(void *);
 
 GPSmgr::GPSmgr() : _nmea( (void*)_nmeaBuffer, sizeof(_nmeaBuffer), this ){
 	_isSetup = false;
-	_isRunning = true;
+ 
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
 	
- 	_fd = -1;
+	_ttyPath = NULL;
+	_speed = B0;
+
+	_fd = -1;
 //	_nmea.setBuffer( (void*)_nmeaBuffer, sizeof(_nmeaBuffer));
- 	_nmea.clear();
+	_nmea.clear();
 	
+	_isRunning = true;
+
+	pthread_create(&_TID, NULL,
+										  (THREADFUNCPTR) &GPSmgr::GPSReaderThread, (void*)this);
+
 	
 }
 
 GPSmgr::~GPSmgr(){
 	stop();
 	
+	pthread_mutex_lock (&_mutex);
+	_isRunning = false;
+	pthread_cond_signal(&_cond);
+	pthread_mutex_unlock (&_mutex);
+
+	pthread_join(_TID, NULL);
+
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
 
@@ -74,13 +96,41 @@ bool GPSmgr::begin(const char* path, speed_t speed){
 
 bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 
+	if(isConnected())
+		return true;
+	
 	_isSetup = false;
+	
+	if(_ttyPath){
+		free((void*) _ttyPath); _ttyPath = NULL;
+	}
+
+	pthread_mutex_lock (&_mutex);
+	_ttyPath = strdup(path);
+	_speed = speed;
+	pthread_mutex_unlock (&_mutex);
+
+	reset();
+	_nmea.clear();
+	
+	_isSetup = true;
+ 
+	return _isSetup;
+}
+
+bool GPSmgr::openGPSPort( int &error){
+
+	if(!_ttyPath  || _speed == B0) {
+		error = EINVAL;
+		return false;
+	}
+	
 	struct termios options;
 	
 	int fd ;
 	
-	if((fd = ::open( path, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY  )) <0) {
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "OPEN %s", path);
+	if((fd = ::open( _ttyPath, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY  )) <0) {
+		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
 		error = errno;
 		return false;
 	}
@@ -89,7 +139,7 @@ bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 	
 	// Back up current TTY settings
 	if( tcgetattr(fd, &_tty_opts_backup)<0) {
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "tcgetattr %s", path);
+		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "tcgetattr %s", _ttyPath);
 		error = errno;
 		return false;
 	}
@@ -114,167 +164,152 @@ bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 	options.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
 	options.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
 	
-	cfsetospeed (&options, speed);
-	cfsetispeed (&options, speed);
+	cfsetospeed (&options, _speed);
+	cfsetispeed (&options, _speed);
 	
 	if (tcsetattr(fd, TCSANOW, &options) < 0){
-		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, errno, "Unable to tcsetattr %s", path);
+		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "Unable to tcsetattr %s", _ttyPath);
 		error = errno;
 		return false;
 	}
 	
+	pthread_mutex_lock (&_mutex);
 	_fd = fd;
-	
 	// add to read set
 	safe_fd_set(_fd, &_master_fds, &_max_fds);
- 
-	_nmea.clear();
- 
-	_isSetup = true;
-	_isRunning = true;
+	pthread_mutex_unlock (&_mutex);
 
-	pthread_create(&_TID, NULL,
-										  (THREADFUNCPTR) &GPSmgr::GPSReaderThread, (void*)this);
-
-	return _isSetup;
+	return true;
 }
 
-void GPSmgr::stop(){
-	
-	if(_isSetup && _fd > -1){
+void GPSmgr::closeGPSPort(){
+	if(isConnected()){
 		
 		pthread_mutex_lock (&_mutex);
-		_isRunning = false;
-		pthread_cond_signal(&_cond);
-		pthread_mutex_unlock (&_mutex);
- 
-		pthread_join(_TID, NULL);
 
- 		// Restore previous TTY settings
+		// Restore previous TTY settings
 		tcsetattr(_fd, TCSANOW, &_tty_opts_backup);
 		close(_fd);
 		safe_fd_clr(_fd, &_master_fds, &_max_fds);
 		_fd = -1;
- 	}
+		pthread_mutex_unlock (&_mutex);
+	}
+}
+
+bool  GPSmgr::isConnected() {
+	bool val = false;
 	
-	_isSetup = false;
+	pthread_mutex_lock (&_mutex);
+	val = _fd != -1;
+	pthread_mutex_unlock (&_mutex);
+ 
+	return val;
+};
+
+void GPSmgr::stop(){
+	
+	if(_isSetup) {
+		closeGPSPort();
+		_isSetup = false;
+		}
 }
 
 
 
 bool GPSmgr::reset(){
 
+	pthread_mutex_lock (&_mutex);
+	_lastLocation.isValid = false;
+	_lastLocation.altitude = false;
+	_lastLocation.HDOP = 255;
+	pthread_mutex_unlock (&_mutex);
+
 	return true;
 }
  
+bool	GPSmgr::GetLocation(GPSLocation_t & location){
+ 
+	bool success = false;
+	pthread_mutex_lock (&_mutex);
+	if(_lastLocation.isValid ){
+		location = _lastLocation;
+		success = true;
+	}
+	
+	pthread_mutex_unlock (&_mutex);
+	return success;
+}
 
 // MARK: -  GPSReader thread
  
+
+string GPSmgr::UTMString(GPSLocation_t location){
+	string str = string();
+	
+	if(location.isValid){
+		long  Zone;
+		char 	latBand;
+		char  Hemisphere;
+		double Easting;
+		double Northing;
+	
+		double latRad = (PI/180.) * location.latitude;
+		double lonRad = (PI/180.) * location.longitude;
+	
+		if( Convert_Geodetic_To_UTM(latRad, lonRad,
+											 &Zone,&latBand, &Hemisphere, &Easting, &Northing ) == UTM_NO_ERROR){
+			
+			char utmBuffer[32] = {0};
+			sprintf(utmBuffer,  "%d%c %ld %ld", (int)Zone, latBand, (long) Easting, (long) Northing);
+			str = string(utmBuffer);
+		}
+	}
+	
+	return str;
+	
+}
 
 
 
 // call then when _nmea.process  is true
 void GPSmgr::processNMEA(){
 	
-	PiCarDB*			db 		= PiCarMgr::shared()->db();
+//	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	string msgID =  string(_nmea.getMessageID());
 	
-	/*
-	 
-	 ublox NEO-M9N
-	 receive signals from the GPS, GLONASS, Galileo, and BeiDou constellations with ~1.5 meter accuracy.
-	 
-	 $GP	GPS			US
-	 $GL GLONASS		RU
-	 $GA Galileo  		EU
-	 $BD  BeiDou 	(China)
-	 
-	 $GN mix..
-	 
-	 
-	 message
-	 GGA	Global Positioning System Fix Data
-	 
-	 */
-	
-	
+ 
+	//  GGA	Global Positioning System Fix Data
 	if( msgID ==  "GGA") {
 		//Global Positioning System Fix Data
 		
-		if(_nmea.isValid()){
+		{
+			long  tmp;
+			time_t now = time(NULL);
+
+			pthread_mutex_lock (&_mutex);
+			memset((void*)&_lastLocation, 0, sizeof(_lastLocation));
+			_lastLocation.isValid = _nmea.isValid();
+			_lastLocation.latitude = _nmea.getLatitude() / 1e6;
+			_lastLocation.longitude = _nmea.getLongitude() / 1e6;
+			_lastLocation.altitudeIsValid = _nmea.getAltitude(tmp);
+			_lastLocation.altitude 		= tmp * 0.001;
+			_lastLocation.navSystem 	= _nmea.getNavSystem();
+			_lastLocation.HDOP 			= _nmea.getHDOP();
+			_lastLocation.numSat 		= _nmea.getNumSatellites();
+			_lastLocation.geoidHeightValid  = _nmea.getGeoidHeight(tmp);
+			_lastLocation.geoidHeight 		= tmp * 0.001;
+			_lastLocation.timestamp = now;
+			pthread_mutex_unlock (&_mutex);
 			
-			long  altitude;
-			long  Zone;
-			char 	latBand;
-			char  Hemisphere;
-			double Easting;
-			double Northing;
-			
-#ifndef PI
-#define PI           3.14159265358979323e0    /* PI                        */
-#endif
-			
-			double latRad = (PI/180.) * (_nmea.getLatitude() / 1e6);
-			double lonRad = (PI/180.) * (_nmea.getLongitude() / 1e6);
-				
-			if( Convert_Geodetic_To_UTM(latRad, lonRad,
-												 &Zone,&latBand, &Hemisphere, &Easting, &Northing ) == UTM_NO_ERROR){
-	 
-				char utmBuffer[32] = {0};
-				sprintf(utmBuffer,  "%d%c %ld %ld", (int)Zone, latBand, (long) Easting, (long) Northing);
-					
-				db->updateValue(GPS_UTM, string(utmBuffer));
-	
-				if(_nmea.getAltitude(altitude) ) {
-					db->updateValue(GPS_ALTITUDE,  to_string(altitude));
- 				}
-				
-				db->updateValue(GPS_GGA_NAVSYSTEM, to_string(_nmea.getNavSystem()));
-				
-//				printf("GGA [%c] ", _nmea.getNavSystem());
-//				printf("  UTM %s  ", utmBuffer);
-//
-//#define MM2FT 	0.0032808399
-//				if(_nmea.getAltitude(altitude) ) {
-//					printf("%.1f ft", (float)(altitude * MM2FT));
-//				}
-//
-//				/* DOP Value	Rating	Description
-//				 1			Ideal			This is the highest possible confidence level to be used for applications
-//				 demanding the highest possible precision at all times.
-//
-//				 1-2		Excellent	At this confidence level, positional measurements are considered accurate
-//				 enough to meet all but the most sensitive applications.
-//
-//				 2-5			Good		Represents a level that marks the minimum appropriate for making business decisions.
-//				 Positional measurements could be used to make reliable 			in-route navigation suggestions to the user.
-//
-//				 5-10	Moderate		Positional measurements could be used for calculations, but the fix quality could
-//				 still be improved. A more open view of the sky is recommended.
-//
-//				 10-20	Fair			Represents a low confidence level. Positional measurements should be discarded or used only
-//				 to indicate a very rough estimate of the current location.
-//
-//				 >20		Poor			At this level, measurements are inaccurate by as much as 300 meters with a 6 meter
-//				 accurate device (50 DOP × 6 meters) and should be discarded.
-//				 */
-//
-//
-//				printf(" s %.1f, Sats: %d",
-//						 _nmea.getHDOP() / 10.,
-//						 _nmea.getNumSatellites());
-//
-//				printf("\n");
-//
-			}
 		}
+		
 	}
 }
 
 
 static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 //	GPSmgr* d = (GPSmgr*)context;
-   
+	
 //	printf("UNKN |%s|\n", nmea.getSentence());
  
 	/*
@@ -286,9 +321,24 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 void GPSmgr::GPSReader(){
 	 
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
+	int lastError = 0;
 	
 	while(_isRunning){
 		
+		// if not setup // check back later
+		if(!_isSetup){
+			sleep(10);
+			continue;
+		}
+	 
+		// is the port setup yet?
+		if (! isConnected()){
+			if(!openGPSPort(lastError)){
+				sleep(10);
+				continue;
+			}
+		}
+	 
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
@@ -317,7 +367,20 @@ void GPSmgr::GPSReader(){
 				else if( nbytes == -1) {
 					readMore = false;
 					int lastError = errno;
-					if(lastError != EAGAIN) {
+					
+					// no data try later
+					if(lastError == EAGAIN)
+						continue;
+					
+					if(lastError == ENXIO){  // device disconnected..
+						
+						ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS disconnectd", _ttyPath);
+
+						closeGPSPort();
+						continue;
+					}
+					
+					else {
 						perror("read");
 					}
 				}
@@ -348,3 +411,4 @@ void GPSmgr::GPSReaderThreadCleanup(void *context){
  
 	printf("cleanup GPSReader\n");
 }
+ 

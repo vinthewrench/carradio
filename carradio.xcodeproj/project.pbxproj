@@ -235,7 +235,6 @@
 				2E8210B32835A53B003D074C /* Utils.hpp */,
 			);
 			name = Utilities;
-			path = Audio;
 			sourceTree = "<group>";
 		};
 		2E8210AA2835A3D2003D074C /* Display */ = {
@@ -270,7 +269,6 @@
 				2E8210BC2835A593003D074C /* TMP117.hpp */,
 			);
 			name = Devices;
-			path = Audio;
 			sourceTree = "<group>";
 		};
 		2E8210AC2835A465003D074C /* Audio */ = {
@@ -279,7 +277,7 @@
 				2E8210AD2835A4AC003D074C /* AudioOutput.cpp */,
 				2E8210AE2835A4AC003D074C /* AudioOutput.hpp */,
 			);
-			path = Audio;
+			name = Audio;
 			sourceTree = "<group>";
 		};
 		2E8210B12835A4CD003D074C /* Radio */ = {

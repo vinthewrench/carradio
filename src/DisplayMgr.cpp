@@ -675,15 +675,17 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	float volume = 0;
 		
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-				
+		
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
-	
+		
 		// volume LED scales between 1 and 24
 		int ledvol = volume*23;
 		for (int i = 0 ; i < 24; i++) {
 			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 		}
-
+		
+		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
+		
 		// clear rest of inside of box
 		if(volume < 1){
 			uint8_t buff2[] = {VFD_CLEAR_AREA,
@@ -692,14 +694,13 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 			_vfd.writePacket(buff2, sizeof(buff2), 1000);
 		}
 		
-		 printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
 		// fill volume area box
 		uint8_t buff3[] = {VFD_SET_AREA,
 			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
 		_vfd.writePacket(buff3, sizeof(buff3), 1000);
-	
-		}
+		
+	}
 }
 
 
@@ -935,7 +936,7 @@ void DisplayMgr::drawInternalError(modeTransition_t transition){
 }
 
 void DisplayMgr::drawGPSScreen(modeTransition_t transition){
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
 
 //	printf("GPS  %d\n",transition);
 	
@@ -949,36 +950,40 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("GPS"));
+	TRY(_vfd.write("Global Position System"));
 	
-	string utm; 
-	if(db->getStringValue(GPS_UTM, utm)) {
-		
+	GPSLocation_t location;
+	if(gps->GetLocation(location)){
+		string utm = GPSmgr::UTMString(location);
 		vector<string> v = split<string>(utm, " ");
- 
-		char buffer[64] = {0};
-		sprintf(buffer, "%-3s",v[0].c_str());
 		
-		TRY(_vfd.setCursor(20,25));
+		char buffer[64] = {0};
+		
+		sprintf(buffer, "%-3s",v[0].c_str());
+		TRY(_vfd.setCursor(20,22));
 		TRY(_vfd.write(buffer));
-
-		TRY(_vfd.setCursor(40,25));
+		
+		TRY(_vfd.setCursor(40,22));
 		TRY(_vfd.write(v[1]));
-
-		TRY(_vfd.setCursor(40,35));
+		
+		TRY(_vfd.setCursor(40,32));
 		TRY(_vfd.write(v[2]));
 		
-		float altitude;
-		if(db->getFloatValue(GPS_ALTITUDE, altitude)){
-#define MM2FT 	0.0032808399
-			
-			char buffer[64] = {0};
-			sprintf(buffer, "%.1f ft",altitude * MM2FT);
-			
-			TRY(_vfd.setCursor(20,50));
+ 		if(location.altitudeIsValid)  {
+#define M2FT 	3.2808399
+			sprintf(buffer, "%.1f ft",location.altitude * M2FT);
+			TRY(_vfd.setCursor(20,45));
 			TRY(_vfd.write(buffer));
 		}
 		
+		sprintf(buffer, "Nav:%c Sats:%2d Hdop:%1f",
+				  location.navSystem, location.numSat, location.HDOP/10.);
+		TRY(_vfd.setCursor(0,60));
+		TRY(_vfd.write(buffer));
  	}
-	
+	else {
+		TRY(_vfd.setCursor(20,22));
+		TRY(_vfd.write("-- No Data --"));
+
+	}
 }

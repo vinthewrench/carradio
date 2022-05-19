@@ -28,8 +28,10 @@ inline static const string VAL_MODULATION_MODE	= "mode";
 //inline static const string VAL_MODULATION_MUX	= "mux";
 inline static const string VAL_RADIO_ON			= "radioON";
 
-
-inline static const string GPS_UTM					= "gps_utm";
+inline static const string GPS_UTM					= "utm";
+inline static const string GPS_GGA_NAVSYSTEM		= "nav";
+ 
+// json data
  
 
 inline static const string PROP_CPU_TEMP_QUERY_DELAY 				= "cputemp-query-delay";

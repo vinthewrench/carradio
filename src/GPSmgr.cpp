@@ -11,11 +11,11 @@
 
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
- 
+#include "PiCarMgr.hpp"
+#include "PiCarDB.hpp"
+#include "PropValKeys.hpp"
 #include "utm.hpp"
-
-
-
+ 
 
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
@@ -176,7 +176,7 @@ bool GPSmgr::reset(){
 // call then when _nmea.process  is true
 void GPSmgr::processNMEA(){
 	
-	
+	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	string msgID =  string(_nmea.getMessageID());
 	
 	/*
@@ -205,6 +205,7 @@ void GPSmgr::processNMEA(){
 			
 			long  altitude;
 			long  Zone;
+			char 	latBand;
 			char  Hemisphere;
 			double Easting;
 			double Northing;
@@ -218,43 +219,49 @@ void GPSmgr::processNMEA(){
 			
 			
 			if( Convert_Geodetic_To_UTM(latRad, lonRad,
-												 &Zone, &Hemisphere, &Easting, &Northing ) == UTM_NO_ERROR){
-				
-				printf("GGA [%c] ", _nmea.getNavSystem());
-				printf("  UTM %d%c %ld %ld ", (int)Zone, Hemisphere, (long) Easting, (long) Northing);
-				
-#define MM2FT 	0.0032808399
-				if(_nmea.getAltitude(altitude) ) {
-					printf("%.1f ft", (float)(altitude * MM2FT));
-				}
-				
-				/* DOP Value	Rating	Description
-				 1			Ideal			This is the highest possible confidence level to be used for applications
-				 demanding the highest possible precision at all times.
-				 
-				 1-2		Excellent	At this confidence level, positional measurements are considered accurate
-				 enough to meet all but the most sensitive applications.
-				 
-				 2-5			Good		Represents a level that marks the minimum appropriate for making business decisions.
-				 Positional measurements could be used to make reliable 			in-route navigation suggestions to the user.
-				 
-				 5-10	Moderate		Positional measurements could be used for calculations, but the fix quality could
-				 still be improved. A more open view of the sky is recommended.
-				 
-				 10-20	Fair			Represents a low confidence level. Positional measurements should be discarded or used only
-				 to indicate a very rough estimate of the current location.
-				 
-				 >20		Poor			At this level, measurements are inaccurate by as much as 300 meters with a 6 meter
-				 accurate device (50 DOP × 6 meters) and should be discarded.
-				 */
-				
-				
-				printf(" s %.1f, Sats: %d",
-						 _nmea.getHDOP() / 10.,
-						 _nmea.getNumSatellites());
-				
-				printf("\n");
-				
+												 &Zone,&latBand, &Hemisphere, &Easting, &Northing ) == UTM_NO_ERROR){
+	 
+				char utmBuffer[32] = {0};
+				sprintf(utmBuffer,  "%d%c %ld %ld", (int)Zone, latBand, (long) Easting, (long) Northing);
+					
+				db->updateValue(GPS_UTM, string(utmBuffer));
+			 
+
+//				printf("GGA [%c] ", _nmea.getNavSystem());
+//				printf("  UTM %s  ", utmBuffer);
+//
+//#define MM2FT 	0.0032808399
+//				if(_nmea.getAltitude(altitude) ) {
+//					printf("%.1f ft", (float)(altitude * MM2FT));
+//				}
+//
+//				/* DOP Value	Rating	Description
+//				 1			Ideal			This is the highest possible confidence level to be used for applications
+//				 demanding the highest possible precision at all times.
+//
+//				 1-2		Excellent	At this confidence level, positional measurements are considered accurate
+//				 enough to meet all but the most sensitive applications.
+//
+//				 2-5			Good		Represents a level that marks the minimum appropriate for making business decisions.
+//				 Positional measurements could be used to make reliable 			in-route navigation suggestions to the user.
+//
+//				 5-10	Moderate		Positional measurements could be used for calculations, but the fix quality could
+//				 still be improved. A more open view of the sky is recommended.
+//
+//				 10-20	Fair			Represents a low confidence level. Positional measurements should be discarded or used only
+//				 to indicate a very rough estimate of the current location.
+//
+//				 >20		Poor			At this level, measurements are inaccurate by as much as 300 meters with a 6 meter
+//				 accurate device (50 DOP × 6 meters) and should be discarded.
+//				 */
+//
+//
+//				printf(" s %.1f, Sats: %d",
+//						 _nmea.getHDOP() / 10.,
+//						 _nmea.getNumSatellites());
+//
+//				printf("\n");
+//
 			}
 		}
 	}

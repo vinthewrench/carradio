@@ -917,7 +917,8 @@ void DisplayMgr::drawInternalError(modeTransition_t transition){
 }
 
 void DisplayMgr::drawGPSScreen(modeTransition_t transition){
-	
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
+
 	printf("GPS  %d\n",transition);
 	
 	if(transition == TRANS_ENTERING) {
@@ -932,7 +933,15 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("GPS"));
 	
+	string utm; 
+	if(db->getStringValue(GPS_UTM, utm)) {
+		
+		char buffer[64] = {0};
+		sprintf(buffer, "%-20s ",utm.c_str());
+		
+		TRY(_vfd.setCursor(20,0));
+ 		TRY(_vfd.write(buffer));
+
+	}
+	
 }
-
-
-

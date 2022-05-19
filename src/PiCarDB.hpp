@@ -53,7 +53,7 @@ class PiCarDB  {
  
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
-	void updateValue(string key, string value, time_t when);
+	void updateValue(string key, string value, time_t when = 0);
 	
 	void updateValue(string key, bool value, time_t  when = 0);
 	void updateValue(string key, int value, time_t  when = 0);

@@ -284,8 +284,7 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 
 
 void GPSmgr::GPSReader(){
-	printf("start GPSReader\n");
-	
+	 
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
 	
 	while(_isRunning){

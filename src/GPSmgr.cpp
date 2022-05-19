@@ -269,7 +269,7 @@ string GPSmgr::UTMString(GPSLocation_t location){
 	
 }
 
-string NavString(char navSystem ){
+string GPSmgr::NavString(char navSystem ){
 	string str = string();
 	switch(navSystem){
 		case 'N' : str = "GNSS"; break;
@@ -277,9 +277,9 @@ string NavString(char navSystem ){
 		case 'L' : str = "GLONASS"; break;
 		case 'A' : str = "Galileo"; break;
 		default: break;
- 	}
+	}
 	
-		return str;
+	return str;
 }
 
 // MARK: -  GPSReader thread

@@ -939,7 +939,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		char buffer[64] = {0};
 		sprintf(buffer, "UTM: %-20s ",utm.c_str());
 		
-		TRY(_vfd.setCursor(20,0));
+		TRY(_vfd.setCursor(10,20));
  		TRY(_vfd.write(buffer));
 
 	}

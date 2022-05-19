@@ -598,7 +598,12 @@ void PiCarMgr::PiCanLoop(){
 					
 									if( ! getSavedFrequencyForMode(RadioMgr::VHF , freq) ){
 										uint32_t maxFreq;
-										RadioMgr:: freqRangeOfMode(RadioMgr::VHF, freq,maxFreq );
+										
+										if(_stations.count(RadioMgr::VHF)){
+											auto info  = _stations[RadioMgr::VHF].front();
+											freq = info.frequency;
+		 								} else
+											RadioMgr:: freqRangeOfMode(RadioMgr::VHF, freq,maxFreq );
 									}
 									
 									_radio.setFrequencyandMode(RadioMgr::VHF, freq);
@@ -612,7 +617,12 @@ void PiCarMgr::PiCanLoop(){
 					
 									if( ! getSavedFrequencyForMode(RadioMgr::GMRS , freq) ){
 										uint32_t maxFreq;
-										RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
+										
+										if(_stations.count(RadioMgr::VHF)){
+											auto info  = _stations[RadioMgr::VHF].front();
+											freq = info.frequency;
+										} else
+											RadioMgr:: freqRangeOfMode(RadioMgr::GMRS, freq,maxFreq );
 									}
 									
 									_radio.setFrequencyandMode(RadioMgr::GMRS, freq);

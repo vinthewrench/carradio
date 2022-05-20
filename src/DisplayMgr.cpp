@@ -657,7 +657,7 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 		// scan the LEDS off
 		for (int i = 0; i < 24; i++) {
 			_leftRing.setColor( i, 0, 0, 0);
-			usleep(20 * 100);
+			usleep(10 * 1000);
 		}
  		return;
 	}

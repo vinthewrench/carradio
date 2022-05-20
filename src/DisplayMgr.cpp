@@ -653,8 +653,13 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	uint8_t bottombox = midY + 5 ;
 	
 	if(transition == TRANS_LEAVING) {
-		_leftRing.clearAll();
-		return;
+		
+		// scan the LEDS off
+		for (int i = 0; i < 24; i++) {
+			_leftRing.setColor( i, 0, 0, 0);
+			usleep(20 * 100);
+		}
+ 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {

@@ -431,7 +431,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
  
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr time_t pollTime	= 5;  // poll sleep in seconds
+	constexpr time_t pollTime	= 5;  // polling for slow devices sleep in seconds
 	timeval	 lastPollTime = {0,0};
  
 	try{

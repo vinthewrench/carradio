@@ -28,10 +28,7 @@ inline static const string VAL_MODULATION_MODE	= "mode";
 //inline static const string VAL_MODULATION_MUX	= "mux";
 inline static const string VAL_RADIO_ON			= "radioON";
 
-inline static const string GPS_UTM					= "utm";
-inline static const string GPS_ALTITUDE			= "altitude";
-inline static const string GPS_GGA_NAVSYSTEM		= "nav";
- 
+
 // json data
  
 

@@ -33,6 +33,7 @@ typedef std::function<void()> voidCallback_t;
 typedef std::vector<std::string> stringvector;
 
 
+//// did you know C++ changed the moduo operator to allow negative numbers?  ... WTF!!
 inline int mod(int a, int b)
 {
 	if(b < 0) //you can check for b == 0 separately and do what you want

@@ -106,13 +106,9 @@ class PiCarMgr {
 private:
 	
 	static PiCarMgr *sharedInstance;
-	bool					_isSetup;
- 
-	//  event thread
-#define PGMR_EVENT_START	0x0001
-#define PGMR_EVENT_EXIT		0x0002
+	bool					_isSetup	= false;
+	bool					_isRunning = false;
 	
-//	nlohmann::json GetRadioJSON();
 	nlohmann::json GetRadioModesJSON();
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
@@ -120,13 +116,8 @@ private:
 	
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
- 
- 	void triggerEvent(uint16_t);
-
+  
 	pthread_t			_piCanLoopTID;
-	pthread_cond_t 	_cond = PTHREAD_COND_INITIALIZER;
-	pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
-	uint16_t				_event = 0;
 	void PiCanLoop();		// C++ version of thread
 	// C wrappers for SDRReader;
 	static void* PiCanLoopThread(void *context);

@@ -73,11 +73,18 @@ PiCarMgr::PiCarMgr(){
 //	signal(SIGTERM, sigHandler);
 //	signal(SIGINT, sigHandler);
  
+	_isRunning = true;
+
+	pthread_create(&_piCanLoopTID, NULL,
+											 (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
+
 	_stations.clear();
 }
 
 PiCarMgr::~PiCarMgr(){
 	stop();
+	_isRunning = false;
+ 	pthread_join(_piCanLoopTID, NULL);
 }
 
  
@@ -87,7 +94,7 @@ bool PiCarMgr::begin(){
 	try {
 		int error = 0;
 		
-  		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
+		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		
 		_display = new DisplayMgr();
@@ -131,12 +138,7 @@ bool PiCarMgr::begin(){
 		// set initial brightness?
 		if(!_display->setBrightness(7))
 			throw Exception("failed to set brightness ");
-
-		pthread_create(&_piCanLoopTID, NULL,
-											  (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
-
-		triggerEvent(PGMR_EVENT_START);
-
+ 
 		_display->showStartup();  // show startup
 		
 		restoreStationsFromFile();
@@ -163,8 +165,7 @@ bool PiCarMgr::begin(){
 void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
-		triggerEvent(PGMR_EVENT_EXIT);
-		pthread_join(_piCanLoopTID, NULL);
+		_isSetup = false;
 
 		stopControls();
 		stopTempSensors();
@@ -175,9 +176,6 @@ void PiCarMgr::stop(){
 		_audio.stop();
 		_display->stop();
 	}
-	
-	_isSetup = false;
-
 }
 
 
@@ -217,11 +215,11 @@ nlohmann::json PiCarMgr::GetRadioModesJSON(){
 	json j;
  
 	for (auto& entry : _lastFreqForMode) {
- 		json j1;
+		json j1;
 		j1[PROP_LAST_RADIO_MODES_MODE] = RadioMgr::modeString(entry.first);
 		j1[PROP_LAST_RADIO_MODES_FREQ] =  entry.second;
- 		j.push_back(j1);
- 	}
+		j.push_back(j1);
+	}
 	
 	return j;
 }
@@ -240,10 +238,10 @@ bool PiCarMgr::updateRadioPrefs() {
 		}
 		else
 		{
-	 	_lastFreqForMode[mode] = _radio.frequency();
+		_lastFreqForMode[mode] = _radio.frequency();
 		_lastRadioMode = mode;
 		didUpdate = true;
- 		}
+		}
 	}
 
 	return didUpdate;
@@ -255,7 +253,7 @@ void PiCarMgr::saveRadioSettings(){
 	
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
- 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
+	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
  }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -265,7 +263,7 @@ void PiCarMgr::restoreRadioSettings(){
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
- 		_audio.setVolume(.6);
+		_audio.setVolume(.6);
 		_audio.setBalance(0.0);
 	}
 	
@@ -276,14 +274,14 @@ void PiCarMgr::restoreRadioSettings(){
 	if(_db.getJSONProperty(PROP_LAST_RADIO_MODES,&j)
 		&&  j.is_array()){
 	 
- 		for(auto item : j ){
+		for(auto item : j ){
 			if(item.is_object()
 				&&  item.contains(PROP_LAST_RADIO_MODES_MODE)
 				&&  item[PROP_LAST_RADIO_MODES_MODE].is_string()
 				&&  item.contains(PROP_LAST_RADIO_MODES_FREQ)
 				&&  item[(PROP_LAST_RADIO_MODES_FREQ)].is_number()){
 				
- 				auto mode = RadioMgr::stringToMode( item[PROP_LAST_RADIO_MODES_MODE]);
+				auto mode = RadioMgr::stringToMode( item[PROP_LAST_RADIO_MODES_MODE]);
 				auto freq = item[PROP_LAST_RADIO_MODES_FREQ] ;
 				_lastFreqForMode[mode] = freq;
 			}
@@ -292,7 +290,7 @@ void PiCarMgr::restoreRadioSettings(){
  
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
- 		auto mode = RadioMgr::stringToMode(str);
+		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
 }
@@ -301,11 +299,11 @@ void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32
 	
 	if(_lastRadioMode != RadioMgr::MODE_UNKNOWN
 		&& _lastFreqForMode.count(_lastRadioMode)){
- 		modeOut = _lastRadioMode;
+		modeOut = _lastRadioMode;
 		freqOut =  _lastFreqForMode[_lastRadioMode];
-  	}
+	}
 	else {
- 		// set it to something;
+		// set it to something;
 		modeOut =  _lastRadioMode = RadioMgr::BROADCAST_FM;
 		freqOut = _lastFreqForMode[_lastRadioMode] = 101500000;
 	}
@@ -315,7 +313,7 @@ bool PiCarMgr::getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &
 	bool success = false;
 
 	if( _lastFreqForMode.count(mode)){
- 	  freqOut =  _lastFreqForMode[mode];
+	  freqOut =  _lastFreqForMode[mode];
 		success = true;
   }
   
@@ -431,33 +429,28 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 
 // MARK: -  PiCarMgr main loop  thread
  
-void PiCarMgr::triggerEvent(uint16_t evt ){
-	pthread_mutex_lock (&_mutex);
-		_event |= evt;
-	pthread_cond_signal(&_cond);
-	pthread_mutex_unlock (&_mutex);
-}
-
-
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr struct timespec sleepTime  =  {0, 10000000};  // idle sleep in 100 hz
 	constexpr time_t pollTime	= 5;  // poll sleep in seconds
-
-	bool		 shouldQuit = false;
 	timeval	 lastPollTime = {0,0};
  
 	try{
 		
-		while(!shouldQuit){
-			
+		while(_isRunning){
+
+			// if not setup // check back shortly -  we are starting up
+			if(!_isSetup){
+				usleep(10000);
+				continue;
+			}
+
 			uint8_t volKnobStatus = 0;
 			uint8_t tunerKnobStatus  = 0;
 
 			bool volMovedCW 		= false;
 			bool volWasClicked 	= false;
 			bool volWasMoved 		= false;
- 			bool tunerMovedCW 	= false;
+			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
 			bool tunerWasMoved 	= false;
 	 
@@ -468,11 +461,10 @@ void PiCarMgr::PiCanLoop(){
 				_volKnob.updateStatus(volKnobStatus);
 				_tunerKnob.updateStatus(tunerKnobStatus);
 				
-				// if any status bit are set process them
-				if( (volKnobStatus | volKnobStatus) != 0) break;
+			// if any status bit are set process them
+				if( (volKnobStatus | tunerKnobStatus) != 0) break;
 	
 				// or take a nap
-
 				
 #if USE_GPIO_INTERRUPT
 				int err = 0;
@@ -500,47 +492,17 @@ void PiCarMgr::PiCanLoop(){
 					printf("gpiod_line_event_wait timeout\n");
 				}
 #else
-				usleep(pollTime * 1e6);
+			 usleep(10000);
 #endif
 			}
   
-			_volKnob.updateStatus();
+			// maybe we quit while I was asleep.  bail now
+			if(!_isRunning) continue;
+			
 			volWasClicked = _volKnob.wasClicked();
 			volWasMoved = 	_volKnob.wasMoved(volMovedCW);
-			
-			_tunerKnob.updateStatus();
 			tunerWasClicked = _tunerKnob.wasClicked();
 			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedCW);
-
-			// --check if any events need processing else wait for a timeout
-			struct timespec ts = {0, 0};
-			clock_gettime(CLOCK_REALTIME, &ts);
-			ts.tv_sec += sleepTime.tv_sec;
-			ts.tv_nsec += sleepTime.tv_nsec;
-
-			pthread_mutex_lock (&_mutex);
-			// dont' wait if something is pending
-			
-			bool shouldWait = (_event == 0)
-									&& !volWasClicked && !volWasMoved
-									&& !tunerWasClicked && !tunerWasMoved;
-			
-			if (shouldWait)
-				pthread_cond_timedwait(&_cond, &_mutex, &ts);
-	 
-			// startEvent is used for ignoring the pthread_cond_timedwait
-			if((_event & PGMR_EVENT_START ) != 0){
-				_event &= ~PGMR_EVENT_START;
-			}
-			
-			if((_event & PGMR_EVENT_EXIT ) != 0){
-				_event &= ~PGMR_EVENT_EXIT;
-				shouldQuit = true;
-			}
-	 
-			pthread_mutex_unlock (&_mutex);
- 
-			if(shouldQuit) continue;
 
 			// Volume button Clicked
 			if(volWasClicked){
@@ -555,12 +517,12 @@ void PiCarMgr::PiCanLoop(){
 					_db.savePropertiesToFile();
 				}
 				else {
-		 			RadioMgr::radio_mode_t mode ;
+					RadioMgr::radio_mode_t mode ;
 					uint32_t freq;
 					
 					getSavedFrequencyandMode(mode,freq);
-				 	_radio.setFrequencyandMode(mode, freq);
-		 			_radio.setON(true);
+					_radio.setFrequencyandMode(mode, freq);
+					_radio.setON(true);
 				}
 			}
 			
@@ -663,7 +625,7 @@ void PiCarMgr::PiCanLoop(){
  
 								case 5: { // GPS
 									_display->showGPS();
- 								}
+								}
 									break;
 									
 								case 6: { // GPS
@@ -770,8 +732,8 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 	bool didSucceed = false;
 	
 	
-	if(! _volKnob.begin(leftKnobAddress, errnum)
-		&& _tunerKnob.begin(rightKnobAddress, errnum) ) {
+	if(! (  _volKnob.begin(leftKnobAddress, errnum)
+		  && _tunerKnob.begin(rightKnobAddress, errnum)) ) {
 		
 		ELOG_MESSAGE("Could not start control knobs");
 		goto done;
@@ -842,7 +804,7 @@ void PiCarMgr::startCPUInfo( std::function<void(bool didSucceed, std::string err
 			_cpuInfo.setQueryDelay(queryDelay);
 		}
 		
- 	}
+	}
 	else {
 		ELOG_ERROR(ErrorMgr::FAC_SENSOR, 0, errnum,  "Start CPUInfo");
 	}

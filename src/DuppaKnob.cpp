@@ -45,7 +45,6 @@ bool DuppaKnob::begin(int deviceAddress, int &error){
 	| 	DuppaEncoder::RINC
 	| 	DuppaEncoder::RDEC ;
 
-
 	status = _duppa.begin(deviceAddress, config, interrupt_config,  error);
 	
 	if(status){

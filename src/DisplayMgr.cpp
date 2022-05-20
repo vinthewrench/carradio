@@ -837,10 +837,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 						_rightRing.setColor(i, 0, 0, 255);
 					}
 					else if(i == off1) {
-						_rightRing.setColor(i, 32, 32, 0);
+						_rightRing.setColor(i, 32, 32, 32);
 					}
 					else if(i == off2) {
-						_rightRing.setColor(i, 32, 32, 0);
+						_rightRing.setColor(i, 32, 255, 0);
 					}
 					else {
 						_rightRing.setColor(i, 0, 0, 0);

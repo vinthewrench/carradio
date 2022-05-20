@@ -8,6 +8,7 @@ project(carradio)
 
 find_package(Threads)
 find_package(PkgConfig)
+find_package(gpiod)
 find_package(ALSA REQUIRED)
 
 
@@ -60,7 +61,6 @@ set(SOURCES
 	src/PiCarMgr.cpp
 	src/TempSensor.cpp
 	src/TimeStamp.cpp
-	
 	src/GPSmgr.cpp
 	src/tranmerc.cpp
 	src/utm.cpp
@@ -102,6 +102,7 @@ target_link_libraries(carradio
     ${ALSA_LIBRARIES}
     ${EXTRA_LIBS}
  	 Threads::Threads
+ 	 gpiod::gpiod
  	)
 
 target_include_directories(carradio

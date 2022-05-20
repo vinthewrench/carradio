@@ -976,7 +976,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			TRY(_vfd.write(buffer));
 		}
 		
-		sprintf(buffer, "%s: %2d P:%.1f",
+		sprintf(buffer, "%s:%2d DOP:%.1f",
 				  GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
 		TRY(_vfd.setFont(VFD::FONT_MINI));
 		TRY(_vfd.setCursor(0,60));

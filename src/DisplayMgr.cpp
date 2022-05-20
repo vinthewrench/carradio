@@ -969,7 +969,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("Global Position"));
+	TRY(_vfd.write("GPS"));
 	
 	GPSLocation_t location;
 	if(gps->GetLocation(location)){
@@ -1006,4 +1006,13 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 //		TRY(_vfd.write("-- No Data --"));
 
 	}
+	
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char buffer[16] = {0};
+	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
+	TRY(_vfd.write(buffer));
+
 }

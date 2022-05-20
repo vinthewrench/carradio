@@ -82,8 +82,6 @@ void DuppaLEDRing::stop(){
 	
 	_isSetup = false;
 	_i2cPort.stop();
-	
-	//	LOG_INFO("QwiicTwist(%02x) stop\n",  _i2cPort.getDevAddr());
 }
 
 uint8_t	DuppaLEDRing::getDevAddr(){

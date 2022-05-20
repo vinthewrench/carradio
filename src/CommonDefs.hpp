@@ -15,6 +15,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <type_traits>
 
 #include "Utils.hpp"
 
@@ -31,6 +32,17 @@ typedef std::function<void(bool didSucceed)> boolCallback_t;
 typedef std::function<void()> voidCallback_t;
 typedef std::vector<std::string> stringvector;
 
+
+inline int mod(int a, int b)
+{
+	if(b < 0) //you can check for b == 0 separately and do what you want
+	  return -mod(-a, -b);
+	int ret = a % b;
+	if(ret < 0)
+	  ret+=b;
+	return ret;
+}
+ 
 class Exception: virtual public std::runtime_error {
 	
 protected:

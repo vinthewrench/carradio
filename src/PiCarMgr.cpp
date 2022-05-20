@@ -29,13 +29,20 @@ const char* path_gps  = "/dev/cu.usbmodem14101";
 const char* path_gps  = "/dev/ttyACM0";
 #endif
 
+#if USE_GPIO_INTERRUPT
+const char* 		gpioPath 				= "/dev/gpiochip0";
+constexpr uint 	gpio_int_line_number	= 27;
+const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
+#endif
+
+
+// Duppa I2CEncoderV2 knobs
+constexpr uint8_t leftKnobAddress = 0x40;
+constexpr uint8_t rightKnobAddress = 0x41;
 
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 const char* dev_audio  = "default";
-
 constexpr int  pcmrate = 48000;
-
-
 
 typedef void * (*THREADFUNCPTR)(void *);
 
@@ -105,7 +112,7 @@ bool PiCarMgr::begin(){
 		if(!_audio.setVolume(0)
 			|| ! _audio.setBalance(0))
 			throw Exception("failed to setup Audio levels ");
-			
+	
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
 		if( devices.size() == 0)
@@ -443,13 +450,60 @@ void PiCarMgr::PiCanLoop(){
 	try{
 		
 		while(!shouldQuit){
+			
+			uint8_t volKnobStatus = 0;
+			uint8_t tunerKnobStatus  = 0;
+
 			bool volMovedCW 		= false;
 			bool volWasClicked 	= false;
 			bool volWasMoved 		= false;
  			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
 			bool tunerWasMoved 	= false;
+	 
+			// loop until status changes
+			for(;;) {
+				
+				// get status from knobs
+				_volKnob.updateStatus(volKnobStatus);
+				_tunerKnob.updateStatus(tunerKnobStatus);
+				
+				// if any status bit are set process them
+				if( (volKnobStatus | volKnobStatus) != 0) break;
 	
+				// or take a nap
+
+				
+#if USE_GPIO_INTERRUPT
+				int err = 0;
+				
+				struct timespec timeout;
+				// Timeout in polltime seconds
+				timeout.tv_sec =  pollTime * 1e6;
+				timeout.tv_nsec = 0;
+				gpiod_line_event evt;
+				
+				// gpiod_line_event_wait return 0 if wait timed out,
+				// -1 if an error occurred,
+				//  1 if an event occurred.
+				err = gpiod_line_event_wait(_gpio_line_int, &timeout);
+				if(err == -1){
+					throw Exception("gpiod_line_event_wait failed ");
+				}
+				// gpiod_line_event_wait only blocks until there's an event or a timeout
+				// occurs, it does not read the event.
+				// call gpiod_line_event_read  to consume the event.
+				else if (err == 1) {
+					gpiod_line_event_read(_gpio_line_int, &evt);
+				}
+				else if (err == 0){
+					printf("gpiod_line_event_wait timeout\n");
+				}
+#else
+				usleep(pollTime * 1e6);
+#endif
+			}
+  
 			_volKnob.updateStatus();
 			volWasClicked = _volKnob.wasClicked();
 			volWasMoved = 	_volKnob.wasMoved(volMovedCW);
@@ -714,24 +768,44 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string error_text)> cb){
 	int  errnum = 0;
 	bool didSucceed = false;
-
 	
-	uint8_t leftAddress = 0x40;
-	uint8_t rightAddress = 0x41;
- 
 	
-	didSucceed =  _volKnob.begin(leftAddress, errnum)
-			&&  	 _tunerKnob.begin(rightAddress, errnum);
-	
-	 
-	if(didSucceed) {
- 		_volKnob.setColor(0, 255, 0);
-		_tunerKnob.setColor(0, 0, 255);
-
-	}
-	else {
+	if(! _volKnob.begin(leftKnobAddress, errnum)
+		&& _tunerKnob.begin(rightKnobAddress, errnum) ) {
+		
 		ELOG_MESSAGE("Could not start control knobs");
+		goto done;
 	}
+	_volKnob.setColor(0, 255, 0);
+	_tunerKnob.setColor(0, 0, 255);
+	
+#if USE_GPIO_INTERRUPT
+	// setup GPIO lines
+	_gpio_chip = gpiod_chip_open(gpioPath);
+	if(!_gpio_chip) {
+		ELOG_MESSAGE("Error open GPIO chip(\"%s\") : %s \n",gpioPath,strerror(errno));
+		goto done;
+	}
+	
+	// get refs to the lines
+	_gpio_line_int =  gpiod_chip_get_line(_gpio_chip, gpio_int_line_number);
+	if(!_gpio_line_int){
+		ELOG_MESSAGE("Error gpiod_chip_get_line %d: %s \n",  gpio_int_line_number, strerror(errno));
+		goto done;
+	}
+
+	// setup the l;ine for input and select pull up resistor
+	if(  gpiod_line_request_falling_edge_events_flags(_gpio_line_int,
+																	  GPIOD_CONSUMER,
+																	  GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP) != 0){
+		ELOG_MESSAGE("Error gpiod_line_request_falling_edge_events %d: %s \n",  gpio_int_line_number, strerror(errno));
+	}
+
+	
+#endif
+	
+	didSucceed = true;
+done:
 	
 	if(cb)
 		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
@@ -739,6 +813,15 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 
 
 void PiCarMgr::stopControls(){
+	
+#if USE_GPIO_INTERRUPT
+	if(_gpio_line_int)
+		gpiod_line_release (_gpio_line_int);
+	
+	if(_gpio_chip)
+		gpiod_chip_close(_gpio_chip);
+ #endif
+
 	_volKnob.stop();
 	_tunerKnob.stop();
 }

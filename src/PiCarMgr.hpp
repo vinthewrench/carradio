@@ -7,7 +7,10 @@
 
 
 #pragma once
- 
+
+
+#define USE_GPIO_INTERRUPT 1
+
 
 #include <stdio.h>
 #include <vector>
@@ -23,6 +26,17 @@
 #include <cstdlib>
 #include <signal.h>
  
+#if USE_GPIO_INTERRUPT
+
+#if defined(__APPLE__)
+// used for cross compile on osx
+#include "macos_gpiod.h"
+#else
+#include <gpiod.h>
+#endif
+#endif
+
+
 #include "CommonDefs.hpp"
 #include "PiCarMgrDevice.hpp"
 #include "DisplayMgr.hpp"
@@ -133,5 +147,9 @@ private:
 	DuppaKnob			_volKnob;
 	DuppaKnob			_tunerKnob;
 
+#if USE_GPIO_INTERRUPT
+	struct gpiod_chip* 		_gpio_chip = NULL;
+	struct gpiod_line*  		_gpio_line_int = NULL;
+#endif
 };
 

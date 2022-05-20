@@ -23,6 +23,37 @@ struct gpiod_chip {
 	char label[32];
 };
 
+struct gpiod_line {
+	unsigned int offset;
+
+	/* The direction of the GPIO line. */
+	int direction;
+
+	/* The active-state configuration. */
+	int active_state;
+
+	/* The logical value last written to the line. */
+	int output_value;
+
+	/* The GPIOLINE_FLAGs returned by GPIO_GET_LINEINFO_IOCTL. */
+	uint32_t info_flags;
+
+	/* The GPIOD_LINE_REQUEST_FLAGs provided to request the line. */
+	uint32_t req_flags;
+
+	/*
+	 * Indicator of LINE_FREE, LINE_REQUESTED_VALUES or
+	 * LINE_REQUESTED_EVENTS.
+	 */
+	int state;
+
+	struct gpiod_chip *chip;
+	struct line_fd_handle *fd_handle;
+
+	char name[32];
+	char consumer[32];
+};
+
 
 struct gpiod_chip *gpiod_chip_open(const char *path) {
 	
@@ -88,5 +119,48 @@ int gpiod_line_set_value_bulk(struct gpiod_line_bulk *bulk, const int *values) {
 	return 0;
 }
 
+
+//struct gpiod_line *
+//gpiod_chip_get_line(struct gpiod_chip *chip, unsigned int offset) GPIOD_API;
+
+struct gpiod_line *gpiod_chip_get_line(struct gpiod_chip *chip, unsigned int offset) {
+	
+	printf("gpiod_chip_get_line(%d)\n",offset);
+	 
+	struct gpiod_line * line = malloc(sizeof (struct gpiod_line));
+  
+	return  line;
+};
+
+
+void gpiod_line_release(struct gpiod_line *line){
+	if(line){
+		printf("gpiod_line_release\n" );
+		free(line);
+	}
+}
+
+int gpiod_line_request_falling_edge_events_flags(struct gpiod_line *line,
+						 const char *consumer,
+						 int flags)
+{
+	
+	printf("gpiod_line_request_falling_edge_events_flags()\n");
+ 	return 0;
+}
+
+
+int gpiod_line_event_read(struct gpiod_line *line,
+								  struct gpiod_line_event *event)  {
+	printf("gpiod_line_event_read()\n");
+	return 0;
+}
+
+int gpiod_line_event_wait(struct gpiod_line *line,
+								  const struct timespec *timeout) {
+	
+		printf("gpiod_line_event_wait()\n");
+	return 0;
+}
 
 #endif

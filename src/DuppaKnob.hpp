@@ -38,7 +38,4 @@ private:
 	
 	bool					_isSetup;
 	DuppaEncoder		_duppa;
-	
-	int16_t 				_twistCount;
-
 };

@@ -51,12 +51,13 @@ public:
 		INT_2 = 0x80,
 	};
 
+	
 	DuppaEncoder();
 	~DuppaEncoder();
  
  
-	bool begin(uint8_t deviceAddress, uint16_t conf = 0);
-	bool begin(uint8_t deviceAddress, uint16_t conf, int &error);
+	bool begin(uint8_t deviceAddress, uint16_t conf = 0, uint8_t intConf = 0);
+	bool begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf, int &error);
 	void stop();
 
 	bool reset();

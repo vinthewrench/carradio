@@ -14,7 +14,6 @@
 DuppaKnob::DuppaKnob(){
 	
 	_isSetup = false;
-	_twistCount = 0;
  }
 
 DuppaKnob::~DuppaKnob(){
@@ -39,11 +38,17 @@ bool DuppaKnob::begin(int deviceAddress, int &error){
 	| DuppaEncoder::RMOD_X1
 	| DuppaEncoder::RGB_ENCODER;
 	
+// pull the interrupt line low when the knob is pressed or moved
+	uint8_t interrupt_config =
+		DuppaEncoder::PUSHR
+	| 	DuppaEncoder::PUSHP
+	| 	DuppaEncoder::RINC
+	| 	DuppaEncoder::RDEC ;
 
-	status = _duppa.begin(deviceAddress, config,  error);
+
+	status = _duppa.begin(deviceAddress, config, interrupt_config,  error);
 	
 	if(status){
-		_twistCount = 0;
 		_isSetup = true;;
 	}
 	return status;

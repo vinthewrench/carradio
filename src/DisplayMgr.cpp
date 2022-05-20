@@ -827,13 +827,12 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			
 			if(hasRange){
 				uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
- 				int offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+ 				uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
 				
 				for (int i = 0 ; i < 24; i++) {
-					int off1 = (offset-1)%24;
-					int off2 = (offset+1)%24;
-
-					
+					uint8_t off1 = (offset-1)%24;
+					uint8_t off2 = (offset+1)%24;
+ 
 					printf("%d %d %d\n", off1, offset, off2);
 					
 					if( i == offset){

@@ -832,7 +832,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				for (int i = 0 ; i < 24; i++) {
 					int off1 = (offset-1)%24;
 					int off2 = (offset+1)%24;
-					 
+
+					
+					printf("%d %d %d\n", off1, offset, off2);
+					
 					if( i == offset){
 						_rightRing.setColor(i, 0, 0, 255);
 					}

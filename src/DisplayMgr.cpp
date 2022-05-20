@@ -830,17 +830,17 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
  				int offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
 				
 				for (int i = 0 ; i < 24; i++) {
-					int off1 = (offset-1)%23;
-					int off2 = (offset+1)%23;
+					int off1 = (offset-1)%24;
+					int off2 = (offset+1)%24;
 					 
 					if( i == offset){
 						_rightRing.setColor(i, 0, 0, 255);
 					}
 					else if(i == off1) {
-						_rightRing.setColor(i, 64, 64, 64);
+						_rightRing.setColor(i, 32, 32, 32);
 					}
 					else if(i == off2) {
-						_rightRing.setColor(i, 64, 64, 64);
+						_rightRing.setColor(i, 32, 32, 32);
 					}
 					else {
 						_rightRing.setColor(i, 0, 0, 0);

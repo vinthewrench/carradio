@@ -8,10 +8,12 @@ project(carradio)
 
 find_package(Threads)
 find_package(PkgConfig)
-find_package(gpiod)
 find_package(ALSA REQUIRED)
 
-
+# you will need to install the gpiod and the dev libraries before building
+# sudo apt-get install gpiod libgpiod-dev
+ 
+ 
 # Find RTL-SDR library (for linking).
 pkg_check_modules(PKG_RTLSDR librtlsdr)
 find_path(RTLSDR_INCLUDE_DIR rtl-sdr.h
@@ -102,7 +104,7 @@ target_link_libraries(carradio
     ${ALSA_LIBRARIES}
     ${EXTRA_LIBS}
  	 Threads::Threads
- 	 gpiod::gpiod
+ 	 gpiod
  	)
 
 target_include_directories(carradio

@@ -834,13 +834,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 					int off2 = (offset+1)%23;
 					 
 					if( i == offset){
-						_rightRing.setColor(i, 0, 255, 00);
+						_rightRing.setColor(i, 0, 0, 255);
 					}
 					else if(i == off1) {
-						_rightRing.setColor(i, 128, 128, 128);
+						_rightRing.setColor(i, 64, 64, 64);
 					}
 					else if(i == off2) {
-						_rightRing.setColor(i, 128, 128, 128);
+						_rightRing.setColor(i, 64, 64, 64);
 					}
 					else {
 						_rightRing.setColor(i, 0, 0, 0);

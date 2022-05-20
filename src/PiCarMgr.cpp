@@ -673,6 +673,7 @@ void PiCarMgr::PiCanLoop(){
 				}
 				
 				// ocassionally save properties
+				saveRadioSettings();
 				if(_db.propertiesChanged()){
 					_db.savePropertiesToFile();
 				}

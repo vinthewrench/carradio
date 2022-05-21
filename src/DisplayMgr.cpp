@@ -407,7 +407,7 @@ void DisplayMgr::DisplayUpdate(){
 				}
 				// check for ay other timeout delay 1.3 secs
 				
-				else if((diff.tv_sec >=  1) && (diff.tv_usec >= 3e5)){
+				else if(diff.tv_sec >=  1){
 					// should we pop the mode?
 					if(!isStickyMode(_current_mode)){
 						popMode();

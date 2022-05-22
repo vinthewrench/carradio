@@ -471,7 +471,7 @@ void PiCarMgr::PiCanLoop(){
 				
 				struct timespec timeout;
 				// Timeout in polltime seconds
-				timeout.tv_sec =  pollTime * 1e6;
+				timeout.tv_sec =  pollTime;
 				timeout.tv_nsec = 0;
 				gpiod_line_event evt;
 				

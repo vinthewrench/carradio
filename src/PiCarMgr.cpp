@@ -125,8 +125,8 @@ bool PiCarMgr::begin(){
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
 
-		if(!_radio.begin(devices[0].index, pcmrate))
-			throw Exception("failed to setup Radio ");
+//		if(!_radio.begin(devices[0].index, pcmrate))
+//			throw Exception("failed to setup Radio ");
 	 
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
@@ -431,7 +431,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
  
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr time_t pollTime	= 8;  // polling for slow devices sleep in seconds
+	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
 	bool firstRun = false;
 	
 	try{

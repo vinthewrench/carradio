@@ -86,7 +86,13 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_eventQueue = {};
 		
 		resetMenu();
-		pthread_create(&_updateTID, NULL,
+		
+		pthread_attr_t attr;
+		pthread_attr_init (&attr);
+		
+		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+		
+		pthread_create(&_updateTID, &attr,
 							(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
 		showStartup();
 	}

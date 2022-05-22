@@ -111,25 +111,25 @@ bool PiCarMgr::begin(){
 		startTempSensors();
 		startControls();
 		
-//		// setup audio out
-//		if(!_audio.begin(dev_audio ,pcmrate, true ))
-//			throw Exception("failed to setup Audio ");
-//		
-//		// quiet audio first
-//		if(!_audio.setVolume(0)
-//			|| ! _audio.setBalance(0))
-//			throw Exception("failed to setup Audio levels ");
-//	
+		// setup audio out
+		if(!_audio.begin(dev_audio ,pcmrate, true ))
+			throw Exception("failed to setup Audio ");
+		
+		// quiet audio first
+		if(!_audio.setVolume(0)
+			|| ! _audio.setBalance(0))
+			throw Exception("failed to setup Audio levels ");
+	
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
-//
-//		if(!_radio.begin(devices[0].index, pcmrate))
-//			throw Exception("failed to setup Radio ");
-//
-//		if(!_gps.begin(path_gps,B9600, error))
-//			throw Exception("failed to setup GPS ", error);
+
+		if(!_radio.begin(devices[0].index, pcmrate))
+			throw Exception("failed to setup Radio ");
+	 
+		if(!_gps.begin(path_gps,B9600, error))
+			throw Exception("failed to setup GPS ", error);
 
 		// setup display device
 		if(!_display->begin(path_display,B9600))
@@ -673,29 +673,29 @@ void PiCarMgr::PiCanLoop(){
 	// occasionally called durring idle time
 
 void PiCarMgr::idle(){
-//	
-//	_tempSensor1.idle();
-//	_cpuInfo.idle();
-//	
-//	if(_tempSensor1.isConnected()){
-//		// handle input
-//		_tempSensor1.rcvResponse([=]( map<string,string> results){
-//			_db.updateValues(results);
-//		});
-//	}
-//	
-//	if(_cpuInfo.isConnected()){
-//		// handle input
-//		_cpuInfo.rcvResponse([=]( map<string,string> results){
-//			_db.updateValues(results);
-//		});
-//	}
-//	
-//	// ocassionally save properties
-//	saveRadioSettings();
-//	if(_db.propertiesChanged()){
-//		_db.savePropertiesToFile();
-//	}
+	
+	_tempSensor1.idle();
+	_cpuInfo.idle();
+	
+	if(_tempSensor1.isConnected()){
+		// handle input
+		_tempSensor1.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+	
+	if(_cpuInfo.isConnected()){
+		// handle input
+		_cpuInfo.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+	
+	// ocassionally save properties
+	saveRadioSettings();
+	if(_db.propertiesChanged()){
+		_db.savePropertiesToFile();
+	}
 
 }
 

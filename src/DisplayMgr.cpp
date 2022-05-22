@@ -699,6 +699,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
+	return;
+	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
 	time_t now = time(NULL);

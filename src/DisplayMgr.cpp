@@ -157,7 +157,7 @@ void DisplayMgr::runLEDEventStartup(){
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
-		if(ledStep < 24 * 2){
+		if(ledStep < 24 * 4){
  			_leftRing.setColor( mod(ledStep, 23), 0, 0, 0);
 			ledStep++;
 			_leftRing.setColor(mod(ledStep, 23), 255, 255, 255);
@@ -710,7 +710,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
-		_leftRing.clearAll();
+//		_leftRing.clearAll();
 	}
 	
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);

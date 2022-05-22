@@ -167,8 +167,6 @@
 				2E8210AC2835A465003D074C /* Audio */,
 				2E8210AB2835A3F3003D074C /* Devices */,
 				2E8210A92835A3B9003D074C /* Utilities */,
-				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
-				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -233,6 +231,8 @@
 		2E8210A92835A3B9003D074C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
+				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 				2E8210CF2835A635003D074C /* CommonDefs.hpp */,
 				2E8210B42835A551003D074C /* TimeStamp.cpp */,
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,

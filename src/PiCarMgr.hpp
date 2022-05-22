@@ -122,7 +122,8 @@ private:
 	// C wrappers for SDRReader;
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
-		
+	void idle();  // occasionally called durrig idle time
+	
 	RadioMgr::radio_mode_t		_lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
 	 

@@ -431,9 +431,9 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
  
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr time_t pollTime	= 5;  // polling for slow devices sleep in seconds
-	timeval	 lastPollTime = {0,0};
- 
+	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
+	bool firstRun = false;
+	
 	try{
 		
 		while(_isRunning){
@@ -444,37 +444,12 @@ void PiCarMgr::PiCanLoop(){
 				continue;
 			}
 
-			// handle the slower stuff like polling first
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &lastPollTime, &diff);
-			
-			if(diff.tv_sec >=  pollTime) {
-				gettimeofday(&lastPollTime, NULL);
-				
-				// run idle first to prevent delays on first run.
-				_tempSensor1.idle();
-				_cpuInfo.idle();
-				
-				if(_tempSensor1.isConnected()){
-					// handle input
-					_tempSensor1.rcvResponse([=]( map<string,string> results){
-						_db.updateValues(results);
-					});
-				}
-				
-				if(_cpuInfo.isConnected()){
-					// handle input
-					_cpuInfo.rcvResponse([=]( map<string,string> results){
-						_db.updateValues(results);
-					});
-				}
-				
-				// ocassionally save properties
-				saveRadioSettings();
-				if(_db.propertiesChanged()){
-					_db.savePropertiesToFile();
-				}
+			// call things that need to be setup,
+			// run idle first to prevent delays on first run.
+
+			if(!firstRun){
+				idle();
+				firstRun = true;
 			}
 			
 			// knob management -
@@ -524,11 +499,13 @@ void PiCarMgr::PiCanLoop(){
 					gpiod_line_event_read(_gpio_line_int, &evt);
 				}
 				else if (err == 0){
-					break;
-//					printf("gpiod_line_event_wait timeout\n");
+					// timeout occured ..
+					//  call idle when nothing else is going on
+					idle();
 				}
 #else
 			 usleep(10000);
+			 idle();
 #endif
 			}
   
@@ -692,20 +669,35 @@ void PiCarMgr::PiCanLoop(){
 		}
 	}
 	
-	
-//	while(!_shouldQuit){
-//
-//		if(!_isSetup){
-//			usleep(200000);
-//			continue;
-//		}
-//
-//		// not doing anything yet.
-//		sleep(1);
-//	}
-	
 }
+	// occasionally called durring idle time
 
+void PiCarMgr::idle(){
+	
+	_tempSensor1.idle();
+	_cpuInfo.idle();
+	
+	if(_tempSensor1.isConnected()){
+		// handle input
+		_tempSensor1.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+	
+	if(_cpuInfo.isConnected()){
+		// handle input
+		_cpuInfo.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+	
+	// ocassionally save properties
+	saveRadioSettings();
+	if(_db.propertiesChanged()){
+		_db.savePropertiesToFile();
+	}
+
+}
 
 void* PiCarMgr::PiCanLoopThread(void *context){
 	PiCarMgr* d = (PiCarMgr*)context;

@@ -444,6 +444,41 @@ void PiCarMgr::PiCanLoop(){
 				continue;
 			}
 
+			// handle the slower stuff like polling first
+			timeval now, diff;
+			gettimeofday(&now, NULL);
+			timersub(&now, &lastPollTime, &diff);
+			
+			if(diff.tv_sec >=  pollTime) {
+				gettimeofday(&lastPollTime, NULL);
+				
+				// run idle first to prevent delays on first run.
+				_tempSensor1.idle();
+				_cpuInfo.idle();
+				
+				if(_tempSensor1.isConnected()){
+					// handle input
+					_tempSensor1.rcvResponse([=]( map<string,string> results){
+						_db.updateValues(results);
+					});
+				}
+				
+				if(_cpuInfo.isConnected()){
+					// handle input
+					_cpuInfo.rcvResponse([=]( map<string,string> results){
+						_db.updateValues(results);
+					});
+				}
+				
+				// ocassionally save properties
+				saveRadioSettings();
+				if(_db.propertiesChanged()){
+					_db.savePropertiesToFile();
+				}
+			}
+			
+			// knob management -
+			
 			uint8_t volKnobStatus = 0;
 			uint8_t tunerKnobStatus  = 0;
 
@@ -644,39 +679,6 @@ void PiCarMgr::PiCanLoop(){
 						}
 						
 					});
-				}
-			}
-
-			// handle slower stuff like polling
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &lastPollTime, &diff);
-			
-			if(diff.tv_sec >=  pollTime) {
-				gettimeofday(&lastPollTime, NULL);
-				
-				// run idle first to prevent delays on first run.
-				_tempSensor1.idle();
-				_cpuInfo.idle();
-				
-				if(_tempSensor1.isConnected()){
-					// handle input
-					_tempSensor1.rcvResponse([=]( map<string,string> results){
-						_db.updateValues(results);
-					});
-				}
-				
-				if(_cpuInfo.isConnected()){
-					// handle input
-					_cpuInfo.rcvResponse([=]( map<string,string> results){
-						_db.updateValues(results);
-					});
-				}
-				
-				// ocassionally save properties
-				saveRadioSettings();
-				if(_db.propertiesChanged()){
-					_db.savePropertiesToFile();
 				}
 			}
 		};

@@ -90,7 +90,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		pthread_attr_t attr;
 		pthread_attr_init (&attr);
 		
-		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+		pthread_attr_setscope(&attr, PTHREAD_SCOPE_PROCESS);
 		
 		pthread_create(&_updateTID, &attr,
 							(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);

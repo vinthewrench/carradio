@@ -489,7 +489,8 @@ void PiCarMgr::PiCanLoop(){
 					gpiod_line_event_read(_gpio_line_int, &evt);
 				}
 				else if (err == 0){
-					printf("gpiod_line_event_wait timeout\n");
+					break;
+//					printf("gpiod_line_event_wait timeout\n");
 				}
 #else
 			 usleep(10000);

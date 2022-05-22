@@ -39,6 +39,19 @@ public:
 
 	 bool reset();
 		
+	// LED effects
+	
+	typedef enum  {
+		LED_EVENT_NONE = 0,
+		LED_EVENT_STARTUP,
+		LED_EVENT_VOL,
+ 	}led_event_t;
+
+	void LEDeventStartup();
+	void LEDeventVol();
+
+	
+	// display related
 	bool setBrightness(uint8_t level);  // 0-7
 
 	void showTime();
@@ -94,8 +107,9 @@ private:
 		
 	}modeTransition_t;
 
-	void drawMode(modeTransition_t transition, mode_state_t mode);
 	
+		
+	void drawMode(modeTransition_t transition, mode_state_t mode);
 	void drawStartupScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
 	void drawVolumeScreen(modeTransition_t transition);
@@ -127,6 +141,20 @@ private:
 	
 	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN);
  
+	// LED effects Bit map
+	
+#define LED_EVENT_STARTUP				0x00000001
+#define LED_EVENT_VOL 					0x00000002
+	
+#define LED_EVENT_STARTUP_RUNNING	0x00010000
+#define LED_EVENT_VOL_RUNNING			0x00020000
+	
+	uint32_t  _ledEvent  = 0;
+	void ledEventSet(uint32_t set, uint32_t reset);
+	void ledEventUpdate();
+	void runLEDEventStartup();
+	void runLEDEventVol();
+
 	void DisplayUpdate();		// C++ version of thread
 	// C wrappers for DisplayUpdate;
 	static void* DisplayUpdateThread(void *context);

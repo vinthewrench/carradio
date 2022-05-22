@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <errno.h>
-
+#include <time.h>
 #if defined(__APPLE__)
 // used for cross compile on osx
 
@@ -159,7 +159,10 @@ int gpiod_line_event_read(struct gpiod_line *line,
 int gpiod_line_event_wait(struct gpiod_line *line,
 								  const struct timespec *timeout) {
 	
-		printf("gpiod_line_event_wait()\n");
+	nanosleep(timeout, NULL);
+	
+	//	printf("gpiod_line_event_wait()\n");
+	
 	return 0;
 }
 

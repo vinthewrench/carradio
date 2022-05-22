@@ -112,6 +112,100 @@ void DisplayMgr::stop(){
 	_isSetup = false;
 }
 
+
+// MARK: -  LED Events
+
+void DisplayMgr::LEDeventStartup(){
+	ledEventSet(LED_EVENT_STARTUP, 0);
+}
+
+void DisplayMgr::LEDeventVol(){
+	ledEventSet(LED_EVENT_VOL,0);
+}
+ 
+ 
+void DisplayMgr::ledEventUpdate(){
+	
+	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
+		runLEDEventStartup();
+
+	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
+		runLEDEventVol();
+
+	
+}
+ 
+
+void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
+	pthread_mutex_lock (&_mutex);
+	_ledEvent |= set;
+	_ledEvent &= ~reset;
+	pthread_cond_signal(&_cond);
+	pthread_mutex_unlock (&_mutex);
+}
+
+void DisplayMgr::runLEDEventStartup(){
+	
+ 	static uint8_t 	ledStep = 0;
+	
+	if( _ledEvent & LED_EVENT_STARTUP ){
+ 	ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_STARTUP );
+		
+		ledStep = 0;
+		printf("\nLED STARTUP\n");
+		_leftRing.clearAll();
+	}
+	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
+		
+		if(ledStep < 24 * 2){
+ 			_leftRing.setColor( mod(ledStep, 23), 0, 0, 0);
+			ledStep++;
+			_leftRing.setColor(mod(ledStep, 23), 255, 255, 255);
+ 			printf("\nLED RUN %d\n",ledStep);
+		}
+		else {
+			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
+			_leftRing.clearAll();
+
+			
+			printf("\nLED RUN DONE\n");
+ 
+		}
+  	}
+ }
+
+void DisplayMgr::runLEDEventVol(){
+	
+	static timeval		startedEvent = {0,0};
+
+	if( _ledEvent & LED_EVENT_VOL ){
+		gettimeofday(&startedEvent, NULL);
+		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_VOL );
+		
+	 	printf("\nVOL STARTUP\n");
+	}
+	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
+		
+		timeval now, diff;
+		gettimeofday(&now, NULL);
+		timersub(&now, &startedEvent, &diff);
+
+		if(diff.tv_sec <  5){
+	 
+			printf("\nVOL RUN\n");
+	
+		}
+		else {
+			ledEventSet(0, LED_EVENT_VOL_RUNNING);
+ 			printf("\nVOL RUN DONE\n");
+
+		}
+	}
+	 
+}
+
+
+
 // MARK: -  display tools
 
 bool DisplayMgr::setBrightness(uint8_t level) {
@@ -338,20 +432,28 @@ void  DisplayMgr::popMode(){
 void DisplayMgr::DisplayUpdate(){
 	
 	bool shouldQuit = false;
-	
-	constexpr time_t sleepTime = 1;
-	
-	//	printf("start DisplayUpdate\n");
+ 	//	printf("start DisplayUpdate\n");
 	
 	while(!shouldQuit){
 		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_REALTIME, &ts);
-		ts.tv_sec += sleepTime;
+		
+		// if there are LED events, run the update every half second
+		// elese wait a whole second
+		if(_ledEvent){
+			ts.tv_sec += 0;
+			ts.tv_nsec += 5.0e8;		// half second
+		}
+		else {
+			ts.tv_sec += 1;
+			ts.tv_nsec += 0;
+		}
 		
 		pthread_mutex_lock (&_mutex);
-		if (_eventQueue.size() == 0)
+		if ((_eventQueue.size() == 0)
+			  && ((_ledEvent & 0x0000ffff) == 0))		// new LED events..
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
 		
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
@@ -362,6 +464,10 @@ void DisplayMgr::DisplayUpdate(){
 		
 		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
+		
+		// run the LED effects
+		if(_ledEvent)
+			ledEventUpdate();
 		
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
@@ -573,8 +679,10 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
 	RtlSdr::device_info_t info;
 	
-	if(transition == TRANS_ENTERING)
+	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
+		LEDeventStartup();
+	}
 	
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.setFont(VFD::FONT_5x7));

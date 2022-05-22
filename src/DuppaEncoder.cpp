@@ -74,6 +74,12 @@ bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf){
 
 bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf, int &error){
 	
+	
+#if defined(__APPLE__)
+	_isSetup = true;
+#else
+
+	
 	if( _i2cPort.begin(deviceAddress, error)
 		&& _i2cPort.writeByte(REG_GCONF,  (uint8_t) 0x80)   // reset the device
 		) {
@@ -94,6 +100,8 @@ bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf, 
 			_isSetup = true;
 		}
 	}
+#endif
+	
 	return _isSetup;
 }
 
@@ -113,6 +121,12 @@ uint8_t	DuppaEncoder::getDevAddr(){
 bool DuppaEncoder::reset(void) {
 	bool success = false;
 	
+#if defined(__APPLE__)
+# pragma clang diagnostic ignored "-Wunreachable-code"
+
+	return(true);
+#endif
+
 	if(_i2cPort.isAvailable()){
 		
 		if(_i2cPort.writeByte(REG_GCONF,  (uint8_t) 0x80)){
@@ -133,6 +147,10 @@ bool DuppaEncoder::updateStatus(){
 bool DuppaEncoder::updateStatus(uint8_t &statusOut) {
 	bool success = false;
 	
+#if defined(__APPLE__)
+	return(true);
+#endif
+
 	if(_i2cPort.isAvailable()){
 		uint8_t status = 0;
 		
@@ -169,7 +187,10 @@ bool DuppaEncoder::wasMoved(bool &cw) {
 bool DuppaEncoder::setColor(uint8_t red, uint8_t green, uint8_t blue){
 	
 	bool success = false;
-	
+#if defined(__APPLE__)
+	return(true);
+#endif
+
 	if(_i2cPort.isAvailable()){
 		
 		I2C::i2c_block_t block = {red, green, blue};

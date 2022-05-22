@@ -63,6 +63,11 @@ bool DuppaLEDRing::begin(uint8_t deviceAddress){
 
 bool DuppaLEDRing::begin(uint8_t deviceAddress,  int &error){
 	
+#if defined(__APPLE__)
+# pragma clang diagnostic ignored "-Wunreachable-code"
+ 	_isSetup = true;
+#else
+
 	if( _i2cPort.begin(deviceAddress, error)
 		&& setConfig(0x01) //Normal operation
 		) {
@@ -71,7 +76,7 @@ bool DuppaLEDRing::begin(uint8_t deviceAddress,  int &error){
 		_isSetup = true;
 	}
 	
-	
+#endif
 	return _isSetup;
 }
 
@@ -93,6 +98,10 @@ uint8_t	DuppaLEDRing::getDevAddr(){
 bool DuppaLEDRing::reset(void) {
 	bool success = false;
 	
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	if(_i2cPort.isAvailable()){
 		
 		success =	selectBank(PAGE1)
@@ -109,7 +118,11 @@ bool DuppaLEDRing::reset(void) {
 
 bool DuppaLEDRing::clearAll(void) {
 	bool success = false;
-	
+
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0)) {
 		
@@ -125,6 +138,7 @@ bool DuppaLEDRing::clearAll(void) {
 bool DuppaLEDRing::PWMFrequencyEnable(uint8_t PWMenable) {
 	bool success = false;
 
+	
 	success =	selectBank(PAGE1)
 	&&  _i2cPort.writeByte(PWM_FREQUENCY_ENABLE,	PWMenable);
 	
@@ -204,6 +218,10 @@ uint8_t DuppaLEDRing::ledFromOffset(uint8_t led_n){
 bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue ){
 	bool success = false;
  
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	led_n = ledFromOffset(led_n);
 
 	if(_i2cPort.isAvailable()
@@ -218,7 +236,10 @@ bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t 
 
 bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 	bool success = false;
-	
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	led_n = ledFromOffset(led_n);
 	
 	if(_i2cPort.isAvailable()
@@ -231,7 +252,10 @@ bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 
 bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 	bool success = false;
-	
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	led_n = ledFromOffset(led_n);
 
 	if(_i2cPort.isAvailable()
@@ -244,7 +268,10 @@ bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 
 bool  DuppaLEDRing::setBLUE(uint8_t led_n, uint8_t color){
 	bool success = false;
-	
+#if defined(__APPLE__)
+	return true;
+#endif
+
 	led_n = ledFromOffset(led_n);
 
 	if(_i2cPort.isAvailable()

@@ -445,7 +445,7 @@ void DisplayMgr::DisplayUpdate(){
 		// elese wait a whole second
 		if(_ledEvent){
 			ts.tv_sec += 0;
-			ts.tv_nsec += 7.5e8;		// half second
+			ts.tv_nsec += 5.0e8;		// half second
 		}
 		else {
 			ts.tv_sec += 1;
@@ -698,8 +698,6 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 }
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
-	
-	return;
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	

@@ -431,7 +431,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
  
 void PiCarMgr::PiCanLoop(){
 	
-	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
+	constexpr time_t pollTime	= 8;  // polling for slow devices sleep in seconds
 	bool firstRun = false;
 	
 	try{
@@ -673,8 +673,6 @@ void PiCarMgr::PiCanLoop(){
 	// occasionally called durring idle time
 
 void PiCarMgr::idle(){
-	
-	return;
 	
 	_tempSensor1.idle();
 	_cpuInfo.idle();

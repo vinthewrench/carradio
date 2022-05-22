@@ -152,7 +152,7 @@ void DisplayMgr::runLEDEventStartup(){
  	ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_STARTUP );
 		
 		ledStep = 0;
-		printf("\nLED STARTUP\n");
+//		printf("\nLED STARTUP\n");
 		_leftRing.clearAll();
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
@@ -161,14 +161,14 @@ void DisplayMgr::runLEDEventStartup(){
  			_leftRing.setColor( mod(ledStep, 23), 0, 0, 0);
 			ledStep++;
 			_leftRing.setColor(mod(ledStep, 23), 255, 255, 255);
- 			printf("\nLED RUN %d\n",ledStep);
+ //			printf("\nLED RUN %d\n",ledStep);
 		}
 		else {
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
 
 			
-			printf("\nLED RUN DONE\n");
+//			printf("\nLED RUN DONE\n");
  
 		}
   	}
@@ -445,7 +445,7 @@ void DisplayMgr::DisplayUpdate(){
 		// elese wait a whole second
 		if(_ledEvent){
 			ts.tv_sec += 0;
-			ts.tv_nsec += 5.0e8;		// half second
+			ts.tv_nsec += 7.5e8;		// half second
 		}
 		else {
 			ts.tv_sec += 1;

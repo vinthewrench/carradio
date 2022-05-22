@@ -441,7 +441,7 @@ void DisplayMgr::DisplayUpdate(){
 		clock_gettime(CLOCK_REALTIME, &ts);
 		
 		pthread_mutex_lock (&_mutex);
-	// if there are LED events, run the update every half second
+		// if there are LED events, run the update every half second
 		// elese wait a whole second
 		if(_ledEvent){
 			ts.tv_sec += 0;
@@ -452,8 +452,8 @@ void DisplayMgr::DisplayUpdate(){
 			ts.tv_nsec += 0;
 		}
 		
-			if ((_eventQueue.size() == 0)
-			  && ((_ledEvent & 0x0000ffff) == 0))		// new LED events..
+		if ((_eventQueue.size() == 0)
+			 && ((_ledEvent & 0x0000ffff) == 0))		// new LED events..
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
 		
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
@@ -482,7 +482,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
-					if(diff.tv_sec >=  3) {
+					if(diff.tv_sec >=  5) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
 						shouldUpdate = true;

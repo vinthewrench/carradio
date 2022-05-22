@@ -681,17 +681,18 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
+		TRY(_vfd.setCursor(0,10));
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		TRY(_vfd.write("Starting Up..."));
+		
+		if(radio->getDeviceInfo(info)){
+			TRY(_vfd.setCursor(0,18));
+			TRY(_vfd.write(info.name));
+		}
+
 		LEDeventStartup();
 	}
 	
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.write("Starting Up..."));
-	
-	if(radio->getDeviceInfo(info)){
-		TRY(_vfd.setCursor(0,18));
-		TRY(_vfd.write(info.name));
-	}
 	
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }

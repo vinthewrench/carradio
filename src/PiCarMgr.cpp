@@ -674,6 +674,8 @@ void PiCarMgr::PiCanLoop(){
 
 void PiCarMgr::idle(){
 	
+	return;
+	
 	_tempSensor1.idle();
 	_cpuInfo.idle();
 	

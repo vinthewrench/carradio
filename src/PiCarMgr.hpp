@@ -66,7 +66,7 @@ class PiCarMgr {
 	bool begin();
 	void stop();
 
-	DisplayMgr* display() {return _display;};
+	DisplayMgr* display() {return &_display;};
 	AudioOutput* audio() {return &_audio;};
 	RadioMgr* radio() 	{return &_radio;};
 	PiCarDB * db() 		{return &_db;};
@@ -129,7 +129,7 @@ private:
 	 
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	
-	DisplayMgr* 		_display;
+	DisplayMgr			_display;
 	AudioOutput 		_audio;
 	RadioMgr				_radio;
 	PiCarDB 				_db;

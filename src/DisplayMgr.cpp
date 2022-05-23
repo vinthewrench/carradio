@@ -66,7 +66,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	
 	// flip the ring numbers
 	_rightRing.setOffset(0,true);
-	_leftRing.setOffset(2, true);		// slight offset for volume control of zero
+	_leftRing.setOffset(0, true);		// slight offset for volume control of zero
 	
 	if( _vfd.reset()
 		&& _rightRing.reset()
@@ -267,7 +267,7 @@ void DisplayMgr::showDiag(){
 
 void DisplayMgr::showVolumeChange(){
 	LEDeventVol();
-	setEvent(EVT_PUSH, MODE_VOLUME );
+//	setEvent(EVT_PUSH, MODE_VOLUME );
 }
 
 

@@ -99,8 +99,6 @@ bool PiCarMgr::begin(){
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		
-		_display = new DisplayMgr();
-
 		// clear DB
 		_db.clearValues();
 
@@ -134,14 +132,14 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup GPS ", error);
 
 		// setup display device
-		if(!_display->begin(path_display,B9600))
+		if(!_display.begin(path_display,B9600))
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-		if(!_display->setBrightness(7))
+		if(!_display.setBrightness(7))
 			throw Exception("failed to set brightness ");
  
-		_display->showStartup();  // show startup
+		_display.showStartup();  // show startup
 		
 		restoreStationsFromFile();
 		restoreRadioSettings();
@@ -191,7 +189,7 @@ void PiCarMgr::stop(){
 		_isSetup = false;
  
 		_gps.stop();
-		_display->stop();
+		_display.stop();
 
 		stopControls();
 		stopTempSensors();
@@ -566,6 +564,7 @@ void PiCarMgr::PiCanLoop(){
 					getSavedFrequencyandMode(mode,freq);
 					_radio.setFrequencyandMode(mode, freq);
 					_radio.setON(true);
+					_display.showVolumeChange();
 				}
 			}
 			
@@ -590,12 +589,12 @@ void PiCarMgr::PiCanLoop(){
 					}
 				}
 				
-				_display->showVolumeChange();
+				_display.showVolumeChange();
 			}
 			
 			if(tunerWasMoved) {
-				if(_display->isMenuDisplayed()){
-						_display->menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
+				if(_display.isMenuDisplayed()){
+					_display.menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
 			//
 				}
 				else if(_radio.isOn() ){
@@ -611,8 +610,8 @@ void PiCarMgr::PiCanLoop(){
 		 
 			if(tunerWasClicked){
 				
-				if(_display->isMenuDisplayed()){
-					_display->menuSelectAction(DisplayMgr::MENU_CLICK);
+				if(_display.isMenuDisplayed()){
+					_display.menuSelectAction(DisplayMgr::MENU_CLICK);
 				}
 				else{
 					
@@ -629,7 +628,7 @@ void PiCarMgr::PiCanLoop(){
 						"Exit",
 					};
 					
-					_display->showMenuScreen(items, 0, 10,
+					_display.showMenuScreen(items, 0, 10,
 													 [=](bool didSucceed, uint selectedItem ){
 						
 						if(didSucceed){
@@ -667,17 +666,17 @@ void PiCarMgr::PiCanLoop(){
 								break;
  
 								case 5: { // GPS
-									_display->showGPS();
+									_display.showGPS();
 								}
 									break;
 									
 								case 6: { // GPS
-									_display->showTime();
+									_display.showTime();
 								}
 									break;
 									
 								case 7: { // DIAG
-									_display->showDiag();
+									_display.showDiag();
 								}
 									break;
 

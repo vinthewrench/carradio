@@ -564,7 +564,7 @@ void PiCarMgr::PiCanLoop(){
 					getSavedFrequencyandMode(mode,freq);
 					_radio.setFrequencyandMode(mode, freq);
 					_radio.setON(true);
-					_display.showVolumeChange();
+					_display.LEDeventVol();
 				}
 			}
 			

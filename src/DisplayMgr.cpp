@@ -503,7 +503,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
-					if(diff.tv_sec >=  3) {
+					if(diff.tv_sec >=  2) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
 						shouldUpdate = true;

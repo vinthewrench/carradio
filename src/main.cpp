@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
 			sleep(1);
 #if defined(__APPLE__)
 			
- 			pican->stop();
+// 			pican->stop();
 //
 //			pican->audio()->setVolume(.5);
 //			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);

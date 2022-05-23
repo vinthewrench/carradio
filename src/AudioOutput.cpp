@@ -76,7 +76,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 		} 	else {
 			
 			snd_mixer_open(&_mixer , SND_MIXER_ELEM_SIMPLE);
-			snd_mixer_attach(_mixer, "default");
+			snd_mixer_attach(_mixer, "hw:1");
 			snd_mixer_selem_register(_mixer, NULL, NULL);
 			snd_mixer_load(_mixer);
 			snd_mixer_handle_events(_mixer);
@@ -84,7 +84,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
-			snd_mixer_selem_id_set_name(sid, "Master");
+			snd_mixer_selem_id_set_name(sid, "Speaker");
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			

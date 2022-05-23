@@ -31,12 +31,27 @@ RadioMgr::RadioMgr(){
 	_isSetup = false;
 	
 	_shouldQuit = false;
- 
+
+	
+	 pthread_create(&_sdrReaderTID, NULL,
+									(THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
+
+	 pthread_create(&_sdrProcessorTID, NULL,
+									(THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
+
+
+	 pthread_create(&_outputProcessorTID, NULL,
+									(THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
+
+
  }
  
 RadioMgr::~RadioMgr(){
 	stop();
-	}
+	pthread_join(_sdrReaderTID, NULL);
+	pthread_join(_sdrProcessorTID, NULL);
+	pthread_join(_outputProcessorTID, NULL);
+}
  
 
 bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate){
@@ -65,17 +80,6 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	if(! _sdr.setACGMode(false))
 		return false;
   
-	pthread_create(&_sdrReaderTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
-
-	pthread_create(&_sdrProcessorTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
-
-
-	pthread_create(&_outputProcessorTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
-
-
 	_isSetup = true;
  
  	return true;
@@ -86,9 +90,6 @@ void RadioMgr::stop(){
 	if(_isSetup  ){
 		_shouldRead = false;
 		_shouldQuit = true;
-		pthread_join(_sdrReaderTID, NULL);
-		pthread_join(_sdrProcessorTID, NULL);
-		pthread_join(_outputProcessorTID, NULL);
 		_sdr.stop();
  	}
 	
@@ -515,9 +516,6 @@ void adjust_gain(SampleVector& samples, double gain)
 
 void RadioMgr::SDRProcessor(){
 	
-//	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-//	PiCarDB*			db 		= PiCarMgr::shared()->db();
-
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
 	double audio_level = 0;
@@ -646,8 +644,7 @@ void RadioMgr::SDRProcessorThreadCleanup(void *context){
  
 void RadioMgr::OutputProcessor(){
   
-	AudioOutput*	 audio  = PiCarMgr::shared()->audio();
-
+	
 	while(!_shouldQuit){
 		
 		if(!_isSetup){
@@ -670,6 +667,7 @@ void RadioMgr::OutputProcessor(){
 		}
 		// Get samples from buffer and write to output.
 		SampleVector samples =_output_buffer.pull();
+		AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 		audio->write(samples);
 	}
 	

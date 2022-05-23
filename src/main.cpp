@@ -57,7 +57,7 @@ int main(int argc, const char * argv[]) {
 			pican->radio()->setON(true);
 //			pican->saveRadioSettings();
 
-			pican->radio()->setON(false);
+//			pican->radio()->setON(false);
 
 			firstrun = false;
 #endif

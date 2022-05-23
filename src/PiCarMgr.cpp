@@ -383,7 +383,7 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			uint32_t freq = atoi(v[1].c_str());
 	 
 			string title = trimCNTRL(v[2]);
-			string location = trimCNTRL((v.size() >2) ?v[3]: string());
+			string location = trimCNTRL((v.size() >2) ?v[2]: string());
 			
 			if(freq != 0
 				&& mode != RadioMgr::MODE_UNKNOWN){

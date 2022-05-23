@@ -84,7 +84,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
-			snd_mixer_selem_id_set_name(sid, "Speaker");
+			snd_mixer_selem_id_set_name(sid, "PCM");
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			

@@ -41,6 +41,8 @@ constexpr uint8_t leftKnobAddress = 0x40;
 constexpr uint8_t rightKnobAddress = 0x41;
 
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
+//const char* dev_audio  = "hw:CARD=DAC,DEV=0";
+
 const char* dev_audio  = "default";
 constexpr int  pcmrate = 48000;
 
@@ -68,10 +70,10 @@ PiCarMgr::PiCarMgr(){
  
 //
 	signal(SIGKILL, sigHandler);
-//	signal(SIGHUP, sigHandler);
-//	signal(SIGQUIT, sigHandler);
-//	signal(SIGTERM, sigHandler);
-//	signal(SIGINT, sigHandler);
+	signal(SIGHUP, sigHandler);
+	signal(SIGQUIT, sigHandler);
+	signal(SIGTERM, sigHandler);
+	signal(SIGINT, sigHandler);
  
 	_isRunning = true;
 

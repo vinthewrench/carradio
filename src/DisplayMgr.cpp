@@ -84,6 +84,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightRing.clearAll();
 		
 		_eventQueue = {};
+		_ledEvent = 0;
 		
 		resetMenu();
 		pthread_create(&_updateTID, NULL,
@@ -103,6 +104,9 @@ void DisplayMgr::stop(){
 		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
+		_eventQueue = {};
+		_ledEvent = 0;
+
 		_rightRing.stop();
 		_leftRing.stop();
 		drawShutdownScreen();

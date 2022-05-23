@@ -187,12 +187,13 @@ void DisplayMgr::runLEDEventStartup(){
 void DisplayMgr::runLEDEventVol(){
 	
 	static timeval		startedEvent = {0,0};
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
 
 	if( _ledEvent & LED_EVENT_VOL ){
 		gettimeofday(&startedEvent, NULL);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_VOL );
 		
-	 	printf("\nVOL STARTUP\n");
+//	 	printf("\nVOL STARTUP\n");
 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
@@ -200,14 +201,32 @@ void DisplayMgr::runLEDEventVol(){
 		gettimeofday(&now, NULL);
 		timersub(&now, &startedEvent, &diff);
 
-		if(diff.tv_sec <  5){
+		if(diff.tv_sec <  1){
 	 
-			printf("\nVOL RUN\n");
+			float volume = 0;
+				
+			if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
+				// volume LED scales between 1 and 24
+				int ledvol = volume*23;
+				for (int i = 0 ; i < 24; i++) {
+					_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+				}
+
+			};
+			
+//			printf("\nVOL RUN\n");
 	
 		}
 		else {
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);
- 			printf("\nVOL RUN DONE\n");
+			
+			// scan the LEDS off
+			for (int i = 0; i < 24; i++) {
+				_leftRing.setColor( i, 0, 0, 0);
+				usleep(10 * 1000);
+			}
+
+ 	//		printf("\nVOL RUN DONE\n");
 
 		}
 	}
@@ -506,7 +525,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
-					if(diff.tv_sec >=  2) {
+					if(diff.tv_sec >=  1) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
 						shouldUpdate = true;
@@ -782,12 +801,12 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	uint8_t bottombox = midY + 5 ;
 	
 	if(transition == TRANS_LEAVING) {
-		
-		// scan the LEDS off
-		for (int i = 0; i < 24; i++) {
-			_leftRing.setColor( i, 0, 0, 0);
-			usleep(10 * 1000);
-		}
+//
+//		// scan the LEDS off
+//		for (int i = 0; i < 24; i++) {
+//			_leftRing.setColor( i, 0, 0, 0);
+//			usleep(10 * 1000);
+//		}
  		return;
 	}
 	
@@ -811,12 +830,12 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
 		
 		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
-		
-		// volume LED scales between 1 and 24
-		int ledvol = volume*23;
-		for (int i = 0 ; i < 24; i++) {
-			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-		}
+//
+//		// volume LED scales between 1 and 24
+//		int ledvol = volume*23;
+//		for (int i = 0 ; i < 24; i++) {
+//			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+//		}
 		
 		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
 		

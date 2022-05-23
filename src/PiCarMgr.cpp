@@ -127,9 +127,6 @@ bool PiCarMgr::begin(){
 		if( devices.size() == 0)
 			throw Exception("No RTL devices found ");
 
-		if(!_radio.begin(devices[0].index, pcmrate))
-			throw Exception("failed to setup Radio ");
-	 
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
 
@@ -142,11 +139,7 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to set brightness ");
  
 		_display->showStartup();  // show startup
-		
-		restoreStationsFromFile();
-		restoreRadioSettings();
-		_isSetup = true;
-
+ 
 		bool firstRunToday = true;
 		time_t now = time(NULL);
 		time_t lastRun = 0;
@@ -161,6 +154,14 @@ bool PiCarMgr::begin(){
 			printf("say hello\n");
 		}
  
+		restoreStationsFromFile();
+		restoreRadioSettings();
+
+		if(!_radio.begin(devices[0].index, pcmrate))
+			throw Exception("failed to setup Radio ");
+	 
+		_isSetup = true;
+
 	}
 	catch ( const Exception& e)  {
 		

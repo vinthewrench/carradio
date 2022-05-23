@@ -54,6 +54,7 @@ static void sigHandler (int signum) {
 	
 	auto picanMgr = PiCarMgr::shared();
 	picanMgr->stop();
+	exit(0);
 }
 
 
@@ -73,7 +74,7 @@ PiCarMgr::PiCarMgr(){
 	signal(SIGHUP, sigHandler);
 	signal(SIGQUIT, sigHandler);
 	signal(SIGTERM, sigHandler);
-	signal(SIGINT, sigHandler);
+//	signal(SIGINT, sigHandler);
  
 	_isRunning = true;
 

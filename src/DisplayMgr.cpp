@@ -1155,7 +1155,7 @@ void DisplayMgr::drawShutdownScreen(){
 	_leftRing.clearAll();
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,10));
+	TRY(_vfd.setCursor(10,40));
 	TRY(_vfd.write(" -- Shut Down --"));
 	usleep(100);
 }

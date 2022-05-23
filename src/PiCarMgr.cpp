@@ -67,14 +67,12 @@ PiCarMgr * PiCarMgr::shared() {
 
 
 PiCarMgr::PiCarMgr(){
-	
- 
-//
-	signal(SIGKILL, sigHandler);
+ 	signal(SIGKILL, sigHandler);
 	signal(SIGHUP, sigHandler);
 	signal(SIGQUIT, sigHandler);
+
 	signal(SIGTERM, sigHandler);
-//	signal(SIGINT, sigHandler);
+	signal(SIGINT, sigHandler);
  
 	_isRunning = true;
 
@@ -493,7 +491,8 @@ void PiCarMgr::PiCanLoop(){
 				//  1 if an event occurred.
 				err = gpiod_line_event_wait(_gpio_line_int, &timeout);
 				if(err == -1){
-					throw Exception("gpiod_line_event_wait failed ");
+					break;
+	//				throw Exception("gpiod_line_event_wait failed ");
 				}
 				// gpiod_line_event_wait only blocks until there's an event or a timeout
 				// occurs, it does not read the event.

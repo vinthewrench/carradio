@@ -49,17 +49,21 @@ int main(int argc, const char * argv[]) {
 		if(firstrun){
 			sleep(5);
 #if defined(__APPLE__)
-			pican->audio()->setVolume(.5);
-			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
-			pican->radio()->setON(true);
-			pican->saveRadioSettings();
-
+			
+			pican->stop();
+//
+//			pican->audio()->setVolume(.5);
+//			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
+//			pican->radio()->setON(true);
+//			pican->saveRadioSettings();
+//
 			firstrun = false;
 #endif
 			continue;
 		}
 	 
- 		sleep(60);
+ 		pause();
+ 
 	}
 
 	return 0;

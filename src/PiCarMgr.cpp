@@ -169,6 +169,7 @@ void PiCarMgr::stop(){
 	if(_isSetup  ){
 		_isSetup = false;
  
+		_gps.stop();
 		_display->stop();
 
 		stopControls();
@@ -471,6 +472,8 @@ void PiCarMgr::PiCanLoop(){
 			// loop until status changes
 			for(;;) {
 				
+				if(!_isSetup) break;
+
 				// get status from knobs
 				_volKnob.updateStatus(volKnobStatus);
 				_tunerKnob.updateStatus(tunerKnobStatus);

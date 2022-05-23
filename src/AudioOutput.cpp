@@ -15,6 +15,9 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <iostream>
+#include <filesystem> // C++17
+#include <fstream>
 
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -175,6 +178,56 @@ bool AudioOutput::write(const SampleVector& samples)
 	
 	return true;
 }
+
+
+bool AudioOutput::playSound(string filePath, boolCallback_t cb){
+	bool 				statusOk = false;
+	int  fd = 0;
+	
+	try{
+		char buff[1024];
+		
+		fd = open(filePath.c_str(), O_RDONLY);
+		if(fd < 0) throw(errno);
+		
+		while(true){
+			size_t bytesRead = read(fd, &buff, sizeof(buff));
+			if(bytesRead > 0){
+				
+				// process bytes
+#if defined(__APPLE__)
+				
+#else
+				int k = snd_pcm_writei(_pcm, buff, bytesRead);
+				
+				if (k < 0) {
+					//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+					// After an underrun, ALSA keeps returning error codes until we
+					// explicitly fix the stream.
+					snd_pcm_recover(_pcm, k, 0);
+					
+				}
+#endif
+				
+			}
+			else
+				break;
+		}
+		if(cb) (cb)(true);
+		statusOk = true;
+	}
+	catch(...){
+		if(cb) (cb)(false);
+		statusOk = false;
+	}
+	
+	if(fd >= 0)
+		close(fd);
+	
+	return statusOk;
+}
+
+
 /*
 void AudioOutput::test(char* fname){
 #if defined(__APPLE__)

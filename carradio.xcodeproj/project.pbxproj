@@ -31,6 +31,7 @@
 		2E8210CB2835A593003D074C /* TMP117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C22835A593003D074C /* TMP117.cpp */; };
 		2E8210CC2835A593003D074C /* DuppaKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C52835A593003D074C /* DuppaKnob.cpp */; };
 		2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210E1283831B2003D074C /* macos_gpiod.c */; };
+		2E8210E6283C1986003D074C /* BTL.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E8210E5283C1983003D074C /* BTL.wav */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
@@ -46,6 +47,7 @@
 			files = (
 				2E821034282884B1003D074C /* carradio.props.json in CopyFiles */,
 				2E821040282AC43D003D074C /* stations.tsv in CopyFiles */,
+				2E8210E6283C1986003D074C /* BTL.wav in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,6 +111,7 @@
 		2E8210CF2835A635003D074C /* CommonDefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CommonDefs.hpp; path = src/CommonDefs.hpp; sourceTree = SOURCE_ROOT; };
 		2E8210E0283831B2003D074C /* macos_gpiod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macos_gpiod.h; sourceTree = "<group>"; };
 		2E8210E1283831B2003D074C /* macos_gpiod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = macos_gpiod.c; sourceTree = "<group>"; };
+		2E8210E5283C1983003D074C /* BTL.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = BTL.wav; path = Assets/BTL.wav; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -207,6 +210,7 @@
 		2E62A90A2825BA6400F5066B /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				2E8210E5283C1983003D074C /* BTL.wav */,
 				2E8210332828848E003D074C /* carradio.props.json */,
 				2E82103F282AC43A003D074C /* stations.tsv */,
 			);

@@ -48,6 +48,8 @@ public:
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 
+	bool playSound(string filePath, boolCallback_t cb);
+	
  
 	private:
  

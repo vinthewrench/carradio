@@ -151,9 +151,9 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	pthread_mutex_lock (&_mutex);
 	_ledEvent |= set;
 	_ledEvent &= ~reset;
-	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);
-}
+	pthread_cond_signal(&_cond);
+	}
 
 void DisplayMgr::runLEDEventStartup(){
 	
@@ -276,11 +276,14 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 		}
 	}
 	
-	if(shouldPush){
+	if(shouldPush)
 		_eventQueue.push({evt,mod});
-		pthread_cond_signal(&_cond);
-	}
+ 
 	pthread_mutex_unlock (&_mutex);
+	
+	if(shouldPush)
+ 		pthread_cond_signal(&_cond);
+
 }
 
 // MARK: -  Menu Mode

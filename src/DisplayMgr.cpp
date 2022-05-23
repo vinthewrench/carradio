@@ -187,7 +187,7 @@ void DisplayMgr::runLEDEventStartup(){
 void DisplayMgr::runLEDEventVol(){
 	
 	static timeval		startedEvent = {0,0};
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 
 	if( _ledEvent & LED_EVENT_VOL ){
 		gettimeofday(&startedEvent, NULL);
@@ -202,20 +202,15 @@ void DisplayMgr::runLEDEventVol(){
 		timersub(&now, &startedEvent, &diff);
 
 		if(diff.tv_sec <  1){
-	 
-			float volume = 0;
-				
-			if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-				// volume LED scales between 1 and 24
-				int ledvol = volume*23;
-				for (int i = 0 ; i < 24; i++) {
-					_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-				}
-
-			};
 			
-//			printf("\nVOL RUN\n");
-	
+			float volume =  audio->volume();
+			// volume LED scales between 1 and 24
+			int ledvol = volume*23;
+			for (int i = 0 ; i < 24; i++) {
+				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+			}
+ 			//			printf("\nVOL RUN\n");
+			
 		}
 		else {
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);

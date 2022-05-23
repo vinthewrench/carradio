@@ -135,6 +135,7 @@ bool RadioMgr::setON(bool isOn) {
 	else {
 		setFrequencyandMode(_mode,_frequency, true);
 		display->showRadioChange();
+		display->LEDeventVol();
 	}
 	
 	return true;

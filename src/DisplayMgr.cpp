@@ -86,13 +86,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_eventQueue = {};
 		
 		resetMenu();
-		
-		pthread_attr_t attr;
-		pthread_attr_init (&attr);
-		
-		pthread_attr_setscope(&attr, PTHREAD_SCOPE_PROCESS);
-		
-		pthread_create(&_updateTID, &attr,
+		pthread_create(&_updateTID, NULL,
 							(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
 		showStartup();
 	}
@@ -163,7 +157,7 @@ void DisplayMgr::runLEDEventStartup(){
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
-		if(ledStep < 24 * 10){
+		if(ledStep < 24 * 2){
  			_leftRing.setColor( mod(ledStep, 23), 0, 0, 0);
 			ledStep++;
 			_leftRing.setColor(mod(ledStep, 23), 255, 255, 255);

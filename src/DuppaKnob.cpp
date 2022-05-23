@@ -54,6 +54,7 @@ bool DuppaKnob::begin(int deviceAddress, int &error){
 }
 
 void DuppaKnob::stop(){
+	setColor(0,0,0);
 	_duppa.stop();
 	_isSetup = false;
 	

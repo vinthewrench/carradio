@@ -158,9 +158,9 @@ void DisplayMgr::runLEDEventStartup(){
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
 		if(ledStep < 24 * 4){
- 			_leftRing.setColor( mod(ledStep, 23), 0, 0, 0);
+ 			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
 			ledStep++;
-			_leftRing.setColor(mod(ledStep, 23), 255, 255, 255);
+			_leftRing.setColor(mod(ledStep, 24), 255, 255, 255);
  //			printf("\nLED RUN %d\n",ledStep);
 		}
 		else {

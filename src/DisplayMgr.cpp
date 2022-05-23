@@ -166,7 +166,6 @@ void DisplayMgr::runLEDEventStartup(){
 		else {
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
-
 			
 //			printf("\nLED RUN DONE\n");
  
@@ -445,7 +444,7 @@ void DisplayMgr::DisplayUpdate(){
 		// elese wait a whole second
 		if(_ledEvent){
 			ts.tv_sec += 0;
-			ts.tv_nsec += 5.0e8;		// half second
+			ts.tv_nsec += 10.0e8;		// half second
 		}
 		else {
 			ts.tv_sec += 1;

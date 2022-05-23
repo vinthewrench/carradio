@@ -103,15 +103,14 @@ void DisplayMgr::stop(){
 		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
-		pthread_cond_signal(&_cond);
-		pthread_join(_updateTID, NULL);
-		
-		drawShutdownScreen();
-		
-		_vfd.stop();
 		_rightRing.stop();
 		_leftRing.stop();
-	}
+		drawShutdownScreen();
+	
+		pthread_cond_signal(&_cond);
+		pthread_join(_updateTID, NULL);
+		_vfd.stop();
+		}
 	
 	_isSetup = false;
 }

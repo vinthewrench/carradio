@@ -160,8 +160,7 @@ private:
 	// C wrappers for DisplayUpdate;
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);
-	bool 			_isRunning = false;
-
+ 
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;
@@ -172,7 +171,8 @@ private:
 	pthread_cond_t 	_cond = PTHREAD_COND_INITIALIZER;
 	pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_t			_updateTID;
-	
+	bool 					_isRunning = false;
+ 
  	// display
 	bool 					_isSetup = false;
 	VFD 					_vfd;

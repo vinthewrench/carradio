@@ -27,23 +27,22 @@ typedef void * (*THREADFUNCPTR)(void *);
 
 
 DisplayMgr::DisplayMgr(){
-
-	_isSetup = false;
-	_ledEvent = 0;
 	_eventQueue = {};
+ 	_ledEvent = 0;
+	_isSetup = false;
 	_isRunning = true;
-
+	
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
 
 }
 
 DisplayMgr::~DisplayMgr(){
-	
 	stop();
 	_isRunning = false;
 	pthread_cond_signal(&_cond);
 	pthread_join(_updateTID, NULL);
+
 }
 
 
@@ -109,6 +108,8 @@ void DisplayMgr::stop(){
 	
 	if(_isSetup){
 		
+		printf("DisplayMgr::stop\n");
+		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
 		_eventQueue = {};
@@ -118,10 +119,11 @@ void DisplayMgr::stop(){
 		_leftRing.stop();
 		drawShutdownScreen();
 	
-		_isSetup = false;
 		_vfd.stop();
 		}
- }
+	
+	_isSetup = false;
+}
 
 
 // MARK: -  LED Events
@@ -440,20 +442,21 @@ void  DisplayMgr::popMode(){
 // MARK: -  DisplayUpdate thread
 
 void DisplayMgr::DisplayUpdate(){
- 
-	while(_isRunning){
 	
+  	//	printf("start DisplayUpdate\n");
+	
+	while(_isRunning){
+		
 		// if not setup // check back later
 		if(!_isSetup){
-			sleep(10);
+			usleep(1000);
 			continue;
 		}
 
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_REALTIME, &ts);
-	
-///--- critical section
+		
 		pthread_mutex_lock (&_mutex);
 		// if there are LED events, run the update every half second
 		// elese wait a whole second
@@ -465,7 +468,6 @@ void DisplayMgr::DisplayUpdate(){
 			ts.tv_sec += 1;
 			ts.tv_nsec += 0;
 		}
-		
 		bool shouldWait = ((_eventQueue.size() == 0)
 								 && ((_ledEvent & 0x0000ffff) == 0));
 	
@@ -473,19 +475,20 @@ void DisplayMgr::DisplayUpdate(){
 
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
-		
+	 
+		if(!_isRunning || !_isSetup)
+			continue;
+
 		pthread_mutex_lock (&_mutex);
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
 			_eventQueue.pop();
 		}
-		mode_state_t lastMode = _current_mode;
-///---
 		
-		if(!_isSetup)
-			continue;
-
+		mode_state_t lastMode = _current_mode;
+		pthread_mutex_unlock (&_mutex);
+		
 		// run the LED effects
 		if(_ledEvent)
 			ledEventUpdate();
@@ -548,7 +551,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 				//			printf("\nEVT_PUSH %d \n", item.mode);
 				
-				if(pushMode(item.mode)){
+			 if(pushMode(item.mode)){
 					shouldRedraw = true;
 				}
 				gettimeofday(&_lastEventTime, NULL);
@@ -1153,7 +1156,7 @@ void DisplayMgr::drawShutdownScreen(){
 	_leftRing.clearAll();
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("Shut Down"));
+	TRY(_vfd.setCursor(10,10));
+	TRY(_vfd.write(" -- Shut Down --"));
 	usleep(100);
 }

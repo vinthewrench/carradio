@@ -47,22 +47,22 @@ int main(int argc, const char * argv[]) {
 	while(true) {
 		
 		if(firstrun){
-			sleep(5);
+			sleep(1);
 #if defined(__APPLE__)
 			
-			pican->stop();
+ 			pican->stop();
 //
 //			pican->audio()->setVolume(.5);
 //			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
 //			pican->radio()->setON(true);
 //			pican->saveRadioSettings();
-//
+
 			firstrun = false;
 #endif
 			continue;
 		}
 	 
- 		pause();
+		sleep(1);
  
 	}
 

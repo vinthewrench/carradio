@@ -80,6 +80,7 @@ PiCarMgr::PiCarMgr(){
 											 (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
 
 	_stations.clear();
+	
 }
 
 PiCarMgr::~PiCarMgr(){
@@ -168,6 +169,9 @@ void PiCarMgr::stop(){
 	if(_isSetup  ){
 		_isSetup = false;
 
+		printf("PiCarMgr::stop\n");
+		_display->stop();
+
 		stopControls();
 		stopTempSensors();
 		stopCPUInfo();
@@ -175,7 +179,6 @@ void PiCarMgr::stop(){
 		_audio.setVolume(0);
 		_audio.setBalance(0);
 		_audio.stop();
-		_display->stop();
 	}
 }
 

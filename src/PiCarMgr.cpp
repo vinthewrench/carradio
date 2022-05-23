@@ -564,6 +564,7 @@ void PiCarMgr::PiCanLoop(){
 					getSavedFrequencyandMode(mode,freq);
 					_radio.setFrequencyandMode(mode, freq);
 					_radio.setON(true);
+					_display.LEDeventVol();
 				}
 			}
 			
@@ -588,7 +589,8 @@ void PiCarMgr::PiCanLoop(){
 					}
 				}
 				
-				_display.showVolumeChange();
+			_display.LEDeventVol();
+	//		_display.showVolumeChange();
 			}
 			
 			if(tunerWasMoved) {

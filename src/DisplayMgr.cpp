@@ -261,8 +261,7 @@ void DisplayMgr::showDiag(){
 
 
 void DisplayMgr::showVolumeChange(){
-	LEDeventVol();
-//	setEvent(EVT_PUSH, MODE_VOLUME );
+ 	setEvent(EVT_PUSH, MODE_VOLUME );
 }
 
 

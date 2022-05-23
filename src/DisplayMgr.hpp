@@ -58,7 +58,7 @@ public:
 	void showDiag();
 	void showGPS();
 	void showStartup();
-	void showVolumeChange();
+	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
 	void showRadioChange();
 

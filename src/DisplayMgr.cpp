@@ -475,9 +475,6 @@ void DisplayMgr::DisplayUpdate(){
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
 	 
-		if(!_isRunning || !_isSetup)
-			continue;
-
 //		pthread_mutex_lock (&_mutex);
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
@@ -488,6 +485,9 @@ void DisplayMgr::DisplayUpdate(){
 		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
 		
+		if(!_isRunning || !_isSetup)
+			  continue;
+
 		// run the LED effects
 		if(_ledEvent)
 			ledEventUpdate();

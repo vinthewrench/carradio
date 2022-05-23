@@ -1129,6 +1129,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 
 void DisplayMgr::drawShutdownScreen(){
+	
+	
+	printf("shutdown display");
 	_vfd.clearScreen();
 	_rightRing.clearAll();
 	_leftRing.clearAll();
@@ -1136,5 +1139,5 @@ void DisplayMgr::drawShutdownScreen(){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("Shut Down"));
-
+	usleep(100);
 }

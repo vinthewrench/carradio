@@ -547,6 +547,9 @@ void RadioMgr::SDRProcessor(){
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);
 			
+			if(_shouldRead)
+				continue;
+			
 			// Decode FM signal.
 			_fmDecoder->process(iqsamples, audiosamples);
 			

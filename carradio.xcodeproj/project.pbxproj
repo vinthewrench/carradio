@@ -295,8 +295,8 @@
 				2E9F9E9B282727D200E12F5D /* Filter.cpp */,
 				2E9F9E9C282727D200E12F5D /* Filter.hpp */,
 				2E9F9E9D282727D200E12F5D /* FmDecode.cpp */,
-				2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */,
 				2E9F9E9A282727D200E12F5D /* FmDecode.hpp */,
+				2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */,
 				2E62A8FB28244E7D00F5066B /* IQSample.h */,
 			);
 			name = Radio;

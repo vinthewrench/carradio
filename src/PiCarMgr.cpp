@@ -160,10 +160,10 @@ bool PiCarMgr::begin(){
 		if(firstRunToday){
 			printf("say hello\n");
 
-			_audio.playSound("BTL.wav", [=](bool success){
-				
-				printf("playSound() = %d\n", success);
-			});
+//	//		_audio.playSound("BTL.wav", [=](bool success){
+//				
+//				printf("playSound() = %d\n", success);
+//			});
 			
 			}
  

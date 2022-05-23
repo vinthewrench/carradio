@@ -184,6 +184,8 @@ bool AudioOutput::write(const SampleVector& samples)
 }
 
 
+#if 0
+
 static unsigned char compareID(const unsigned char * id, unsigned char * ptr)
 {
 	unsigned char i = 4;
@@ -361,6 +363,8 @@ bool AudioOutput::playSound(string filePath, boolCallback_t cb){
 	
 	return statusOk;
 }
+
+#endif
 
 
 /*

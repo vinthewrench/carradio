@@ -17,7 +17,7 @@
 
 using namespace nlohmann;
 using namespace Utils;
-//f
+
 const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
 
 

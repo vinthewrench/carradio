@@ -146,6 +146,21 @@ bool PiCarMgr::begin(){
 		restoreStationsFromFile();
 		restoreRadioSettings();
 		_isSetup = true;
+
+		bool firstRunToday = true;
+		time_t now = time(NULL);
+		time_t lastRun = 0;
+		
+		if(_db.getTimeProperty(PROP_LAST_WRITE_DATE, &lastRun)){
+			if( (now-lastRun) < 60 ){
+				firstRunToday = false;
+			}
+		}
+		
+		if(firstRunToday){
+			printf("say hello\n");
+		}
+ 
 	}
 	catch ( const Exception& e)  {
 		
@@ -177,6 +192,8 @@ void PiCarMgr::stop(){
 		stopCPUInfo();
 		_audio.setVolume(0);
 		_audio.setBalance(0);
+		
+		
 		_radio.stop();
 		_audio.stop();
 	}

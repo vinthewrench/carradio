@@ -31,9 +31,10 @@ inline static const string VAL_RADIO_ON			= "radioON";
 
 // json data
  
+inline static const string  PROP_LAST_WRITE_DATE				= "last_write";
 
-inline static const string PROP_CPU_TEMP_QUERY_DELAY 				= "cputemp-query-delay";
-inline static const string  PROP_TEMPSENSOR_QUERY_DELAY				= "temp-query-delay";
+inline static const string PROP_CPU_TEMP_QUERY_DELAY 			= "cputemp-query-delay";
+inline static const string  PROP_TEMPSENSOR_QUERY_DELAY		= "temp-query-delay";
 
 inline static const string  PROP_LAST_RADIO_MODE				= "last_radio_mode";
 inline static const string  PROP_LAST_RADIO_MODES				= "last_radio_modes";

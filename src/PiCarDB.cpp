@@ -14,8 +14,10 @@
 #include <iostream>
 #include <filesystem> // C++17
 #include <fstream>
+#include <time.h>
 #include "json.hpp"
 #include "ErrorMgr.hpp"
+#include "PropValKeys.hpp"
 
 using namespace nlohmann;
 
@@ -327,6 +329,22 @@ bool PiCarDB::getProperty(string key, string *value){
 	return false;
 }
 
+bool PiCarDB::getTimeProperty(string key, time_t * valOut){
+	if( _props.contains(key)
+		&&  _props.at(key).is_number_unsigned())
+	{
+		auto val = _props.at(key);
+		
+		if(valOut)
+			*valOut = (time_t) val;
+		return true;
+		
+	}
+	return false;
+}
+
+
+
 bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 	
 	if( _props.contains(key)
@@ -443,6 +461,10 @@ bool PiCarDB::savePropertiesToFile(string filePath){
  
 	std::lock_guard<std::mutex> lock(_mutex);
 	bool statusOk = false;
+	
+	time_t now = time(NULL);
+
+	_props[ PROP_LAST_WRITE_DATE] = now;
 	
 	std::ofstream ofs;
 	

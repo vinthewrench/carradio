@@ -15,6 +15,7 @@
 #include <bitset>
 #include <strings.h>
 #include <cstring>
+#include <time.h>
 
 #include "json.hpp"
 
@@ -41,6 +42,7 @@ class PiCarDB  {
 	bool setPropertyIfNone(string key, string value);
 
 	bool getUint16Property(string key, uint16_t * value);
+	bool getTimeProperty(string key, time_t * value);
 	bool getFloatProperty(string key, float * valOut);
 	bool getBoolProperty(string key, bool * valOut);
 	bool getJSONProperty(string key, nlohmann::json  *j);

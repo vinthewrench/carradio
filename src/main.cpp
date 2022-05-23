@@ -52,10 +52,12 @@ int main(int argc, const char * argv[]) {
 			
 // 			pican->stop();
 //
-//			pican->audio()->setVolume(.5);
-//			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
-//			pican->radio()->setON(true);
+			pican->audio()->setVolume(.5);
+			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
+			pican->radio()->setON(true);
 //			pican->saveRadioSettings();
+
+			pican->radio()->setON(false);
 
 			firstrun = false;
 #endif

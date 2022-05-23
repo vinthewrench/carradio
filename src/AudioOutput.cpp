@@ -27,6 +27,10 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 
+#if defined(__APPLE__)
+typedef unsigned long snd_pcm_uframes_t;
+#endif
+
  AudioOutput::AudioOutput(){
 	_isSetup = false;
 	_balance = 0;
@@ -180,39 +184,159 @@ bool AudioOutput::write(const SampleVector& samples)
 }
 
 
+static unsigned char compareID(const unsigned char * id, unsigned char * ptr)
+{
+	unsigned char i = 4;
+
+	while (i--)
+	{
+		if ( *(id)++ != *(ptr)++ ) return(0);
+	}
+	return(1);
+}
+
+
+
+
+#pragma pack (1)
+/////////////////////// WAVE File Stuff /////////////////////
+// An IFF file header looks like this
+typedef struct _FILE_head
+{
+	unsigned char	ID[4];	// could be {'R', 'I', 'F', 'F'} or {'F', 'O', 'R', 'M'}
+	unsigned int	Length;	// Length of subsequent file (including remainder of header). This is in
+									// Intel reverse byte order if RIFF, Motorola format if FORM.
+	unsigned char	Type[4];	// {'W', 'A', 'V', 'E'} or {'A', 'I', 'F', 'F'}
+} FILE_head;
+
+
+// An IFF chunk header looks like this
+typedef struct _CHUNK_head
+{
+	unsigned char ID[4];	// 4 ascii chars that is the chunk ID
+	unsigned int	Length;	// Length of subsequent data within this chunk. This is in Intel reverse byte
+							// order if RIFF, Motorola format if FORM. Note: this doesn't include any
+							// extra byte needed to pad the chunk out to an even size.
+} CHUNK_head;
+
+// WAVE fmt chunk
+typedef struct _FORMAT {
+	short				wFormatTag;
+	unsigned short	wChannels;
+	unsigned int	dwSamplesPerSec;
+	unsigned int	dwAvgBytesPerSec;
+	unsigned short	wBlockAlign;
+	unsigned short	wBitsPerSample;
+  // Note: there may be additional fields here, depending upon wFormatTag
+} FORMAT;
+#pragma pack()
+// For WAVE file loading
+static const unsigned char Riff[4]	= { 'R', 'I', 'F', 'F' };
+static const unsigned char Wave[4] = { 'W', 'A', 'V', 'E' };
+static const unsigned char Fmt[4] = { 'f', 'm', 't', ' ' };
+static const unsigned char Data[4] = { 'd', 'a', 't', 'a' };
+
+
 bool AudioOutput::playSound(string filePath, boolCallback_t cb){
 	bool 				statusOk = false;
 	int  fd = 0;
+	// Size (in frames) of loaded WAVE file's data
+	snd_pcm_uframes_t		WaveSize;
+	
+	// Sample rate
+	unsigned short			WaveRate;
+	
+	// Bit resolution
+	unsigned char			WaveBits;
+	
+	// Number of channels in the wave file
+	unsigned char			WaveChannels;
+	
 	
 	try{
-		char buff[1024];
-		
+		FILE_head	head;
 		fd = open(filePath.c_str(), O_RDONLY);
 		if(fd < 0) throw(errno);
 		
-		while(true){
-			size_t bytesRead = read(fd, &buff, sizeof(buff));
-			if(bytesRead > 0){
-				
-				// process bytes
-#if defined(__APPLE__)
-				
-#else
-				int k = snd_pcm_writei(_pcm, buff, bytesRead);
-				
-				if (k < 0) {
-					//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
-					// After an underrun, ALSA keeps returning error codes until we
-					// explicitly fix the stream.
-					snd_pcm_recover(_pcm, k, 0);
-					
-				}
-#endif
-				
+		
+		if (read(fd, &head, sizeof(FILE_head)) == sizeof(FILE_head))
+		{
+			// Is it a RIFF and WAVE?
+			if (!compareID(&Riff[0], &head.ID[0]) || !compareID(&Wave[0], &head.Type[0]))
+			{
+				throw( "is not a WAVE file");
 			}
-			else
-				break;
+			
+			// Read in next chunk header
+			while (read(fd, &head, sizeof(CHUNK_head)) == sizeof(CHUNK_head))
+			{
+				// ============================ Is it a fmt chunk? ===============================
+				if (compareID(&Fmt[0], &head.ID[0]))
+				{
+					FORMAT	format;
+					
+					// Read in the remainder of chunk
+					if (read(fd, &format.wFormatTag, sizeof(FORMAT)) != sizeof(FORMAT)) break;
+					
+					// Can't handle compressed WAVE files
+					if (format.wFormatTag != 1)
+					{
+						throw( "compressed WAVE not supported");
+					}
+					
+					WaveBits = (unsigned char)format.wBitsPerSample;
+					WaveRate = (unsigned short)format.dwSamplesPerSec;
+					WaveChannels = format.wChannels;
+				}
+				
+				// ============================ Is it a data chunk? ===============================
+				else if (compareID(&Data[0], &head.ID[0]))
+				{
+					
+					char buff[1024];
+					
+					printf("bytes %d\n",head.Length );
+					//			lseek(fd, head.Length, SEEK_CUR);
+					
+					for(size_t	total = 0; total < head.Length; ){
+						
+						size_t bytesRead = read(fd, &buff, sizeof(buff));
+						if(bytesRead > 0){
+							// process (bytesRead);
+#if defined(__APPLE__)
+
+#else
+
+							int k = snd_pcm_writei(_pcm, buff, bytesRead);
+							
+							if (k < 0) {
+								//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+								// After an underrun, ALSA keeps returning error codes until we
+								// explicitly fix the stream.
+								snd_pcm_recover(_pcm, k, 0);
+
+								
+							}
+#endif
+							total += bytesRead;
+							
+						}
+						else {
+							break;
+						}
+						
+					}
+				}
+				
+				// ============================ Skip this chunk ===============================
+				else
+				{
+					if (head.Length & 1) ++head.Length;  // If odd, round it up to account for pad byte
+					lseek(fd, head.Length, SEEK_CUR);
+				}
+			}
 		}
+		
 		if(cb) (cb)(true);
 		statusOk = true;
 	}

@@ -119,6 +119,8 @@ private:
 	void drawGPSScreen(modeTransition_t transition);
 	void drawInternalError(modeTransition_t transition);
  
+	void drawShutdownScreen();
+	
 //Menu stuff
 	void resetMenu();
 	void drawMenuScreen(modeTransition_t transition);

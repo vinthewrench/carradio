@@ -104,6 +104,8 @@ void DisplayMgr::stop(){
 		pthread_cond_signal(&_cond);
 		pthread_join(_updateTID, NULL);
 		
+		drawShutdownScreen();
+		
 		_vfd.stop();
 		_rightRing.stop();
 		_leftRing.stop();
@@ -1122,5 +1124,17 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
 	TRY(_vfd.write(buffer));
+
+}
+
+
+void DisplayMgr::drawShutdownScreen(){
+	_vfd.clearScreen();
+	_rightRing.clearAll();
+	_leftRing.clearAll();
+
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+	TRY(_vfd.write("Shut Down"));
 
 }

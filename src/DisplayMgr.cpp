@@ -107,9 +107,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 void DisplayMgr::stop(){
 	
 	if(_isSetup){
-		
-		printf("DisplayMgr::stop\n");
-		
+ 
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
 		_eventQueue = {};
@@ -1155,7 +1153,7 @@ void DisplayMgr::drawShutdownScreen(){
 	_leftRing.clearAll();
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,40));
-	TRY(_vfd.write(" -- Shut Down --"));
+	TRY(_vfd.setCursor(10,35));
+	TRY(_vfd.write("  Well... Bye"));
 	usleep(100);
 }

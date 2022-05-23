@@ -175,11 +175,10 @@ void PiCarMgr::stop(){
 		stopControls();
 		stopTempSensors();
 		stopCPUInfo();
-		_radio.stop();
 		_audio.setVolume(0);
 		_audio.setBalance(0);
+		_radio.stop();
 		_audio.stop();
-	
 	}
 }
 

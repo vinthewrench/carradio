@@ -99,6 +99,8 @@ void DisplayMgr::stop(){
 	
 	if(_isSetup){
 		
+		printf("DisplayMgr::stop\n");
+		
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
 		pthread_cond_signal(&_cond);

@@ -303,21 +303,32 @@ bool AudioOutput::playSound(string filePath, boolCallback_t cb){
 						size_t bytesRead = read(fd, &buff, sizeof(buff));
 						if(bytesRead > 0){
 							// process (bytesRead);
-#if defined(__APPLE__)
-
-#else
-
-							int k = snd_pcm_writei(_pcm, buff, bytesRead);
 							
-							if (k < 0) {
-								//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
-								// After an underrun, ALSA keeps returning error codes until we
-								// explicitly fix the stream.
-								snd_pcm_recover(_pcm, k, 0);
+							// Write data.
+							unsigned int p = 0;
+							unsigned int n =  (unsigned int) bytesRead / _nchannels;
+							unsigned int framesize = 2 * _nchannels;
 
+							while (p < n) {
+#if defined(__APPLE__)
+								p += n - p;
+#else
+							int k = snd_pcm_writei(_pcm, buff + p * framesize, n - p);
 								
-							}
+								if (k < 0) {
+							//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+									// After an underrun, ALSA keeps returning error codes until we
+									// explicitly fix the stream.
+									snd_pcm_recover(_pcm, k, 0);
+									return false;
+									
+								} else {
+									p += k;
+								}
+								
 #endif
+							}
+
 							total += bytesRead;
 							
 						}

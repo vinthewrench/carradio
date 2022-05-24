@@ -222,22 +222,25 @@ bool DuppaLEDRing::setColor(uint8_t led_n, led_color_t color){
 bool DuppaLEDRing::setLEDs( led_block_t & leds){
 	bool success = false;
  
-	if(_i2cPort.isAvailable()) {
+ 	if(_i2cPort.isAvailable())
+	{
 		
 		uint8_t data[72];
 		
 		for(int i = 0; i <24; i++) {
-	 
 			data [ issi_led_map[0][i]  -1]  = leds[ledFromOffset(i)].r;
 			data [ issi_led_map[1][i]  -1]  = leds[ledFromOffset(i)].g;
 			data [ issi_led_map[2][i]  -1]  = leds[ledFromOffset(i)].b;
 		};
 
-		success = selectBank(PAGE0);
+ 	success = selectBank(PAGE0);
+		
 		
 		for(int i = 0; i < 72; i++){
-			if(!success) break;
-			success &= _i2cPort.writeByte(i, data[i]);
+ 			if(!success) break;
+//			printf("%2d %3d\n", i,data[i]);
+			
+ 		success &= _i2cPort.writeByte( data[i]);
  		}
  	}
  

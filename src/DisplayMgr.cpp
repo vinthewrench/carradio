@@ -170,16 +170,17 @@ void DisplayMgr::runLEDEventStartup(){
 		
 		if(ledStep < 24 * 4){
 			
+#if 1
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
-			
 			data[mod(++ledStep, 24)] = {255,255,255};
- 			_leftRing.setLEDs(data);
+			_leftRing.setLEDs(data);
 			
+#else
+			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
+			ledStep++;
+			_leftRing.setColor(mod(ledStep, 24), 255, 255, 255);
+#endif
 			
-			//			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
-			//			ledStep++;
-			//			_leftRing.setColor(mod(ledStep, 24), 255, 255, 255);
-			// //			printf("\nLED RUN %d\n",ledStep);
 		}
 		else {
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);

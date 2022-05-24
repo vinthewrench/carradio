@@ -215,6 +215,35 @@ uint8_t DuppaLEDRing::ledFromOffset(uint8_t led_n){
 	return led_n;
 }
 
+bool DuppaLEDRing::setColor(uint8_t led_n, led_color_t color){
+	return setColor(led_n, color.r, color.g, color.b);
+}
+
+bool DuppaLEDRing::setLEDs( led_block_t & leds){
+	bool success = false;
+ 
+	if(_i2cPort.isAvailable()) {
+		
+		uint8_t data[72];
+		
+		for(int i = 0; i <24; i++) {
+	 
+			data [ issi_led_map[0][i]  -1]  = leds[i].r;
+			data [ issi_led_map[1][i]  -1]  = leds[i].g;
+			data [ issi_led_map[2][i]  -1]  = leds[i].b;
+		};
+
+		success = selectBank(PAGE0);
+		
+		for(int i = 0; i < 72; i++){
+			if(!success) break;
+			success &= _i2cPort.writeByte(i, data[i]);
+ 		}
+ 	}
+ 
+		return success;
+}
+
 bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue ){
 	bool success = false;
  

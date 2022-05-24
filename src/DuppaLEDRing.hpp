@@ -16,9 +16,17 @@ class DuppaLEDRing
  
 public:
  
+	typedef struct {
+		uint8_t 	r;
+		uint8_t	g;
+		uint8_t	b;
+	} led_color_t;
+	
+	
+	typedef led_color_t led_block_t[24];
+ 
 	DuppaLEDRing();
 	~DuppaLEDRing();
- 
  
 	bool begin(uint8_t deviceAddress);
 	bool begin(uint8_t deviceAddress, int &error);
@@ -32,6 +40,10 @@ public:
 	bool reset();
  
 	bool clearAll();
+	
+	bool setColor(uint8_t led_n, led_color_t color);
+	bool setLEDs(led_block_t &leds);
+
 	bool setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue );
 	bool setRED(uint8_t led_n, uint8_t color);
 	bool setGREEN(uint8_t led_n, uint8_t color);

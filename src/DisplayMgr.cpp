@@ -170,7 +170,7 @@ void DisplayMgr::runLEDEventStartup(){
 		
 		if(ledStep < 24 * 4){
 			
-			DuppaLEDRing::led_block_t data = {0};
+			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			
 			data[mod(++ledStep, 24)] = {255,255,255};
  			_leftRing.setLEDs(data);

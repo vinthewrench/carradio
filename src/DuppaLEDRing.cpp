@@ -228,9 +228,9 @@ bool DuppaLEDRing::setLEDs( led_block_t & leds){
 		
 		for(int i = 0; i <24; i++) {
 	 
-			data [ issi_led_map[0][i]  -1]  = leds[i].r;
-			data [ issi_led_map[1][i]  -1]  = leds[i].g;
-			data [ issi_led_map[2][i]  -1]  = leds[i].b;
+			data [ issi_led_map[0][i]  -1]  = leds[ledFromOffset(i)].r;
+			data [ issi_led_map[1][i]  -1]  = leds[ledFromOffset(i)].g;
+			data [ issi_led_map[2][i]  -1]  = leds[ledFromOffset(i)].b;
 		};
 
 		success = selectBank(PAGE0);

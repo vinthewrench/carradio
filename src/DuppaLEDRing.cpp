@@ -235,7 +235,7 @@ bool DuppaLEDRing::setLEDs( led_block_t & leds){
 
  	success = selectBank(PAGE0);
 		
-		_i2cPort.writeByte(0);
+		_i2cPort.writeByte(0xff);
 		
 		for(int i = 0; i < 72; i++){
  			if(!success) break;

@@ -235,12 +235,13 @@ bool DuppaLEDRing::setLEDs( led_block_t & leds){
 
  	success = selectBank(PAGE0);
 		
+//		_i2cPort.writeByte(0xff);
 		
 		for(int i = 0; i < 72; i++){
  			if(!success) break;
 //			printf("%2d %3d\n", i,data[i]);
 			
- 		success &= _i2cPort.writeByte( i+1, data[i]);
+ 		success &= _i2cPort.writeByte( data[i]);
  		}
  	}
  

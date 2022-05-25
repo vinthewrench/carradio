@@ -62,6 +62,8 @@ public:
 
 	bool reset();
  
+	bool setAntiBounce(uint8_t period); // period * 0.192ms
+	
 	// resets on read.
 	bool updateStatus();
 	bool updateStatus(uint8_t &regOut);

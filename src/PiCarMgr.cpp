@@ -751,10 +751,13 @@ void PiCarMgr::displayMenu(){
 		if(e.first == mode) selectedItem = i;
 	}
 	
-	 
+	// sow down the menu
+	_tunerKnob.setAntiBounce(64);
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
 		
+		_tunerKnob.setAntiBounce(1);
+
 		if(didSucceed) {
 			menu_mode_t selectedMode = menu_map[newSelectedItem].first;
 			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;

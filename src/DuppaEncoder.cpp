@@ -200,3 +200,18 @@ bool DuppaEncoder::setColor(uint8_t red, uint8_t green, uint8_t blue){
 	
 	return success;
 }
+
+bool DuppaEncoder::setAntiBounce(uint8_t period){  // period * 0.192ms
+	bool success = false;
+#if defined(__APPLE__)
+	return(true);
+#endif
+	
+	if(_i2cPort.isAvailable()){
+		
+		success = _i2cPort.writeByte(REG_ANTBOUNC, period);
+	}
+	
+	return success;
+	
+}

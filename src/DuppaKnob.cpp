@@ -94,3 +94,8 @@ bool DuppaKnob::setColor(uint8_t red, uint8_t green, uint8_t blue ){
 	return _isSetup && _duppa.setColor(red,green,blue);
 
 }
+
+bool DuppaKnob::setAntiBounce(uint8_t period){
+	return _isSetup && _duppa.setAntiBounce(period);
+
+}

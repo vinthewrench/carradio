@@ -813,7 +813,9 @@ void PiCarMgr::displayMenu(){
 				}
  				_radio.setFrequencyandMode(radioMode, freq, true);
 				_radio.setON(true);
+				saveRadioSettings();
 				_db.savePropertiesToFile();
+
 			}
 		}
 	});

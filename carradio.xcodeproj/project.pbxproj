@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EE283EAEB2003D074C /* Wranger2010.cpp */; };
+		2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EF283EAEB2003D074C /* OBD2.cpp */; };
+		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
@@ -31,6 +34,9 @@
 		2E8210CB2835A593003D074C /* TMP117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C22835A593003D074C /* TMP117.cpp */; };
 		2E8210CC2835A593003D074C /* DuppaKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C52835A593003D074C /* DuppaKnob.cpp */; };
 		2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210E1283831B2003D074C /* macos_gpiod.c */; };
+		2E8210F3283EAEB2003D074C /* FrameDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210E9283EAEB2003D074C /* FrameDB.cpp */; };
+		2E8210F5283EAEB2003D074C /* CANBusMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210ED283EAEB2003D074C /* CANBusMgr.cpp */; };
+		2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210FC283EB144003D074C /* PiCarCAN.cpp */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
@@ -109,6 +115,22 @@
 		2E8210CF2835A635003D074C /* CommonDefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CommonDefs.hpp; path = src/CommonDefs.hpp; sourceTree = SOURCE_ROOT; };
 		2E8210E0283831B2003D074C /* macos_gpiod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macos_gpiod.h; sourceTree = "<group>"; };
 		2E8210E1283831B2003D074C /* macos_gpiod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = macos_gpiod.c; sourceTree = "<group>"; };
+		2E8210E8283EAEB2003D074C /* Wranger2010.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Wranger2010.hpp; sourceTree = "<group>"; };
+		2E8210E9283EAEB2003D074C /* FrameDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameDB.cpp; sourceTree = "<group>"; };
+		2E8210EA283EAEB2003D074C /* GMLAN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GMLAN.cpp; sourceTree = "<group>"; };
+		2E8210EB283EAEB2003D074C /* FrameDB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrameDB.hpp; sourceTree = "<group>"; };
+		2E8210EC283EAEB2003D074C /* CANBusMgr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CANBusMgr.hpp; sourceTree = "<group>"; };
+		2E8210ED283EAEB2003D074C /* CANBusMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CANBusMgr.cpp; sourceTree = "<group>"; };
+		2E8210EE283EAEB2003D074C /* Wranger2010.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wranger2010.cpp; sourceTree = "<group>"; };
+		2E8210EF283EAEB2003D074C /* OBD2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OBD2.cpp; sourceTree = "<group>"; };
+		2E8210F0283EAEB2003D074C /* OBD2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OBD2.hpp; sourceTree = "<group>"; };
+		2E8210F1283EAEB2003D074C /* CanProtocol.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CanProtocol.hpp; sourceTree = "<group>"; };
+		2E8210F2283EAEB2003D074C /* GMLAN.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GMLAN.hpp; sourceTree = "<group>"; };
+		2E8210F9283EAF45003D074C /* can.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = can.h; path = src/can.h; sourceTree = SOURCE_ROOT; };
+		2E8210FA283EAF45003D074C /* can_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = can_error.h; path = src/can_error.h; sourceTree = SOURCE_ROOT; };
+		2E8210FB283EAF45003D074C /* can_raw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = can_raw.h; path = src/can_raw.h; sourceTree = SOURCE_ROOT; };
+		2E8210FC283EB144003D074C /* PiCarCAN.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCarCAN.cpp; sourceTree = "<group>"; };
+		2E8210FD283EB144003D074C /* PiCarCAN.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarCAN.hpp; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -165,6 +187,7 @@
 				2E8210B12835A4CD003D074C /* Radio */,
 				2E82109D2835A336003D074C /* GPS */,
 				2E8210AC2835A465003D074C /* Audio */,
+				2E8210E7283EAE32003D074C /* CanBus */,
 				2E8210AB2835A3F3003D074C /* Devices */,
 				2E8210A92835A3B9003D074C /* Utilities */,
 			);
@@ -192,6 +215,9 @@
 		2E62A9012824597800F5066B /* macincludes */ = {
 			isa = PBXGroup;
 			children = (
+				2E8210FA283EAF45003D074C /* can_error.h */,
+				2E8210FB283EAF45003D074C /* can_raw.h */,
+				2E8210F9283EAF45003D074C /* can.h */,
 				2E62A9022824597800F5066B /* rtl-sdr.h */,
 				2E62A9032824597800F5066B /* libusb-1.0.0.dylib */,
 				2E62A9042824597800F5066B /* librtlsdr.0.6git.dylib */,
@@ -302,6 +328,34 @@
 			name = Radio;
 			sourceTree = "<group>";
 		};
+		2E8210E7283EAE32003D074C /* CanBus */ = {
+			isa = PBXGroup;
+			children = (
+				2E8210F8283EAED5003D074C /* Protocols */,
+				2E8210ED283EAEB2003D074C /* CANBusMgr.cpp */,
+				2E8210EC283EAEB2003D074C /* CANBusMgr.hpp */,
+				2E8210E9283EAEB2003D074C /* FrameDB.cpp */,
+				2E8210EB283EAEB2003D074C /* FrameDB.hpp */,
+				2E8210FD283EB144003D074C /* PiCarCAN.hpp */,
+				2E8210FC283EB144003D074C /* PiCarCAN.cpp */,
+			);
+			name = CanBus;
+			sourceTree = "<group>";
+		};
+		2E8210F8283EAED5003D074C /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				2E8210F1283EAEB2003D074C /* CanProtocol.hpp */,
+				2E8210EA283EAEB2003D074C /* GMLAN.cpp */,
+				2E8210F2283EAEB2003D074C /* GMLAN.hpp */,
+				2E8210EF283EAEB2003D074C /* OBD2.cpp */,
+				2E8210F0283EAEB2003D074C /* OBD2.hpp */,
+				2E8210EE283EAEB2003D074C /* Wranger2010.cpp */,
+				2E8210E8283EAEB2003D074C /* Wranger2010.hpp */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -364,18 +418,24 @@
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
+				2E8210F3283EAEB2003D074C /* FrameDB.cpp in Sources */,
+				2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */,
 				2E8210A62835A380003D074C /* GPSmgr.cpp in Sources */,
 				2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */,
 				2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */,
 				2E8210CC2835A593003D074C /* DuppaKnob.cpp in Sources */,
 				2E8210A22835A36D003D074C /* utm.cpp in Sources */,
+				2E8210F5283EAEB2003D074C /* CANBusMgr.cpp in Sources */,
 				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
 				2E8210CA2835A593003D074C /* CPUInfo.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,
+				2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */,
+				2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */,
 				2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */,
 				2E8210AF2835A4AC003D074C /* AudioOutput.cpp in Sources */,
 				2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */,
 				2E8210C82835A593003D074C /* I2C.cpp in Sources */,
+				2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */,
 				2E8210C72835A593003D074C /* DuppaLEDRing.cpp in Sources */,
 				2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */,
 				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,

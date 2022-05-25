@@ -43,6 +43,7 @@
 #include "AudioOutput.hpp"
 #include "RadioMgr.hpp"
 #include "GPSmgr.hpp"
+#include "PiCarCAN.hpp"
 
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
@@ -147,6 +148,8 @@ private:
 	RadioMgr				_radio;
 	PiCarDB 				_db;
 	GPSmgr				_gps;
+	PiCarCAN				_can;
+	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
 	DuppaKnob			_volKnob;

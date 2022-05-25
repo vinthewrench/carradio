@@ -67,6 +67,12 @@ set(SOURCES
 	src/tranmerc.cpp
 	src/utm.cpp
 	src/MicroNMEA.cpp
+	src/CANBusMgr.cpp
+	src/FrameDB.cpp
+ 	src/GMLAN.cpp
+	src/OBD2.cpp
+	src/Wranger2010.cpp
+	src/PiCarCAN.cpp
 	)
 
  

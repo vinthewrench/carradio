@@ -25,7 +25,6 @@ inline static const string VAL_AUDIO_VOLUME		= "vol";
 inline static const string VAL_AUDIO_BALANCE		= "bal";
 inline static const string VAL_RADIO_FREQ			= "freq";
 inline static const string VAL_MODULATION_MODE	= "mode";
-//inline static const string VAL_MODULATION_MUX	= "mux";
 inline static const string VAL_RADIO_ON			= "radioON";
 
 

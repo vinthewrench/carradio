@@ -12,6 +12,7 @@
 #include <iostream>
 #include <filesystem> // C++17
 #include <fstream>
+#include <execinfo.h>
 
 #include "Utils.hpp"
 
@@ -50,6 +51,22 @@ typedef void * (*THREADFUNCPTR)(void *);
 
 PiCarMgr *PiCarMgr::sharedInstance = NULL;
  
+
+
+static void CRASH_Handler()
+{
+	void *trace_elems[20];
+	int trace_elem_count(backtrace( trace_elems, 20 ));
+	char **stack_syms(backtrace_symbols( trace_elems, trace_elem_count ));
+	for ( int i = 0 ; i < trace_elem_count ; ++i )
+	{
+		 std::cout << stack_syms[i] << "\r\n";
+	}
+	free( stack_syms );
+
+	exit(1);
+}
+
 static void sigHandler (int signum) {
 	
 	auto picanMgr = PiCarMgr::shared();
@@ -74,6 +91,8 @@ PiCarMgr::PiCarMgr(){
 	signal(SIGTERM, sigHandler);
 	signal(SIGINT, sigHandler);
  
+	std::set_terminate( CRASH_Handler );
+
 	_isRunning = true;
 
 	pthread_create(&_piCanLoopTID, NULL,
@@ -138,9 +157,13 @@ bool PiCarMgr::begin(){
 		// set initial brightness?
 		if(!_display.setBrightness(7))
 			throw Exception("failed to set brightness ");
- 
+  
+		// SETUP CANBUS
+		if(!_can.begin(error))
+			throw Exception("failed to setup CANBUS ", error);
+
 		_display.showStartup();  // show startup
-		
+	
 		restoreStationsFromFile();
 		restoreRadioSettings();
 		_isSetup = true;

@@ -255,17 +255,10 @@ bool PiCarMgr::updateRadioPrefs() {
 		&&  _radio.frequency() != 0) {
 		
 		auto mode = _radio.radioMode();
-		
-		if( _lastFreqForMode.count(mode)
-			&& _lastFreqForMode[mode] == _radio.frequency() ){
-			didUpdate = false;
-		}
-		else
-		{
 		_lastFreqForMode[mode] = _radio.frequency();
 		_lastRadioMode = mode;
 		didUpdate = true;
-		}
+		 
 	}
 
 	return didUpdate;

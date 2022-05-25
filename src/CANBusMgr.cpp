@@ -63,10 +63,10 @@ CANBusMgr::~CANBusMgr(){
 bool CANBusMgr::registerHandler(string ifName) {
 	
 	// is it an already registered ?
- 	if(_interfaces.count(ifName))
+	if(_interfaces.count(ifName))
 		return false;
 	
-	 	_interfaces[ifName] = -1;
+	_interfaces[ifName] = -1;
 	
 	return true;
 }
@@ -211,7 +211,6 @@ bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes, 
 		}
 	}
 	
-done:
 	if(errorOut) *errorOut = error;
 	return false;
 }

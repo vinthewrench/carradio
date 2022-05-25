@@ -101,7 +101,18 @@ class PiCarMgr {
 								bool up,
 								station_info_t &info);
 
+	typedef enum :int {
+		MENU_UNKNOWN = 0,
+		MENU_AM,
+		MENU_FM,
+		MENU_VHF,
+		MENU_GMRS,
+		MENU_GPS,
+		MENU_TIME,
+		MENU_SETTINGS
+	} menu_mode_t;
 	
+	menu_mode_t currentMode();
 	
 private:
 	
@@ -113,6 +124,8 @@ private:
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
+	
+	void displayMenu();
 	
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);

@@ -49,7 +49,24 @@ public:
 
 	void LEDeventStartup();
 	void LEDeventVol();
+	
+// active mode
+	typedef enum  {
+		MODE_UNKNOWN = 0,
+		MODE_STARTUP,
+		MODE_TIME,
+		MODE_VOLUME,
+		MODE_BALANCE,
+		MODE_RADIO,
+		MODE_DIAG,
+		MODE_GPS,
+		MODE_SETTINGS,
 
+		MODE_MENU,
+	}mode_state_t;
+
+	mode_state_t active_mode();
+	
 	
 	// display related
 	bool setBrightness(uint8_t level);  // 0-7
@@ -79,18 +96,6 @@ public:
 	
 private:
 		
-	typedef enum  {
-		MODE_UNKNOWN = 0,
-		MODE_STARTUP,
-		MODE_TIME,
-		MODE_VOLUME,
-		MODE_BALANCE,
-		MODE_RADIO,
-		MODE_DIAG,
-		MODE_GPS,
-	
-		MODE_MENU,
-	}mode_state_t;
 
 	typedef enum  {
 		EVT_NONE = 0,
@@ -105,8 +110,6 @@ private:
 		TRANS_LEAVING,
 		
 	}modeTransition_t;
-
-	
 		
 	void drawMode(modeTransition_t transition, mode_state_t mode);
 	void drawStartupScreen(modeTransition_t transition);

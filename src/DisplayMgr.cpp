@@ -254,6 +254,18 @@ bool DisplayMgr::setBrightness(uint8_t level) {
 // MARK: -  change modes
 
 
+DisplayMgr::mode_state_t DisplayMgr::active_mode(){
+	mode_state_t mode = MODE_UNKNOWN;
+	
+	if(isStickyMode(_current_mode))
+		mode = _current_mode;
+	else
+		mode = _saved_mode;
+ 
+	return mode;
+}
+
+
 void DisplayMgr::showStartup(){
 	setEvent(EVT_PUSH, MODE_STARTUP );
 }

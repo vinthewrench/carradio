@@ -197,7 +197,6 @@ void PiCarMgr::stop(){
 		_audio.setVolume(0);
 		_audio.setBalance(0);
 		
-		
 		_radio.stop();
 		_audio.stop();
 	}
@@ -462,16 +461,16 @@ void PiCarMgr::PiCanLoop(){
 	try{
 		
 		while(_isRunning){
-
+			
 			// if not setup // check back shortly -  we are starting up
 			if(!_isSetup){
 				usleep(10000);
 				continue;
 			}
-
+			
 			// call things that need to be setup,
 			// run idle first to prevent delays on first run.
-
+			
 			if(!firstRun){
 				idle();
 				firstRun = true;
@@ -481,26 +480,26 @@ void PiCarMgr::PiCanLoop(){
 			
 			uint8_t volKnobStatus = 0;
 			uint8_t tunerKnobStatus  = 0;
-
+			
 			bool volMovedCW 		= false;
 			bool volWasClicked 	= false;
 			bool volWasMoved 		= false;
 			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
 			bool tunerWasMoved 	= false;
-	 
+			
 			// loop until status changes
 			for(;;) {
 				
 				if(!_isSetup) break;
-
+				
 				// get status from knobs
 				_volKnob.updateStatus(volKnobStatus);
 				_tunerKnob.updateStatus(tunerKnobStatus);
 				
-			// if any status bit are set process them
+				// if any status bit are set process them
 				if( (volKnobStatus | tunerKnobStatus) != 0) break;
-	
+				
 				// or take a nap
 				
 #if USE_GPIO_INTERRUPT
@@ -518,7 +517,7 @@ void PiCarMgr::PiCanLoop(){
 				err = gpiod_line_event_wait(_gpio_line_int, &timeout);
 				if(err == -1){
 					break;
-	//				throw Exception("gpiod_line_event_wait failed ");
+					//				throw Exception("gpiod_line_event_wait failed ");
 				}
 				// gpiod_line_event_wait only blocks until there's an event or a timeout
 				// occurs, it does not read the event.
@@ -532,11 +531,11 @@ void PiCarMgr::PiCanLoop(){
 					idle();
 				}
 #else
-			 usleep(10000);
-			 idle();
+				usleep(10000);
+				idle();
 #endif
 			}
-  
+			
 			// maybe we quit while I was asleep.  bail now
 			if(!_isRunning) continue;
 			
@@ -544,7 +543,7 @@ void PiCarMgr::PiCanLoop(){
 			volWasMoved = 	_volKnob.wasMoved(volMovedCW);
 			tunerWasClicked = _tunerKnob.wasClicked();
 			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedCW);
-
+			
 			// Volume button Clicked
 			if(volWasClicked){
 				bool isOn = _radio.isOn();
@@ -589,109 +588,38 @@ void PiCarMgr::PiCanLoop(){
 					}
 				}
 				
-			_display.LEDeventVol();
-	//		_display.showVolumeChange();
+				_display.LEDeventVol();
+				//		_display.showVolumeChange();
 			}
 			
 			if(tunerWasMoved) {
 				if(_display.isMenuDisplayed()){
 					_display.menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
-			//
+					//
 				}
 				else if(_radio.isOn() ){
-						// change  stations
+					// change  stations
 					bool shouldConstrain = _stations.count(_radio.radioMode()) > 0;
-	 
-						auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
-						auto mode  = _radio.radioMode();
-						_radio.setFrequencyandMode(mode, newfreq);
-					}
+					
+					auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
+					auto mode  = _radio.radioMode();
+					_radio.setFrequencyandMode(mode, newfreq);
+				}
 			}
-		
-		 
+			
+			
 			if(tunerWasClicked){
-				
 				if(_display.isMenuDisplayed()){
 					_display.menuSelectAction(DisplayMgr::MENU_CLICK);
 				}
 				else{
-					
-					vector<DisplayMgr::menuItem_t> items = {
-						"AM",
-						"FM",
-						"VHF",
-						"GMRS",
-						"-",
-						"GPS",
-						"Time",
-						"Diagnostics",
-						"Settings",
-						"Exit",
-					};
-					
-					_display.showMenuScreen(items, 0, 10,
-													 [=](bool didSucceed, uint selectedItem ){
-						
-						if(didSucceed){
-							printf("Menu Completed |%s|\n", items[selectedItem].c_str());
-							
-							saveRadioSettings();
-							_db.savePropertiesToFile();
-
-							switch(selectedItem){
-								case 0:
-								case 1:   // FM
-								case 2:   // VHF
-								case 3:   // GMRS
-								{
-									
-									RadioMgr::radio_mode_t  mode = RadioMgr::MODE_UNKNOWN;
-									uint32_t freq;
-									switch(selectedItem){
-										case 0: mode = RadioMgr::BROADCAST_AM; break;
-										case 1: mode = RadioMgr::BROADCAST_FM; break;
-										case 2: mode = RadioMgr::VHF; break;
-										case 3: mode = RadioMgr::GMRS; break;
-										default: break;
-									}
-									
-						 
-									if( ! getSavedFrequencyForMode(mode, freq) ){
-										uint32_t maxFreq;
-										RadioMgr:: freqRangeOfMode(mode, freq,maxFreq );
-									}
-									
-									_radio.setFrequencyandMode(mode, freq, true);
-									_radio.setON(true);
-								}
-								break;
- 
-								case 5: { // GPS
-									_display.showGPS();
-								}
-									break;
-									
-								case 6: { // GPS
-									_display.showTime();
-								}
-									break;
-									
-								case 7: { // DIAG
-									_display.showDiag();
-								}
-									break;
-
-							};
-	
-						}
-						
-					});
+					displayMenu();
 				}
+				
 			}
-		};
-
+		}
 	}
-	catch ( const Exception& e)  {
+ 	catch ( const Exception& e)  {
 		printf("\tError %d %s\n\n", e.getErrorNumber(), e.what());
 		
 		if(e.getErrorNumber()	 == ENXIO){
@@ -748,6 +676,142 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 	//PiCarMgr* d = (PiCarMgr*)context;
  
 //	printf("cleanup sdr\n");
+}
+
+// MARK: -   Menu Management
+
+PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
+	menu_mode_t mode = MENU_UNKNOWN;
+	
+	switch( _display.active_mode()){
+			
+		case DisplayMgr::MODE_RADIO:
+			if(_radio.isOn()){
+				
+				switch(_radio.radioMode()){
+					case RadioMgr::BROADCAST_AM:
+						mode = MENU_AM;
+						break;
+					case RadioMgr::BROADCAST_FM:
+						mode = MENU_FM;
+						break;
+					case RadioMgr::VHF:
+						mode = MENU_VHF;
+						break;
+					case RadioMgr::GMRS:
+						mode = MENU_GMRS;
+						break;
+					default: break;
+ 				}
+			}
+			break;
+			
+		case DisplayMgr::MODE_TIME:
+			mode = MENU_TIME;
+			break;
+
+		case DisplayMgr::MODE_GPS:
+			mode = MENU_GPS;
+			break;
+
+		case DisplayMgr::MODE_SETTINGS:
+			mode = MENU_SETTINGS;
+			break;
+
+		default:
+			break;
+	}
+	 
+	return mode;
+}
+
+
+void PiCarMgr::displayMenu(){
+	
+	vector < pair<PiCarMgr::menu_mode_t, string>> menu_map = {
+		{MENU_AM, 		"AM"},
+		{MENU_FM, 		"FM"},
+		{MENU_VHF, 		"VHF"},
+		{MENU_GMRS, 	"GMRS"},
+		{MENU_UNKNOWN, "-"},
+		{MENU_GPS,		"GPS"},
+		{MENU_TIME,		"Time"},
+		{MENU_SETTINGS,"Settings"},
+		{MENU_UNKNOWN, "Exit"},
+	};
+	
+	constexpr time_t timeout_secs = 10;
+	
+	vector<string> menu_items = {};
+	int selectedItem = 0;
+	menu_mode_t mode = currentMode();
+	
+	menu_items.reserve(menu_map.size());
+	
+	for(int i = 0; i < menu_map.size(); i++){
+		auto e = menu_map[i];
+		menu_items.push_back(e.second);
+		if(e.first == mode) selectedItem = i;
+	}
+	
+	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
+									[=](bool didSucceed, uint newSelectedItem ){
+		
+		if(didSucceed) {
+			menu_mode_t selectedMode = menu_map[newSelectedItem].first;
+			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;
+			
+			
+			switch (selectedMode) {
+				case MENU_UNKNOWN:
+					// do nothing
+					break;
+					
+				case MENU_AM:
+					radioMode = RadioMgr::BROADCAST_AM;
+					break;
+					
+				case MENU_FM:
+					radioMode = RadioMgr::BROADCAST_FM;
+					break;
+					
+				case MENU_VHF:
+					radioMode = RadioMgr::VHF;
+					break;
+					
+				case MENU_GMRS:
+					radioMode = RadioMgr::GMRS;
+					break;
+					
+				case MENU_TIME:
+					_display.showTime();
+					break;
+					
+				case MENU_GPS:
+					_display.showGPS();
+					break;
+					
+				case MENU_SETTINGS:
+					break;
+					
+				default:
+					break;
+			}
+			
+			// if it was a radio selection, turn it one and select
+			if(radioMode != RadioMgr::MODE_UNKNOWN){
+				uint32_t freq;
+
+				if( ! getSavedFrequencyForMode(radioMode, freq) ){
+					uint32_t maxFreq;
+					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
+				}
+ 				_radio.setFrequencyandMode(radioMode, freq, true);
+				_radio.setON(true);
+				_db.savePropertiesToFile();
+			}
+		}
+	});
 }
 
 

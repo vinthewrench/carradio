@@ -224,7 +224,6 @@ bool DuppaLEDRing::setLEDs( led_block_t & leds){
  
  	if(_i2cPort.isAvailable())
 	{
-		
 		uint8_t data[72];
 		
 		for(int i = 0; i <24; i++) {

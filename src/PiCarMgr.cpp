@@ -752,7 +752,8 @@ void PiCarMgr::displayMenu(){
 	}
 	
 	// sow down the menu
-	_tunerKnob.setAntiBounce(64);
+	_tunerKnob.setAntiBounce(128);
+	
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
 		

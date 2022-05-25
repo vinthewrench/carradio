@@ -369,6 +369,11 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				break;
 				
 			case MENU_CLICK:
+				
+				// ignore menu separators
+				if(_menuItems[_currentMenuItem] == "-")
+					break;
+				
 				if(_menuCB) {
 					_menuCB(true,  _currentMenuItem);
 				}

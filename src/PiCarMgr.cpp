@@ -746,6 +746,10 @@ void PiCarMgr::displayMenu(){
 	int selectedItem = 0;
 	menu_mode_t mode = currentMode();
 	
+	// fall back the selection for usability
+	if(mode == MENU_TIME || mode == MENU_UNKNOWN)
+		mode = MENU_FM;
+	
 	menu_items.reserve(menu_map.size());
 	
 	for(int i = 0; i < menu_map.size(); i++){
@@ -754,6 +758,7 @@ void PiCarMgr::displayMenu(){
 		if(e.first == mode) selectedItem = i;
 	}
 	
+	 
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
 		
@@ -768,7 +773,7 @@ void PiCarMgr::displayMenu(){
 					break;
 					
 				case MENU_AM:
-					radioMode = RadioMgr::BROADCAST_AM;
+	//				radioMode = RadioMgr::BROADCAST_AM;
 					break;
 					
 				case MENU_FM:

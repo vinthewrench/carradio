@@ -103,7 +103,7 @@ bool CANBusMgr::start(string ifName,int *errorOut){
 				// open connection here
 				fd = openSocket(ifName, errorOut);
 				_interfaces[ifName] = fd;
- 				return fd == -1?false:true;
+				return fd == -1?false:true;
 			}
 			else {
 				// already open
@@ -147,6 +147,9 @@ int CANBusMgr::openSocket(string ifname, int *errorOut){
 	// add to read set
 	safe_fd_set(fd, &_master_fds, &_max_fds);
 	
+	printf("open can %s = %d\n", ifname.c_str(),  fd);
+	
+
 	return fd;
 }
 

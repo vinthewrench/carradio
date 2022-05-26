@@ -1247,14 +1247,14 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		else count = 0;
  	}
 	 
-	p  += sprintf(buffer, "%4s: ", "GM");
+	p = buffer;
+	p  += sprintf(p, "%4s: ", "GM");
 	if(count > 0)
-		p  += sprintf(buffer, "%zu", count);
+		p  += sprintf(p, "%zu", count);
 	else
-		p  += sprintf(buffer, "---");
+		p  += sprintf(p, "---");
 
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
+		TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,25));
 	TRY(_vfd.write(buffer));
  
@@ -1269,12 +1269,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		}
 		else count = 0;
 	}
-	 
-	p  += sprintf(buffer, "%4s: ", "Jeep");
+	
+	p = buffer;
+	p  += sprintf(p, "%4s: ", "Jeep");
 	if(count > 0)
-		p  += sprintf(buffer, "%zu", count);
+		p  += sprintf(p, "%zu", count);
 	else
-		p  += sprintf(buffer, "---");
+		p  += sprintf(p, "---");
 
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));

@@ -1248,11 +1248,11 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.write(buffer));
  
 	if(can->packetCount(count)){
-		sprintf(buffer, "packets: %-6zu", count);
+		sprintf(buffer, "%-4zu packets", count);
 	}
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,25));
+	TRY(_vfd.setCursor(0,20));
 	TRY(_vfd.write(buffer));
  
 

@@ -147,8 +147,7 @@ int CANBusMgr::openSocket(string ifname, int *errorOut){
 	// add to read set
 	safe_fd_set(fd, &_master_fds, &_max_fds);
 	
-	printf("open can %s = %d\n", ifname.c_str(),  fd);
-	
+//	printf("open PF_CAN %s = %d\n", ifname.c_str(),  fd);
 
 	return fd;
 }

@@ -69,6 +69,8 @@ static void CRASH_Handler()
 
 static void sigHandler (int signum) {
 	
+	printf("sigHandler %d\n", signum);
+	
 	auto picanMgr = PiCarMgr::shared();
 	picanMgr->stop();
 	exit(0);

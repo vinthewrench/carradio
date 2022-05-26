@@ -1234,13 +1234,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	char buffer[64] = {0};
 
-	sprintf(buffer, "%20s","QUIET");
+	sprintf(buffer, "%-20s","QUIET");
 
 	if(can->lastFrameTime(lastTime)){
 		time_t diff = now - lastTime;
  
 		if(diff < 5 ){
-			sprintf(buffer, "%20s","ACTIVE");
+			sprintf(buffer, "%-20s","ACTIVE");
  		}
   	}
 	TRY(_vfd.setFont(VFD::FONT_MINI));

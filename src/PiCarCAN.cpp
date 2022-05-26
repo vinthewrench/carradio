@@ -43,7 +43,7 @@ bool PiCarCAN::begin( int &error){
 	_isSetup = true;
 #else
 	 
-	_isSetup = (_CANbus.start("can0", error)
+	_isSetup = (_CANbus.start("vcan0", error)
 //					&& _CANbus.start("can1", error)
 					);
 #endif

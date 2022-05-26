@@ -301,7 +301,7 @@ void DisplayMgr::showCANbus(uint8_t page){
 	
 	switch (page) {
 		case 0:
-			setEvent(EVT_PUSH, MODE_CANBUS1);
+			setEvent(EVT_PUSH, MODE_CANBUS);
 			break;
 			
 		case 1:

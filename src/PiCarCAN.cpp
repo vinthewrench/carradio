@@ -42,9 +42,7 @@ bool PiCarCAN::begin( int &error){
 #if defined(__APPLE__)
 	_isSetup = true;
 #else
-	
-	int error;
-	
+	 
 	_isSetup = (_CANbus.start("can0", error)
 //					&& _CANbus.start("can1", error)
 					);

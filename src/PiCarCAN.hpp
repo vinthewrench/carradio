@@ -25,6 +25,12 @@ class PiCarCAN {
 	
 public:
 
+	typedef enum  {
+		CAN_ALL= 0,
+		CAN_GM,
+		CAN_JEEP,
+	}pican_bus_t;
+
 	PiCarCAN();
 	~PiCarCAN();
 		
@@ -33,9 +39,9 @@ public:
 	void stop();
 	bool reset();
 
-	bool lastFrameTime(time_t &time);
-	bool packetCount(size_t &count);
-	bool resetPacketCount();
+	bool lastFrameTime(pican_bus_t bus, time_t &time);
+	bool packetCount(pican_bus_t bus, size_t &count);
+	bool resetPacketCount(pican_bus_t bus);
  
 private:
 	bool 				_isSetup = false;

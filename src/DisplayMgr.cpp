@@ -1233,28 +1233,54 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	size_t count = 0;
 	
 	char buffer[64] = {0};
-
-	sprintf(buffer, "%20s","QUIET");
-
-	if(can->lastFrameTime(lastTime)){
+	char* p = buffer;
+	
+	// GM BUS
+	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
  
 		if(diff < 5 ){
-			sprintf(buffer, "%20s","ACTIVE");
- 		}
-  	}
-	TRY(_vfd.setFont(VFD::FONT_MINI));
-	TRY(_vfd.setCursor(0,60));
-	TRY(_vfd.write(buffer));
- 
-	if(can->packetCount(count)){
-		sprintf(buffer, "packets: %zu", count);
-	}
+			if(can->packetCount(PiCarCAN::CAN_GM, count)){
+				
+			}
+		}
+		else count = 0;
+ 	}
+	 
+	p  += sprintf(buffer, "%4s: ", "GM");
+	if(count > 0)
+		p  += sprintf(buffer, "%zu", count);
+	else
+		p  += sprintf(buffer, "---");
+
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,25));
 	TRY(_vfd.write(buffer));
  
+	// JEEP BUS
+	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
+		time_t diff = now - lastTime;
+ 
+		if(diff < 5 ){
+			if(can->packetCount(PiCarCAN::CAN_JEEP, count)){
+				
+			}
+		}
+		else count = 0;
+	}
+	 
+	p  += sprintf(buffer, "%4s: ", "Jeep");
+	if(count > 0)
+		p  += sprintf(buffer, "%zu", count);
+	else
+		p  += sprintf(buffer, "---");
+
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(10,35));
+	TRY(_vfd.write(buffer));
+
 
  	struct tm *t = localtime(&now);
 	char timebuffer[16] = {0};

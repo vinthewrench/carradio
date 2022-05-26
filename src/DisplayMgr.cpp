@@ -88,7 +88,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	if(_isSetup) {
 		
 		_rightKnob.setColor(0, 255, 0);
-		_rightKnob.setColor(0, 255, 0);
+		_leftKnob.setColor(0, 255, 0);
 
 		// Set for normal operation
 		_rightRing.setConfig(0x01);

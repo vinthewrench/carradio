@@ -1252,7 +1252,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(count > 0)
 		p  += sprintf(p, "%zu", count);
 	else
-		p  += sprintf(p, "---");
+		p  += sprintf(p, "%-10s"," ---");
 
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,25));
@@ -1275,7 +1275,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(count > 0)
 		p  += sprintf(p, "%zu", count);
 	else
-		p  += sprintf(p, "---");
+		p  += sprintf(p, "%-10s"," ---");
 
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));

@@ -1234,13 +1234,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	char buffer[64] = {0};
 
-	sprintf(buffer, "%-20s","QUIET");
+	sprintf(buffer, "%20s","QUIET");
 
 	if(can->lastFrameTime(lastTime)){
 		time_t diff = now - lastTime;
  
 		if(diff < 5 ){
-			sprintf(buffer, "%-20s","ACTIVE");
+			sprintf(buffer, "%20s","ACTIVE");
  		}
   	}
 	TRY(_vfd.setFont(VFD::FONT_MINI));
@@ -1248,11 +1248,11 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.write(buffer));
  
 	if(can->packetCount(count)){
-		sprintf(buffer, "%-4zu packets", count);
+		sprintf(buffer, "packets: %zu", count);
 	}
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,20));
+	TRY(_vfd.setCursor(10,25));
 	TRY(_vfd.write(buffer));
  
 

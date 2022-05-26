@@ -795,7 +795,7 @@ void PiCarMgr::displayMenu(){
 		if(e.first == mode) selectedItem = i;
 	}
 	
-	// sow down the menu
+	// slow down the menu
 	_tunerKnob.setAntiBounce(32);
 	
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
@@ -838,6 +838,8 @@ void PiCarMgr::displayMenu(){
 					break;
  
 				case MENU_CANBUS:
+					// skow down for multi pages
+					_tunerKnob.setAntiBounce(120);
 					_display.showCANbus();
 					break;
 	

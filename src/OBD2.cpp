@@ -294,8 +294,7 @@ void OBD2:: processFrame(FrameDB* db,string ifName, can_frame_t frame, time_t wh
 			// if its one of ours we need to ask for more here..
 			// send a flow control Continue To Send (CTS) frame
 	 
-			if(_canBus->isReadingFile()
-				||  _canBus->sendFrame(ifName, can_id - 8 , {0x30, 0x00, 0x0A}, NULL)){
+			if( _canBus->sendFrame(ifName, can_id - 8 , {0x30, 0x00, 0x0A}, NULL)){
 				
 				// only store te continue if we were successful.
 				obd_state_t s;

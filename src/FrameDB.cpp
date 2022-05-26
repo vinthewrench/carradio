@@ -389,6 +389,10 @@ void FrameDB::updateValue(string_view key, string value, time_t when){
 	
 	if(shouldUpdate)
 		_values[key] = {when, _lastValueEtag++, value};
+	
+	// DEBUG
+	if(shouldUpdate)
+		printf("\t %20s : %s \n", string(key).c_str(), value.c_str());
 }
 
 

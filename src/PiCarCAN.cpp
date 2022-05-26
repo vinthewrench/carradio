@@ -13,13 +13,13 @@ PiCarCAN::PiCarCAN() {
  
 	_CANbus.registerProtocol("can1", &_gmlan);
 	_CANbus.registerProtocol("can1", &_obdii);
-	
-	_CANbus.registerProtocol("can0", &_jeep);
-	_CANbus.registerProtocol("can0", &_obdii);
-
-	_CANbus.registerHandler("can0");
 	_CANbus.registerHandler("can1");
 
+//	_CANbus.registerProtocol("can0", &_jeep);
+//	_CANbus.registerProtocol("can0", &_obdii);
+//
+//	_CANbus.registerHandler("can0");
+	
 }
 
 PiCarCAN::~PiCarCAN(){
@@ -43,7 +43,8 @@ bool PiCarCAN::begin( int &error){
 	_isSetup = true;
 #else
 	_isSetup = (_CANbus.start("can0")
-					&& _CANbus.start("can1"));
+//					&& _CANbus.start("can1")
+					);
 #endif
  
 	return _isSetup;

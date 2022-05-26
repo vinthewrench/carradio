@@ -17,6 +17,7 @@
 #include <mutex>
 #include <thread>			//Needed for std::thread
 #include <fstream>
+#include <pthread.h>
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -39,18 +40,8 @@ public:
 
 	bool registerProtocol(string ifName,  CanProtocol *protocol = NULL);
 
-	bool start(string ifName,int *error = NULL);
-	bool stop(string ifName,int *error = NULL);
-
-	bool readFramesFromFile(string filePath, bool nodelay = true,
-									int *error = NULL,
-									voidCallback_t doneCallBack = NULL );
-	
-	void quitReading() {_paused = false; _reading = false;};
-	bool isReadingFile(){ return _reading;};
-	
-	void pauseReading();
-	void resumeReading();
+	bool start(string ifName, int &error);
+	bool stop(string ifName, int &error);
 
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
@@ -58,24 +49,25 @@ public:
  
 private:
 	
-	FrameDB			_frameDB;
+	bool 				_isSetup = false;
 
-	void readFileThread(std::ifstream *ifs, bool nodelay, voidCallback_t doneCallBack);
-	std::thread  	_thread;		 //CANbus reading  thread,
-	bool 				_running;	 //Flag for starting and terminating the main loop
+	FrameDB			_frameDB;
  
 	
-	void CANThread();
-	std::thread  	_thread1;	//thread,for reading a file
-	bool 				_reading;	// reading frames from file
-	bool 				_paused;		 
+	pthread_cond_t 		_cond = PTHREAD_COND_INITIALIZER;
+	pthread_mutex_t 		_mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_t				_TID;
 
-	int openSocket(string ifName, int *error = NULL);
+	void 				CANReader();		// C++ version of thread
+	// C wrappers for CANReader;
+	static void* 	CANReaderThread(void *context);
+	static void 	CANReaderThreadCleanup(void *context);
+	bool 				_isRunning = false;
+
+	int openSocket(string ifName, int &error);
 
 	map<string, int> _interfaces;
 	fd_set	 _master_fds;		// Can sockets that are ready for read
 	int		_max_fds;
-	
-	 
 };
 

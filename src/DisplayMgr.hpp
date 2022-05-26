@@ -58,10 +58,11 @@ public:
 		MODE_VOLUME,
 		MODE_BALANCE,
 		MODE_RADIO,
+		MODE_CANBUS,
 		MODE_DIAG,
 		MODE_GPS,
 		MODE_SETTINGS,
-
+	
 		MODE_MENU,
 	}mode_state_t;
 
@@ -78,6 +79,7 @@ public:
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
 	void showRadioChange();
+	void showCANbus();
 
  	// Menu Screen Management
 	typedef string menuItem_t;
@@ -119,6 +121,8 @@ private:
 	void drawRadioScreen(modeTransition_t transition);
 	void drawDiagScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
+	void drawCANBusScreen(modeTransition_t transition);
+
 	void drawInternalError(modeTransition_t transition);
  
 	void drawShutdownScreen();

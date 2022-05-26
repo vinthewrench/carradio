@@ -297,6 +297,10 @@ void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
+void DisplayMgr::showCANbus(){
+	setEvent(EVT_PUSH, MODE_CANBUS);
+}
+
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	pthread_mutex_lock (&_mutex);
@@ -447,6 +451,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_RADIO:
 		case MODE_DIAG:
 		case MODE_GPS:
+		case MODE_CANBUS:
 			isSticky = true;
 			break;
 			
@@ -701,6 +706,11 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 			case MODE_GPS:
 				drawGPSScreen(transition);
 				break;
+	
+			case MODE_CANBUS:
+				drawCANBusScreen(transition);
+				break;
+ 
 				
 			case MODE_UNKNOWN:
 				
@@ -1199,3 +1209,57 @@ void DisplayMgr::drawShutdownScreen(){
 	TRY(_vfd.write("  Well... Bye"));
 	usleep(100);
 }
+
+
+
+void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
+ 
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	time_t now = time(NULL);
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+	}
+
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+	TRY(_vfd.write("CANbus"));
+	
+	time_t lastTime = 0;
+	size_t count = 0;
+	
+	char buffer[64] = {0};
+
+	sprintf(buffer, "%20s","QUIET");
+
+	if(can->lastFrameTime(lastTime)){
+		time_t diff = now - lastTime;
+ 
+		if(diff < 5 ){
+			sprintf(buffer, "%20s","ACTIVE");
+ 		}
+  	}
+	TRY(_vfd.setFont(VFD::FONT_MINI));
+	TRY(_vfd.setCursor(0,60));
+	TRY(_vfd.write(buffer));
+ 
+	if(can->packetCount(count)){
+		sprintf(buffer, "%-4zu packets", count);
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,20));
+	TRY(_vfd.write(buffer));
+ 
+
+ 	struct tm *t = localtime(&now);
+	char timebuffer[16] = {0};
+	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
+	TRY(_vfd.write(timebuffer));
+ }

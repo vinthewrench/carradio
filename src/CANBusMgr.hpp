@@ -18,6 +18,7 @@
 #include <thread>			//Needed for std::thread
 #include <fstream>
 #include <pthread.h>
+#include <time.h>
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -43,6 +44,10 @@ public:
 	bool start(string ifName, int &error);
 	bool stop(string ifName, int &error);
 
+	bool lastFrameTime(string ifName, time_t &time);
+	bool packetCount(string ifName, size_t &count);
+	bool resetPacketCount(string ifName);
+ 
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
 	FrameDB* frameDB() {return &_frameDB;};
@@ -50,24 +55,23 @@ public:
 private:
 	
 	bool 				_isSetup = false;
-
 	FrameDB			_frameDB;
  
-	
-	pthread_cond_t 		_cond = PTHREAD_COND_INITIALIZER;
-	pthread_mutex_t 		_mutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_t				_TID;
 
 	void 				CANReader();		// C++ version of thread
 	// C wrappers for CANReader;
 	static void* 	CANReaderThread(void *context);
 	static void 	CANReaderThreadCleanup(void *context);
 	bool 				_isRunning = false;
+	pthread_t		_TID;
 
 	int openSocket(string ifName, int &error);
 
-	map<string, int> _interfaces;
-	fd_set	 _master_fds;		// Can sockets that are ready for read
-	int		_max_fds;
+	map<string, int> 		_interfaces;
+	map<string, time_t> 	_lastFrameTime;
+	map<string, size_t> 	_packetCount;
+
+	fd_set			 	_master_fds;		// Can sockets that are ready for read
+	int					_max_fds;
 };
 

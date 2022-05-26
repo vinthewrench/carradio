@@ -9,10 +9,13 @@
 
 
 #include "CommonDefs.hpp"
+
+#include <time.h>
+
 #include "CANBusMgr.hpp"
+
 #include "GMLAN.hpp"
 #include "OBD2.hpp"
-
 #include "Wranger2010.hpp"
 
 using namespace std;
@@ -28,10 +31,12 @@ public:
 	bool begin();
 	bool begin(int &error);
 	void stop();
+	bool reset();
 
-	 bool reset();
-
-	
+	bool lastFrameTime(time_t &time);
+	bool packetCount(size_t &count);
+	bool resetPacketCount();
+ 
 private:
 	bool 				_isSetup = false;
 

@@ -41,7 +41,8 @@ CANBusMgr::CANBusMgr(){
 	
 	_isSetup = false;
 	_isRunning = true;
-
+	_packetCount = {};
+	_lastFrameTime  = {};
 	pthread_create(&_TID, NULL,
 										  (THREADFUNCPTR) &CANBusMgr::CANReaderThread, (void*)this);
 
@@ -57,12 +58,11 @@ CANBusMgr::~CANBusMgr(){
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
 
-	pthread_mutex_lock (&_mutex);
 	_isRunning = false;
-	pthread_cond_signal(&_cond);
-	pthread_mutex_unlock (&_mutex);
 	pthread_join(_TID, NULL);
  }
+
+// MARK: -  CANReader Handlers
 
 bool CANBusMgr::registerHandler(string ifName) {
 	
@@ -101,6 +101,7 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 	return success;
 }
 
+// MARK: -  CANReader control
 
 bool CANBusMgr::start(string ifName, int &error){
 	
@@ -116,7 +117,7 @@ bool CANBusMgr::start(string ifName, int &error){
 					return false;
 				}
 				else {
-					_isRunning = true;
+					_isSetup = true;
 					return true;;
 				}
  			}
@@ -196,6 +197,7 @@ bool CANBusMgr::stop(string ifName, int &error){
 	return false;
 }
 
+
 bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *errorOut){
 
 	int error = EBADF;
@@ -234,6 +236,72 @@ bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes, 
 }
  
 
+
+bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
+	
+	time_t lastTime = 0;
+	
+	// close all?
+	if(ifName.empty()){
+		for (auto& [key, time]  : _lastFrameTime){
+			if(time > lastTime){
+				lastTime = time;
+			}
+		}
+		timeOut = lastTime;
+		return true;
+	}
+	else for (auto& [key, time]  : _lastFrameTime){
+		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
+			
+			timeOut = time;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CANBusMgr::packetCount(string ifName, size_t &countOut){
+	
+	size_t totalCount = 0;
+	
+	// close all?
+	if(ifName.empty()){
+		for (auto& [_, count]  : _packetCount){
+			totalCount += count;
+		}
+		countOut = totalCount;
+ 		return true;
+	}
+	else for (auto& [key, count]  : _packetCount){
+		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
+			
+			countOut = count;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CANBusMgr::resetPacketCount(string ifName){
+	 
+	// close all?
+	if(ifName.empty()){
+		_packetCount = {};
+ 		return true;
+	}
+	else for (auto& [key, count]  : _packetCount){
+		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
+			_packetCount[key] = 0;
+ 			return true;
+		}
+	}
+	return false;
+}
+
+
+ bool resetPacketCount(string ifName);
+
 // MARK: -  CANReader thread
 
 void CANBusMgr::CANReader(){
@@ -269,8 +337,8 @@ void CANBusMgr::CANReader(){
 		 
 				struct timeval tv;
 				gettimeofday(&tv, NULL);
-	
-				unsigned long timestamp = (tv.tv_sec * 100 ) + (tv.tv_usec / 10000);
+				
+	 			unsigned long timestamp = (tv.tv_sec * 100 ) + (tv.tv_usec / 10000);
  
 				size_t nbytes = read(fd, &frame, sizeof(struct can_frame));
 				
@@ -279,6 +347,8 @@ void CANBusMgr::CANReader(){
 				}
 				else if(nbytes > 0){
 					_frameDB.saveFrame(ifName, frame, timestamp);
+					_lastFrameTime[ifName] =  tv.tv_sec;
+					_packetCount[ifName]++;
 				}
 			}
 		}

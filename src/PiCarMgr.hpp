@@ -69,9 +69,10 @@ class PiCarMgr {
 
 	DisplayMgr* display() {return &_display;};
 	AudioOutput* audio() {return &_audio;};
-	RadioMgr* radio() 	{return &_radio;};
-	PiCarDB * db() 		{return &_db;};
-	GPSmgr * gps() 		{return &_gps;};
+	RadioMgr* 	radio() 	{return &_radio;};
+	PiCarDB * 	db() 		{return &_db;};
+	GPSmgr * 	gps() 		{return &_gps;};
+	PiCarCAN * 	can() 		{return &_can;};
 
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
@@ -108,6 +109,7 @@ class PiCarMgr {
 		MENU_FM,
 		MENU_VHF,
 		MENU_GMRS,
+		MENU_CANBUS,
 		MENU_GPS,
 		MENU_TIME,
 		MENU_SETTINGS

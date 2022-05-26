@@ -735,6 +735,10 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_SETTINGS:
 			mode = MENU_SETTINGS;
 			break;
+			
+		case DisplayMgr::MODE_CANBUS:
+			mode = MENU_CANBUS;
+			break;
 
 		default:
 			break;
@@ -753,6 +757,7 @@ void PiCarMgr::displayMenu(){
 		{MENU_GMRS, 	"GMRS"},
 		{MENU_UNKNOWN, "-"},
 		{MENU_GPS,		"GPS"},
+		{MENU_CANBUS,	"CAN bus"},
 		{MENU_TIME,		"Time"},
 		{MENU_SETTINGS,"Settings"},
 		{MENU_UNKNOWN, "Exit"},
@@ -817,7 +822,11 @@ void PiCarMgr::displayMenu(){
 				case MENU_GPS:
 					_display.showGPS();
 					break;
-					
+ 
+				case MENU_CANBUS:
+					_display.showCANbus();
+					break;
+	
 				case MENU_SETTINGS:
 					break;
 					

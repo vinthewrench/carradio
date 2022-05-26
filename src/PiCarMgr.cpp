@@ -610,11 +610,25 @@ void PiCarMgr::PiCanLoop(){
 				//		_display.showVolumeChange();
 			}
 			
+			
 			if(tunerWasMoved) {
+				
+				uint8_t page = 0;
+		
 				if(_display.isMenuDisplayed()){
 					_display.menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
 					//
 				}
+				
+				// allow for scroll in canbus menu
+				else if(_display.isScreenDisplayed(DisplayMgr::MODE_CANBUS, page)){
+	 				if(page == 0)
+						_display.showCANbus(1);
+					else
+						_display.showCANbus(0);
+				}
+				
+				// change tuner
 				else if(_radio.isOn() ){
 					// change  stations
 					bool shouldConstrain = _stations.count(_radio.radioMode()) > 0;

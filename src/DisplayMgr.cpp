@@ -297,8 +297,21 @@ void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
-void DisplayMgr::showCANbus(){
-	setEvent(EVT_PUSH, MODE_CANBUS);
+void DisplayMgr::showCANbus(uint8_t page){
+	
+	switch (page) {
+		case 0:
+			setEvent(EVT_PUSH, MODE_CANBUS1);
+			break;
+			
+		case 1:
+			setEvent(EVT_PUSH, MODE_CANBUS1);
+			break;
+			
+		default:
+			setEvent(EVT_PUSH, MODE_CANBUS);
+	}
+	
 }
 
 
@@ -443,6 +456,31 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 
 // MARK: -  mode utils
 
+
+bool DisplayMgr::isScreenDisplayed(mode_state_t mode, uint8_t &page){
+	
+	// for main page
+	if( mode == _current_mode){
+		page = 0;
+		return true;
+	}
+	// handle multi page
+	else switch(mode) {
+		case MODE_CANBUS:
+			
+			if(_current_mode == MODE_CANBUS1){
+				page = 1;
+				return true;
+			}
+			break;
+			
+		default: break;
+	}
+	
+	return false;
+	
+}
+
 bool DisplayMgr::isStickyMode(mode_state_t md){
 	bool isSticky = false;
 	
@@ -452,6 +490,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_DIAG:
 		case MODE_GPS:
 		case MODE_CANBUS:
+		case MODE_CANBUS1:
 			isSticky = true;
 			break;
 			
@@ -709,6 +748,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	
 			case MODE_CANBUS:
 				drawCANBusScreen(transition);
+				break;
+				
+			case MODE_CANBUS1:
+				drawCANBusScreen1(transition);
 				break;
  
 				
@@ -1167,7 +1210,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		TRY(_vfd.write(v[2]));
 		
  		if(location.altitudeIsValid)  {
-#define M2FT 	3.2808399
+			constexpr double  M2FT = 	3.2808399;
 			sprintf(buffer, "%.1f ft",location.altitude * M2FT);
 			TRY(_vfd.setCursor(20,48));
 			TRY(_vfd.write(buffer));
@@ -1217,6 +1260,8 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	time_t now = time(NULL);
 	
+	constexpr int busTimeout = 5;
+	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 	}
@@ -1239,7 +1284,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
  
-		if(diff < 5 ){
+		if(diff < busTimeout ){
 			if(can->packetCount(PiCarCAN::CAN_GM, count)){
 				
 			}
@@ -1262,7 +1307,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
 		time_t diff = now - lastTime;
  
-		if(diff < 5 ){
+		if(diff < busTimeout ){
 			if(can->packetCount(PiCarCAN::CAN_JEEP, count)){
 				
 			}
@@ -1290,3 +1335,29 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
 	TRY(_vfd.write(timebuffer));
  }
+
+
+void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
+ 
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	time_t now = time(NULL);
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+	}
+
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+	TRY(_vfd.write("CANbus(1)"));
+	
+	struct tm *t = localtime(&now);
+	char timebuffer[16] = {0};
+	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
+	TRY(_vfd.write(timebuffer));
+
+}

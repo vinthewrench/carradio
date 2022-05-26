@@ -59,6 +59,8 @@ public:
 		MODE_BALANCE,
 		MODE_RADIO,
 		MODE_CANBUS,
+		MODE_CANBUS1,
+
 		MODE_DIAG,
 		MODE_GPS,
 		MODE_SETTINGS,
@@ -79,8 +81,11 @@ public:
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
 	void showRadioChange();
-	void showCANbus();
+	void showCANbus(uint8_t page = 0);
 
+
+	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
+	
  	// Menu Screen Management
 	typedef string menuItem_t;
 	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
@@ -121,7 +126,9 @@ private:
 	void drawRadioScreen(modeTransition_t transition);
 	void drawDiagScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
+	
 	void drawCANBusScreen(modeTransition_t transition);
+	void drawCANBusScreen1(modeTransition_t transition);
 
 	void drawInternalError(modeTransition_t transition);
  

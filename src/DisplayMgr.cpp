@@ -25,6 +25,13 @@ printf("FAIL AT line: %d\n", __LINE__ ); \
 
 typedef void * (*THREADFUNCPTR)(void *);
 
+// Duppa I2CEncoderV2 knobs
+constexpr uint8_t leftKnobAddress = 0x40;
+constexpr uint8_t rightKnobAddress = 0x41;
+
+constexpr uint8_t rightRingAddress = 0x60;
+constexpr uint8_t leftRingAddress = 0x61;
+
 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
@@ -59,8 +66,11 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	if(!_vfd.begin(path,speed,error))
 		throw Exception("failed to setup VFD ");
 	
-	if( !(_rightRing.begin(0x60, error)
-			&& _leftRing.begin(0x61, error))){
+	if( !(_rightRing.begin(rightRingAddress, error)
+			&& _leftRing.begin(leftRingAddress, error)
+			&& _rightKnob.begin(rightKnobAddress, error)
+			&& _leftKnob.begin(leftKnobAddress, error)
+			)){
 		throw Exception("failed to setup LEDrings ");
 	}
 	
@@ -77,6 +87,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	
 	if(_isSetup) {
 		
+		_rightKnob.setColor(0, 255, 0);
+		_rightKnob.setColor(0, 255, 0);
+
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
 		_leftRing.setConfig(0x01);
@@ -113,6 +126,8 @@ void DisplayMgr::stop(){
 		_eventQueue = {};
 		_ledEvent = 0;
 
+		_rightKnob.stop();
+		_leftKnob.stop();
 		_rightRing.stop();
 		_leftRing.stop();
 		drawShutdownScreen();
@@ -415,10 +430,14 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	//	uint8_t maxCol = width / 7;
 	
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(1);
+		_rightKnob.setColor(0,255, 0);
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(32);
+		_rightKnob.setColor(0,0 , 128);
 		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
@@ -1263,10 +1282,12 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	constexpr int busTimeout = 5;
 	
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setColor(128,0, 0);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setColor(0,255, 0);
 		return;
 	}
 	
@@ -1341,14 +1362,17 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
  
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	time_t now = time(NULL);
+	
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setColor(128,0, 0);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setColor(0,255, 0);
 		return;
 	}
-	
+
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("CANbus(1)"));

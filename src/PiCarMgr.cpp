@@ -35,11 +35,7 @@ const char* 		gpioPath 				= "/dev/gpiochip0";
 constexpr uint 	gpio_int_line_number	= 27;
 const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
-
-
-// Duppa I2CEncoderV2 knobs
-constexpr uint8_t leftKnobAddress = 0x40;
-constexpr uint8_t rightKnobAddress = 0x41;
+ 
 
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 //const char* dev_audio  = "hw:CARD=DAC,DEV=0";
@@ -496,6 +492,9 @@ void PiCarMgr::PiCanLoop(){
 			
 			// knob management -
 			
+			DuppaKnob* tunerKnob =	_display.rightKnob();
+			DuppaKnob* volKnob = 	_display.leftKnob();
+	
 			uint8_t volKnobStatus = 0;
 			uint8_t tunerKnobStatus  = 0;
 			
@@ -512,8 +511,8 @@ void PiCarMgr::PiCanLoop(){
 				if(!_isSetup) break;
 				
 				// get status from knobs
-				_volKnob.updateStatus(volKnobStatus);
-				_tunerKnob.updateStatus(tunerKnobStatus);
+				volKnob->updateStatus(volKnobStatus);
+				tunerKnob->updateStatus(tunerKnobStatus);
 				
 				// if any status bit are set process them
 				if( (volKnobStatus | tunerKnobStatus) != 0) break;
@@ -557,10 +556,10 @@ void PiCarMgr::PiCanLoop(){
 			// maybe we quit while I was asleep.  bail now
 			if(!_isRunning) continue;
 			
-			volWasClicked = _volKnob.wasClicked();
-			volWasMoved = 	_volKnob.wasMoved(volMovedCW);
-			tunerWasClicked = _tunerKnob.wasClicked();
-			tunerWasMoved 	= _tunerKnob.wasMoved(tunerMovedCW);
+			volWasClicked 		= volKnob->wasClicked();
+			volWasMoved 		= volKnob->wasMoved(volMovedCW);
+			tunerWasClicked 	= tunerKnob->wasClicked();
+			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
 			
 			// Volume button Clicked
 			if(volWasClicked){
@@ -751,6 +750,7 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			break;
 			
 		case DisplayMgr::MODE_CANBUS:
+		case DisplayMgr::MODE_CANBUS1:
 			mode = MENU_CANBUS;
 			break;
 
@@ -782,7 +782,7 @@ void PiCarMgr::displayMenu(){
 	vector<string> menu_items = {};
 	int selectedItem = 0;
 	menu_mode_t mode = currentMode();
-	
+ 
 	// fall back the selection for usability
 	if(mode == MENU_TIME || mode == MENU_UNKNOWN)
 		mode = MENU_FM;
@@ -796,13 +796,10 @@ void PiCarMgr::displayMenu(){
 	}
 	
 	// slow down the menu
-	_tunerKnob.setAntiBounce(32);
-	
+ 
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
-		
-		_tunerKnob.setAntiBounce(1);
-
+ 
 		if(didSucceed) {
 			menu_mode_t selectedMode = menu_map[newSelectedItem].first;
 			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;
@@ -838,8 +835,6 @@ void PiCarMgr::displayMenu(){
 					break;
  
 				case MENU_CANBUS:
-					// skow down for multi pages
-					_tunerKnob.setAntiBounce(120);
 					_display.showCANbus();
 					break;
 	
@@ -874,16 +869,6 @@ void PiCarMgr::displayMenu(){
 void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string error_text)> cb){
 	int  errnum = 0;
 	bool didSucceed = false;
-	
-	
-	if(! (  _volKnob.begin(leftKnobAddress, errnum)
-		  && _tunerKnob.begin(rightKnobAddress, errnum)) ) {
-		
-		ELOG_MESSAGE("Could not start control knobs");
-		goto done;
-	}
-	_volKnob.setColor(0, 255, 0);
-	_tunerKnob.setColor(0, 0, 255);
 	
 #if USE_GPIO_INTERRUPT
 	// setup GPIO lines
@@ -928,8 +913,6 @@ void PiCarMgr::stopControls(){
 		gpiod_chip_close(_gpio_chip);
  #endif
 
-	_volKnob.stop();
-	_tunerKnob.stop();
 }
 
 

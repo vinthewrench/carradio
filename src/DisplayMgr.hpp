@@ -22,6 +22,7 @@
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 #include "DuppaLEDRing.hpp"
+#include "DuppaKnob.hpp"
 
 using namespace std;
 
@@ -70,7 +71,11 @@ public:
 
 	mode_state_t active_mode();
 	
+	// knobs
 	
+	DuppaKnob* rightKnob() { return &_rightKnob;};
+	DuppaKnob* leftKnob() { return &_leftKnob;};
+
 	// display related
 	bool setBrightness(uint8_t level);  // 0-7
 
@@ -193,8 +198,9 @@ private:
 	
 	DuppaLEDRing		_rightRing;
 	DuppaLEDRing		_leftRing;
-	// debug stuff
-	
+	DuppaKnob			_leftKnob;
+	DuppaKnob			_rightKnob;
+
 //	string modeString();
 
 };

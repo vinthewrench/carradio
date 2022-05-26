@@ -48,7 +48,6 @@
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
-#include "DuppaKnob.hpp"
 #include "json.hpp"
 
 using namespace std;
@@ -154,8 +153,6 @@ private:
 	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
-	DuppaKnob			_volKnob;
-	DuppaKnob			_tunerKnob;
 
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

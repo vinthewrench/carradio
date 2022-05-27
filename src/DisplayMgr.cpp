@@ -549,9 +549,9 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
 				
-				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
-
+				setEvent(EVT_POP, MODE_UNKNOWN);
+	
 				if(cb) {
 					cb(true,  item);
 				}
@@ -580,7 +580,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		_vfd.clearScreen();
 		return;
 	}
 	

@@ -150,7 +150,7 @@ bool VFD::clearScreen(){
 	
 	uint8_t buffer[] = {0x12, 0, 0, 0xff, 0xff};
 	
-	return  writePacket(buffer, sizeof(buffer), 50);
+	return  writePacket(buffer, sizeof(buffer), 1000);
 }
 
 
@@ -198,7 +198,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 		for(int i = 0; i < len +4; i++){
 			success = (::write(_fd,&buffer[i] , 1) == 1);
 			if(!success) return false;
-			usleep(10);
+			usleep(waitusec);
 		}
 		
 #else

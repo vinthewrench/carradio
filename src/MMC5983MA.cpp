@@ -114,6 +114,7 @@ bool MMC5983MA::readTempC(float& tempOut){
 	 
 	uint8_t temp;
 	
+	printf("compass readTempC \n");
 	if(_i2cPort.readByte(MMC5983MA_TOUT, temp)){
 		//
 		//		int16_t digitalTemp;

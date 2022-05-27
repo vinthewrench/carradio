@@ -1031,7 +1031,7 @@ void PiCarMgr::startCompass(){
 	didSucceed = _compass.begin(deviceAddress,errnum);
 	if(didSucceed){
 		
-		ELOG_MESSAGE("Start Compass   - OK");
+		printf("Start Compass   - OK");
 	}
 	else {
 		ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass 1 ");

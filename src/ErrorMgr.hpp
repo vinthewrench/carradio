@@ -23,7 +23,7 @@
 	  ErrorMgr::shared()->logError(ErrorMgr::LEV_ERROR, _fac_, _dev_, _errnum_, _msg_, ##__VA_ARGS__)
 
 
-#define LOGT_DEBUG( _msg_, ...)  ErrorMgr::shared()->logMessage(ErrorMgr::LogFlagDebug, true,_msg_, ##__VA_ARGS__)
+#define LOGT_DEBUG( _msg_, ...)  ErrorMgr::shared()->logMessage(ErrorMgr::LEV_DEBUG, true,_msg_, ##__VA_ARGS__)
 
 
  

@@ -479,7 +479,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 // MARK: -  Menu Mode
 
 void DisplayMgr::resetMenu() {
-	_menuItems.clear();
+	_menuItems = {};
 	_currentMenuItem = 0;
 	_menuTimeout = 0;
 	_menuTitle = "";

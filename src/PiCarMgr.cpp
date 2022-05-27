@@ -864,17 +864,13 @@ void PiCarMgr::displaySettingsMenu(){
 			"Dim Screen",
 			"Exit",
 	};
-
-	printf("displaySettingsMenu\n");
-	
+ 
 	_display.showMenuScreen(menu_items,
 									0,
 									"Settings",
 									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
-		
-		printf("showMenuScreen return %d %d\n", didSucceed, newSelectedItem);
-
+	
 		if(didSucceed) {
 			
 			switch (newSelectedItem) {
@@ -883,7 +879,7 @@ void PiCarMgr::displaySettingsMenu(){
 //					break;
 					
 				default:
-					displayMenu();
+					;
 			}
 		}
 	});

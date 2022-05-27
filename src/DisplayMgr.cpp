@@ -377,6 +377,9 @@ void DisplayMgr::showCANbus(uint8_t page){
 
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
+	
+	printf("setEvent (%d, %d)\n" , evt , mod);
+
 	pthread_mutex_lock (&_mutex);
 	
 	// dont keep pushing the same thing
@@ -387,9 +390,25 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 			shouldPush = false;
 		}
 		
-		// always push a menu..
-		if(evt == EVT_PUSH && mod == MODE_MENU)
-			shouldPush = true;
+		
+		///*
+		// iterate through queue
+		
+		auto q = _eventQueue;
+		//print queue
+			while (!q.empty()) {
+				
+				auto e  = q.front();
+				printf(" (%d,%d)", e.evt, e.mode);
+	 			 q.pop();
+			}
+		printf(" \n");
+
+		 
+		///
+ //		// always push a menu..
+//		if(evt == EVT_PUSH && mod == MODE_MENU)
+//			shouldPush = true;
 		
 	}
 	
@@ -533,7 +552,6 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
 
-	//			popMode();
 				if(cb) {
 					cb(true,  item);
 				}

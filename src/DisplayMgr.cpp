@@ -475,7 +475,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	
 
 	// prevent menu on menu
-	if(_current_mode == MODE_MENU) popMode();
+//	if(_current_mode == MODE_MENU) popMode();
 	
 	printf("showMenuScreen (%d)\n",_current_mode );
 
@@ -514,11 +514,13 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				if(_menuItems[_currentMenuItem] == "-")
 					break;
 				
+				// need to pop first // menu might force another menu
+				setEvent(EVT_POP, MODE_UNKNOWN);
+				resetMenu();
+
 				if(_menuCB) {
 					_menuCB(true,  _currentMenuItem);
 				}
-				setEvent(EVT_POP, MODE_UNKNOWN);
-				resetMenu();
 				break;
 		}
 		

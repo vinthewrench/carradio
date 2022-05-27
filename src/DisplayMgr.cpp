@@ -33,7 +33,7 @@ constexpr uint8_t rightRingAddress = 0x60;
 constexpr uint8_t leftRingAddress = 0x61;
 
 constexpr uint8_t antiBounceDefault = 1;
-constexpr uint8_t antiBounceSlow = 128;
+constexpr uint8_t antiBounceSlow = 32;
 
 
 

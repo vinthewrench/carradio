@@ -764,7 +764,6 @@ void PiCarMgr::displayMenu(){
 		{MENU_TIME,		"Time"},
 		{MENU_UNKNOWN, "-"},
 		{MENU_SETTINGS,"Settings"},
-		{MENU_UNKNOWN, "Exit"},
 	};
 	
 	constexpr time_t timeout_secs = 10;

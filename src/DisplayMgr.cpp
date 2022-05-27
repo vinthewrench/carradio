@@ -473,11 +473,12 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	_menuTimeout = timeout;
 	_menuCB = cb;
 	
-	printf("showMenuScreen \n");
 
 	// prevent menu on menu
-	//if(_current_mode == MODE_MENU) popMode();
+	if(_current_mode == MODE_MENU) popMode();
 	
+	printf("showMenuScreen (%d)\n",_current_mode );
+
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 

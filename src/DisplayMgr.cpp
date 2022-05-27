@@ -578,6 +578,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
 		return;
 	}
 	
@@ -1323,7 +1324,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 }
 
 void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
-//	printf("displayDiagScreen %d\n",transition);
+ //printf("drawSettingsScreen %d\n",transition);
 	
  
 	if(transition == TRANS_ENTERING) {

@@ -126,6 +126,7 @@ bool PiCarMgr::begin(){
  
 		// if we fail, no big deal..
 		startTempSensors();
+		startCompass();
 		startControls();
 		
 		// setup audio out
@@ -213,6 +214,7 @@ void PiCarMgr::stop(){
 		_display.stop();
 
 		stopControls();
+		stopCompass();
 		stopTempSensors();
 		stopCPUInfo();
 		_audio.setVolume(0);
@@ -1010,3 +1012,27 @@ void PiCarMgr::stopTempSensors(){
 PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 	return _tempSensor1.getDeviceState();
 }
+
+// MARK: -   I2C Compass
+
+void PiCarMgr::startCompass(){
+	int  errnum = 0;
+	bool didSucceed = false;
+ 
+	uint8_t deviceAddress = 0x30;
+ 
+	didSucceed = _compass.begin(deviceAddress,errnum);
+	if(didSucceed){
+		
+		ELOG_MESSAGE("Start Compass   - OK");
+	}
+	else {
+		ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass 1 ");
+	}
+
+}
+
+void PiCarMgr::stopCompass(){
+	_compass.stop();
+}
+

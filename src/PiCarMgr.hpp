@@ -48,6 +48,8 @@
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
+#include "MMC5983MA.hpp"
+
 #include "json.hpp"
 
 using namespace std;
@@ -80,6 +82,9 @@ class PiCarMgr {
 	void stopTempSensors();
 	PiCarMgrDevice::device_state_t tempSensor1State();
 
+	void startCompass();
+	void stopCompass();
+ 
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
@@ -155,6 +160,7 @@ private:
 	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
+	MMC5983MA			_compass;
 
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

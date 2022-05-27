@@ -10,6 +10,7 @@
 		2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EE283EAEB2003D074C /* Wranger2010.cpp */; };
 		2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EF283EAEB2003D074C /* OBD2.cpp */; };
 		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
+		2E0EA4802841603D0012E406 /* MMC5983MA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
@@ -59,6 +60,8 @@
 
 /* Begin PBXFileReference section */
 		2E0EA47D284055630012E406 /* RGB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RGB.hpp; sourceTree = "<group>"; };
+		2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MMC5983MA.cpp; sourceTree = "<group>"; };
+		2E0EA47F28415B5E0012E406 /* MMC5983MA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MMC5983MA.hpp; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -300,6 +303,8 @@
 				2E8210BD2835A593003D074C /* TempSensor.hpp */,
 				2E8210C22835A593003D074C /* TMP117.cpp */,
 				2E8210BC2835A593003D074C /* TMP117.hpp */,
+				2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */,
+				2E0EA47F28415B5E0012E406 /* MMC5983MA.hpp */,
 			);
 			name = Devices;
 			sourceTree = "<group>";
@@ -437,6 +442,7 @@
 				2E8210AF2835A4AC003D074C /* AudioOutput.cpp in Sources */,
 				2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */,
 				2E8210C82835A593003D074C /* I2C.cpp in Sources */,
+				2E0EA4802841603D0012E406 /* MMC5983MA.cpp in Sources */,
 				2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */,
 				2E8210C72835A593003D074C /* DuppaLEDRing.cpp in Sources */,
 				2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */,

@@ -73,7 +73,8 @@ set(SOURCES
 	src/OBD2.cpp
 	src/Wranger2010.cpp
 	src/PiCarCAN.cpp
-	)
+	src/MMC5983MA.cpp
+)
 
  
 add_executable(carradio ${SOURCES})

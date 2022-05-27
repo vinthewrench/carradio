@@ -321,10 +321,24 @@ void DisplayMgr::showStartup(){
 void DisplayMgr::showTime(){
 	setEvent(EVT_PUSH, MODE_TIME);
 }
-
-void DisplayMgr::showDiag(){
-	setEvent(EVT_PUSH, MODE_DIAG);
+ 
+void DisplayMgr::showSettings(uint8_t page){
+	
+	switch (page) {
+		case 0:
+			setEvent(EVT_PUSH, MODE_SETTINGS);
+			break;
+			
+		case 1:
+			setEvent(EVT_PUSH, MODE_SETTINGS1);
+			break;
+			
+		default:
+			setEvent(EVT_PUSH, MODE_SETTINGS);
+	}
+	
 }
+
 
 
 void DisplayMgr::showVolumeChange(){
@@ -390,6 +404,10 @@ bool  DisplayMgr::isScreenDisplayedMultiPage(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
 		case MODE_CANBUS1:
+			
+		case MODE_SETTINGS:
+		case MODE_SETTINGS1:
+
 		case MODE_MENU:
 			return true;
 	 
@@ -408,6 +426,9 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	static map <mode_state_t,  next_state_t> next_mode_map  = {
 		{MODE_CANBUS,  { {KNOB_UP , MODE_CANBUS1} } },
 		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS} } },
+	
+		{ MODE_SETTINGS, { {KNOB_DOWN ,  MODE_SETTINGS1} } },
+		{ MODE_SETTINGS1, { {KNOB_DOWN ,  MODE_SETTINGS} } },
 	};
 	
 	
@@ -576,7 +597,15 @@ bool DisplayMgr::isScreenDisplayed(mode_state_t mode, uint8_t &page){
 				return true;
 			}
 			break;
+
+		case MODE_SETTINGS:
 			
+			if(_current_mode == MODE_SETTINGS1){
+				page = 1;
+				return true;
+			}
+			break;
+
 		default: break;
 	}
 	
@@ -590,7 +619,8 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 	switch(md){
 		case MODE_TIME:
 		case MODE_RADIO:
-		case MODE_DIAG:
+		case MODE_SETTINGS:
+		case MODE_SETTINGS1:
 		case MODE_GPS:
 		case MODE_CANBUS:
 		case MODE_CANBUS1:
@@ -837,10 +867,14 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				drawRadioScreen(transition);
 				break;
 				
-			case MODE_DIAG:
-				drawDiagScreen(transition);
+			case MODE_SETTINGS:
+				drawSettingsScreen(transition);
 				break;
-				
+	
+			case MODE_SETTINGS1:
+				drawSettingsScreen1(transition);
+				break;
+	
 			case MODE_MENU:
 				drawMenuScreen(transition);
 				break;
@@ -1244,22 +1278,47 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 }
 
-void DisplayMgr::drawDiagScreen(modeTransition_t transition){
+void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 //	printf("displayDiagScreen %d\n",transition);
 	
-	
+ 
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Orange);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
-   TRY(_vfd.write("Diagnostics"));
+	TRY(_vfd.write("Settings"));
+
+}
+
+void DisplayMgr::drawSettingsScreen1(modeTransition_t transition){
+//	printf("displayDiagScreen %d\n",transition);
 	
+	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Orange);
+		_vfd.clearScreen();
+	}
+
+	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		return;
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,10));
+	TRY(_vfd.write("Settings(1)"));
+
 }
 
 

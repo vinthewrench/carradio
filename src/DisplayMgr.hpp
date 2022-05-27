@@ -62,9 +62,9 @@ public:
 		MODE_CANBUS,
 		MODE_CANBUS1,
 
-		MODE_DIAG,
 		MODE_GPS,
 		MODE_SETTINGS,
+		MODE_SETTINGS1,
 	
 		MODE_MENU,
 	}mode_state_t;
@@ -98,13 +98,13 @@ public:
 
 	// display  page
 	void showTime();
-	void showDiag();
 	void showGPS();
 	void showStartup();
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
 	void showRadioChange();
 	void showCANbus(uint8_t page = 0);
+	void showSettings(uint8_t page = 0);
 
 	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
 	
@@ -134,11 +134,13 @@ private:
 	void drawVolumeScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
 	void drawRadioScreen(modeTransition_t transition);
-	void drawDiagScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
 	
 	void drawCANBusScreen(modeTransition_t transition);
 	void drawCANBusScreen1(modeTransition_t transition);
+
+	void drawSettingsScreen(modeTransition_t transition);
+	void drawSettingsScreen1(modeTransition_t transition);
 
 	void drawInternalError(modeTransition_t transition);
  

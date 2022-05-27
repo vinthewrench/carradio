@@ -827,7 +827,8 @@ void PiCarMgr::displayMenu(){
 					break;
 	
 				case MENU_SETTINGS:
-					break;
+					_display.showSettings();
+						break;
 					
 				default:
 					break;

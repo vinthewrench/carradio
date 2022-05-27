@@ -386,6 +386,11 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 		if(item.evt == evt &&  item.mode == mod ){
 			shouldPush = false;
 		}
+		
+		// always push a menu..
+		if(evt == EVT_PUSH && mod == MODE_MENU)
+			shouldPush = true;
+		
 	}
 	
 	if(shouldPush)

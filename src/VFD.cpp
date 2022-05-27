@@ -150,7 +150,7 @@ bool VFD::clearScreen(){
 	
 	uint8_t buffer[] = {0x12, 0, 0, 0xff, 0xff};
 	
-	return  writePacket(buffer, sizeof(buffer), 1000);
+	return  writePacket(buffer, sizeof(buffer), 50);
 }
 
 

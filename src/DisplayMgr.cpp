@@ -567,7 +567,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
 	
-		printf("drawMenuScreen  %d\n",transition);
+	printf("drawMenuScreen  %d  items(%lu)\n",transition, _menuItems.size());
 
 	//	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();

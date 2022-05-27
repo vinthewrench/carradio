@@ -862,8 +862,6 @@ void PiCarMgr::displaySettingsMenu(){
 	
 	vector<string> menu_items = {
 			"Dim Screen",
-			"this",
-			"that",
 			"Exit",
 	};
 

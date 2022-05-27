@@ -762,6 +762,7 @@ void PiCarMgr::displayMenu(){
 		{MENU_GPS,		"GPS"},
 		{MENU_CANBUS,	"CAN bus"},
 		{MENU_TIME,		"Time"},
+		{MENU_UNKNOWN, "-"},
 		{MENU_SETTINGS,"Settings"},
 		{MENU_UNKNOWN, "Exit"},
 	};

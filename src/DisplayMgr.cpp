@@ -515,11 +515,16 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 					break;
 				
 				// need to pop first // menu might force another menu
+				
+				// save the vars that get reset
+				auto cb = _menuCB;
+				auto item = _currentMenuItem;
+				
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
 
-				if(_menuCB) {
-					_menuCB(true,  _currentMenuItem);
+				if(cb) {
+					cb(true,  item);
 				}
 				break;
 		}

@@ -395,7 +395,6 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	
 	if(shouldPush)
  		pthread_cond_signal(&_cond);
-
 }
 
 // MARK: -  Knob Management
@@ -473,6 +472,11 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	
 	_menuTimeout = timeout;
 	_menuCB = cb;
+	
+	printf("showMenuScreen \n");
+
+	// prevent menu on menu
+	if(_current_mode == MODE_MENU) popMode();
 	
 	setEvent(EVT_PUSH,MODE_MENU);
 }

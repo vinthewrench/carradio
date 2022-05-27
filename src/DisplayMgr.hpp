@@ -70,11 +70,22 @@ public:
 	}mode_state_t;
 
 	mode_state_t active_mode();
-	
+ 
 	// knobs
 	
+	typedef enum  {
+		KNOB_EXIT = 0,
+		KNOB_UP,
+		KNOB_DOWN,
+		KNOB_CLICK
+	}knob_action;
+
 	DuppaKnob* rightKnob() { return &_rightKnob;};
 	DuppaKnob* leftKnob() { return &_leftKnob;};
+
+	// multi page display
+	bool isScreenDisplayedMultiPage();
+	void selectorKnobAction(knob_action action);
 
 	// display related
 	bool setBrightness(uint8_t level);  // 0-7
@@ -89,6 +100,7 @@ public:
 	void showCANbus(uint8_t page = 0);
 
 
+
 	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
 	
  	// Menu Screen Management
@@ -96,16 +108,6 @@ public:
 	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
 	void showMenuScreen(vector<menuItem_t> items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
  
-	typedef enum  {
-		MENU_EXIT = 0,
-		MENU_UP,
-		MENU_DOWN,
-		MENU_CLICK
-	}menu_action;
-	void menuSelectAction(menu_action action);
-	bool isMenuDisplayed() {return _current_mode == MODE_MENU;};
-	
-	
 private:
 		
 
@@ -139,8 +141,10 @@ private:
  
 	void drawShutdownScreen();
 	
+	
 //Menu stuff
 	void resetMenu();
+	void menuSelectAction(knob_action action);
 	void drawMenuScreen(modeTransition_t transition);
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;

@@ -494,7 +494,7 @@ void PiCarMgr::PiCanLoop(){
 			
 			DuppaKnob* tunerKnob =	_display.rightKnob();
 			DuppaKnob* volKnob = 	_display.leftKnob();
-	
+			
 			uint8_t volKnobStatus = 0;
 			uint8_t tunerKnobStatus  = 0;
 			
@@ -612,21 +612,10 @@ void PiCarMgr::PiCanLoop(){
 			
 			if(tunerWasMoved) {
 				
-				uint8_t page = 0;
-		
-				if(_display.isMenuDisplayed()){
-					_display.menuSelectAction(tunerMovedCW?DisplayMgr::MENU_UP:DisplayMgr::MENU_DOWN);
-					//
-				}
 				
-				// allow for scroll in canbus menu
-				else if(_display.isScreenDisplayed(DisplayMgr::MODE_CANBUS, page)){
-	 				if(page == 0)
-						_display.showCANbus(1);
-					else
-						_display.showCANbus(0);
+				if(_display.isScreenDisplayedMultiPage()){
+					_display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN);
 				}
-				
 				// change tuner
 				else if(_radio.isOn() ){
 					// change  stations
@@ -638,10 +627,9 @@ void PiCarMgr::PiCanLoop(){
 				}
 			}
 			
-			
 			if(tunerWasClicked){
-				if(_display.isMenuDisplayed()){
-					_display.menuSelectAction(DisplayMgr::MENU_CLICK);
+				if(_display.isScreenDisplayedMultiPage()){
+					_display.selectorKnobAction(DisplayMgr::KNOB_CLICK);
 				}
 				else{
 					displayMenu();

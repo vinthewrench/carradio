@@ -359,6 +359,46 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 
 }
 
+// MARK: -  Knob Management
+ 
+bool  DisplayMgr::isScreenDisplayedMultiPage(){
+	switch (_current_mode) {
+		case MODE_CANBUS:
+		case MODE_CANBUS1:
+		case MODE_MENU:
+			return true;
+	 
+		default:
+			return false;
+	}
+	
+}
+
+
+void DisplayMgr::selectorKnobAction(knob_action action){
+	if(isScreenDisplayedMultiPage()){
+		if(_current_mode == MODE_MENU)
+			return menuSelectAction(action);
+		
+		else {
+			switch(action){
+					
+				case KNOB_EXIT:
+					break;
+					
+				case KNOB_UP:
+					break;
+					
+				case KNOB_DOWN:
+					break;
+					
+				case KNOB_CLICK:
+					break;
+			}
+		}
+	}
+}
+
 // MARK: -  Menu Mode
 
 void DisplayMgr::resetMenu() {
@@ -383,13 +423,13 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
-void DisplayMgr::menuSelectAction(menu_action action){
+void DisplayMgr::menuSelectAction(knob_action action){
 	
-	if(isMenuDisplayed()) {
+	if(_current_mode == MODE_MENU) {
 		
 		switch(action){
 				
-			case MENU_EXIT:
+			case KNOB_EXIT:
 				if(_menuCB) {
 					_menuCB(false, 0);
 				}
@@ -397,17 +437,17 @@ void DisplayMgr::menuSelectAction(menu_action action){
 				resetMenu();
 				break;
 				
-			case MENU_UP:
+			case KNOB_UP:
 				_currentMenuItem = min(_currentMenuItem + 1,  static_cast<int>( _menuItems.size() -1));
 				setEvent(EVT_NONE,MODE_MENU);
 				break;
 				
-			case MENU_DOWN:
+			case KNOB_DOWN:
 				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
 				setEvent(EVT_NONE,MODE_MENU);
 				break;
 				
-			case MENU_CLICK:
+			case KNOB_CLICK:
 				
 				// ignore menu separators
 				if(_menuItems[_currentMenuItem] == "-")

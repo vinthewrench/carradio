@@ -102,6 +102,9 @@ class PiCarMgr {
 								bool up,
 								station_info_t &info);
 
+
+private:
+	
 	typedef enum :int {
 		MENU_UNKNOWN = 0,
 		MENU_AM,
@@ -116,8 +119,6 @@ class PiCarMgr {
 	
 	menu_mode_t currentMode();
 	
-private:
-	
 	static PiCarMgr *sharedInstance;
 	bool					_isSetup	= false;
 	bool					_isRunning = false;
@@ -128,7 +129,8 @@ private:
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
 	
 	void displayMenu();
-	
+	void displaySettingsMenu();
+
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
   

@@ -785,7 +785,6 @@ void PiCarMgr::displayMenu(){
 		if(e.first == mode) selectedItem = i;
 	}
 	
-	// slow down the menu
  
 	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
@@ -828,7 +827,8 @@ void PiCarMgr::displayMenu(){
 					break;
 	
 				case MENU_SETTINGS:
-					_display.showSettings();
+					displaySettingsMenu();
+	//				_display.showSettings();
 						break;
 					
 				default:
@@ -853,6 +853,36 @@ void PiCarMgr::displayMenu(){
 	});
 }
 
+
+void PiCarMgr::displaySettingsMenu(){
+	
+	constexpr time_t timeout_secs = 10;
+	
+	vector<string> menu_items = {
+			"Dim Screen",
+			"this",
+			"that",
+			"Exit",
+	};
+
+	_display.showMenuScreen(menu_items, 1, timeout_secs,
+									[=](bool didSucceed, uint newSelectedItem ){
+		
+		if(didSucceed) {
+			
+			switch (newSelectedItem) {
+				case 1:
+					_display.showSettings(1);
+					break;
+					
+				default:
+					displayMenu();
+			}
+		}
+	});
+									
+}
+ 
 
 // MARK: -   Knobs and Buttons
 

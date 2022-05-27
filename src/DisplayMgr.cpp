@@ -613,7 +613,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		}
 		
 		uint8_t cursorV = startV;
-		for(int i = _menuCursor; i <= _menuCursor + maxLines; i ++){
+		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
 			char moreIndicator =  ' ';
 			
@@ -625,7 +625,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			
 			sprintf(buffer, "%c%-18s %c",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator);
 			
-			printf("- %2d  |%s|\n",cursorV, buffer);
+			printf("-  %d %2d  |%s|\n",i, cursorV, buffer);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

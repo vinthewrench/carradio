@@ -584,7 +584,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		_vfd.clearScreen();
 		return;
 	}
 	
@@ -592,7 +591,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
  		_vfd.clearScreen();
-		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
 		
@@ -623,6 +621,8 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			TRY(_vfd.setCursor(0,cursorV));
 			
 			sprintf(buffer, "%c%-18s %c",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator);
+			
+			printf("- %2d  |%s|\n",cursorV, buffer);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

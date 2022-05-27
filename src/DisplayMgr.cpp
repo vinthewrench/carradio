@@ -528,7 +528,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
 
-				popMode();
+	//			popMode();
 				if(cb) {
 					cb(true,  item);
 				}

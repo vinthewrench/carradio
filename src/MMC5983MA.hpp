@@ -34,6 +34,9 @@ public:
 	 
 	uint8_t	getDevAddr();
 
+	
+	bool getChipID(uint8_t &chipID);
+ 
 private:
  
 	I2C 		_i2cPort;

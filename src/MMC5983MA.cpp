@@ -6,7 +6,8 @@
 //
 
 #include "MMC5983MA.hpp"
-
+#include "CommonDefs.hpp"
+#include "ErrorMgr.hpp"
 //Register map for MMC5983MA'
 //http://www.memsic.com/userfiles/files/DataSheets/Magnetic-Sensors-Datasheets/MMC5983MA_Datasheet.pdf
 
@@ -46,6 +47,16 @@ bool MMC5983MA::begin(uint8_t deviceAddress){
 bool MMC5983MA::begin(uint8_t deviceAddress,   int &error){
  
 	if( _i2cPort.begin(deviceAddress, error) ) {
+		
+		uint8_t  chipID = 0;
+		
+		if(getChipID(chipID) && chipID == 0x5d) {
+			_isSetup = true;
+	}
+		else {
+			ELOG_MESSAGE("MMC5983MA(%02x) unexpected chipID = %02x\n", deviceAddress, chipID );
+			error = ENODEV;
+		}
 		_isSetup = true;
 	}
 
@@ -64,3 +75,11 @@ uint8_t	MMC5983MA::getDevAddr(){
 };
 
 
+
+
+bool MMC5983MA::getChipID(uint8_t &chipID){
+	
+	bool success = _i2cPort.readByte(MMC5983MA_PRODUCT_ID, chipID);
+	return success;
+
+}

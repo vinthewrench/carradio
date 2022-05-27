@@ -427,7 +427,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 		{MODE_CANBUS,  { {KNOB_UP , MODE_CANBUS1} } },
 		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS} } },
 	
-		{ MODE_SETTINGS, { {KNOB_DOWN ,  MODE_SETTINGS1} } },
+		{ MODE_SETTINGS, { {KNOB_UP ,  MODE_SETTINGS1} } },
 		{ MODE_SETTINGS1, { {KNOB_DOWN ,  MODE_SETTINGS} } },
 	};
 	

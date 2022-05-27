@@ -792,7 +792,6 @@ void PiCarMgr::displayMenu(){
 			menu_mode_t selectedMode = menu_map[newSelectedItem].first;
 			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;
 			
-			
 			switch (selectedMode) {
 				case MENU_UNKNOWN:
 					// do nothing

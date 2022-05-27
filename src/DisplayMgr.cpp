@@ -1298,6 +1298,10 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("Settings"));
 
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width()-5,60));
+	TRY(_vfd.write(">"));
+
 }
 
 void DisplayMgr::drawSettingsScreen1(modeTransition_t transition){
@@ -1318,6 +1322,11 @@ void DisplayMgr::drawSettingsScreen1(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("Settings(1)"));
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,60));
+	TRY(_vfd.write("<"));
+
 
 }
 
@@ -1503,7 +1512,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width()-5,60));
-	TRY(_vfd.write("<"));
+	TRY(_vfd.write(">"));
 
  }
 

@@ -378,8 +378,6 @@ void DisplayMgr::showCANbus(uint8_t page){
 
 void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	
-	printf("setEvent (%d, %d)\n" , evt , mod);
-
 	pthread_mutex_lock (&_mutex);
 	
 	// dont keep pushing the same thing
@@ -389,27 +387,6 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 		if(item.evt == evt &&  item.mode == mod ){
 			shouldPush = false;
 		}
-		
-		
-		///*
-		// iterate through queue
-		
-		auto q = _eventQueue;
-		//print queue
-			while (!q.empty()) {
-				
-				auto e  = q.front();
-				printf(" (%d,%d)", e.evt, e.mode);
-	 			 q.pop();
-			}
-		printf(" \n");
-
-		 
-		///
- //		// always push a menu..
-//		if(evt == EVT_PUSH && mod == MODE_MENU)
-//			shouldPush = true;
-		
 	}
 	
 	if(shouldPush)
@@ -505,12 +482,6 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	_menuCB = cb;
 	
 	pthread_mutex_unlock (&_mutex);
-
-	// prevent menu on menu
-//	if(_current_mode == MODE_MENU) popMode();
-	
-	printf("showMenuScreen (%d)\n",_current_mode );
-
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
@@ -520,10 +491,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 	
 	if(_current_mode == MODE_MENU) {
 		wasHandled = true;
-		
-		
-		printf("menuSelectAction (%d)\n",action );
-
+ 
 		switch(action){
 				
 			case KNOB_EXIT:
@@ -573,9 +541,6 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 
 void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
-	
-	printf("drawMenuScreen  %d  items(%lu)\n",transition, _menuItems.size());
-
 	//	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	
@@ -622,10 +587,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			if(i == _menuCursor && _menuCursor != 0) moreIndicator = '<';
 			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = '>';
 			TRY(_vfd.setCursor(0,cursorV));
-			
 			sprintf(buffer, "%c%-18s %c",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator);
-			
-			printf("-  %d %2d  |%s|\n",i, cursorV, buffer);
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

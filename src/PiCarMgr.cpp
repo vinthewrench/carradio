@@ -878,9 +878,9 @@ void PiCarMgr::displaySettingsMenu(){
 		if(didSucceed) {
 			
 			switch (newSelectedItem) {
-				case 1:
- //					_display.showSettings(1);
-					break;
+//				case 1:
+// //					_display.showSettings(1);
+//					break;
 					
 				default:
 					displayMenu();

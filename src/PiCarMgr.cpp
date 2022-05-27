@@ -734,6 +734,7 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			break;
 
 		case DisplayMgr::MODE_SETTINGS:
+		case DisplayMgr::MODE_SETTINGS1:
 			mode = MENU_SETTINGS;
 			break;
 			

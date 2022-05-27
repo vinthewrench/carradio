@@ -375,31 +375,32 @@ bool  DisplayMgr::isScreenDisplayedMultiPage(){
 }
 
 
-bool DisplayMgr::selectorKnobAction(knob_action action){
+bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	bool wasHandled = false;
+	
+	typedef   map <knob_action_t,  mode_state_t> next_state_t;
+	static map <mode_state_t,  next_state_t> next_mode_map  = {
+		{MODE_CANBUS,  { {KNOB_UP , MODE_CANBUS1} } },
+		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS} } },
+	};
+	
 	
 	if(isScreenDisplayedMultiPage()){
 		if(_current_mode == MODE_MENU){
 			wasHandled =  menuSelectAction(action);
 		}
 		else {
-			switch(action){
-					
-				case KNOB_EXIT:
-					break;
-					
-				case KNOB_UP:
-					wasHandled = true;
-				break;
-					
-				case KNOB_DOWN:
-					wasHandled = true;
-					break;
-					
-				case KNOB_CLICK:
-					
-					break;
+			
+			mode_state_t nextMode = MODE_UNKNOWN;
+			
+			if(next_mode_map.count(_current_mode)
+				&& next_mode_map[_current_mode].count(action))
+				nextMode = next_mode_map[_current_mode][action];
+			
+			if(nextMode != MODE_UNKNOWN) {
+				setEvent(EVT_PUSH, nextMode );
+				wasHandled = true;
 			}
 		}
 	}
@@ -430,7 +431,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
-bool DisplayMgr::menuSelectAction(knob_action action){
+bool DisplayMgr::menuSelectAction(knob_action_t action){
 	bool wasHandled = false;
 
 	if(_current_mode == MODE_MENU) {

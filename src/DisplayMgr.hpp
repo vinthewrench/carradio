@@ -78,14 +78,14 @@ public:
 		KNOB_UP,
 		KNOB_DOWN,
 		KNOB_CLICK
-	}knob_action;
+	}knob_action_t;
 
 	DuppaKnob* rightKnob() { return &_rightKnob;};
 	DuppaKnob* leftKnob() { return &_leftKnob;};
 
 	// multi page display
 	bool isScreenDisplayedMultiPage();
-	bool selectorKnobAction(knob_action action);
+	bool selectorKnobAction(knob_action_t action);
 
 	// display related
 	bool setBrightness(uint8_t level);  // 0-7
@@ -99,8 +99,6 @@ public:
 	void showRadioChange();
 	void showCANbus(uint8_t page = 0);
 
-
-
 	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
 	
  	// Menu Screen Management
@@ -109,8 +107,6 @@ public:
 	void showMenuScreen(vector<menuItem_t> items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
  
 private:
-		
-
 	typedef enum  {
 		EVT_NONE = 0,
 		EVT_PUSH,
@@ -144,7 +140,7 @@ private:
 	
 //Menu stuff
 	void resetMenu();
-	bool menuSelectAction(knob_action action);
+	bool menuSelectAction(knob_action_t action);
 	void drawMenuScreen(modeTransition_t transition);
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;

@@ -111,7 +111,11 @@ public:
  	// Menu Screen Management
 	typedef string menuItem_t;
 	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
-	void showMenuScreen(vector<menuItem_t> items, uint intitialItem,  time_t timeout = 0,  menuSelectedCallBack_t cb = nullptr);
+	void showMenuScreen(vector<menuItem_t> items,
+							  uint intitialItem,
+							  string title,
+							  time_t timeout = 0,
+							  menuSelectedCallBack_t cb = nullptr);
  
 private:
 	typedef enum  {
@@ -157,6 +161,7 @@ private:
 
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;
+	string					  _menuTitle;
 //
 	
 	mode_state_t _current_mode = MODE_UNKNOWN;

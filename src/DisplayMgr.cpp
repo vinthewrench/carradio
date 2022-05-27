@@ -458,15 +458,20 @@ void DisplayMgr::resetMenu() {
 	_menuItems.clear();
 	_currentMenuItem = 0;
 	_menuTimeout = 0;
+	_menuTitle = "";
 	_menuCB = nullptr;
 	
 }
 
-void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, time_t timeout,
+void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
+										  uint intitialItem,
+										  string title,
+										  time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
 	resetMenu();
 	_menuItems = items;
+	_menuTitle = title;
 	_currentMenuItem =  min( max( static_cast<int>(intitialItem), 0),static_cast<int>( _menuItems.size()) -1);
 	_menuCursor	= 0;
 	
@@ -520,12 +525,15 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
 				
-				setEvent(EVT_POP, MODE_UNKNOWN);
+//				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
 
+				popMode();
 				if(cb) {
 					cb(true,  item);
 				}
+				
+				setEvent(EVT_NONE, MODE_UNKNOWN);
 				break;
 		}
 		
@@ -558,7 +566,10 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
  		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
-		TRY(_vfd.write("Select Screen"));
+		
+		auto title = _menuTitle;
+		if (title.empty()) title = "Select";
+		TRY(_vfd.write(title));
 	}
 	
 	// did something change?

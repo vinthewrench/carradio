@@ -785,7 +785,10 @@ void PiCarMgr::displayMenu(){
 	}
 	
  
-	_display.showMenuScreen(menu_items, selectedItem, timeout_secs,
+	_display.showMenuScreen(menu_items,
+									selectedItem,
+									"Select Screen",
+									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
  
 		if(didSucceed) {
@@ -866,7 +869,10 @@ void PiCarMgr::displaySettingsMenu(){
 
 	printf("displaySettingsMenu\n");
 	
-	_display.showMenuScreen(menu_items, 1, timeout_secs,
+	_display.showMenuScreen(menu_items,
+									0,
+									"Settings",
+									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
 		
 		printf("showMenuScreen return %d %d\n", didSucceed, newSelectedItem);

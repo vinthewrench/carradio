@@ -584,6 +584,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
 		return;
 	}
 	
@@ -591,6 +592,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
  		_vfd.clearScreen();
+		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
 		

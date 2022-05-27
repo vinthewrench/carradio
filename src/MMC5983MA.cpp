@@ -8,6 +8,8 @@
 #include "MMC5983MA.hpp"
 #include "CommonDefs.hpp"
 #include "ErrorMgr.hpp"
+#include <unistd.h>
+
 //Register map for MMC5983MA'
 //http://www.memsic.com/userfiles/files/DataSheets/Magnetic-Sensors-Datasheets/MMC5983MA_Datasheet.pdf
 
@@ -50,7 +52,7 @@ bool MMC5983MA::begin(uint8_t deviceAddress,   int &error){
 		
 		uint8_t  chipID = 0;
 		
-		if(getChipID(chipID) && chipID == 0x5d) {
+		if(getChipID(chipID) && chipID == 0x30) {
 			_isSetup = true;
 	}
 		else {
@@ -83,3 +85,48 @@ bool MMC5983MA::getChipID(uint8_t &chipID){
 	return success;
 
 }
+
+
+bool MMC5983MA::reset() {
+	bool success = false;
+
+	if(_i2cPort.isAvailable()){
+		
+		if(_i2cPort.writeByte(MMC5983MA_CONTROL_1,  (uint8_t) 0x80)){
+			usleep(10000);  //  Wait 10 ms for all registers to reset
+ 			success = true;
+		}
+	}
+	
+	return success;
+}
+
+
+//uint8_t MMC5983MA::readTemperature()
+//{
+//  uint8_t temp = _i2c_bus->readByte(MMC5983MA_ADDRESS, MMC5983MA_TOUT);  // Read the raw temperature register
+//  return temp;
+//}
+//
+
+bool MMC5983MA::readTempC(float& tempOut){
+	bool success = false;
+	 
+	uint8_t temp;
+	
+	if(_i2cPort.readByte(MMC5983MA_TOUT, temp)){
+		//
+		//		int16_t digitalTemp;
+		//
+		//		digitalTemp = ((data.bytes[0]) << 8) | (data.bytes[1] );
+		//
+		//		float finalTempC = digitalTemp * TMP117_RESOLUTION; // Multiplies by the resolution for digital to final temp
+		//
+		//		tempOut = finalTempC;
+		success = true;
+		//
+		printf("readTemp  %d  \n",temp );
+	}
+	return success;
+}
+

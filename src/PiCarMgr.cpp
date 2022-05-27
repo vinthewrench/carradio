@@ -978,6 +978,13 @@ void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string
 	int  errnum = 0;
 	bool didSucceed = false;
  
+	
+	
+#warning DEBUG
+	float foo;
+	_compass.readTempC(foo);
+///
+	
 	uint8_t deviceAddress = 0x4A;
  
 	didSucceed =  _tempSensor1.begin(deviceAddress, VAL_OUTSIDE_TEMP, errnum);

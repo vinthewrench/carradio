@@ -31,10 +31,13 @@ public:
 	bool begin(uint8_t deviceAddress,  int &error);
 	void stop();
  
+	bool reset(); 	// reset from timeout
+
 	 
 	uint8_t	getDevAddr();
 
 	
+	bool readTempC(float&);
 	bool getChipID(uint8_t &chipID);
  
 private:

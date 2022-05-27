@@ -32,6 +32,10 @@ constexpr uint8_t rightKnobAddress = 0x41;
 constexpr uint8_t rightRingAddress = 0x60;
 constexpr uint8_t leftRingAddress = 0x61;
 
+constexpr uint8_t antiBounceDefault = 1;
+constexpr uint8_t antiBounceSlow = 128;
+
+
 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
@@ -86,6 +90,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_isSetup = true;
 	
 	if(_isSetup) {
+		
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		_leftKnob.setAntiBounce(antiBounceDefault);
 		
 		_rightKnob.setColor(RGB(0,255,0));
 		_leftKnob.setColor(RGB(0,255,0));
@@ -430,13 +437,14 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	//	uint8_t maxCol = width / 7;
 	
 	if(transition == TRANS_LEAVING) {
-		_rightKnob.setAntiBounce(1);
+		_rightKnob.setAntiBounce(antiBounceDefault);
 		_rightKnob.setColor(RGB(0,255,0));
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
-		_rightKnob.setAntiBounce(32);
+		_rightKnob.setAntiBounce(antiBounceSlow);
+	
 		_rightKnob.setColor(RGB(0,0,255));
 		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
@@ -1282,11 +1290,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	constexpr int busTimeout = 5;
 	
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
 		_rightKnob.setColor(255,0, 0);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
 		_rightKnob.setColor(0,255, 0);
 		return;
 	}
@@ -1359,16 +1369,18 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 
 
 void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
- 
+	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	time_t now = time(NULL);
 	
 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
 		_rightKnob.setColor(255,0, 0);
 		_vfd.clearScreen();
 	}
-
+	
 	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
 		_rightKnob.setColor(0,255, 0);
 		return;
 	}

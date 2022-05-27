@@ -79,17 +79,24 @@ public:
 		KNOB_DOWN,
 		KNOB_CLICK
 	}knob_action_t;
+ 
+	typedef enum  {
+		KNOB_RIGHT,
+		KNOB_LEFT,
+ 	}knob_id_t;
 
 	DuppaKnob* rightKnob() { return &_rightKnob;};
 	DuppaKnob* leftKnob() { return &_leftKnob;};
 
+	// display related
+	bool setBrightness(uint8_t level);  // 0-7
+	bool setKnobColor(knob_id_t, RGB);
+	
 	// multi page display
 	bool isScreenDisplayedMultiPage();
 	bool selectorKnobAction(knob_action_t action);
 
-	// display related
-	bool setBrightness(uint8_t level);  // 0-7
-
+	// display  page
 	void showTime();
 	void showDiag();
 	void showGPS();
@@ -194,14 +201,19 @@ private:
  
  	// display
 	bool 					_isSetup = false;
-	VFD 					_vfd;
 	
+	// colors and brightness
+	RGB 					_rightKnobColor;
+	RGB 					_leftKnobColor;
+	uint8_t				_dimLevel;
+	
+
+	// devices
+	VFD 					_vfd;
 	DuppaLEDRing		_rightRing;
 	DuppaLEDRing		_leftRing;
 	DuppaKnob			_leftKnob;
 	DuppaKnob			_rightKnob;
-
-//	string modeString();
-
+ 
 };
 

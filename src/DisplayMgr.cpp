@@ -94,8 +94,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		_leftKnob.setAntiBounce(antiBounceDefault);
 		
-		_rightKnob.setColor(RGB(0,255,0));
-		_leftKnob.setColor(RGB(0,255,0));
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		setKnobColor(KNOB_LEFT, RGB::Lime);
 
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
@@ -267,6 +267,31 @@ bool DisplayMgr::setBrightness(uint8_t level) {
 	bool success = false;
 	if(_isSetup){
 		success = _vfd.setBrightness(level);
+	}
+	
+	return success;
+}
+
+
+
+bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
+	bool success = false;
+	if(_isSetup){
+		
+		// calculate color vs brightness
+		RGB effectiveColor = color;
+		
+		
+		switch (knob) {
+			case KNOB_RIGHT:
+				success = _rightKnob.setColor(effectiveColor);
+				break;
+
+			case KNOB_LEFT:
+				success =  _leftKnob.setColor(effectiveColor);
+ 				break;
+
+	 		}
 	}
 	
 	return success;
@@ -490,15 +515,14 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		_rightKnob.setColor(RGB(0,255,0));
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
-	
-		_rightKnob.setColor(RGB(0,0,255));
-		_vfd.clearScreen();
+		setKnobColor(KNOB_RIGHT, RGB::Blue);
+ 		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
 		TRY(_vfd.write("Select Screen"));
@@ -1343,13 +1367,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
-		_rightKnob.setColor(255,0, 0);
+		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		_rightKnob.setColor(0,255, 0);
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -1427,13 +1451,13 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
-		_rightKnob.setColor(255,0, 0);
+		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
 	}
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		_rightKnob.setColor(0,255, 0);
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 

@@ -375,11 +375,14 @@ bool  DisplayMgr::isScreenDisplayedMultiPage(){
 }
 
 
-void DisplayMgr::selectorKnobAction(knob_action action){
+bool DisplayMgr::selectorKnobAction(knob_action action){
+	
+	bool wasHandled = false;
+	
 	if(isScreenDisplayedMultiPage()){
-		if(_current_mode == MODE_MENU)
-			return menuSelectAction(action);
-		
+		if(_current_mode == MODE_MENU){
+			wasHandled =  menuSelectAction(action);
+		}
 		else {
 			switch(action){
 					
@@ -387,16 +390,20 @@ void DisplayMgr::selectorKnobAction(knob_action action){
 					break;
 					
 				case KNOB_UP:
-					break;
+					wasHandled = true;
+				break;
 					
 				case KNOB_DOWN:
+					wasHandled = true;
 					break;
 					
 				case KNOB_CLICK:
+					
 					break;
 			}
 		}
 	}
+	return wasHandled;
 }
 
 // MARK: -  Menu Mode
@@ -423,9 +430,11 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
-void DisplayMgr::menuSelectAction(knob_action action){
-	
+bool DisplayMgr::menuSelectAction(knob_action action){
+	bool wasHandled = false;
+
 	if(_current_mode == MODE_MENU) {
+		wasHandled = true;
 		
 		switch(action){
 				
@@ -462,6 +471,8 @@ void DisplayMgr::menuSelectAction(knob_action action){
 		}
 		
 	}
+	
+	return wasHandled;
 }
 
 

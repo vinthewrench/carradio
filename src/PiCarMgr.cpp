@@ -612,9 +612,9 @@ void PiCarMgr::PiCanLoop(){
 			
 			if(tunerWasMoved) {
 				
-				
-				if(_display.isScreenDisplayedMultiPage()){
-					_display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN);
+				if(_display.isScreenDisplayedMultiPage()
+					&& _display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN)){
+					// was handled - do nothing
 				}
 				// change tuner
 				else if(_radio.isOn() ){
@@ -628,13 +628,13 @@ void PiCarMgr::PiCanLoop(){
 			}
 			
 			if(tunerWasClicked){
-				if(_display.isScreenDisplayedMultiPage()){
-					_display.selectorKnobAction(DisplayMgr::KNOB_CLICK);
+				if(_display.isScreenDisplayedMultiPage()
+					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
+					// was handled - do nothing
 				}
 				else{
 					displayMenu();
 				}
-				
 			}
 		}
 	}

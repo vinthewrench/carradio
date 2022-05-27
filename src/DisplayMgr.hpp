@@ -85,7 +85,7 @@ public:
 
 	// multi page display
 	bool isScreenDisplayedMultiPage();
-	void selectorKnobAction(knob_action action);
+	bool selectorKnobAction(knob_action action);
 
 	// display related
 	bool setBrightness(uint8_t level);  // 0-7
@@ -144,7 +144,7 @@ private:
 	
 //Menu stuff
 	void resetMenu();
-	void menuSelectAction(knob_action action);
+	bool menuSelectAction(knob_action action);
 	void drawMenuScreen(modeTransition_t transition);
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;

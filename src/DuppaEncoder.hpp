@@ -8,7 +8,7 @@
 #pragma once
 
 #include "I2C.hpp"
-
+#include "RGB.hpp"
 using namespace std;
 
 class DuppaEncoder
@@ -75,6 +75,7 @@ public:
 	uint8_t	getDevAddr();
   
 	bool setColor(uint8_t red, uint8_t green, uint8_t blue );
+	bool setColor(RGB color);
 
 	
 private:

@@ -21,8 +21,7 @@ public:
 		uint8_t	g;
 		uint8_t	b;
 	} led_color_t;
-	
-	
+		
 	typedef led_color_t led_block_t[24];
  
 	DuppaLEDRing();

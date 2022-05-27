@@ -34,6 +34,8 @@ public:
 	bool updateStatus(uint8_t &regOut);
 	bool setColor(uint8_t red, uint8_t green, uint8_t blue );
 
+	bool setColor(RGB color);
+
 	
 	bool setAntiBounce(uint8_t period); // period * 0.192ms
 

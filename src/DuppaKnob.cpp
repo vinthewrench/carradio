@@ -90,6 +90,11 @@ bool DuppaKnob::wasMoved( bool &cw){
 }
 
 
+
+bool DuppaKnob::setColor(RGB color){
+	return _isSetup && _duppa.setColor(color);
+}
+
 bool DuppaKnob::setColor(uint8_t red, uint8_t green, uint8_t blue ){
 	return _isSetup && _duppa.setColor(red,green,blue);
 

@@ -184,6 +184,10 @@ bool DuppaEncoder::wasMoved(bool &cw) {
 }
 
 
+bool DuppaEncoder::setColor(RGB color){
+	return setColor(color.r, color.g, color.b);
+}
+
 bool DuppaEncoder::setColor(uint8_t red, uint8_t green, uint8_t blue){
 	
 	bool success = false;

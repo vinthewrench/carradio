@@ -58,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2E0EA47D284055630012E406 /* RGB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RGB.hpp; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -260,6 +261,7 @@
 				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
 				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 				2E8210CF2835A635003D074C /* CommonDefs.hpp */,
+				2E0EA47D284055630012E406 /* RGB.hpp */,
 				2E8210B42835A551003D074C /* TimeStamp.cpp */,
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,
 				2E8210B22835A53B003D074C /* json.hpp */,

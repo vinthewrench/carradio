@@ -557,6 +557,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
 		return;
 	}
 	

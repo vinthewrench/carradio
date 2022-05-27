@@ -514,9 +514,13 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 bool DisplayMgr::menuSelectAction(knob_action_t action){
 	bool wasHandled = false;
 
+	
 	if(_current_mode == MODE_MENU) {
 		wasHandled = true;
 		
+		
+		printf("menuSelectAction (%d)\n",action );
+
 		switch(action){
 				
 			case KNOB_EXIT:

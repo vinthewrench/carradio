@@ -198,7 +198,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 		for(int i = 0; i < len +4; i++){
 			success = (::write(_fd,&buffer[i] , 1) == 1);
 			if(!success) return false;
-			usleep(waitusec);
+			usleep(10);
 		}
 		
 #else

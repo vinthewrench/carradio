@@ -493,6 +493,8 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 										  time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
+//	pthread_mutex_lock (&_mutex);
+
 	resetMenu();
 	_menuItems = items;
 	_menuTitle = title;
@@ -502,6 +504,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	_menuTimeout = timeout;
 	_menuCB = cb;
 	
+//	pthread_mutex_unlock (&_mutex);
 
 	// prevent menu on menu
 //	if(_current_mode == MODE_MENU) popMode();

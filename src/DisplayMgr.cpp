@@ -479,7 +479,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 // MARK: -  Menu Mode
 
 void DisplayMgr::resetMenu() {
-	_menuItems = {};
+	_menuItems.clear();
 	_currentMenuItem = 0;
 	_menuTimeout = 0;
 	_menuTitle = "";
@@ -493,7 +493,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 										  time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
-//	pthread_mutex_lock (&_mutex);
+	pthread_mutex_lock (&_mutex);
 
 	resetMenu();
 	_menuItems = items;
@@ -504,7 +504,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	_menuTimeout = timeout;
 	_menuCB = cb;
 	
-//	pthread_mutex_unlock (&_mutex);
+	pthread_mutex_unlock (&_mutex);
 
 	// prevent menu on menu
 //	if(_current_mode == MODE_MENU) popMode();

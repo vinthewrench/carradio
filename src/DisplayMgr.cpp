@@ -476,7 +476,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items, uint intitialItem, tim
 	printf("showMenuScreen \n");
 
 	// prevent menu on menu
-	if(_current_mode == MODE_MENU) popMode();
+	//if(_current_mode == MODE_MENU) popMode();
 	
 	setEvent(EVT_PUSH,MODE_MENU);
 }

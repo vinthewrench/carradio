@@ -38,6 +38,7 @@ bool CompassSensor::begin(int deviceAddress, int &error){
 		_queryDelay = 1;	// seconds
 		_lastQueryTime = {0,0};
 		_resultMap.clear();
+		reset();
 
 	}else {
 		_state = INS_INVALID;
@@ -57,7 +58,7 @@ bool CompassSensor::isConnected(){
 }
  
 void CompassSensor::reset(){
-	
+	_sensor.reset();
 }
 
 void CompassSensor::setQueryDelay(uint64_t delay){
@@ -131,7 +132,8 @@ void CompassSensor::idle(){
 					gettimeofday(&now, NULL);
 					timersub(&now, &_lastQueryTime, &diff);
 					
-					if(diff.tv_sec >=  _queryDelay  ) {
+	//				if(diff.tv_sec >=  _queryDelay  ) {
+				if(diff.tv_usec >=  5e5  ) {
 						shouldQuery = true;
 					}
 				}

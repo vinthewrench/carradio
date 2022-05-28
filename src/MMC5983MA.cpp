@@ -32,7 +32,40 @@ enum MMC5983MA_Register
 	MMC5983MA_PRODUCT_ID	= 0x2F //Shouldbe0x30
 };
 
- 
+// Bits definitions
+#define MEAS_M_DONE                 (1 << 0)
+#define MEAS_T_DONE                 (1 << 1)
+#define OTP_READ_DONE               (1 << 4)
+#define TM_M                        (1 << 0)
+#define TM_T                        (1 << 1)
+#define INT_MEAS_DONE_EN            (1 << 2)
+#define SET_OPERATION               (1 << 3)
+#define RESET_OPERATION             (1 << 4)
+#define AUTO_SR_EN                  (1 << 5)
+#define OTP_READ                    (1 << 6)
+#define BW0                         (1 << 0)
+#define BW1                         (1 << 1)
+#define X_INHIBIT                   (1 << 2)
+#define YZ_INHIBIT                  (3 << 3)
+#define SW_RST                      (1 << 7)
+#define CM_FREQ_0                   (1 << 0)
+#define CM_FREQ_1                   (1 << 1)
+#define CM_FREQ_2                   (1 << 2)
+#define CMM_EN                      (1 << 3)
+#define PRD_SET_0                   (1 << 4)
+#define PRD_SET_1                   (1 << 5)
+#define PRD_SET_2                   (1 << 6)
+#define EN_PRD_SET                  (1 << 7)
+#define ST_ENP                      (1 << 1)
+#define ST_ENM                      (1 << 2)
+#define SPI_3W                      (1 << 6)
+#define X2_MASK                     (3 << 6)
+#define Y2_MASK                     (3 << 4)
+#define Z2_MASK                     (3 << 2)
+#define XYZ_0_SHIFT                 10
+#define XYZ_1_SHIFT                 2
+
+
 MMC5983MA::MMC5983MA(){
 	_isSetup = false;
 }
@@ -92,8 +125,8 @@ bool MMC5983MA::reset() {
 	bool success = false;
 
  
-		if(_i2cPort.writeByte(MMC5983MA_CONTROL_1,  (uint8_t) 0x80)){
-			usleep(10000);  //  Wait 10 ms for all registers to reset
+		if(_i2cPort.writeByte(MMC5983MA_CONTROL_1, SW_RST)){
+			usleep(15000);  //  Wait 10 ms for all registers to reset
  			success = true;
 		}
 	 
@@ -171,28 +204,30 @@ bool MMC5983MA::readMag() {
 	bool success = false;
 	
 	I2C::i2c_block_t block;
-
-
 	
 	if(_i2cPort.readBlock(MMC5983MA_XOUT_0,  7, block)) {
-		uint32_t x,y,z;
+		uint32_t currentX,currentY,currentZ;
 	 
-		x = (uint32_t)(block[0] << 10 | block[1] << 2 | (block[6] & 0xC0) >> 6); // Turn the 18 bits into a unsigned 32-bit value
-		y = (uint32_t)(block[2] << 10 | block[3] << 2 | (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
-		z = (uint32_t)(block[4] << 10 | block[5] << 2 | (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
+		currentX = (uint32_t)(block[0] << 10
+							| block[1] << 2
+							| (block[6] & 0xC0) >> 6); // Turn the 18 bits into a unsigned 32-bit value
+		
+		currentY = (uint32_t)(block[2] << 10
+							| block[3] << 2
+							| (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
+		
+		currentZ = (uint32_t)(block[4] << 10
+							| block[5] << 2
+							| (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
 
 		
 		double normalizedX, normalizedY, normalizedZ, heading;
-		
-		
-		
-		normalizedX = (double)x - 131072.0;
+ 
+		normalizedX = (double)currentX - 131072.0;
 		normalizedX /= 131072.0;
-		
-		normalizedY = (double)y - 131072.0;
+		normalizedY = (double)currentY - 131072.0;
 		normalizedY /= 131072.0;
-		
-		normalizedZ = (double)z - 131072.0;
+		normalizedZ = (double)currentZ - 131072.0;
 		normalizedZ /= 131072.0;
 		
 		// Magnetic north is oriented with the Y axis

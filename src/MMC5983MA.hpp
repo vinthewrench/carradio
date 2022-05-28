@@ -30,7 +30,7 @@ public:
 	bool begin(uint8_t deviceAddress,  int &error);
 	void stop();
  
-	bool reset(); 	// reset from timeout
+	bool reset(); 	 
 
 	 
 	uint8_t	getDevAddr();

@@ -143,6 +143,8 @@ bool MMC5983MA::isTempMeasurementDone() {
 	uint8_t statusReg;
 	
 	isDone = _i2cPort.readByte(MMC5983MA_STATUS, statusReg) && ((statusReg & 0x02 ) == 0x02);
+	
+	printf("statusReg = %02x\n", statusReg);
  	return isDone;
 
 }

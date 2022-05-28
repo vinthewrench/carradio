@@ -35,7 +35,7 @@ bool CompassSensor::begin(int deviceAddress, int &error){
 	
 	if(status){
 		_state = INS_IDLE;
-		_queryDelay = 2;	// seconds
+		_queryDelay = 1;	// seconds
 		_lastQueryTime = {0,0};
 		_resultMap.clear();
 
@@ -138,26 +138,26 @@ void CompassSensor::idle(){
 				
 				if(shouldQuery){
 					
-					_sensor.startTempMeasurement();
-					_state = INS_WAITING_FOR_TEMP;
-					
-				}
-			}
-				break;
-				
-			case INS_WAITING_FOR_TEMP:
-			{
-				if( _sensor.isTempMeasurementDone()) {
-					float tempC;
-					
-					if( _sensor.readTempC(tempC)) {
-						_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
+//					_sensor.startTempMeasurement();
+//					_state = INS_WAITING_FOR_TEMP;
+//
+//				}
+//			}
+//				break;
+//
+//			case INS_WAITING_FOR_TEMP:
+//			{
+//				if( _sensor.isTempMeasurementDone()) {
+//					float tempC;
+//
+//					if( _sensor.readTempC(tempC)) {
+//						_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
 						
 						_sensor.startMagMeasurement();
 						_state = INS_WAITING_FOR_MAG;
 						//					gettimeofday(&_lastQueryTime, NULL);
 					}
-				}
+	//			}
 			}
 				break;
 				

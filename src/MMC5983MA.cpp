@@ -113,7 +113,6 @@ bool MMC5983MA::readTempC(float& tempOut){
 	 
 	uint8_t digitalTemp;
 	
-	printf("compass readTempC \n");
 	if(_i2cPort.readByte(MMC5983MA_TOUT, digitalTemp)){
 		
 		float finalTempC = -75.0f + (static_cast<float>(digitalTemp) * (200.0f / 255.0f));
@@ -121,7 +120,7 @@ bool MMC5983MA::readTempC(float& tempOut){
 		tempOut = finalTempC;
 		success = true;
  
-		printf("readTempS  %.1f  \n",finalTempC );
+		printf("readTempS  %.1f C,  %.1f F  \n",finalTempC,  finalTempC *9.0/5.0 + 32.0 );
 	}
 	return success;
 }
@@ -143,9 +142,7 @@ bool MMC5983MA::isTempMeasurementDone() {
 	uint8_t statusReg;
 	
 	isDone = _i2cPort.readByte(MMC5983MA_STATUS, statusReg) && ((statusReg & 0x02 ) == 0x02);
-	
-	printf("statusReg = %02x\n", statusReg);
- 	return isDone;
+	return isDone;
 
 }
  

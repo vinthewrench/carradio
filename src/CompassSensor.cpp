@@ -38,8 +38,6 @@ bool CompassSensor::begin(int deviceAddress, int &error){
 		_queryDelay = 2;	// seconds
 		_lastQueryTime = {0,0};
 		_resultMap.clear();
-	
-		printf("CompassSensor setup\n");
 
 	}else {
 		_state = INS_INVALID;
@@ -140,8 +138,6 @@ void CompassSensor::idle(){
 				
 				if(shouldQuery){
 					
-					printf("CompassSensor startTempMeasurement\n");
-
 					_sensor.startTempMeasurement();
 					_state = INS_WAITING_FOR_TEMP;
 					
@@ -154,10 +150,10 @@ void CompassSensor::idle(){
 				if( _sensor.isTempMeasurementDone()) {
 					float tempC;
 			
-					printf("CompassSensor  TempMeasurementDone\n");
-
-	
+ 
 					if( _sensor.readTempC(tempC)) {
+						
+						
 						_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
 						_state = INS_RESPONSE;
 						gettimeofday(&_lastQueryTime, NULL);

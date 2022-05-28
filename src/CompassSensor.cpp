@@ -53,7 +53,7 @@ void CompassSensor::stop(){
 }
 
 bool CompassSensor::isConnected(){
-	return  (_state ==  INS_IDLE || _state ==  INS_RESPONSE);
+	return   (_state != INS_INVALID) && (_state != INS_UNKNOWN);
 	
 }
  

@@ -221,7 +221,7 @@ bool MMC5983MA::readMag() {
 							| (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
 
 		
-		double normalizedX, normalizedY, normalizedZ, heading;
+		double normalizedX, normalizedY, normalizedZ, heading = 0;
  
  		normalizedX = (double)currentX - 131072.0;
 		normalizedX /= 131072.0;
@@ -263,34 +263,46 @@ bool MMC5983MA::readMag() {
 //		}
 //
 //#else
-		
+		 #ifndef PI
+		#define PI           3.14159265358979323e0    /* PI                        */
+		#endif
 
-		// Magnetic north is oriented with the Y axis
-		if (normalizedY != 0)
-		{
-			if (normalizedX < 0)
-			{
-				if (normalizedY > 0)
-					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
-				else
-					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
-			}
-			else
-			{
-				if (normalizedY < 0)
-					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
-				else
-					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
-			}
-		}
-		else
-		{
-			// atan of an infinite number is 90 or 270 degrees depending on X value
-			if (normalizedX > 0)
-				heading = 270;
-			else
-				heading = 90;
-		}
+		if (normalizedY > 0)
+			heading =  (atan( normalizedX / normalizedY)) * (180 / PI);
+		else if (normalizedY < 0)
+				heading =  270 - (atan( normalizedX / normalizedY)) * (180 / PI);
+		else if ((normalizedY == 0) && (normalizedX < 0))
+			heading = 180.0;
+		else if ((normalizedY == 0) && (normalizedX > 0))
+			heading = 0.0;
+	
+//
+//		// Magnetic north is oriented with the Y axis
+//		if (normalizedY != 0)
+//		{
+//			if (normalizedX < 0)
+//			{
+//				if (normalizedY > 0)
+//					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
+//				else
+//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
+//			}
+//			else
+//			{
+//				if (normalizedY < 0)
+//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
+//				else
+//					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
+//			}
+//		}
+//		else
+//		{
+//			// atan of an infinite number is 90 or 270 degrees depending on X value
+//			if (normalizedX > 0)
+//				heading = 270;
+//			else
+//				heading = 90;
+//		}
 	
 //#endif
 		for(int i = 0; i < 7; i++)

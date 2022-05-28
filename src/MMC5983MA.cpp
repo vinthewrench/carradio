@@ -229,40 +229,40 @@ bool MMC5983MA::readMag() {
 		normalizedY /= 131072.0;
 		normalizedZ = (double)currentZ - 131072.0;
 		normalizedZ /= 131072.0;
- 
-#if 0
-#ifndef PI
-#define PI           3.14159265358979323e0    /* PI                        */
-#endif
-
- 
-		if (normalizedY != 0)
-		{
-			if (normalizedX < 0)
-			{
-				if (normalizedY > 0)
-					heading = atan2(normalizedX, normalizedY) * 180 / PI; // Quadrant 1
-				else
-					heading = (atan2(normalizedX, normalizedY) * 180 / PI) + 180; // Quadrant 2
-			}
-			else
-			{
-				if (normalizedY < 0)
-					heading = (atan2(normalizedX, normalizedY) * 180 / PI + 180); // Quadrant 3
-				else
-					heading = 360 - (atan2(normalizedX, normalizedY) * 180 / PI); // Quadrant 4
-			}
-		}
-		else
-		{
-			// atan of an infinite number is 90 or 270 degrees depending on X value
-			if (normalizedX > 0)
-				heading = 270;
-			else
-				heading = 90;
-		}
-		
-#else
+//
+//#if 0
+//#ifndef PI
+//#define PI           3.14159265358979323e0    /* PI                        */
+//#endif
+//
+//
+//		if (normalizedY != 0)
+//		{
+//			if (normalizedX < 0)
+//			{
+//				if (normalizedY > 0)
+//					heading = atan2(normalizedX, normalizedY) * 180 / PI; // Quadrant 1
+//				else
+//					heading = (atan2(normalizedX, normalizedY) * 180 / PI) + 180; // Quadrant 2
+//			}
+//			else
+//			{
+//				if (normalizedY < 0)
+//					heading = (atan2(normalizedX, normalizedY) * 180 / PI + 180); // Quadrant 3
+//				else
+//					heading = 360 - (atan2(normalizedX, normalizedY) * 180 / PI); // Quadrant 4
+//			}
+//		}
+//		else
+//		{
+//			// atan of an infinite number is 90 or 270 degrees depending on X value
+//			if (normalizedX > 0)
+//				heading = 270;
+//			else
+//				heading = 90;
+//		}
+//
+//#else
 		
 
 		// Magnetic north is oriented with the Y axis
@@ -292,11 +292,11 @@ bool MMC5983MA::readMag() {
 				heading = 90;
 		}
 	
-#endif
+//#endif
 		for(int i = 0; i < 7; i++)
 			printf("%02x ",block[i]);
  
- 		printf(" %.1f, %.1f, %.1f   = %.1f \n",
+ 		printf(" %f , %f, %f   = %.1f \n",
 				 normalizedX, normalizedY, normalizedZ,  heading );
 		
  		success = true;

@@ -289,10 +289,12 @@ bool MMC5983MA::readMag() {
 //			else
 //				heading = 90;
 //		}
- 	printf("raw: %6uz, %6uz, %6uz (%f, %f, %f) = %.1f , %.1f \n",
-			 			currentX, currentY, currentZ,
-						 normalizedX, normalizedY, normalizedZ,
-			 heading,  atan2(normalizedX, normalizedY) * 180 / PI);
+		
+		for(int i = 0; i < 7; i++)
+			printf("%02x ",block[i]);
+ 
+ 		printf("raw: %6u, %6u, %6u   = %.1f \n",
+				 currentX, currentY, currentZ,  heading );
 		
  		success = true;
 	}

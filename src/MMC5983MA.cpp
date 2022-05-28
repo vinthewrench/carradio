@@ -9,6 +9,7 @@
 #include "CommonDefs.hpp"
 #include "ErrorMgr.hpp"
 #include <unistd.h>
+#include <math.h>
 
 //Register map for MMC5983MA'
 //http://www.memsic.com/userfiles/files/DataSheets/Magnetic-Sensors-Datasheets/MMC5983MA_Datasheet.pdf
@@ -171,16 +172,58 @@ bool MMC5983MA::readMag() {
 	
 	I2C::i2c_block_t block;
 
-	uint32_t destination[3];
+
+	
 	if(_i2cPort.readBlock(MMC5983MA_XOUT_0,  7, block)) {
-
+		uint32_t x,y,z;
 	 
-		destination[0] = (uint32_t)(block[0] << 10 | block[1] << 2 | (block[6] & 0xC0) >> 6); // Turn the 18 bits into a unsigned 32-bit value
-		  destination[1] = (uint32_t)(block[2] << 10 | block[3] << 2 | (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
-		  destination[2] = (uint32_t)(block[4] << 10 | block[5] << 2 | (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
+		x = (uint32_t)(block[0] << 10 | block[1] << 2 | (block[6] & 0xC0) >> 6); // Turn the 18 bits into a unsigned 32-bit value
+		y = (uint32_t)(block[2] << 10 | block[3] << 2 | (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
+		z = (uint32_t)(block[4] << 10 | block[5] << 2 | (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
 
-		printf("compass (%d, %d, %d )\n", destination[0],destination[1],destination[2]);
-		success = true;
+		
+		double normalizedX, normalizedY, normalizedZ, heading;
+		
+		
+		
+		normalizedX = (double)x - 131072.0;
+		normalizedX /= 131072.0;
+		
+		normalizedY = (double)y - 131072.0;
+		normalizedY /= 131072.0;
+		
+		normalizedZ = (double)z - 131072.0;
+		normalizedZ /= 131072.0;
+		
+		// Magnetic north is oriented with the Y axis
+		if (normalizedY != 0)
+		{
+			if (normalizedX < 0)
+			{
+				if (normalizedY > 0)
+					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
+				else
+					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
+			}
+			else
+			{
+				if (normalizedY < 0)
+					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
+				else
+					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
+			}
+		}
+		else
+		{
+			// atan of an infinite number is 90 or 270 degrees depending on X value
+			if (normalizedX > 0)
+				heading = 270;
+			else
+				heading = 90;
+		}
+		printf("compass (%.1f)\n", heading);
+		
+ 		success = true;
 	}
  
 	

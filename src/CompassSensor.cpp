@@ -132,8 +132,7 @@ void CompassSensor::idle(){
 					gettimeofday(&now, NULL);
 					timersub(&now, &_lastQueryTime, &diff);
 					
-	//				if(diff.tv_sec >=  _queryDelay  ) {
-				if(diff.tv_usec >=  5e5  ) {
+ 				if(diff.tv_sec >=  _queryDelay  ) {
 						shouldQuery = true;
 					}
 				}

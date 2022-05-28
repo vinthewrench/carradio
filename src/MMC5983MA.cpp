@@ -308,7 +308,7 @@ bool MMC5983MA::readMag() {
 //		for(int i = 0; i < 7; i++)
 //			printf("%02x ",block[i]);
 //
- 		printf(" %f , %f, %f   = %.1f/t %.1f \n",
+ 		printf(" %f , %f, %f   = %.1f\t %.1f \n",
 				 normalizedX, normalizedY, normalizedZ,  heading , heading  - 14.0 );
 		
  		success = true;

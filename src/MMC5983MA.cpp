@@ -223,12 +223,12 @@ bool MMC5983MA::readMag() {
 		
 		double normalizedX, normalizedY, normalizedZ, heading;
  
-		normalizedX = (double)currentX - 131072.0;
-		normalizedX /= 131072.0;
-		normalizedY = (double)currentY - 131072.0;
-		normalizedY /= 131072.0;
-		normalizedZ = (double)currentZ - 131072.0;
-		normalizedZ /= 131072.0;
+		normalizedX = (double)currentX - 262144.0;
+		normalizedX /= 262144.0;
+		normalizedY = (double)currentY - 262144.0;
+		normalizedY /= 262144.0;
+		normalizedZ = (double)currentZ - 262144.0;
+		normalizedZ /= 262144.0;
 		
 		// Magnetic north is oriented with the Y axis
 		if (normalizedY != 0)

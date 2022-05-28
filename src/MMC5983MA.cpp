@@ -179,7 +179,7 @@ bool MMC5983MA::readMag() {
 		  destination[1] = (uint32_t)(block[2] << 10 | block[3] << 2 | (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
 		  destination[2] = (uint32_t)(block[4] << 10 | block[5] << 2 | (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
 
-		printf("compass (%d, %d, %d )\n", destination[0],destination[1],destination[1]);
+		printf("compass (%d, %d, %d )\n", destination[0],destination[1],destination[2]);
 		success = true;
 	}
  

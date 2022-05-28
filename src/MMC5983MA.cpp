@@ -223,46 +223,45 @@ bool MMC5983MA::readMag() {
 		
 		double normalizedX, normalizedY, normalizedZ, heading;
  
-#if 0
-		normalizedX = (double)currentX - 262144;
+ 		normalizedX = (double)currentX - 262144;
 		normalizedX /= 131072.0;
 		normalizedY = (double)currentY - 131072.0;
 		normalizedY /= 131072.0;
 		normalizedZ = (double)currentZ - 131072.0;
 		normalizedZ /= 131072.0;
-#else
-		normalizedX = (double)currentX ;
-		normalizedY = (double)currentY ;
-		normalizedZ = (double)currentZ;
-
+ 
+#ifndef PI
+#define PI           3.14159265358979323e0    /* PI                        */
 #endif
-		
-		// Magnetic north is oriented with the Y axis
-		if (normalizedY != 0)
-		{
-			if (normalizedX < 0)
-			{
-				if (normalizedY > 0)
-					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
-				else
-					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
-			}
-			else
-			{
-				if (normalizedY < 0)
-					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
-				else
-					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
-			}
-		}
-		else
-		{
-			// atan of an infinite number is 90 or 270 degrees depending on X value
-			if (normalizedX > 0)
-				heading = 270;
-			else
-				heading = 90;
-		}
+
+	  heading = atan2(normalizedX, normalizedY) * 180 / PI;
+//		
+//		// Magnetic north is oriented with the Y axis
+//		if (normalizedY != 0)
+//		{
+//			if (normalizedX < 0)
+//			{
+//				if (normalizedY > 0)
+//					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
+//				else
+//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
+//			}
+//			else
+//			{
+//				if (normalizedY < 0)
+//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
+//				else
+//					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
+//			}
+//		}
+//		else
+//		{
+//			// atan of an infinite number is 90 or 270 degrees depending on X value
+//			if (normalizedX > 0)
+//				heading = 270;
+//			else
+//				heading = 90;
+//		}
  	printf("compass  (%f, %f, %f) = %.1f \n", normalizedX, normalizedY, normalizedZ, heading);
 		
  		success = true;

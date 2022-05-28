@@ -223,7 +223,7 @@ bool MMC5983MA::readMag() {
 		
 		double normalizedX, normalizedY, normalizedZ, heading;
  
- 		normalizedX = (double)currentX - 262144;
+ 		normalizedX = (double)currentX - 131072.0;
 		normalizedX /= 131072.0;
 		normalizedY = (double)currentY - 131072.0;
 		normalizedY /= 131072.0;

@@ -230,7 +230,7 @@ bool MMC5983MA::readMag() {
 		normalizedZ = (double)currentZ - 131072.0;
 		normalizedZ /= 131072.0;
 
-#if 0
+#if 1
 #ifndef PI
 #define PI           3.14159265358979323e0    /* PI                        */
 #endif

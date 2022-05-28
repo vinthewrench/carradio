@@ -234,8 +234,7 @@ bool MMC5983MA::readMag() {
 #define PI           3.14159265358979323e0    /* PI                        */
 #endif
 
-	  heading = atan2(normalizedX, normalizedY) * 180 / PI;
-		
+ 
 		if (normalizedY != 0)
 		{
 			if (normalizedX < 0)
@@ -290,7 +289,10 @@ bool MMC5983MA::readMag() {
 //			else
 //				heading = 90;
 //		}
- 	printf("compass  (%f, %f, %f) = %.1f \n", normalizedX, normalizedY, normalizedZ, heading);
+ 	printf("raw: %6uz, %6uz, %6uz (%f, %f, %f) = %.1f , %.1f \n",
+			 			currentX, currentY, currentZ,
+						 normalizedX, normalizedY, normalizedZ,
+			 heading,  atan2(normalizedX, normalizedY) * 180 / PI);
 		
  		success = true;
 	}

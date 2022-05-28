@@ -131,7 +131,7 @@ bool MMC5983MA::readTempC(float& tempOut){
  bool MMC5983MA::startTempMeasurement(){
 	bool success = false;
 	 
-	 success =  _i2cPort.writeByte(MMC5983MA_CONTROL_1,  (uint8_t) 0x02);
+	 success =  _i2cPort.writeByte(MMC5983MA_CONTROL_0,  (uint8_t) 0x02);
  
 	  return success;
 }

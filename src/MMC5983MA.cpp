@@ -275,7 +275,7 @@ bool MMC5983MA::readMag() {
 //			heading = 180.0;
 //		else if ((normalizedY == 0) && (normalizedX > 0))
 //			heading = 0.0;
-//	
+//
 
 		// Magnetic north is oriented with the Y axis
 		if (normalizedY != 0)
@@ -308,8 +308,8 @@ bool MMC5983MA::readMag() {
 //		for(int i = 0; i < 7; i++)
 //			printf("%02x ",block[i]);
 //
- 		printf(" %f , %f, %f   = %.1f %1.f \n",
-				 normalizedX, normalizedY, normalizedZ,  heading , heading +14.0 );
+ 		printf(" %f , %f, %f   = %.1f/t %.1f \n",
+				 normalizedX, normalizedY, normalizedZ,  heading , heading  - 14.0 );
 		
  		success = true;
 	}

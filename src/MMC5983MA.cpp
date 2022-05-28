@@ -90,13 +90,12 @@ bool MMC5983MA::getChipID(uint8_t &chipID){
 bool MMC5983MA::reset() {
 	bool success = false;
 
-	if(_i2cPort.isAvailable()){
-		
+ 
 		if(_i2cPort.writeByte(MMC5983MA_CONTROL_1,  (uint8_t) 0x80)){
 			usleep(10000);  //  Wait 10 ms for all registers to reset
  			success = true;
 		}
-	}
+	 
 	
 	return success;
 }
@@ -112,22 +111,39 @@ bool MMC5983MA::reset() {
 bool MMC5983MA::readTempC(float& tempOut){
 	bool success = false;
 	 
-	uint8_t temp;
+	uint8_t digitalTemp;
 	
 	printf("compass readTempC \n");
-	if(_i2cPort.readByte(MMC5983MA_TOUT, temp)){
-		//
-		//		int16_t digitalTemp;
-		//
-		//		digitalTemp = ((data.bytes[0]) << 8) | (data.bytes[1] );
-		//
-		//		float finalTempC = digitalTemp * TMP117_RESOLUTION; // Multiplies by the resolution for digital to final temp
-		//
-		//		tempOut = finalTempC;
+	if(_i2cPort.readByte(MMC5983MA_TOUT, digitalTemp)){
+		
+		float finalTempC = -75.0f + (static_cast<float>(digitalTemp) * (200.0f / 255.0f));
+
+		tempOut = finalTempC;
 		success = true;
-		//
-		printf("readTemp  %d  \n",temp );
+ 
+		printf("readTempS  %.1f  \n",finalTempC );
 	}
 	return success;
 }
 
+
+
+ bool MMC5983MA::startTempMeasurement(){
+	bool success = false;
+	 
+	 success =  _i2cPort.writeByte(MMC5983MA_CONTROL_1,  (uint8_t) 0x02);
+ 
+	  return success;
+}
+
+bool MMC5983MA::isTempMeasurementDone() {
+	
+	bool isDone = false;
+
+	uint8_t statusReg;
+	
+	isDone = _i2cPort.readByte(MMC5983MA_STATUS, statusReg) && ((statusReg & 0x02 ) == 0x02);
+ 	return isDone;
+
+}
+ 

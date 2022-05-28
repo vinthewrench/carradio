@@ -652,17 +652,23 @@ void PiCarMgr::PiCanLoop(){
 	// occasionally called durring idle time
 
 void PiCarMgr::idle(){
-	
-	
-#warning DEBUG
-	float foo;
-	_compass.readTempC(foo);
-///
-
-	
+ 
+	_compass.idle();
 	_tempSensor1.idle();
 	_cpuInfo.idle();
 	
+	if(_compass.isConnected()){
+		// handle input
+		_compass.rcvResponse([=]( map<string,string> results){
+			
+			for (const auto& [key, value] : results) {
+				printf("Compass %s = %s\n", key.c_str(), value.c_str());
+			}
+ 
+			_db.updateValues(results);
+		});
+	}
+
 	if(_tempSensor1.isConnected()){
 		// handle input
 		_tempSensor1.rcvResponse([=]( map<string,string> results){
@@ -1023,24 +1029,37 @@ PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 
 // MARK: -   I2C Compass
 
-void PiCarMgr::startCompass(){
-	int  errnum = 0;
-	bool didSucceed = false;
- 
-	uint8_t deviceAddress = 0x30;
- 
-	didSucceed = _compass.begin(deviceAddress,errnum);
-	if(didSucceed){
+void PiCarMgr::startCompass ( std::function<void(bool didSucceed, std::string error_text)> cb){
 		
-		printf("Start Compass   - OK");
-	}
-	else {
-		ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass 1 ");
-	}
-
+		int  errnum = 0;
+		bool didSucceed = false;
+	 
+	 
+		uint8_t deviceAddress = 0x30;
+	 
+		didSucceed =  _compass.begin(deviceAddress, errnum);
+		if(didSucceed){
+			
+			uint16_t queryDelay = 0;
+			if(_db.getUint16Property(PROP_COMPASS_QUERY_DELAY, &queryDelay)){
+				_compass.setQueryDelay(queryDelay);
+			}
+		}
+		else {
+			ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass");
+		}
+		
+		
+		if(cb)
+			(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
 }
 
 void PiCarMgr::stopCompass(){
 	_compass.stop();
 }
 
+
+
+PiCarMgrDevice::device_state_t PiCarMgr::compassState(){
+	return _compass.getDeviceState();
+}

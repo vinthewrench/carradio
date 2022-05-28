@@ -20,6 +20,8 @@ using namespace std;
 
 inline static const string VAL_CPU_INFO_TEMP 	= "CPU_TEMP";
 inline static const string VAL_OUTSIDE_TEMP 		= "OUTSIDE_TEMP";
+inline static const string VAL_COMPASS_BEARING 		= "COMPASS_BEARING";
+inline static const string VAL_COMPASS_TEMP 		= "COMPASS_TEMP";
 
 inline static const string VAL_AUDIO_VOLUME		= "vol";
 inline static const string VAL_AUDIO_BALANCE		= "bal";
@@ -34,6 +36,7 @@ inline static const string  PROP_LAST_WRITE_DATE				= "last_write";
 
 inline static const string PROP_CPU_TEMP_QUERY_DELAY 			= "cputemp-query-delay";
 inline static const string  PROP_TEMPSENSOR_QUERY_DELAY		= "temp-query-delay";
+inline static const string  PROP_COMPASS_QUERY_DELAY			= "compass-query-delay";
 
 inline static const string  PROP_LAST_RADIO_MODE				= "last_radio_mode";
 inline static const string  PROP_LAST_RADIO_MODES				= "last_radio_modes";

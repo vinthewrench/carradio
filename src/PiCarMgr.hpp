@@ -48,7 +48,7 @@
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
-#include "MMC5983MA.hpp"
+#include "CompassSensor.hpp"
 
 #include "json.hpp"
 
@@ -82,8 +82,10 @@ class PiCarMgr {
 	void stopTempSensors();
 	PiCarMgrDevice::device_state_t tempSensor1State();
 
-	void startCompass();
+	void startCompass( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCompass();
+	PiCarMgrDevice::device_state_t compassState();
+
  
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
@@ -160,7 +162,7 @@ private:
 	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
-	MMC5983MA			_compass;
+	CompassSensor		_compass;
 
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

@@ -661,9 +661,9 @@ void PiCarMgr::idle(){
 		// handle input
 		_compass.rcvResponse([=]( map<string,string> results){
 			
-			for (const auto& [key, value] : results) {
-				printf("Compass %s = %s\n", key.c_str(), value.c_str());
-			}
+//			for (const auto& [key, value] : results) {
+//				printf("Compass %s = %s\n", key.c_str(), value.c_str());
+//			}
  
 			_db.updateValues(results);
 		});

@@ -120,7 +120,7 @@ bool MMC5983MA::readTempC(float& tempOut){
 		tempOut = finalTempC;
 		success = true;
  
-		printf("readTempS  %.1f C,  %.1f F  \n",finalTempC,  finalTempC *9.0/5.0 + 32.0 );
+//		printf("readTempS  %.1f C,  %.1f F  \n",finalTempC,  finalTempC *9.0/5.0 + 32.0 );
 	}
 	return success;
 }

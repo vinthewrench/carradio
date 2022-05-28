@@ -221,7 +221,7 @@ bool MMC5983MA::readMag() {
 			else
 				heading = 90;
 		}
-		printf("compass  (%f, %f, %f) = %.1f \n", normalizedX, normalizedY, normalizedZ, heading);
+	//	printf("compass  (%f, %f, %f) = %.1f \n", normalizedX, normalizedY, normalizedZ, heading);
 		
  		success = true;
 	}

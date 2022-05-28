@@ -318,7 +318,6 @@ bool I2C::readBlock(uint8_t regAddr, uint8_t size, i2c_block_t & block ){
 	
 	bool status = false;
 	
-	 
 	if(size > sizeof(block))
 		return false;
 	

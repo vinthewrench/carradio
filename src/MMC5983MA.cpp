@@ -230,6 +230,7 @@ bool MMC5983MA::readMag() {
 		normalizedZ = (double)currentZ - 131072.0;
 		normalizedZ /= 131072.0;
  
+#if 0
 #ifndef PI
 #define PI           3.14159265358979323e0    /* PI                        */
 #endif
@@ -261,35 +262,37 @@ bool MMC5983MA::readMag() {
 				heading = 90;
 		}
 		
+#else
 		
-//
-//		// Magnetic north is oriented with the Y axis
-//		if (normalizedY != 0)
-//		{
-//			if (normalizedX < 0)
-//			{
-//				if (normalizedY > 0)
-//					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
-//				else
-//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
-//			}
-//			else
-//			{
-//				if (normalizedY < 0)
-//					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
-//				else
-//					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
-//			}
-//		}
-//		else
-//		{
-//			// atan of an infinite number is 90 or 270 degrees depending on X value
-//			if (normalizedX > 0)
-//				heading = 270;
-//			else
-//				heading = 90;
-//		}
-		
+
+		// Magnetic north is oriented with the Y axis
+		if (normalizedY != 0)
+		{
+			if (normalizedX < 0)
+			{
+				if (normalizedY > 0)
+					heading = 57.2958 * atan(-normalizedX / normalizedY); // Quadrant 1
+				else
+					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 2
+			}
+			else
+			{
+				if (normalizedY < 0)
+					heading = 57.2958 * atan(-normalizedX / normalizedY) + 180; // Quadrant 3
+				else
+					heading = 360 - (57.2958 * atan(normalizedX / normalizedY)); // Quadrant 4
+			}
+		}
+		else
+		{
+			// atan of an infinite number is 90 or 270 degrees depending on X value
+			if (normalizedX > 0)
+				heading = 270;
+			else
+				heading = 90;
+		}
+	
+#endif
 		for(int i = 0; i < 7; i++)
 			printf("%02x ",block[i]);
  

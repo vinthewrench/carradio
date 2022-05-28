@@ -42,7 +42,10 @@ public:
 	bool isTempMeasurementDone();
 	bool readTempC(float&);
 	
- 
+	bool startMagMeasurement();
+	bool isMagMeasurementDone();
+	bool readMag();
+
 private:
  
 	I2C 		_i2cPort;

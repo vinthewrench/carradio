@@ -146,3 +146,44 @@ bool MMC5983MA::isTempMeasurementDone() {
 
 }
  
+
+bool MMC5983MA::startMagMeasurement(){
+  bool success = false;
+	
+	success =  _i2cPort.writeByte(MMC5983MA_CONTROL_0,  (uint8_t) 0x01);
+
+	 return success;
+}
+
+bool MMC5983MA::isMagMeasurementDone() {
+  
+  bool isDone = false;
+   uint8_t statusReg;
+  
+  isDone = _i2cPort.readByte(MMC5983MA_STATUS, statusReg) && ((statusReg & 0x01 ) == 0x01);
+  return isDone;
+
+}
+
+ 
+bool MMC5983MA::readMag() {
+	bool success = false;
+	
+	I2C::i2c_block_t block;
+
+	uint32_t destination[3];
+	if(_i2cPort.readBlock(MMC5983MA_XOUT_0,  7, block)) {
+
+	 
+		destination[0] = (uint32_t)(block[0] << 10 | block[1] << 2 | (block[6] & 0xC0) >> 6); // Turn the 18 bits into a unsigned 32-bit value
+		  destination[1] = (uint32_t)(block[2] << 10 | block[3] << 2 | (block[6] & 0x30) >> 4); // Turn the 18 bits into a unsigned 32-bit value
+		  destination[2] = (uint32_t)(block[4] << 10 | block[5] << 2 | (block[6] & 0x0C) >> 2); // Turn the 18 bits into a unsigned 32-bit value
+
+		printf("compass (%d, %d, %d )\n", destination[0],destination[1],destination[1]);
+		success = true;
+	}
+ 
+	
+	
+	return success;
+}

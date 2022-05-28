@@ -149,19 +149,34 @@ void CompassSensor::idle(){
 			{
 				if( _sensor.isTempMeasurementDone()) {
 					float tempC;
-			
- 
+					
 					if( _sensor.readTempC(tempC)) {
-						
-						
 						_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
-						_state = INS_RESPONSE;
-						gettimeofday(&_lastQueryTime, NULL);
+						
+						_sensor.startMagMeasurement();
+						_state = INS_WAITING_FOR_MAG;
+						//					gettimeofday(&_lastQueryTime, NULL);
 					}
 				}
 			}
 				break;
+				
+			case INS_WAITING_FOR_MAG:
+			{
+				if( _sensor.isMagMeasurementDone()) {
 					
+					if( _sensor.readMag()) {
+						//				_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
+						
+						_state = INS_RESPONSE;
+						gettimeofday(&_lastQueryTime, NULL);
+					}
+					
+				}
+			}
+				break;
+				
+				
 			default:;
 		}
 		

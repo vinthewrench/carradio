@@ -296,8 +296,8 @@ bool MMC5983MA::readMag() {
 		for(int i = 0; i < 7; i++)
 			printf("%02x ",block[i]);
  
- 		printf(" %6u, %6u, %6u   = %.1f \n",
-				 currentX, currentY, currentZ,  heading );
+ 		printf(" %.1f, %.1f, %.1f   = %.1f \n",
+				 normalizedX, normalizedY, normalizedZ,  heading );
 		
  		success = true;
 	}

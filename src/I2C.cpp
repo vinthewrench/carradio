@@ -273,7 +273,27 @@ bool I2C::readWord(uint8_t regAddr,  uint16_t& word, bool swap){
 	return true;
 }
  
+/*
+ 
+ i2cdetect -F 1
+ Functionalities implemented by /dev/i2c-1:
+ I2C                              yes
+ SMBus Quick Command              yes
+ SMBus Send Byte                  yes
+ SMBus Receive Byte               yes
+ SMBus Write Byte                 yes
+ SMBus Read Byte                  yes
+ SMBus Write Word                 yes
+ SMBus Read Word                  yes
+ SMBus Process Call               yes
+ SMBus Block Write                yes
+ SMBus Block Read                 no		<<<----
+ SMBus Block Process Call         no
+ SMBus PEC                        yes
+ I2C Block Write                  yes
+ I2C Block Read                   yes
 
+ */
 
 bool I2C::readBlock(uint8_t regAddr, uint8_t size, i2c_block_t & block ){
 
@@ -282,6 +302,7 @@ bool I2C::readBlock(uint8_t regAddr, uint8_t size, i2c_block_t & block ){
 	union i2c_smbus_data data;
 
 	memset(data.block, 0, sizeof(data.block));
+#if 0
 	data.block[0] = size + 1;
 
 	if(i2c_smbus_access (_fd, I2C_SMBUS_READ, regAddr, I2C_SMBUS_I2C_BLOCK_DATA, &data) < 0){
@@ -290,10 +311,31 @@ bool I2C::readBlock(uint8_t regAddr, uint8_t size, i2c_block_t & block ){
 
 		return false;
 	}
-
 	memcpy(block, data.block, sizeof(block));
-	
 	return true;
+
+#else
+	
+	bool status = false;
+	
+	if(size > sizeof(block))
+		return false;
+	
+	status = readByte(regAddr, block[0]);
+	if(status) {
+		for(int i = 1; i < size; i++){
+			status &= readByte( block[i]);
+			if(!status) break;
+		}
+	}
+	
+	if(status)
+		memcpy(block, data.block, sizeof(block));
+
+	return status;
+	
+#endif
+	
 }
 
 bool I2C::writeBlock(uint8_t regAddr, uint8_t size, i2c_block_t  block ){

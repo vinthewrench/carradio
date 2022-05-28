@@ -293,7 +293,7 @@ bool MMC5983MA::readMag() {
 		for(int i = 0; i < 7; i++)
 			printf("%02x ",block[i]);
  
- 		printf("raw: %6u, %6u, %6u   = %.1f \n",
+ 		printf(" %6u, %6u, %6u   = %.1f \n",
 				 currentX, currentY, currentZ,  heading );
 		
  		success = true;

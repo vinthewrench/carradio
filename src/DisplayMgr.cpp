@@ -487,7 +487,6 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 
 bool DisplayMgr::menuSelectAction(knob_action_t action){
 	bool wasHandled = false;
-
 	
 	if(_current_mode == MODE_MENU) {
 		wasHandled = true;
@@ -524,8 +523,16 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
 				
+				pthread_mutex_lock (&_mutex);
 				resetMenu();
-				setEvent(EVT_POP, MODE_UNKNOWN);
+				
+				//  if you actually selected a menu, then just pop the mode..
+				//  you dont have to give it a TRANS_LEAVING
+				
+				popMode();
+			 	pthread_mutex_unlock (&_mutex);
+				
+			//	setEvent(EVT_POP, MODE_UNKNOWN);
 	
 				if(cb) {
 					cb(true,  item);
@@ -861,7 +868,8 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	if(!_isSetup)
 		return;
 	
-	printf("drawMode trans:%d mode%d\n", transition, mode);
+	if(transition != 1)
+		printf("drawMode trans:%d mode %d\n", transition, mode);
 	
 	try {
 		switch (mode) {

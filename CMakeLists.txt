@@ -75,6 +75,9 @@ set(SOURCES
 	src/PiCarCAN.cpp
 	src/MMC5983MA.cpp
 	src/CompassSensor.cpp
+	
+#Bosch compass
+	src/bno055.c
 )
 
  

@@ -19,7 +19,7 @@
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 2";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 8";
 
 
 const char* path_display  = "/dev/ttyUSB0";

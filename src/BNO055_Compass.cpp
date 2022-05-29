@@ -43,7 +43,7 @@ bool BNO055_Compass::begin(uint8_t deviceAddress,   int &error){
 	constexpr u8  BNO055_CHIPID  = 0xa0;
 	
 	
-	if(1 /*  _i2cPort.begin(deviceAddress, error) */ ){
+	if(  _i2cPort.begin(deviceAddress, error) ){
 		s8 ret = bno055_init(&_bno)
 		&& (_bno.chip_id == BNO055_CHIPID);
 		

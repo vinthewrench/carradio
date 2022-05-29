@@ -454,6 +454,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 			
 			if(nextMode == MODE_NOCHANGE){		// ignore event
 				wasHandled = true;
+				printf("MODE_NOCHANGE\n");
  			}
 			else if(nextMode != MODE_UNKNOWN) {
 				setEvent(EVT_PUSH, nextMode );

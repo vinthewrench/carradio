@@ -619,6 +619,7 @@ void PiCarMgr::PiCanLoop(){
 				if(_display.isScreenDisplayedMultiPage()
 					&& _display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN)){
 					// was handled - do nothing
+					printf("ignored\n");
 				}
 				// change tuner
 				else if(_radio.isOn() ){

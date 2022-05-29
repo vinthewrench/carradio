@@ -1589,6 +1589,17 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("CANbus(1)"));
 	
+	
+	// test values
+ 	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(0,20) ; _vfd.write("COOLANT *F");
+	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(20,28) ; _vfd.write("206");
+	
+	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(0,30) ; _vfd.write("TRANS TEMP *F");
+	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(20,38) ; _vfd.write("140");
+	
+	 
+	
+	
 	struct tm *t = localtime(&now);
 	char timebuffer[16] = {0};
 	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);

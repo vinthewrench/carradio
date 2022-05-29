@@ -1420,7 +1420,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		TRY(_vfd.write(v[2]));
 		
  		if(location.altitudeIsValid)  {
-			constexpr double  M2FT = 	3.2808399;
+			constexpr double  M2FT = 	3.2808399;  
 			sprintf(buffer, "%.1f" "ft",location.altitude * M2FT);
 			TRY(_vfd.setCursor(20,48));
 			TRY(_vfd.write(buffer));

@@ -882,8 +882,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	if(!_isSetup)
 		return;
 	
-	if(transition != TRANS_IDLE)
+	if(transition != TRANS_IDLE){
 		printf("drawMode trans:%d mode %d\n", transition, mode);
+		fflush(stdout);
+	}
 	
 	try {
 		switch (mode) {

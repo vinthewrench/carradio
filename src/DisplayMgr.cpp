@@ -133,7 +133,6 @@ void DisplayMgr::stop(){
 		resetMenu();
 		
 		drawShutdownScreen();
-		runLEDEventStartup();
 		sleep(1);
 
 		_eventQueue = {};
@@ -167,8 +166,6 @@ void DisplayMgr::ledEventUpdate(){
 
 	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
-
-	
 }
  
 

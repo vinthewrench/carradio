@@ -99,6 +99,8 @@ public:
 	bool selectorKnobAction(knob_action_t action);
 
 	// display  page
+	void redraw();		// forrce a	 redraw
+	
 	void showTime();
 	void showGPS();
 	void showStartup();

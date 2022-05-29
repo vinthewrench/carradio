@@ -429,13 +429,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 		{ MODE_CANBUS,  { {KNOB_UP , 	 MODE_CANBUS1},  {KNOB_DOWN , MODE_NOCHANGE} } },
 		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS},  {KNOB_UP ,  MODE_NOCHANGE}  } },
  
-	
-//		{ MODE_SETTINGS, { {KNOB_UP ,  MODE_SETTINGS1} , {KNOB_DOWN ,  MODE_NOCHANGE} } },
-//
-//		{ MODE_SETTINGS1, { {KNOB_DOWN ,  MODE_SETTINGS} } },
-//		{ MODE_SETTINGS1, { {KNOB_UP ,  MODE_NOCHANGE} } },
 	};
-	
 	
 	if(isScreenDisplayedMultiPage()){
 		if(_current_mode == MODE_MENU){
@@ -538,9 +532,11 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				//  if you actually selected a menu, then just pop the mode..
 				//  you dont have to give it a TRANS_LEAVING
 				
+				drawMenuScreen(TRANS_LEAVING);  // force menu exit
 				popMode();
-			 	pthread_mutex_unlock (&_mutex);
-				
+				pthread_mutex_unlock (&_mutex);
+	 
+
 			//	setEvent(EVT_POP, MODE_UNKNOWN);
 	
 				if(cb) {
@@ -685,6 +681,10 @@ void  DisplayMgr::popMode(){
 	_current_mode = _saved_mode==MODE_UNKNOWN ? MODE_TIME:_saved_mode;
 	_saved_mode = MODE_UNKNOWN;
 	
+}
+
+void DisplayMgr::redraw(){
+	drawMode(TRANS_ENTERING, _current_mode );
 }
 
 

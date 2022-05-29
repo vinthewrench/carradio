@@ -815,10 +815,7 @@ void PiCarMgr::displayMenu(){
 			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;
 			
 			switch (selectedMode) {
-				case MENU_UNKNOWN:
-					// do nothing
-					break;
-					
+ 
 				case MENU_AM:
 	//				radioMode = RadioMgr::BROADCAST_AM;
 					break;
@@ -852,7 +849,11 @@ void PiCarMgr::displayMenu(){
 	//				_display.showSettings();
 						break;
 					
+				case 	MENU_UNKNOWN:
 				default:
+					// do nothing
+				_display.redraw();
+	
 					break;
 			}
 			

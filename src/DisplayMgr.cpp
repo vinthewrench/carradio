@@ -877,10 +877,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	if(!_isSetup)
 		return;
 	
-	if(transition != TRANS_IDLE){
-		printf("drawMode trans:%d mode %d\n", transition, mode);
-		fflush(stdout);
-	}
+//	if(transition != TRANS_IDLE){
+//		printf("drawMode trans:%d mode %d\n", transition, mode);
+//		fflush(stdout);
+//	}
 	
 	try {
 		switch (mode) {
@@ -1390,10 +1390,12 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 //	printf("GPS  %d\n",transition);
 	
 	if(transition == TRANS_ENTERING) {
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
 	}
 
 	if(transition == TRANS_LEAVING) {
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	

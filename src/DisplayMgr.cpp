@@ -127,7 +127,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 void DisplayMgr::stop(){
 	
 	if(_isSetup){
- 
+		_isSetup = false;
+
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
 		_eventQueue = {};
@@ -138,11 +139,9 @@ void DisplayMgr::stop(){
 		_rightRing.stop();
 		_leftRing.stop();
 		drawShutdownScreen();
-	
 		_vfd.stop();
 		}
 	
-	_isSetup = false;
 }
 
 
@@ -970,6 +969,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
+		_vfd.clearScreen();
 		TRY(_vfd.setCursor(0,10));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.write("Starting Up..."));
@@ -1455,9 +1455,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 void DisplayMgr::drawShutdownScreen(){
 	
 	
-	printf("shutdown display");
+//	printf("shutdown display");
 	_vfd.clearScreen();
-	_rightRing.clearAll();
+	_vfd.clearScreen();
+ 	_rightRing.clearAll();
 	_leftRing.clearAll();
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));

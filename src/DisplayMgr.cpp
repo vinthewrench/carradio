@@ -131,14 +131,18 @@ void DisplayMgr::stop(){
 
 		if(_menuCB) _menuCB(false, 0);
 		resetMenu();
+		
+		drawShutdownScreen();
+		runLEDEventStartup();
+		sleep(1);
+
 		_eventQueue = {};
 		_ledEvent = 0;
-
 		_rightKnob.stop();
 		_leftKnob.stop();
 		_rightRing.stop();
 		_leftRing.stop();
-		drawShutdownScreen();
+		_vfd.setPowerOn(false);
 		_vfd.stop();
 		}
 	
@@ -1454,7 +1458,6 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 void DisplayMgr::drawShutdownScreen(){
 	
-	
 //	printf("shutdown display");
 	_vfd.clearScreen();
 	_vfd.clearScreen();
@@ -1464,8 +1467,6 @@ void DisplayMgr::drawShutdownScreen(){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));
-	sleep(1);
-	_vfd.setPowerOn(false);
 }
 
 

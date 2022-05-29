@@ -138,7 +138,7 @@ void DisplayMgr::stop(){
 		_isSetup = false;
 		pthread_cond_signal(&_cond);
 
-		usleep(100);
+		usleep(500);
 		drawShutdownScreen();
 
 		_rightKnob.stop();

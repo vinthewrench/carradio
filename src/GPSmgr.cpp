@@ -341,14 +341,14 @@ void GPSmgr::GPSReader(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			sleep(10);
+			sleep(5);
 			continue;
 		}
 	 
 		// is the port setup yet?
 		if (! isConnected()){
 			if(!openGPSPort(lastError)){
-				sleep(10);
+				sleep(5);
 				continue;
 			}
 		}

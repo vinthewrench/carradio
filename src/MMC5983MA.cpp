@@ -93,7 +93,7 @@ bool MMC5983MA::begin(uint8_t deviceAddress,   int &error){
 			ELOG_MESSAGE("MMC5983MA(%02x) unexpected chipID = %02x\n", deviceAddress, chipID );
 			error = ENODEV;
 		}
-		_isSetup = true;
+		_isSetup = false;
 	}
 
 	return _isSetup;

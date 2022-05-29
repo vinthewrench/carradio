@@ -424,11 +424,19 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	typedef   map <knob_action_t,  mode_state_t> next_state_t;
 	static map <mode_state_t,  next_state_t> next_mode_map  = {
-		{MODE_CANBUS,  { {KNOB_UP , MODE_CANBUS1} } },
+		{ MODE_CANBUS,  { {KNOB_UP , MODE_CANBUS1} } },
+		{ MODE_CANBUS,  { {KNOB_DOWN , MODE_NOCHANGE} } },
+
 		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS} } },
+		{ MODE_CANBUS1,  { {KNOB_UP ,  MODE_NOCHANGE} } },
+
+ 
 	
 		{ MODE_SETTINGS, { {KNOB_UP ,  MODE_SETTINGS1} } },
+		{ MODE_SETTINGS, { {KNOB_DOWN ,  MODE_NOCHANGE} } },
+	
 		{ MODE_SETTINGS1, { {KNOB_DOWN ,  MODE_SETTINGS} } },
+		{ MODE_SETTINGS1, { {KNOB_UP ,  MODE_NOCHANGE} } },
 	};
 	
 	
@@ -444,7 +452,10 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 				&& next_mode_map[_current_mode].count(action))
 				nextMode = next_mode_map[_current_mode][action];
 			
-			if(nextMode != MODE_UNKNOWN) {
+			if(nextMode == MODE_NOCHANGE){		// ignore event
+				wasHandled = true;
+ 			}
+			else if(nextMode != MODE_UNKNOWN) {
 				setEvent(EVT_PUSH, nextMode );
 				wasHandled = true;
 			}

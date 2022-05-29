@@ -563,7 +563,7 @@ void PiCarMgr::PiCanLoop(){
 			tunerWasClicked 	= tunerKnob->wasClicked();
 			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
 			
-			// Volume button Clicked
+// MARK:   Volume button Clicked
 			if(volWasClicked){
 				bool isOn = _radio.isOn();
 				
@@ -586,6 +586,7 @@ void PiCarMgr::PiCanLoop(){
 				}
 			}
 			
+// MARK:   Volume button moved
 			if(volWasMoved && _radio.isOn() ){
 				// change  volume
 				auto volume = _audio.volume();
@@ -612,6 +613,7 @@ void PiCarMgr::PiCanLoop(){
 			}
 			
 			
+// MARK:   Tuner button moved
 			if(tunerWasMoved) {
 				
 				if(_display.isScreenDisplayedMultiPage()
@@ -629,6 +631,7 @@ void PiCarMgr::PiCanLoop(){
 				}
 			}
 			
+// MARK:   Tuner button clicked
 			if(tunerWasClicked){
 				if(_display.isScreenDisplayedMultiPage()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){

@@ -54,6 +54,8 @@ public:
 // active mode
 	typedef enum  {
 		MODE_UNKNOWN = 0,
+		MODE_NOCHANGE,	  // no change in mode
+		
 		MODE_STARTUP,
 		MODE_TIME,
 		MODE_VOLUME,

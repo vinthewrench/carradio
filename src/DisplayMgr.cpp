@@ -422,7 +422,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	bool wasHandled = false;
 	
-	printf("selectorKnobAction (%d)\n", action);
+//	printf("selectorKnobAction (%d)\n", action);
 	
 	typedef   map <knob_action_t,  mode_state_t> next_state_t;
 	static map <mode_state_t,  next_state_t> next_mode_map  = {
@@ -445,8 +445,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 			
 			if(nextMode == MODE_NOCHANGE){		// ignore event
 				wasHandled = true;
-				printf("MODE_NOCHANGE\n");
- 			}
+			}
 			else if(nextMode != MODE_UNKNOWN) {
 				setEvent(EVT_PUSH, nextMode );
 				wasHandled = true;

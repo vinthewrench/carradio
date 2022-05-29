@@ -129,7 +129,6 @@ private:
 		TRANS_REFRESH,
 		TRANS_IDLE,
 		TRANS_LEAVING,
-		
 	}modeTransition_t;
 		
 	void drawMode(modeTransition_t transition, mode_state_t mode);

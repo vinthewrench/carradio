@@ -861,6 +861,8 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	if(!_isSetup)
 		return;
 	
+	printf("drawMode trans:%d mode%d\n", transition, mode);
+	
 	try {
 		switch (mode) {
 				
@@ -1536,7 +1538,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 
 void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
-	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+//	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	time_t now = time(NULL);
 	
 	if(transition == TRANS_ENTERING) {

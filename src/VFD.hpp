@@ -45,7 +45,8 @@ public:
 	bool writePacket(const uint8_t *data , size_t len , useconds_t waitusec = 50);
 
 	bool setBrightness(uint8_t);  //  0 == off - 7 == max
-
+	bool setPowerOn(bool setOn);
+	
 	bool clearScreen();
 
 	bool setCursor(uint8_t x, uint8_t y);

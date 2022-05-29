@@ -967,6 +967,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	RtlSdr::device_info_t info;
 	
 	if(transition == TRANS_ENTERING){
+		
+		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
 		TRY(_vfd.setCursor(0,10));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
@@ -1422,7 +1424,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
  		if(location.altitudeIsValid)  {
 			constexpr double  M2FT = 	3.2808399;  
-			sprintf(buffer, "%.1f" "ft",location.altitude * M2FT);
+			sprintf(buffer, "%.1f",location.altitude * M2FT);
 			TRY(_vfd.setCursor(20,48));
 			TRY(_vfd.write(buffer));
 		}
@@ -1461,7 +1463,8 @@ void DisplayMgr::drawShutdownScreen(){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));
-	usleep(100);
+	sleep(1);
+	_vfd.setPowerOn(false);
 }
 
 

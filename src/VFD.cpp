@@ -124,6 +124,16 @@ bool VFD::setBrightness(uint8_t level){
 	return  writePacket(buffer, sizeof(buffer), 50);
 }
 
+
+bool  VFD::setPowerOn(bool setOn){
+	
+	uint8_t buffer[] = {0x1b, 0x00};
+ 	buffer[1] = setOn?0x50:0x46 ;
+	return  writePacket(buffer, sizeof(buffer), 50);
+}
+
+
+
 bool VFD::setCursor(uint8_t x, uint8_t y){
 	uint8_t buffer[] = {0x10, x,y};
 	

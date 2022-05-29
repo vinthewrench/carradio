@@ -284,16 +284,16 @@ typedef unsigned long int u64; /**< used for unsigned 64bit */
 /**\name    BUS READ AND WRITE FUNCTIONS           */
 /***************************************************************/
 #define BNO055_WR_FUNC_PTR       s8 (*bus_write) \
-        (u8, u8, u8 *, u8)
+        (void*, u8, u8 *, u8)
 
-#define BNO055_BUS_WRITE_FUNC(dev_addr, reg_addr, reg_data, wr_len) \
-    bus_write(dev_addr, reg_addr, reg_data, wr_len)
+#define BNO055_BUS_WRITE_FUNC(ctx, reg_addr, reg_data, wr_len) \
+    bus_write(ctx, reg_addr, reg_data, wr_len)
 
 #define BNO055_RD_FUNC_PTR       s8 \
-    (*bus_read)(u8, u8, u8 *, u8)
+    (*bus_read)(void*, u8, u8 *, u8)
 
-#define BNO055_BUS_READ_FUNC(dev_addr, reg_addr, reg_data, r_len) \
-    bus_read(dev_addr, reg_addr, reg_data, r_len)
+#define BNO055_BUS_READ_FUNC(ctx, reg_addr, reg_data, r_len) \
+    bus_read(ctx, reg_addr, reg_data, r_len)
 
 #define BNO055_DELAY_RETURN_TYPE void
 
@@ -517,10 +517,12 @@ struct bno055_t
     u8 mag_rev_id; /**< mag revision id of bno055 */
     u8 gyro_rev_id; /**< gyro revision id of bno055 */
     u8 bl_rev_id; /**< boot loader revision id of bno055 */
-    u8 dev_addr; /**< i2c device address of bno055 */
+  //  u8 dev_addr; /**< i2c device address of bno055 */
     BNO055_WR_FUNC_PTR; /**< bus write function pointer */
     BNO055_RD_FUNC_PTR; /**<bus read function pointer */
     void (*delay_msec)(BNO055_MDELAY_DATA_TYPE); /**< delay function pointer */
+	
+	void *context;		// user pointer
 };
 
 /*!
@@ -2201,6 +2203,12 @@ struct bno055_sic_matrix_t
 
 #define BNO055_SET_BITSLICE(regvar, bitname, val) \
     ((regvar & ~bitname##_MSK) | ((val << bitname##_POS) & bitname##_MSK))
+
+/* ensure proper linkage to c++ programs */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*************************************************/
 /**\name FUNCTION DECLARATION    */
@@ -8134,5 +8142,10 @@ BNO055_RETURN_FUNCTION_TYPE bno055_get_gyro_any_motion_awake_durn(u8 *gyro_awake
  *
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_set_gyro_any_motion_awake_durn(u8 gyro_awake_durn_u8);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -211,6 +211,7 @@ bool I2C::readByte(uint8_t& byte){
 
 
 
+
 bool I2C::readByte(uint8_t regAddr,  uint8_t& byte){
 	
 	if(!_isSetup) return false;
@@ -227,6 +228,17 @@ bool I2C::readByte(uint8_t regAddr,  uint8_t& byte){
 	byte = data.byte & 0xFF;
 	return true;
 }
+
+
+bool I2C::readByte(uint8_t regAddr,  unsigned char * byte) {
+	
+	uint8_t b;
+	
+	bool success =  readByte(regAddr, b);
+	if(success) *byte = b;
+	return success;
+ }
+
 
 
 bool I2C::readWord(uint8_t regAddr,  int16_t& word, bool swap){
@@ -338,6 +350,27 @@ bool I2C::readBlock(uint8_t regAddr, uint8_t size, i2c_block_t & block ){
 #endif
 	
 }
+
+// stupid c++ alternative version
+bool I2C::readBlock(uint8_t regAddr, uint8_t size, unsigned char * block ){
+	if(!_isSetup) return false;
+
+	bool status = false;
+
+	memset(block, 0, sizeof(size));
+ 
+	status = readByte(regAddr, block[0]);
+	if(status) {
+		for(int i = 1; i < size; i++){
+			status &= readByte( block[i]);
+			if(!status) break;
+		}
+	}
+	return status;
+}
+
+
+
 
 bool I2C::writeBlock(uint8_t regAddr, uint8_t size, i2c_block_t  block ){
 

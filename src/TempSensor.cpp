@@ -47,6 +47,7 @@ bool TempSensor::begin(int deviceAddress, string resultKey, int &error){
 }
 
 void TempSensor::stop(){
+	_sensor.stop();
 	_state = INS_INVALID;
 }
 

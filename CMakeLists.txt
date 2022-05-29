@@ -73,11 +73,12 @@ set(SOURCES
 	src/OBD2.cpp
 	src/Wranger2010.cpp
 	src/PiCarCAN.cpp
-	src/MMC5983MA.cpp
-	src/CompassSensor.cpp
+#	src/MMC5983MA.cpp
 	
 #Bosch compass
 	src/bno055.c
+	src/BNO055_Compass.cpp
+	src/CompassSensor.cpp
 )
 
  

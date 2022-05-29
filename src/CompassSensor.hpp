@@ -14,7 +14,7 @@
 
 #include <map>
 #include "PiCarMgrDevice.hpp"
-#include "MMC5983MA.hpp"
+#include "BNO055_Compass.hpp"
 
 using namespace std;
 
@@ -58,10 +58,10 @@ private:
 	in_state_t 		_state;
 	map<string,string> _resultMap;
  
-	MMC5983MA		_sensor;
-	
+ 
 	timeval			_lastQueryTime;
 	uint64_t     	_queryDelay;			// how long to wait before next query
 
+	BNO055_Compass	_compass;
 };
  

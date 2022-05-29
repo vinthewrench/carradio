@@ -31,7 +31,10 @@ bool CompassSensor::begin(int deviceAddress){
 bool CompassSensor::begin(int deviceAddress, int &error){
 	bool status = false;
 
-	status = _sensor.begin(deviceAddress, error);
+	if(deviceAddress == 0)
+		deviceAddress = BNO055_I2C_ADDR1;
+	
+ 	status = _compass.begin(deviceAddress, error);
 	
 	if(status){
 		_state = INS_IDLE;
@@ -49,6 +52,8 @@ bool CompassSensor::begin(int deviceAddress, int &error){
 }
 
 void CompassSensor::stop(){
+	
+	_compass.stop();
 	_state = INS_INVALID;
 }
 
@@ -58,7 +63,7 @@ bool CompassSensor::isConnected(){
 }
  
 void CompassSensor::reset(){
-	_sensor.reset();
+//	_sensor.reset();
 }
 
 void CompassSensor::setQueryDelay(uint64_t delay){
@@ -132,46 +137,13 @@ void CompassSensor::idle(){
 					gettimeofday(&now, NULL);
 					timersub(&now, &_lastQueryTime, &diff);
 					
- 				if(diff.tv_sec >=  _queryDelay  ) {
+					if(diff.tv_sec >=  _queryDelay  ) {
 						shouldQuery = true;
 					}
 				}
 				
 				if(shouldQuery){
 					
-//					_sensor.startTempMeasurement();
-//					_state = INS_WAITING_FOR_TEMP;
-//
-//				}
-//			}
-//				break;
-//
-//			case INS_WAITING_FOR_TEMP:
-//			{
-//				if( _sensor.isTempMeasurementDone()) {
-//					float tempC;
-//
-//					if( _sensor.readTempC(tempC)) {
-//						_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
-						
-						_sensor.startMagMeasurement();
-						_state = INS_WAITING_FOR_MAG;
-						//					gettimeofday(&_lastQueryTime, NULL);
-					}
-	//			}
-			}
-				break;
-				
-			case INS_WAITING_FOR_MAG:
-			{
-				if( _sensor.isMagMeasurementDone()) {
-					
-					if( _sensor.readMag()) {
-						//				_resultMap[VAL_COMPASS_TEMP] =  to_string(tempC);
-						
-						_state = INS_RESPONSE;
-						gettimeofday(&_lastQueryTime, NULL);
-					}
 					
 				}
 			}

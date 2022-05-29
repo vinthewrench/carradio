@@ -1039,7 +1039,7 @@ void PiCarMgr::startCompass ( std::function<void(bool didSucceed, std::string er
 		bool didSucceed = false;
 	 
 	 
-		uint8_t deviceAddress = 0x30;
+		uint8_t deviceAddress = 0;  // use default 
 	 
 		didSucceed =  _compass.begin(deviceAddress, errnum);
 		if(didSucceed){

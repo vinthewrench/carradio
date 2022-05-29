@@ -10,9 +10,9 @@
 		2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EE283EAEB2003D074C /* Wranger2010.cpp */; };
 		2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EF283EAEB2003D074C /* OBD2.cpp */; };
 		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
-		2E0EA4802841603D0012E406 /* MMC5983MA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */; };
 		2E0EA484284196AE0012E406 /* CompassSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA482284196A90012E406 /* CompassSensor.cpp */; };
-		2E0EA48A2843174F0012E406 /* bno055.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA4882843174F0012E406 /* bno055.c */; };
+		2E0EA48E2843D2C10012E406 /* BNO055_Compass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA48C2843D2C10012E406 /* BNO055_Compass.cpp */; };
+		2E0EA48F2843D65B0012E406 /* bno055.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA4882843174F0012E406 /* bno055.c */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
@@ -62,12 +62,12 @@
 
 /* Begin PBXFileReference section */
 		2E0EA47D284055630012E406 /* RGB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RGB.hpp; sourceTree = "<group>"; };
-		2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MMC5983MA.cpp; sourceTree = "<group>"; };
-		2E0EA47F28415B5E0012E406 /* MMC5983MA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MMC5983MA.hpp; sourceTree = "<group>"; };
 		2E0EA482284196A90012E406 /* CompassSensor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompassSensor.cpp; sourceTree = "<group>"; };
 		2E0EA483284196A90012E406 /* CompassSensor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CompassSensor.hpp; sourceTree = "<group>"; };
 		2E0EA4882843174F0012E406 /* bno055.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bno055.c; sourceTree = "<group>"; };
 		2E0EA4892843174F0012E406 /* bno055.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bno055.h; sourceTree = "<group>"; };
+		2E0EA48C2843D2C10012E406 /* BNO055_Compass.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BNO055_Compass.cpp; sourceTree = "<group>"; };
+		2E0EA48D2843D2C10012E406 /* BNO055_Compass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BNO055_Compass.hpp; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -168,8 +168,10 @@
 		2E0EA487284317340012E406 /* Compass */ = {
 			isa = PBXGroup;
 			children = (
-				2E0EA4882843174F0012E406 /* bno055.c */,
 				2E0EA4892843174F0012E406 /* bno055.h */,
+				2E0EA4882843174F0012E406 /* bno055.c */,
+				2E0EA48D2843D2C10012E406 /* BNO055_Compass.hpp */,
+				2E0EA48C2843D2C10012E406 /* BNO055_Compass.cpp */,
 			);
 			name = Compass;
 			sourceTree = "<group>";
@@ -276,6 +278,8 @@
 		2E8210A92835A3B9003D074C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				2E8210BA2835A593003D074C /* I2C.cpp */,
+				2E8210C12835A593003D074C /* I2C.hpp */,
 				2E62A8642807383700F5066B /* ErrorMgr.cpp */,
 				2E62A8652807383700F5066B /* ErrorMgr.hpp */,
 				2E8210CF2835A635003D074C /* CommonDefs.hpp */,
@@ -312,8 +316,6 @@
 				2E8210B82835A593003D074C /* DuppaKnob.hpp */,
 				2E8210B92835A593003D074C /* DuppaLEDRing.cpp */,
 				2E8210C42835A593003D074C /* DuppaLEDRing.hpp */,
-				2E8210BA2835A593003D074C /* I2C.cpp */,
-				2E8210C12835A593003D074C /* I2C.hpp */,
 				2E8210C02835A593003D074C /* RotaryKnob.hpp */,
 				2E8210BB2835A593003D074C /* TempSensor.cpp */,
 				2E8210BD2835A593003D074C /* TempSensor.hpp */,
@@ -321,8 +323,6 @@
 				2E8210BC2835A593003D074C /* TMP117.hpp */,
 				2E0EA482284196A90012E406 /* CompassSensor.cpp */,
 				2E0EA483284196A90012E406 /* CompassSensor.hpp */,
-				2E0EA47E28415B5E0012E406 /* MMC5983MA.cpp */,
-				2E0EA47F28415B5E0012E406 /* MMC5983MA.hpp */,
 			);
 			name = Devices;
 			sourceTree = "<group>";
@@ -437,6 +437,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E0EA48E2843D2C10012E406 /* BNO055_Compass.cpp in Sources */,
 				2E62A86A280738BA00F5066B /* VFD.cpp in Sources */,
 				2E8210B62835A551003D074C /* TimeStamp.cpp in Sources */,
 				2E8210CB2835A593003D074C /* TMP117.cpp in Sources */,
@@ -459,10 +460,9 @@
 				2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */,
 				2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */,
 				2E8210AF2835A4AC003D074C /* AudioOutput.cpp in Sources */,
+				2E0EA48F2843D65B0012E406 /* bno055.c in Sources */,
 				2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */,
-				2E0EA48A2843174F0012E406 /* bno055.c in Sources */,
 				2E8210C82835A593003D074C /* I2C.cpp in Sources */,
-				2E0EA4802841603D0012E406 /* MMC5983MA.cpp in Sources */,
 				2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */,
 				2E8210C72835A593003D074C /* DuppaLEDRing.cpp in Sources */,
 				2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */,

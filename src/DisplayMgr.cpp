@@ -470,7 +470,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 										  time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
-	pthread_mutex_lock (&_mutex);
+//	pthread_mutex_lock (&_mutex);
 
 	resetMenu();
 	_menuItems = items;
@@ -481,7 +481,7 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	_menuTimeout = timeout;
 	_menuCB = cb;
 	
-	pthread_mutex_unlock (&_mutex);
+//	pthread_mutex_unlock (&_mutex);
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 

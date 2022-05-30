@@ -1635,7 +1635,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			normalizeCANvalue(cachedProps[i+4].key, val2);
  		
 	// spread across 21 chars
-		sprintf( buffer , "%10s %10s", val1.c_str(), val2.c_str());
+		sprintf( buffer , " %9s  %9s ", val1.c_str(), val2.c_str());
 		_vfd.setCursor(0, row1 + (i * rowsize) + 8);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
@@ -1703,12 +1703,12 @@ bool DisplayMgr::normalizeCANvalue(string key, string & value){
 		value = "48";
 	else 	if(key == "LONG_FUEL_TRIM_1")
 		value = "10.0";
-	else 	if(key == "LONG_FUEL_TRIM_1")
+	else 	if(key == "LONG_FUEL_TRIM_2")
 		value = "7.2";
 	else 	if(key == "RUN_TIME")
 		value = "7:43";
  else
-	 value = "";
+	 value = "---";
 	
 	return true;
 	

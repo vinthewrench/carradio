@@ -540,14 +540,19 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				
 				drawMenuScreen(TRANS_LEAVING);  // force menu exit
 				popMode();
+				
+				popMode();	// do it twice.. remove the old mode.
 				pthread_mutex_unlock (&_mutex);
 	 
-
-			//	setEvent(EVT_POP, MODE_UNKNOWN);
-	
+	 
 				if(cb) {
 					cb(true,  item);
 				}
+				
+				
+			//		_display.redraw();
+
+
 				break;
 		}
 		

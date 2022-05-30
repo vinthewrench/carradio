@@ -608,6 +608,9 @@ void PiCarMgr::PiCanLoop(){
  
 					// save the new radio mode as a PROP_LAST_MENU_SELECTED
 	 				auto newMenuSelect =  radioModeToMenuMode(mode);
+					
+					printf("radioMode %d ,menu %d\n", mode, newMenuSelect);
+					
 					if(newMenuSelect != MENU_UNKNOWN)
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(newMenuSelect));
  				}

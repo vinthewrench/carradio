@@ -1653,24 +1653,80 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 
 // MARK: -  isplay value formatting
 
-bool DisplayMgr::normalizeCANvalue(string key, string & value){
+bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	
 	FrameDB*	fDB 	= PiCarMgr::shared()->can()->frameDB();
 	
-	if(key == "GM_COOLANT_TEMP")
-			value = "210\xA0";
-	else 	if(key == "GM_TRANS_TEMP")
-		value = "188\xA0";
-	else 	if(key == "GM_OIL_PRESSURE")
-		value = "48";
-	else 	if(key == "LONG_FUEL_TRIM_1")
-		value = "10.0";
-	else 	if(key == "LONG_FUEL_TRIM_2")
-		value = "7.2";
-	else 	if(key == "RUN_TIME")
-		value = "7:43";
- else
-	 value = "---";
+	string rawValue;
+	string value;
+	
+	char buffer[256];
+	char *p = buffer;
+
+	if(fDB->valueWithKey(key, &rawValue)) {
+		
+		switch(fDB->unitsForKey(key)){
+				
+			case FrameDB::DEGREES_C:
+			{
+				double cTemp = fDB->normalizedDoubleForValue(key,rawValue);
+				double fTemp =  cTemp *(9.0/5.0) + 32.0;
+				sprintf(p, "%d/xA0" "F",  (int) round(fTemp));
+				value = string(buffer);
+			}
+				break;
+				
+			case FrameDB::KPA:
+			{
+				double kPas = fDB->normalizedDoubleForValue(key,rawValue);
+				double psi =  kPas * 0.1450377377;
+				value = to_string((int) round(psi));
+			}
+				break;
+				
+			case	FrameDB::VOLTS:
+			{
+				float volts =   stof(rawValue);
+				sprintf(p, "%1.2fV",  volts);
+				value = string(buffer);
+			}
+				break;
+				
+			case FrameDB::FUEL_TRIM:{
+				double trim = fDB->normalizedDoubleForValue(key,rawValue);
+				sprintf(p, "%1.1f%%",  trim);
+				value = string(buffer);
+			}
+				break;
+				
+				
+			default:
+				value = rawValue;
+		}
+		
+	}
+	
+	if(value.empty()){
+		value = "---";
+	}
+ 
+	valueOut = value;
+
+//
+//	if(key == "GM_COOLANT_TEMP")
+//			value = "210\xA0";
+//	else 	if(key == "GM_TRANS_TEMP")
+//		value = "188\xA0";
+//	else 	if(key == "GM_OIL_PRESSURE")
+//		value = "48";
+//	else 	if(key == "LONG_FUEL_TRIM_1")
+//		value = "10.0";
+//	else 	if(key == "LONG_FUEL_TRIM_2")
+//		value = "7.2";
+//	else 	if(key == "RUN_TIME")
+//		value = "7:43";
+// else
+//	 value = "---";
 	
 	return true;
 	

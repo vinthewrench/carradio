@@ -453,3 +453,115 @@ bool FrameDB::valueWithKey(string_view key, string *valueOut){
  	
 	return true;
 };
+
+
+FrameDB::valueSchemaUnits_t FrameDB::unitsForKey(string key){
+	valueSchema_t schema = schemaForKey(key);
+	return schema.units;
+}
+
+string   FrameDB::unitSuffixForKey(string key){
+	string suffix = {};
+	
+	switch(unitsForKey(key)){
+			
+			case VOLTS:
+			suffix = "V";
+			break;
+
+		case MILLIAMPS:
+		case AMPS:
+			suffix = "A";
+			break;
+ 
+		case DEGREES_C:
+			suffix = "ºC";
+			break;
+ 
+	 	case PERCENT:
+			suffix = "%";
+			break;
+ 
+		case SECONDS:
+			suffix = "Seconds";
+			break;
+			
+		case MINUTES:
+			suffix = "Minutes";
+			break;
+
+	 
+		default:
+			break;
+	}
+	
+	return suffix;
+}
+
+double FrameDB::normalizedDoubleForValue(string key, string value){
+	
+	double retVal = 0;
+	
+	// see if it's a number
+	char   *p;
+	double val = strtod(value.c_str(), &p);
+	if(*p == 0) {
+ 
+		// normalize number
+		
+		switch(unitsForKey(key)){
+				
+			case MILLIVOLTS:
+			case MILLIAMPS:
+ 				retVal = val / 1000;
+				break;
+				
+			case  RPM:
+	 			retVal = val /4;
+				break;
+				
+			case PERCENT:
+			case DEGREES_C:
+ 			case VOLTS:
+			case AMPS:
+			case SECONDS:
+			case MINUTES:
+			case KPA:
+			case FUEL_TRIM:
+			case KM:
+			case KPH:
+				
+ 				retVal = val;
+				break;
+				
+			default:
+				break;
+		}
+	}
+	return retVal;
+}
+ int FrameDB::intForValue(string key, string value){
+	
+	int retVal = 0;
+	
+	 switch(unitsForKey(key)){
+
+		 case MINUTES:
+		 case SECONDS:
+		 case INT:
+		 {
+			 int intval = 0;
+
+			 if(sscanf(value.c_str(), "%d", &intval) == 1){
+				retVal = intval;
+			}
+		 }
+			 break;
+ 
+			 
+			 default:
+			 break;
+	 }
+	  
+	return retVal;
+}

@@ -794,17 +794,18 @@ void PiCarMgr::displayMenu(){
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {};
-	int selectedItem = 0;
+	int selectedItem = -1;
 	menu_mode_t mode = currentMode();
  
 	// fall back the selection for usability
 	
 	uint16_t lastSelect;
 	if(_db.getUint16Property(PROP_LAST_MENU_SELECTED, &lastSelect)){
-		mode = MENU_UNKNOWN;
 		selectedItem = lastSelect;
+		printf("PROP_LAST_MENU_SELECTED = %d\n", lastSelect);
 	}
-	else if(mode == MENU_TIME || mode == MENU_UNKNOWN)
+	else if(selectedItem == -1
+			  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
 		mode = MENU_FM;
 	
 	menu_items.reserve(menu_map.size());
@@ -812,11 +813,12 @@ void PiCarMgr::displayMenu(){
 	for(int i = 0; i < menu_map.size(); i++){
 		auto e = menu_map[i];
 		menu_items.push_back(e.second);
-		if(mode != MENU_UNKNOWN)
+		if(selectedItem == -1)
 			if(e.first == mode) selectedItem = i;
 	}
 	
-	
+	printf("selectedItem = %d\n", selectedItem);
+
 	_display.showMenuScreen(menu_items,
 									selectedItem,
 									"Select Screen",

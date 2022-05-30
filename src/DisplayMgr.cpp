@@ -805,7 +805,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 			case EVT_PUSH:
 				
-				//			printf("\nEVT_PUSH %d \n", item.mode);
+					printf("\nEVT_PUSH %d \n", item.mode);
 				
 			 if(pushMode(item.mode)){
 					shouldRedraw = true;

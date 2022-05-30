@@ -1635,7 +1635,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			normalizeCANvalue(cachedProps[i+4].key, val2);
  		
 	// spread across 21 chars
-		sprintf( buffer , "%-9s %-9s", val1.c_str(), val2.c_str());
+		sprintf( buffer , "%-9s  %-9s", val1.c_str(), val2.c_str());
 		_vfd.setCursor(col1, row1 + (i * rowsize) + 9);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}

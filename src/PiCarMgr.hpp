@@ -124,6 +124,8 @@ private:
 		MENU_SETTINGS
 	} menu_mode_t;
 	
+	vector < pair<PiCarMgr::menu_mode_t, string>> _main_menu_map;
+	
 	menu_mode_t currentMode();
 	
 	static PiCarMgr *sharedInstance;

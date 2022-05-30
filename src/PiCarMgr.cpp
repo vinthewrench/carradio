@@ -54,6 +54,7 @@ PiCarMgr *PiCarMgr::sharedInstance = NULL;
  
 
 
+
 static void CRASH_Handler()
 {
 	void *trace_elems[20];
@@ -95,6 +96,19 @@ PiCarMgr::PiCarMgr(){
 	signal(SIGINT, sigHandler);
  
 	std::set_terminate( CRASH_Handler );
+ 
+	_main_menu_map = {
+		  {MENU_AM, 		"AM"},
+		  {MENU_FM, 		"FM"},
+		  {MENU_VHF, 		"VHF"},
+		  {MENU_GMRS, 	"GMRS"},
+		  {MENU_UNKNOWN, "-"},
+		  {MENU_GPS,		"GPS"},
+		  {MENU_CANBUS,	"Engine"},
+		  {MENU_TIME,		"Time"},
+		  {MENU_UNKNOWN, "-"},
+		  {MENU_SETTINGS,"Settings"},
+	  };
 
 	_isRunning = true;
 
@@ -590,6 +604,16 @@ void PiCarMgr::PiCanLoop(){
 					_radio.setFrequencyandMode(mode, freq);
 					_radio.setON(true);
 					_display.LEDeventVol();
+					
+					// save the cuurent mode as a menu item
+					for(int i = 0; i < _main_menu_map.size(); i++){
+						auto e = _main_menu_map[i];
+						if(e.first == currentMode()) {
+							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(i));
+							break;
+						}
+					}
+					
 				}
 			}
 			
@@ -778,19 +802,6 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 
 void PiCarMgr::displayMenu(){
 	
-	vector < pair<PiCarMgr::menu_mode_t, string>> menu_map = {
-		{MENU_AM, 		"AM"},
-		{MENU_FM, 		"FM"},
-		{MENU_VHF, 		"VHF"},
-		{MENU_GMRS, 	"GMRS"},
-		{MENU_UNKNOWN, "-"},
-		{MENU_GPS,		"GPS"},
-		{MENU_CANBUS,	"Engine"},
-		{MENU_TIME,		"Time"},
-		{MENU_UNKNOWN, "-"},
-		{MENU_SETTINGS,"Settings"},
-	};
-	
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {};
@@ -807,10 +818,10 @@ void PiCarMgr::displayMenu(){
 			  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
 		mode = MENU_FM;
 	
-	menu_items.reserve(menu_map.size());
+	menu_items.reserve(_main_menu_map.size());
 	
-	for(int i = 0; i < menu_map.size(); i++){
-		auto e = menu_map[i];
+	for(int i = 0; i < _main_menu_map.size(); i++){
+		auto e = _main_menu_map[i];
 		menu_items.push_back(e.second);
 		if(selectedItem == -1)
 			if(e.first == mode) selectedItem = i;
@@ -823,7 +834,7 @@ void PiCarMgr::displayMenu(){
 									[=](bool didSucceed, uint newSelectedItem ){
  
 		if(didSucceed) {
-			menu_mode_t selectedMode = menu_map[newSelectedItem].first;
+			menu_mode_t selectedMode = _main_menu_map[newSelectedItem].first;
 			RadioMgr::radio_mode_t radioMode = RadioMgr::MODE_UNKNOWN;
 			
 			if(selectedMode != MENU_UNKNOWN)
@@ -913,8 +924,7 @@ void PiCarMgr::displaySettingsMenu(){
 				default:
 					break;
 			}
-			_display.redraw();
-
+	 
 		}
 	});
 									

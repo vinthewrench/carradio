@@ -539,8 +539,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				//  you dont have to give it a TRANS_LEAVING
 				
 				drawMenuScreen(TRANS_LEAVING);  // force menu exit
-				popMode();
-				
+				popMode();			// remove the menu
 				popMode();	// do it twice.. remove the old mode.
 				pthread_mutex_unlock (&_mutex);
 	 
@@ -549,10 +548,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 					cb(true,  item);
 				}
 				
-				
-			//		_display.redraw();
-
-
+ 
 				break;
 		}
 		
@@ -694,14 +690,7 @@ void  DisplayMgr::popMode(){
 	_saved_mode = MODE_UNKNOWN;
 	
 }
-
-void DisplayMgr::redraw(){
-	
-	setEvent(EVT_REDRAW, _current_mode );
-}
-
-
-
+ 
 // MARK: -  DisplayUpdate thread
 
 void DisplayMgr::DisplayUpdate(){
@@ -893,18 +882,11 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	
 	if(!_isSetup)
 		return;
-	
-	
-	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
-	
-	if(transition != TRANS_IDLE)
-		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
-	
-//	if(transition != TRANS_IDLE){
-//		printf("drawMode trans:%d mode %d\n", transition, mode);
-//		fflush(stdout);
-//	}
-	
+//	
+//	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+//	if(transition != TRANS_IDLE)
+//		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
+ 
 	try {
 		switch (mode) {
 				

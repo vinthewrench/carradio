@@ -125,6 +125,7 @@ private:
 	} menu_mode_t;
 	
 	vector < pair<PiCarMgr::menu_mode_t, string>> _main_menu_map;
+	int main_menu_map_offset(PiCarMgr::menu_mode_t);
 	
 	menu_mode_t currentMode();
 	

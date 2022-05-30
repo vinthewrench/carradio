@@ -605,15 +605,13 @@ void PiCarMgr::PiCanLoop(){
 					_radio.setON(true);
 					_display.LEDeventVol();
 					_display.showRadioChange();
- 
-					// save the new radio mode as a PROP_LAST_MENU_SELECTED
-	 				auto newMenuSelect =  radioModeToMenuMode(mode);
 					
-					printf("radioMode %d ,menu %d\n", mode, newMenuSelect);
+					// save the new radio mode as a PROP_LAST_MENU_SELECTED
+					auto newMenuSelect =  radioModeToMenuMode(mode);
 					
 					if(newMenuSelect != MENU_UNKNOWN)
-						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(newMenuSelect));
- 				}
+						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
+				}
 			}
 			
 // MARK:   Volume button moved
@@ -808,6 +806,19 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 }
 
 
+int PiCarMgr::main_menu_map_offset(PiCarMgr::menu_mode_t mode ){
+	int selectedItem = -1;
+
+	for(int i = 0; i < _main_menu_map.size(); i++){
+		auto e = _main_menu_map[i];
+	 	if(selectedItem == -1)
+			if(e.first == mode) selectedItem = i;
+	}
+
+	return selectedItem;
+}
+
+
 void PiCarMgr::displayMenu(){
 	
 	constexpr time_t timeout_secs = 10;
@@ -831,9 +842,10 @@ void PiCarMgr::displayMenu(){
 	for(int i = 0; i < _main_menu_map.size(); i++){
 		auto e = _main_menu_map[i];
 		menu_items.push_back(e.second);
-		if(selectedItem == -1)
-			if(e.first == mode) selectedItem = i;
 	}
+	
+	if(selectedItem == -1)
+		selectedItem = main_menu_map_offset(mode);
 	
  	_display.showMenuScreen(menu_items,
 									selectedItem,

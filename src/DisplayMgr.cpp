@@ -805,7 +805,6 @@ void DisplayMgr::DisplayUpdate(){
 				break;
 				
 			case EVT_PUSH:
-				
 				//			printf("\nEVT_PUSH %d \n", item.mode);
 				
 			 if(pushMode(item.mode)){

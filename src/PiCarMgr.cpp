@@ -870,7 +870,7 @@ void PiCarMgr::displayMenu(){
 					break;
 			}
 		
-			_display.redraw();
+	//		_display.redraw();
 
 			// if it was a radio selection, turn it one and select
 			if(radioMode != RadioMgr::MODE_UNKNOWN){

@@ -802,7 +802,6 @@ void PiCarMgr::displayMenu(){
 	uint16_t lastSelect;
 	if(_db.getUint16Property(PROP_LAST_MENU_SELECTED, &lastSelect)){
 		selectedItem = lastSelect;
-		printf("PROP_LAST_MENU_SELECTED = %d\n", lastSelect);
 	}
 	else if(selectedItem == -1
 			  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
@@ -817,9 +816,7 @@ void PiCarMgr::displayMenu(){
 			if(e.first == mode) selectedItem = i;
 	}
 	
-	printf("selectedItem = %d\n", selectedItem);
-
-	_display.showMenuScreen(menu_items,
+ 	_display.showMenuScreen(menu_items,
 									selectedItem,
 									"Select Screen",
 									timeout_secs,
@@ -871,7 +868,6 @@ void PiCarMgr::displayMenu(){
 				default:
 					// do nothing
 				_display.redraw();
-	
 					break;
 			}
 			

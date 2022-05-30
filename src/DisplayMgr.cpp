@@ -889,8 +889,11 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	if(!_isSetup)
 		return;
 	
+	
+	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+	
 	if(transition != TRANS_IDLE)
-		printf("drawMode %d %d\n", transition,mode);
+		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
 	
 //	if(transition != TRANS_IDLE){
 //		printf("drawMode trans:%d mode %d\n", transition, mode);

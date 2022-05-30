@@ -1575,7 +1575,6 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
  //	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
 	
 	uint8_t col1 = 5;

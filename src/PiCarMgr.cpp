@@ -785,7 +785,7 @@ void PiCarMgr::displayMenu(){
 		{MENU_GMRS, 	"GMRS"},
 		{MENU_UNKNOWN, "-"},
 		{MENU_GPS,		"GPS"},
-		{MENU_CANBUS,	"CAN bus"},
+		{MENU_CANBUS,	"Engine"},
 		{MENU_TIME,		"Time"},
 		{MENU_UNKNOWN, "-"},
 		{MENU_SETTINGS,"Settings"},
@@ -847,7 +847,7 @@ void PiCarMgr::displayMenu(){
 					break;
  
 				case MENU_CANBUS:
-					_display.showCANbus();
+					_display.showCANbus(1);
 					break;
 	
 				case MENU_SETTINGS:

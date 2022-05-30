@@ -1671,7 +1671,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 			{
 				double cTemp = fDB->normalizedDoubleForValue(key,rawValue);
 				double fTemp =  cTemp *(9.0/5.0) + 32.0;
-				sprintf(p, "%d/xA0" "F",  (int) round(fTemp));
+				sprintf(p, "%d\xA0" "F",  (int) round(fTemp));
 				value = string(buffer);
 			}
 				break;

@@ -1696,9 +1696,9 @@ bool DisplayMgr::normalizeCANvalue(string key, string & value){
 	FrameDB*	fDB 	= PiCarMgr::shared()->can()->frameDB();
 	
 	if(key == "GM_COOLANT_TEMP")
-			value = "210";
+			value = "210\xA0";
 	else 	if(key == "GM_TRANS_TEMP")
-		value = "188";
+		value = "188/xA0";
 	else 	if(key == "GM_OIL_PRESSURE")
 		value = "48";
 	else 	if(key == "LONG_FUEL_TRIM_1")

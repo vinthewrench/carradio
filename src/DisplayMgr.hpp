@@ -122,6 +122,7 @@ public:
 							  menuSelectedCallBack_t cb = nullptr);
  
 private:
+	
 	typedef enum  {
 		EVT_NONE = 0,
 		EVT_PUSH,
@@ -153,6 +154,9 @@ private:
  
 	void drawShutdownScreen();
 	
+	
+// display value formatting
+ 	bool normalizeCANvalue(string key, string & value);
 	
 //Menu stuff
 	void resetMenu();

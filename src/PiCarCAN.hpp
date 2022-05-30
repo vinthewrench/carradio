@@ -43,6 +43,8 @@ public:
 	bool packetCount(pican_bus_t bus, size_t &count);
 	bool resetPacketCount(pican_bus_t bus);
  
+	FrameDB* frameDB() {return  _CANbus.frameDB();};
+
 private:
 	bool 				_isSetup = false;
 

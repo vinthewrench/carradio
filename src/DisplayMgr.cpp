@@ -1580,7 +1580,8 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t col1 = 5;
 	uint8_t col2 = midX + 5;
 	uint8_t row1 = 16;
-
+	uint8_t rowsize = 19;
+	
 	
 	if(transition == TRANS_ENTERING) {
 		
@@ -1592,54 +1593,65 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		
-		for(uint8_t	 i = 0; i < 6; i++){
+		for(uint8_t	 i = 0; i < 6; i++)
 			if(cachedProps.count(i+1)){
 				auto item = cachedProps[i+1];
 				
 				if(i < 3){
-					_vfd.setCursor(col1, row1 + (i  * 19 ));
+					_vfd.setCursor(col1, row1 + (i  * rowsize ));
 					_vfd.write(item.title);
 					
 				}
 				else {
-					_vfd.setCursor(col2, row1 + ( (i-3)  * 19 ));
+					_vfd.setCursor(col2, row1 + ( (i-3)  * rowsize ));
 					_vfd.write(item.title);
 				}
-				
 			}
-		}
-//		for(auto [line, item] : cachedProps){
-//
-//		}
-//
-//
-//		/* debugs*/
-//		{
-//			map <uint8_t, PiCarDB::canbusdisplay_prop_t>  props;
-//
-//			if(_db.getCanbusDisplayProps(props)){
-//
-//				for(auto [line, item] : props){
-//
-//						printf("%d %-20s %s\n", line, item.title.c_str(), item.key.c_str());
-//
-//				}
-//			}
-//
-//		}
-//		/////
 	}
-	
-	if(transition == TRANS_LEAVING) {
 		
-		cachedProps.clear();
-		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		return;
-	}
+		if(transition == TRANS_LEAVING) {
+			
+			cachedProps.clear();
+			_rightKnob.setAntiBounce(antiBounceDefault);
+			setKnobColor(KNOB_RIGHT, RGB::Lime);
+			return;
+		}
 
+		
+	// Draw values
+	_vfd.setFont(VFD::FONT_5x7);
+	for(uint8_t	 i = 0; i < 3; i++){
+		
+		char buffer[30];
+		memset(buffer, ' ', sizeof(buffer));
+		
+		string val1 = "";
+		string val2 = "";
+ 
+		if(cachedProps.count(i+1))
+			normalizeCANvalue(cachedProps[i+1].key, val1);
+
+		if(cachedProps.count(i+4))
+			normalizeCANvalue(cachedProps[i+4].key, val2);
+ 		
+	// spread across 21 chars
+		sprintf( buffer , "%10s %10s", val1.c_str(), val2.c_str());
+		_vfd.setCursor(0, row1 + (i * rowsize) + 8);
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+	}
+ 
 	
-		  
+	
+	// Draw time
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char timebuffer[16] = {0};
+	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
+	TRY(_vfd.write(timebuffer));
+ 
+}
 		  
 
  
@@ -1674,18 +1686,31 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 //
 //
 //
+
+
+
+// MARK: -  isplay value formatting
+
+bool DisplayMgr::normalizeCANvalue(string key, string & value){
 	
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
-	char timebuffer[16] = {0};
-	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
-	TRY(_vfd.write(timebuffer));
-
-//	
-//	TRY(_vfd.setFont(VFD::FONT_5x7));
-//	TRY(_vfd.setCursor(0,60));
-//	TRY(_vfd.write("<"));
-
+	FrameDB*	fDB 	= PiCarMgr::shared()->can()->frameDB();
+	
+	if(key == "GM_COOLANT_TEMP")
+			value = "210";
+	else 	if(key == "GM_TRANS_TEMP")
+		value = "188";
+	else 	if(key == "GM_OIL_PRESSURE")
+		value = "48";
+	else 	if(key == "LONG_FUEL_TRIM_1")
+		value = "10.0";
+	else 	if(key == "LONG_FUEL_TRIM_1")
+		value = "7.2";
+	else 	if(key == "RUN_TIME")
+		value = "7:43";
+ else
+	 value = "";
+	
+	return true;
+	
 }
+

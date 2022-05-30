@@ -1682,9 +1682,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				double psi =  kPas * 0.1450377377;
 				sprintf(p, "%d psi",   (int) round(psi));
 				value = string(buffer);
-	
-				value = to_string((int) round(psi));
-			}
+				}
 				break;
 				
 			case	FrameDB::VOLTS:

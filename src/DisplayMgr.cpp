@@ -691,7 +691,8 @@ void  DisplayMgr::popMode(){
 }
 
 void DisplayMgr::redraw(){
-	drawMode(TRANS_ENTERING, _current_mode );
+	
+	setEvent(EVT_REDRAW, _current_mode );
 }
 
 
@@ -753,8 +754,8 @@ void DisplayMgr::DisplayUpdate(){
 		bool shouldUpdate = false;			// needs update of data
 		
 		switch(item.evt){
-				
-				// timeout - nothing happened
+			
+		 	// timeout - nothing happened
 			case EVT_NONE:
 				timeval now, diff;
 				gettimeofday(&now, NULL);
@@ -821,7 +822,13 @@ void DisplayMgr::DisplayUpdate(){
 					shouldUpdate = true;
 				}
 				break;
-				
+			
+			case EVT_REDRAW:
+				gettimeofday(&_lastEventTime, NULL);
+				shouldRedraw = true;
+				shouldUpdate = true;
+				break;
+	 
 		}
 		
 		if(lastMode != _current_mode)

@@ -127,6 +127,7 @@ private:
 		EVT_NONE = 0,
 		EVT_PUSH,
 		EVT_POP,
+		EVT_REDRAW,
  	}event_t;
 
 	typedef enum  {

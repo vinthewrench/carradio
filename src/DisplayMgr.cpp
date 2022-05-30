@@ -1654,40 +1654,6 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 }
 		  
 
- 
-	// TRY(_vfd.setFont(VFD::FONT_5x7));
-	// TRY(_vfd.setCursor(0,10));
-	// TRY(_vfd.write("CANbus(1)"));
- 
-//
-//	// test values
-//	int y = 16;
-//	int x = 5;
-//
-//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("COOLANT"); y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("206");	 y +=10;
-//
-//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("TRANS TEMP");  y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("140");	 y +=10;
-//
-//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("OIL PRESSURE");  y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("200");
-//
-//	x = 70;	 y = 16;
-//	_vfd.setFont(VFD::FONT_MINI) ;  _vfd.setCursor(x,y) ; _vfd.write("FUEL TRIM B0"); y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("-13.6");	 y +=10;
-//
-//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("FUEL TRIM B1");  y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("-12.4");	 y +=10;
-//
-//	_vfd.setFont(VFD::FONT_MINI) ;  _vfd.setCursor(x,y) ; _vfd.write("RUN TIME");  y +=9;
-//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("43:00");
-//
-//
-//
-//
-
-
 
 // MARK: -  isplay value formatting
 

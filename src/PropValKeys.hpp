@@ -51,3 +51,5 @@ inline static const string  PROP_CANBUS_DISPLAY				= "canbus-display";
 inline static const string  PROP_LINE							= "line";
 inline static const string  PROP_TITLE							= "title";
 inline static const string  PROP_KEY							= "key";
+
+inline static const string  PROP_LAST_MENU_SELECTED		= "last_menu";

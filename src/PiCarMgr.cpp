@@ -914,6 +914,7 @@ void PiCarMgr::displaySettingsMenu(){
 //					break;
 					
 				default:
+					break;
 			}
 			_display.redraw();
 

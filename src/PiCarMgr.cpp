@@ -867,10 +867,11 @@ void PiCarMgr::displayMenu(){
 				case 	MENU_UNKNOWN:
 				default:
 					// do nothing
-				_display.redraw();
 					break;
 			}
-			
+		
+			_display.redraw();
+
 			// if it was a radio selection, turn it one and select
 			if(radioMode != RadioMgr::MODE_UNKNOWN){
 				uint32_t freq;

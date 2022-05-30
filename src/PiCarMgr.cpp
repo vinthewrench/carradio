@@ -604,7 +604,8 @@ void PiCarMgr::PiCanLoop(){
 					_radio.setFrequencyandMode(mode, freq);
 					_radio.setON(true);
 					_display.LEDeventVol();
-					
+					display->showRadioChange();
+ 
 					// save the cuurent mode as a menu item
 					for(int i = 0; i < _main_menu_map.size(); i++){
 						auto e = _main_menu_map[i];

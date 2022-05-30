@@ -606,16 +606,11 @@ void PiCarMgr::PiCanLoop(){
 					_display.LEDeventVol();
 					_display.showRadioChange();
  
-					// save the cuurent mode as a menu item
-					for(int i = 0; i < _main_menu_map.size(); i++){
-						auto e = _main_menu_map[i];
-						if(e.first == currentMode()) {
-							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(i));
-							break;
-						}
-					}
-					
-				}
+					// save the new radio mode as a PROP_LAST_MENU_SELECTED
+	 				auto newMenuSelect =  radioModeToMenuMode(mode);
+					if(newMenuSelect != MENU_UNKNOWN)
+						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(newMenuSelect));
+ 				}
 			}
 			
 // MARK:   Volume button moved
@@ -749,29 +744,38 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 
 // MARK: -   Menu Management
 
+PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radioMode){
+	menu_mode_t mode = MENU_UNKNOWN;
+
+	switch(radioMode){
+		case RadioMgr::BROADCAST_AM:
+			mode = MENU_AM;
+			break;
+		case RadioMgr::BROADCAST_FM:
+			mode = MENU_FM;
+			break;
+		case RadioMgr::VHF:
+			mode = MENU_VHF;
+			break;
+		case RadioMgr::GMRS:
+			mode = MENU_GMRS;
+			break;
+		default: break;
+	}
+
+	return mode;
+}
+
+
 PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 	menu_mode_t mode = MENU_UNKNOWN;
+	
 	
 	switch( _display.active_mode()){
 			
 		case DisplayMgr::MODE_RADIO:
 			if(_radio.isOn()){
-				
-				switch(_radio.radioMode()){
-					case RadioMgr::BROADCAST_AM:
-						mode = MENU_AM;
-						break;
-					case RadioMgr::BROADCAST_FM:
-						mode = MENU_FM;
-						break;
-					case RadioMgr::VHF:
-						mode = MENU_VHF;
-						break;
-					case RadioMgr::GMRS:
-						mode = MENU_GMRS;
-						break;
-					default: break;
- 				}
+				mode  = radioModeToMenuMode(_radio.radioMode());
 			}
 			break;
 			

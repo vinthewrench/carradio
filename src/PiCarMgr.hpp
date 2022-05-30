@@ -150,6 +150,8 @@ private:
 	static void PiCanLoopThreadCleanup(void *context);
 	void idle();  // occasionally called durrig idle time
 	
+	menu_mode_t radioModeToMenuMode(RadioMgr::radio_mode_t);
+	
 	RadioMgr::radio_mode_t		_lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
 	 

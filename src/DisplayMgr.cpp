@@ -826,9 +826,8 @@ void DisplayMgr::DisplayUpdate(){
 			case EVT_REDRAW:
 				gettimeofday(&_lastEventTime, NULL);
 				shouldRedraw = true;
-				shouldUpdate = true;
+//				shouldUpdate = true;
 				break;
-	 
 		}
 		
 		if(lastMode != _current_mode)
@@ -942,10 +941,8 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 			case MODE_CANBUS1:
 				drawCANBusScreen1(transition);
 				break;
- 
-				
+ 				
 			case MODE_UNKNOWN:
-				
 				// we will always leave the UNKNOWN state at start
 				if(transition == TRANS_LEAVING)
 					break;

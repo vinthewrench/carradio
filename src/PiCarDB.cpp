@@ -347,18 +347,29 @@ bool PiCarDB::getTimeProperty(string key, time_t * valOut){
 
 bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 	
-	if( _props.contains(key)
-		&&  _props.at(key).is_number_unsigned())
+	if( _props.contains(key))
 	{
-		auto val = _props.at(key);
-		
-		if(val <= UINT16_MAX){
-			if(valOut)
-				*valOut = (uint16_t) val;
-			return true;
+		if(_props.at(key).is_number_unsigned()){
+			auto val = _props.at(key);
+			
+			if(val <= UINT16_MAX){
+				if(valOut)
+					*valOut = (uint16_t) val;
+				return true;
+			}
 		}
+		else 	if(_props.at(key).is_string()){
+			string val = _props.at(key);
+			
+ 			int intValue = atoi(val.c_str());
+			if(intValue <= UINT16_MAX){
+				if(valOut)
+					*valOut = (uint16_t) intValue;
+				return true;
+			}
+ 		}
 	}
-	return false;
+	 	return false;
 }
 
 bool  PiCarDB::getFloatProperty(string key, float * valOut){

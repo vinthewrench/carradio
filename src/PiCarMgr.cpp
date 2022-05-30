@@ -13,9 +13,14 @@
 #include <filesystem> // C++17
 #include <fstream>
 #include <execinfo.h>
+#include <time.h>
+#include <sys/time.h>
 
 #include "Utils.hpp"
+#include "TimeStamp.hpp"
 
+using namespace std;
+using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
@@ -64,8 +69,8 @@ static void CRASH_Handler()
 }
 
 static void sigHandler (int signum) {
-	
-	printf("sigHandler %d\n", signum);
+ 
+	printf("%s sigHandler %d\n", TimeStamp(false).logFileString().c_str(), signum);
 	
 	auto picanMgr = PiCarMgr::shared();
 	picanMgr->stop();
@@ -121,7 +126,7 @@ bool PiCarMgr::begin(){
 
 		// read in any properties
 		_db.restorePropertiesFromFile();
-
+ 		
 		startCPUInfo();
  
 		// if we fail, no big deal..
@@ -299,7 +304,7 @@ void PiCarMgr::saveRadioSettings(){
 void PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
-	 
+	
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
@@ -310,10 +315,10 @@ void PiCarMgr::restoreRadioSettings(){
 	// SET RADIO Info
 	
 	_lastFreqForMode.clear();
-
+	
 	if(_db.getJSONProperty(PROP_LAST_RADIO_MODES,&j)
 		&&  j.is_array()){
-	 
+		
 		for(auto item : j ){
 			if(item.is_object()
 				&&  item.contains(PROP_LAST_RADIO_MODES_MODE)
@@ -327,13 +332,15 @@ void PiCarMgr::restoreRadioSettings(){
 			}
 		}
 	}
- 
+	
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
 		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
+ 
 }
+ 
 
 void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &freqOut){
 	

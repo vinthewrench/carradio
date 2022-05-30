@@ -1569,37 +1569,114 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 
 
 void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
+
+	static map <uint8_t, PiCarDB::canbusdisplay_prop_t> cachedProps;
+
+ //	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
 	
-//	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	time_t now = time(NULL);
+	uint8_t col1 = 5;
+	uint8_t col2 = midX + 5;
+	uint8_t row1 = 16;
+
 	
 	if(transition == TRANS_ENTERING) {
+		
+		 db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
+	
+		// draw titles
+		_vfd.setFont(VFD::FONT_MINI);
+		
+		for(uint8_t	 i = 0; i < 6; i++){
+			if(cachedProps.count(i+1)){
+				auto item = cachedProps[i+1];
+				
+				if(i < 3){
+					_vfd.setCursor(col1, row1 + (i  * 19 ));
+					_vfd.write(item.title);
+					
+				}
+				else {
+					_vfd.setCursor(col2, row1 + ( (i-3)  * 19 ));
+					_vfd.write(item.title);
+				}
+				
+			}
+		}
+//		for(auto [line, item] : cachedProps){
+//
+//		}
+//
+//
+//		/* debugs*/
+//		{
+//			map <uint8_t, PiCarDB::canbusdisplay_prop_t>  props;
+//
+//			if(_db.getCanbusDisplayProps(props)){
+//
+//				for(auto [line, item] : props){
+//
+//						printf("%d %-20s %s\n", line, item.title.c_str(), item.key.c_str());
+//
+//				}
+//			}
+//
+//		}
+//		/////
 	}
 	
 	if(transition == TRANS_LEAVING) {
+		
+		cachedProps.clear();
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("CANbus(1)"));
 	
+		  
+		  
+
+ 
+	// TRY(_vfd.setFont(VFD::FONT_5x7));
+	// TRY(_vfd.setCursor(0,10));
+	// TRY(_vfd.write("CANbus(1)"));
+ 
+//
+//	// test values
+//	int y = 16;
+//	int x = 5;
+//
+//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("COOLANT"); y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("206");	 y +=10;
+//
+//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("TRANS TEMP");  y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("140");	 y +=10;
+//
+//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("OIL PRESSURE");  y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(x+25,y) ; _vfd.write("200");
+//
+//	x = 70;	 y = 16;
+//	_vfd.setFont(VFD::FONT_MINI) ;  _vfd.setCursor(x,y) ; _vfd.write("FUEL TRIM B0"); y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("-13.6");	 y +=10;
+//
+//	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(x,y) ; _vfd.write("FUEL TRIM B1");  y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("-12.4");	 y +=10;
+//
+//	_vfd.setFont(VFD::FONT_MINI) ;  _vfd.setCursor(x,y) ; _vfd.write("RUN TIME");  y +=9;
+//	_vfd.setFont(VFD::FONT_5x7) ;  _vfd.setCursor(x+25,y) ; _vfd.write("43:00");
+//
+//
+//
+//
 	
-	// test values
- 	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(0,20) ; _vfd.write("COOLANT *F");
-	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(20,28) ; _vfd.write("206");
-	
-	_vfd.setFont(VFD::FONT_MINI) ; _vfd.setCursor(0,30) ; _vfd.write("TRANS TEMP *F");
-	_vfd.setFont(VFD::FONT_5x7) ; _vfd.setCursor(20,38) ; _vfd.write("140");
-	
-	 
-	
-	
+	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char timebuffer[16] = {0};
 	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
@@ -1607,9 +1684,9 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
 	TRY(_vfd.write(timebuffer));
 
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,60));
-	TRY(_vfd.write("<"));
+//	
+//	TRY(_vfd.setFont(VFD::FONT_5x7));
+//	TRY(_vfd.setCursor(0,60));
+//	TRY(_vfd.write("<"));
 
 }

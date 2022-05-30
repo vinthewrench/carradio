@@ -52,6 +52,14 @@ class PiCarDB  {
 	
 	bool propertiesChanged() {return _didChangeProperties;};
 	
+	// MARK: - convenience utility
+	typedef struct {
+		string title;
+		string key;
+ 	} canbusdisplay_prop_t;
+	
+	bool getCanbusDisplayProps(map <uint8_t, canbusdisplay_prop_t> &);
+	
  
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);

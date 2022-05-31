@@ -395,15 +395,15 @@ void GPSmgr::GPSReader(){
 			timeout_cnt = 0;
 			if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
 				
-				for(bool readMore = true; readMore; ){
+	//			for(bool readMore = true; readMore; ){
 					
 					u_int8_t c;
 					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
 					
-					readMore = false;
+		//			readMore = false;
 					
 					if(nbytes == 1){
-						readMore = true;;
+	//					readMore = true;;
 						
 						if(_nmea.process(c)){
 							processNMEA();
@@ -413,8 +413,11 @@ void GPSmgr::GPSReader(){
 						int lastError = errno;
 						
 						// no data try later
-						if(lastError == EAGAIN)
+						if(lastError == EAGAIN){
+							printf("EAGAIN\n");
 							continue;
+
+						}
 						
 						if(lastError == ENXIO){  // device disconnected..
 							
@@ -427,7 +430,7 @@ void GPSmgr::GPSReader(){
 						else {
 							perror("read");
 						}
-					}
+//					}
 				}
 			}
 		}

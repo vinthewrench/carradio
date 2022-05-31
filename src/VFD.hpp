@@ -44,6 +44,9 @@ public:
 	bool write(const char* str);
 	bool writePacket(const uint8_t *data , size_t len , useconds_t waitusec = 50);
 
+	bool printPacket(const char *fmt, ...);
+	
+	
 	bool setBrightness(uint8_t);  //  0 == off - 7 == max
 	bool setPowerOn(bool setOn);
 	

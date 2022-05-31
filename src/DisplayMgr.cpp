@@ -1748,23 +1748,20 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		// top line
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
- 		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "Car Radio: %s", PiCarMgr::PiCarMgr_Version);
-		_vfd.writePacket( (const uint8_t*) buffer,21);
-
-		_vfd.setFont(VFD::FONT_MINI);
-  		row += 6;  _vfd.setCursor(col+10, row );
-		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%s %s ", __DATE__, __TIME__);
-		_vfd.writePacket( (const uint8_t*) buffer,21);
+		_vfd.printPacket("Car Radio ");
 		
-		uname(&utsBuff) ;
-	 	row += 6;  _vfd.setCursor(col+10, row );
-		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%s: %s ", utsBuff.sysname, utsBuff.version);
-		_vfd.writePacket( (const uint8_t*) buffer,21);
- 
+		string str1 = string(PiCarMgr::PiCarMgr_Version);
+		std::transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
+		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str1.c_str());
+		
+		row += 7;  _vfd.setCursor(col+10, row );
+		string str2 = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
+		std::transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
+		_vfd.printPacket("%s", str2.c_str());
+
+	 
 		row += 8;
+		_vfd.setFont(VFD::FONT_5x7);
  		RtlSdr::device_info_t info;
  		if(radio->isConnected() && radio->getDeviceInfo(info) ){
 			sprintf( buffer ,"\xBA RADIO OK");

@@ -176,6 +176,21 @@ bool VFD:: write(string str){
 	return  writePacket( (uint8_t *) str.c_str(), str.size(), 500);
 }
 
+bool VFD::printPacket(const char *fmt, ...){
+	bool success = false;
+
+	char *s;
+	va_list args;
+	va_start(args, fmt);
+	vasprintf(&s, fmt, args);
+	
+	write(s);
+	free(s);
+	va_end(args);
+	
+	return success;
+}
+
 
 #define PACKET_MODE 0
 

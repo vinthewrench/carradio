@@ -989,29 +989,28 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		memset(buffer, ' ', sizeof(buffer));
 		row+=8; _vfd.setCursor(col, row);
+		_vfd.setFont(VFD::FONT_MINI);
+	
 		if(radio->isConnected()){
 			RtlSdr::device_info_t info;
-
-			sprintf( buffer ,"\xBA  Radio");
+			sprintf( buffer ,"\xBA RADIO OK");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
-			_vfd.setFont(VFD::FONT_MINI);
 			row += 6;  _vfd.setCursor(col+5, row );
 			_vfd.write(info.name);
-			_vfd.setFont(VFD::FONT_5x7);
 		}
 		else {
-	 		sprintf( buffer ,"X  Radio Not Connected");
+	 		sprintf( buffer ,"X RADIO FAIL");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
  		}
  
 		memset(buffer, ' ', sizeof(buffer));
 		row += 8; _vfd.setCursor(col, row);
 		if(gps->isConnected()){
-			sprintf( buffer ,"\xBA  GPS");
+			sprintf( buffer ,"\xBA GPS OK");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
  		}
 		else {
-			sprintf( buffer ,"X  GPS Not Connected");
+			sprintf( buffer ,"X GPS FAIL");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
   		}
 

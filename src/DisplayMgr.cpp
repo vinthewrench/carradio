@@ -1750,30 +1750,38 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("Car Radio ");
 		
-		string str1 = string(PiCarMgr::PiCarMgr_Version);
-		std::transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
-		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str1.c_str());
+		string str;
+		
+		str = string(PiCarMgr::PiCarMgr_Version);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str.c_str());
 		
 		row += 7;  _vfd.setCursor(col+10, row );
-		string str2 = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
-		std::transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
-		_vfd.printPacket("%s", str2.c_str());
+		str = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
 
-	 
-		row += 8;
-		_vfd.setFont(VFD::FONT_5x7);
- 		RtlSdr::device_info_t info;
- 		if(radio->isConnected() && radio->getDeviceInfo(info) ){
-			sprintf( buffer ,"\xBA RADIO OK");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
-			row += 6;  _vfd.setCursor(col+10, row );
-			std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
-			_vfd.write(info.product);
-		}
-		else {
-			sprintf( buffer ,"X RADIO FAIL");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
-		}
+		
+		row += 7;  _vfd.setCursor(col+10, row );
+		str =   string(utsBuff.sysname)  + " " +  string(utsBuff.version);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+//
+//		row += 8;
+//		_vfd.setFont(VFD::FONT_5x7);
+// 		RtlSdr::device_info_t info;
+// 		if(radio->isConnected() && radio->getDeviceInfo(info) ){
+//			sprintf( buffer ,"\xBA RADIO OK");
+//			_vfd.writePacket( (const uint8_t*) buffer,21);
+//			row += 6;  _vfd.setCursor(col+10, row );
+//			std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
+//			_vfd.write(info.product);
+//		}
+//		else {
+//			sprintf( buffer ,"X RADIO FAIL");
+//			_vfd.writePacket( (const uint8_t*) buffer,21);
+//		}
 
 	}
  

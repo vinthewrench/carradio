@@ -179,16 +179,18 @@ bool CANBusMgr::getStatus(vector<can_status_t> & statsOut){
 			can_status_t stat;
 			stat.ifName = key;
 			
-			printf("gs: %s\n", key.c_str());
 			if(_lastFrameTime.count(key))
 				stat.lastFrameTime = _lastFrameTime[key];
 			
 			if(_packetCount.count(key))
 				stat.packetCount = _packetCount[key];
+			
 			stats.push_back(stat);
  		}
 		
 	}
+	statsOut = stats;
+	
 	return stats.size() > 0;;
 }
 

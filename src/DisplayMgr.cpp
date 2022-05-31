@@ -1805,11 +1805,11 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 	col = lastcol;
 	row += 7;  _vfd.setCursor(col+10, row );
-
+	_vfd.setFont(VFD::FONT_MINI);
+	
 	vector<CANBusMgr::can_status_t> canStats;
 	if(can->getStatus(canStats)){
 		str =  string("CAN:");
-		
 		for(auto e :canStats){
 			str  += " " + e.ifName;
 		}

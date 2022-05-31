@@ -365,7 +365,7 @@ void GPSmgr::GPSReader(){
 	 
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
-		selTimeout.tv_sec = 10;       /* timeout (secs.) */
+		selTimeout.tv_sec = 5;       /* timeout (secs.) */
 		selTimeout.tv_usec = 0;            /* 100 microseconds */
 		
 		/* back up master */
@@ -380,12 +380,12 @@ void GPSmgr::GPSReader(){
 		
 		// timeout -- nothing from GPS
 		if(numReady == 0){
-			if (timeout_cnt ++ > 2){
+	//		if (timeout_cnt ++ > 2){
 				
 				timeout_cnt = 0;
 				ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
  				closeGPSPort();
- 			}
+// 			}
  			continue;
 		}
 	 

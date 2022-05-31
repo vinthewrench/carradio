@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <cmath>
 #include <algorithm>
+#include <sys/utsname.h>
+
 #include "Utils.hpp"
 
 #include "PiCarMgr.hpp"
@@ -1730,31 +1732,40 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
  
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
-	
+	struct utsname utsBuff;
 	char buffer[30];
 	uint8_t col = 0;
 	uint8_t row = 7;
 
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
+//	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
 
 	if(transition == TRANS_ENTERING){
-		
+	
+	
 	 	_vfd.clearScreen();
-		
+	
+		// top line
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.write("Car Radio");
-  
-		// version number.
-		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "Version: %s", PiCarMgr::PiCarMgr_Version);
-		_vfd.setFont(VFD::FONT_MINI);
-		row+=8; _vfd.setCursor(col + 10, row);
+ 		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "Car Radio: %s", PiCarMgr::PiCarMgr_Version);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 
-		 
-		RtlSdr::device_info_t info;
+		_vfd.setFont(VFD::FONT_MINI);
+  		row += 6;  _vfd.setCursor(col+10, row );
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "%s %s ", __DATE__, __TIME__);
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+		
+		uname(&utsBuff) ;
+	 	row += 6;  _vfd.setCursor(col+10, row );
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "%s: %s ", utsBuff.sysname, utsBuff.version);
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+ 
+		row += 8;
+ 		RtlSdr::device_info_t info;
  		if(radio->isConnected() && radio->getDeviceInfo(info) ){
 			sprintf( buffer ,"\xBA RADIO OK");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
@@ -1773,7 +1784,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 }
 
 
-// MARK: -  isplay value formatting
+// MARK: -  Display value formatting
 
 bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	

@@ -1034,7 +1034,7 @@ void DisplayMgr::drawDeviceStatus(){
 	if(radio->isConnected() && radio->getDeviceInfo(info) ){
  		sprintf( buffer ,"\xBA RADIO OK");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
-		row += 6;  _vfd.setCursor(col+5, row );
+		row += 6;  _vfd.setCursor(col+10, row );
  		std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
 	 	_vfd.write(info.product);
 	}

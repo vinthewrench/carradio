@@ -1763,7 +1763,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 		uname(&utsBuff);
 		row += 7;  _vfd.setCursor(col+10, row );
-		str =   string(utsBuff.sysname)  + " " +  string(utsBuff.version);
+		str =   string(utsBuff.sysname)  + " " +  string(utsBuff.release);
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 

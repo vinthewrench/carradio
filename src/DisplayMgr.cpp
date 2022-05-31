@@ -1008,7 +1008,6 @@ void DisplayMgr::drawDeviceStatusScreen(modeTransition_t transition){
 		_vfd.write("Device Status");
  
 		drawDeviceStatus();
-		LEDeventStartup();
 	}
  
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");

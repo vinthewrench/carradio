@@ -360,8 +360,8 @@ void GPSmgr::GPSReader(){
 	 
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
-		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 100;            /* 100 microseconds */
+		selTimeout.tv_sec = 1;       /* timeout (secs.) */
+		selTimeout.tv_usec = 0;            /* 100 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;
@@ -384,6 +384,8 @@ void GPSmgr::GPSReader(){
 					}
 				}
 				else if( nbytes == -1) {
+					
+					printf("read failed\n");
 					readMore = false;
 					int lastError = errno;
 					

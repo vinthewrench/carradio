@@ -159,11 +159,10 @@ bool PiCarMgr::begin(){
 	
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
-		if( devices.size() == 0)
-			throw Exception("No RTL devices found ");
-
-		if(!_radio.begin(devices[0].index, pcmrate))
-			throw Exception("failed to setup Radio ");
+		if(devices.size() > 0) {
+	 		if(!_radio.begin(devices[0].index))
+			 throw Exception("failed to setup Radio ");
+ 		}
 	 
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
@@ -586,32 +585,47 @@ void PiCarMgr::PiCanLoop(){
 			
 // MARK:   Volume button Clicked
 			if(volWasClicked){
-				bool isOn = _radio.isOn();
 				
-				if(isOn){
-					// just turn it off
-					_radio.setON(false);
+				if(_radio.isConnected()){
+					bool isOn = _radio.isOn();
 					
-					// turn it off forces save of stations.
-					saveRadioSettings();
-					_db.savePropertiesToFile();
+					if(isOn){
+						// just turn it off
+						_radio.setON(false);
+						
+						// turn it off forces save of stations.
+						saveRadioSettings();
+						_db.savePropertiesToFile();
+					}
+					else {
+						RadioMgr::radio_mode_t mode ;
+						uint32_t freq;
+						
+						getSavedFrequencyandMode(mode,freq);
+						_radio.setFrequencyandMode(mode, freq);
+						_radio.setON(true);
+						_display.LEDeventVol();
+						_display.showRadioChange();
+						
+						// save the new radio mode as a PROP_LAST_MENU_SELECTED
+						auto newMenuSelect =  radioModeToMenuMode(mode);
+						
+						if(newMenuSelect != MENU_UNKNOWN)
+							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
+					}
 				}
 				else {
-					RadioMgr::radio_mode_t mode ;
-					uint32_t freq;
+					auto devices = RtlSdr::get_devices();
+					if(devices.size() == 0){
+						printf("no Radio found\n");
+						_display.showStartup();  // show startup
 					
-					getSavedFrequencyandMode(mode,freq);
-					_radio.setFrequencyandMode(mode, freq);
-					_radio.setON(true);
-					_display.LEDeventVol();
-					_display.showRadioChange();
-					
-					// save the new radio mode as a PROP_LAST_MENU_SELECTED
-					auto newMenuSelect =  radioModeToMenuMode(mode);
-					
-					if(newMenuSelect != MENU_UNKNOWN)
-						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
+					}
+//					if(devices.size() > 0) {
+//						if(!_radio.begin(devices[0].index))
+
 				}
+
 			}
 			
 // MARK:   Volume button moved

@@ -965,24 +965,62 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
+	uint8_t width = _vfd.width();
+	uint8_t midX = width/2;
+	
+	
+	char buffer[30];
+	uint8_t col = 10;
+ 	uint8_t row = 5;
+
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-	
-	RtlSdr::device_info_t info;
-	
+	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
+ 
 	if(transition == TRANS_ENTERING){
 		
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
 		_vfd.clearScreen();
-		TRY(_vfd.setCursor(0,10));
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		TRY(_vfd.write("Starting Up..."));
 		
-		if(radio->getDeviceInfo(info)){
-			TRY(_vfd.setCursor(0,18));
-			TRY(_vfd.write(info.name));
-		}
+		_vfd.setCursor(col, row);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.write("Starting Up...");
+		
+		row += 18;
+		
+		memset(buffer, ' ', sizeof(buffer));
+ 		_vfd.setCursor(col, row);
+		if(radio->isConnected()){
+			RtlSdr::device_info_t info;
 
+			sprintf( buffer ,"\xBA  Radio");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+			row += 8;
+			_vfd.setFont(VFD::FONT_MINI);
+ 			_vfd.setCursor(col+5, row); row += 8;
+			_vfd.write(info.name);
+			_vfd.setFont(VFD::FONT_5x7);
+		}
+		else {
+			row += 8;
+			sprintf( buffer ,"X  Radio Not Connected");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+ 		}
+ 
+		memset(buffer, ' ', sizeof(buffer));
+		row += 8;
+ 		_vfd.setCursor(col, row);
+		if(gps->isConnected()){
+			sprintf( buffer ,"\xBA  GPS");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+ 		}
+		else {
+			sprintf( buffer ,"X  GPS Not Connected");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+  		}
+
+		
+		
 		LEDeventStartup();
 	}
 	
@@ -1680,7 +1718,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 			{
 				double kPas = fDB->normalizedDoubleForValue(key,rawValue);
 				double psi =  kPas * 0.1450377377;
-				sprintf(p, "%d psi",   (int) round(psi));
+				sprintf(p, "%2d psi",   (int) round(psi));
 				value = string(buffer);
 				}
 				break;
@@ -1688,7 +1726,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 			case	FrameDB::VOLTS:
 			{
 				float volts =   stof(rawValue);
-				sprintf(p, "%1.2fV",  volts);
+				sprintf(p, "%2.2fV",  volts);
 				value = string(buffer);
 			}
 				break;

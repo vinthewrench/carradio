@@ -53,6 +53,8 @@ public:
 	bool begin(uint32_t deviceIndex, int  pcmrate,  int &error);
 	void stop();
 	
+	bool isConnected() ;
+
 	bool getDeviceInfo(RtlSdr::device_info_t&);
 	
 	static string freqSuffixString(double hz);

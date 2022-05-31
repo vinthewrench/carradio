@@ -97,6 +97,13 @@ void RadioMgr::stop(){
  
  }
 
+ bool  RadioMgr::isConnected() {
+	bool val = false;
+	 
+	 val = _isSetup;
+ 
+	return val;
+};
 
 
 bool RadioMgr::getDeviceInfo(RtlSdr::device_info_t& info){
@@ -459,13 +466,14 @@ void RadioMgr::SDRReader(){
 	IQSampleVector iqsamples;
 
 	while(!_shouldQuit){
-		{
+	 
+		
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldRead){
  				usleep(2);
 				continue;
 			}
-		}
+	 
 		
 		if (!_sdr.getSamples(iqsamples)) {
 			//			 fprintf(stderr, "ERROR: getSamples\n");

@@ -1800,10 +1800,10 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 		
-		lastrow = row+10;
+		lastrow = row;
 	}
 	
-	row = lastrow;
+	row = lastrow+ 7;
 	_vfd.setCursor(col+10, row );
 	_vfd.setFont(VFD::FONT_MINI);
 	

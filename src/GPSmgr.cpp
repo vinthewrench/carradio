@@ -342,6 +342,8 @@ void GPSmgr::GPSReader(){
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
 	int lastError = 0;
 	
+	int timeout_cnt = 0;
+	
 	while(_isRunning){
 		
 		// if not setup // check back later
@@ -356,57 +358,75 @@ void GPSmgr::GPSReader(){
 				sleep(5);
 				continue;
 			}
+			else {
+				timeout_cnt = 0;
+			}
 		}
 	 
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
-		selTimeout.tv_sec = 1;       /* timeout (secs.) */
+		selTimeout.tv_sec = 10;       /* timeout (secs.) */
 		selTimeout.tv_usec = 0;            /* 100 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;
 		
 		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
+		
 		if( numReady == -1 ) {
 			perror("select");
+			continue;
 		}
 		
-		if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
-			
-			for(bool readMore = true; readMore; ){
+		// timeout -- nothing from GPS
+		if(numReady == 0){
+			if (timeout_cnt ++ > 2){
 				
-				u_int8_t c;
-				size_t nbytes =  (size_t)::read( _fd, &c, 1 );
+				timeout_cnt = 0;
+				ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
+ 				closeGPSPort();
+ 			}
+ 			continue;
+		}
+	 
+		if(numReady > 0) {
+			timeout_cnt = 0;
+			if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
 				
-				if(nbytes == 1){
-					if(_nmea.process(c)){
-						processNMEA();
+				for(bool readMore = true; readMore; ){
+					
+					u_int8_t c;
+					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
+					
+					if(nbytes == 1){
+						if(_nmea.process(c)){
+							processNMEA();
+						}
 					}
-				}
-				else if( nbytes == -1) {
-					
-					printf("read failed\n");
-					readMore = false;
-					int lastError = errno;
-					
-					// no data try later
-					if(lastError == EAGAIN)
-						continue;
-					
-					if(lastError == ENXIO){  // device disconnected..
+					else if( nbytes == -1) {
+						readMore = false;
+						int lastError = errno;
 						
-						ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS disconnectd", _ttyPath);
-
-						closeGPSPort();
-						continue;
-					}
-					
-					else {
-						perror("read");
+						// no data try later
+						if(lastError == EAGAIN)
+							continue;
+						
+						if(lastError == ENXIO){  // device disconnected..
+							
+							ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS disconnectd", _ttyPath);
+							
+							closeGPSPort();
+							continue;
+						}
+						
+						else {
+							perror("read");
+						}
 					}
 				}
 			}
 		}
+
 	}
 }
 

@@ -1102,7 +1102,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		float fTemp = cTemp *9.0/5.0 + 32.0;
 		char buffer[64] = {0};
 		
-		TRY(_vfd.setCursor(10, 55));
+		TRY(_vfd.setCursor(10, 60));
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		sprintf(buffer, "%3d\xa0" "F", (int) round(fTemp) );
 		TRY(_vfd.write(buffer));
@@ -1110,7 +1110,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 //	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 //		char buffer[64] = {0};
-//		
+//
 //		TRY(_vfd.setCursor(64, 55));
 //		TRY(_vfd.setFont(VFD::FONT_5x7));
 //		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );

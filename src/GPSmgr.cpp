@@ -373,7 +373,6 @@ void GPSmgr::GPSReader(){
 		
 		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
 		
-		printf("Select returns %d\n",numReady );
 		if( numReady == -1 ) {
 			perror("select");
 			continue;
@@ -392,19 +391,20 @@ void GPSmgr::GPSReader(){
 		}
 		
 		if(numReady > 0) {
-			timeout_cnt = 0;
-			if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
+				if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
 				
 	//			for(bool readMore = true; readMore; ){
 					
 					u_int8_t c;
 					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
 					
+					printf("read %d\n", nbytes);
 		//			readMore = false;
 					
 					if(nbytes == 1){
 	//					readMore = true;;
-						
+						timeout_cnt = 0;
+
 						if(_nmea.process(c)){
 							processNMEA();
 						}

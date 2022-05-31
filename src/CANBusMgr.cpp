@@ -169,6 +169,29 @@ int CANBusMgr::openSocket(string ifname, int &error){
 }
 
 
+
+bool CANBusMgr::getStatus(vector<can_status_t> & statsOut){
+ 
+	vector<can_status_t> stats = {};
+	
+	for (auto& [key, fd]  : _interfaces){
+		if(fd != -1){
+			can_status_t stat;
+			
+			stat.ifName = key;
+			
+			if(_lastFrameTime.count(key))
+				stat.lastFrameTime = _lastFrameTime[key];
+			
+			if(_packetCount.count(key))
+				stat.packetCount = _packetCount[key];
+			stats.push_back(stat);
+ 		}
+		
+	}
+	return stats.size() > 0;;
+}
+
 #warning may want to toggle _isRunning = false here
 bool CANBusMgr::stop(string ifName, int &error){
 	

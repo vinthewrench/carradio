@@ -50,6 +50,14 @@ public:
  
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
+	typedef struct {
+		string 	ifName;
+		time_t	lastFrameTime;
+		size_t	packetCount;
+	} can_status_t;
+
+	bool getStatus(vector<can_status_t> & stats);
+ 
 	FrameDB* frameDB() {return &_frameDB;};
  
 private:

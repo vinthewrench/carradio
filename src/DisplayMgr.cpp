@@ -1734,11 +1734,15 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
  
 	uint8_t col = 0;
 	uint8_t row = 7;
+	string str;
+	static uint8_t lastcol = col;
 
 	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
 	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
 	PiCarDB*				db 		= PiCarMgr::shared()->db();
+	PiCarCAN*			can 		= PiCarMgr::shared()->can();
+
 	
 	if(transition == TRANS_LEAVING) {
 		return;
@@ -1752,9 +1756,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("Car Radio ");
-		
-		string str;
-		
+	 
 		struct utsname utsBuff;
 		RtlSdr::device_info_t rtlInfo;
 		
@@ -1797,7 +1799,26 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			str =   string("COMPASS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
+		
+		lastcol = col+10;
 	}
+	
+	col = lastcol;
+	row += 7;  _vfd.setCursor(col+10, row );
+
+	vector<CANBusMgr::can_status_t> canStats;
+	if(can->getStatus(canStats)){
+		str =  string("CAN:");
+		
+		for(auto e :canStats){
+			str  += " " + e.ifName;
+		}
+	}
+	else
+		str =  string("CAN: ") + string("NOT CONNECTED");
+	
+	std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+	_vfd.printPacket("%s", str.c_str());
 	
 	float cTemp = 0;
 	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){

@@ -115,3 +115,7 @@ bool PiCarCAN::resetPacketCount(pican_bus_t bus){
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
 	return _CANbus.resetPacketCount(ifName);
 }
+
+bool PiCarCAN::getStatus(vector<CANBusMgr::can_status_t> & stats){
+	return  _CANbus.getStatus(stats);
+}

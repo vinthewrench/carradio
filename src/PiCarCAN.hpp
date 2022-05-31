@@ -43,6 +43,8 @@ public:
 	bool packetCount(pican_bus_t bus, size_t &count);
 	bool resetPacketCount(pican_bus_t bus);
  
+	bool getStatus(vector<CANBusMgr::can_status_t> & stats);
+ 
 	FrameDB* frameDB() {return  _CANbus.frameDB();};
 
 private:

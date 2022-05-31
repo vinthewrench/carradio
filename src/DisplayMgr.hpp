@@ -67,7 +67,8 @@ public:
 		MODE_GPS,
 		MODE_SETTINGS,
 		MODE_SETTINGS1,
-	
+		
+		MODE_DEV_STATUS,
 		MODE_MENU,
 	}mode_state_t;
 
@@ -108,6 +109,8 @@ public:
 	void showCANbus(uint8_t page = 0);
 	void showSettings(uint8_t page = 0);
 
+	void showDevStatus();
+
 	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
 	
  	// Menu Screen Management
@@ -137,6 +140,7 @@ private:
 		
 	void drawMode(modeTransition_t transition, mode_state_t mode);
 	void drawStartupScreen(modeTransition_t transition);
+	void drawDeviceStatusScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
 	void drawVolumeScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
@@ -148,10 +152,11 @@ private:
 
 	void drawSettingsScreen(modeTransition_t transition);
 	void drawSettingsScreen1(modeTransition_t transition);
-
+	
 	void drawInternalError(modeTransition_t transition);
  
 	void drawShutdownScreen();
+	void drawDeviceStatus();
 	
 	
 // display value formatting

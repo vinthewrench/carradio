@@ -618,7 +618,7 @@ void PiCarMgr::PiCanLoop(){
 					auto devices = RtlSdr::get_devices();
 					if(devices.size() == 0){
 						printf("no Radio found\n");
-						_display.showStartup();  // show startup
+						_display.showDevStatus();  // show startup
 					
 					}
 //					if(devices.size() > 0) {

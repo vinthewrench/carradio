@@ -346,6 +346,10 @@ void DisplayMgr::showSettings(uint8_t page){
 	
 }
 
+ 
+void DisplayMgr::showDevStatus(){
+	setEvent(EVT_PUSH, MODE_DEV_STATUS );
+}
 
 
 void DisplayMgr::showVolumeChange(){
@@ -763,6 +767,13 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
+				if(_current_mode == MODE_DEV_STATUS) {
+					if(diff.tv_sec >=  2) {
+						pushMode(MODE_TIME);
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+				}
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
@@ -894,6 +905,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				drawStartupScreen(transition);
 				break;
 				
+			case MODE_DEV_STATUS:
+				drawDeviceStatusScreen(transition);
+				break;
+				
 			case MODE_TIME:
 				drawTimeScreen(transition);
 				break;
@@ -965,63 +980,82 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
-	uint8_t width = _vfd.width();
-	uint8_t midX = width/2;
-	
-	
-	char buffer[30];
-	uint8_t col = 10;
- 	uint8_t row = 7;
-
-	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
- 
-	if(transition == TRANS_ENTERING){
+ 	if(transition == TRANS_ENTERING){
 		
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
 		_vfd.clearScreen();
 		
-		_vfd.setCursor(col, row);
+		_vfd.setCursor(7, 10);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Starting Up...");
- 		row+=2;
-		
-		memset(buffer, ' ', sizeof(buffer));
-		row+=8; _vfd.setCursor(col, row);
-		_vfd.setFont(VFD::FONT_MINI);
-	
-		if(radio->isConnected()){
-			RtlSdr::device_info_t info;
-			sprintf( buffer ,"\xBA RADIO OK");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
-			row += 6;  _vfd.setCursor(col+5, row );
-			_vfd.write(info.name);
-		}
-		else {
-	 		sprintf( buffer ,"X RADIO FAIL");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
- 		}
  
-		memset(buffer, ' ', sizeof(buffer));
-		row += 8; _vfd.setCursor(col, row);
-		if(gps->isConnected()){
-			sprintf( buffer ,"\xBA GPS OK");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
- 		}
-		else {
-			sprintf( buffer ,"X GPS FAIL");
-			_vfd.writePacket( (const uint8_t*) buffer,21);
-  		}
-
-		
-		
+		drawDeviceStatus();
 		LEDeventStartup();
 	}
-	
-	
+ 
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
+
+void DisplayMgr::drawDeviceStatusScreen(modeTransition_t transition){
+	
+	if(transition == TRANS_ENTERING){
+		
+	 	_vfd.clearScreen();
+		
+		_vfd.setCursor(7, 10);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.write("Device Status");
+ 
+		drawDeviceStatus();
+		LEDeventStartup();
+	}
+ 
+	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+}
+
+
+void DisplayMgr::drawDeviceStatus(){
+ 
+	char buffer[30];
+	uint8_t col = 10;
+	uint8_t row = 7;
+
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
+ 
+	row+=2;
+	
+	memset(buffer, ' ', sizeof(buffer));
+	row+=8; _vfd.setCursor(col, row);
+	_vfd.setFont(VFD::FONT_MINI);
+
+	if(radio->isConnected()){
+		RtlSdr::device_info_t info;
+		sprintf( buffer ,"\xBA RADIO OK");
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+		row += 6;  _vfd.setCursor(col+5, row );
+		_vfd.write(info.name);
+	}
+	else {
+		sprintf( buffer ,"X RADIO FAIL");
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+	}
+
+	memset(buffer, ' ', sizeof(buffer));
+	row += 8; _vfd.setCursor(col, row);
+	if(gps->isConnected()){
+		sprintf( buffer ,"\xBA GPS OK");
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+	}
+	else {
+		sprintf( buffer ,"X GPS FAIL");
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+	}
+
+}
+
+
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	

@@ -1735,10 +1735,15 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	uint8_t col = 0;
 	uint8_t row = 7;
 
-	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
 	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
- 
+	PiCarDB*				db 		= PiCarMgr::shared()->db();
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
 	if(transition == TRANS_ENTERING){
 	 
 		_vfd.clearScreen();
@@ -1768,7 +1773,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 
-		
 		row += 7;  _vfd.setCursor(col+10, row );
 		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
 			str =   "RADIO: " +  string(rtlInfo.product);
@@ -1793,8 +1797,16 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			str =   string("COMPASS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-
 	}
+	
+	float cTemp = 0;
+	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+		
+		_vfd.setCursor(col+10, 64 );
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("CPU TEMP:%d\xa0" "C ", (int) round(cTemp));
+		}
+
  
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }

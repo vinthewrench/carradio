@@ -382,7 +382,7 @@ void GPSmgr::GPSReader(){
 		if(numReady == 0){
 	//		if (timeout_cnt ++ > 2){
 				
-			printf("timeOut\n"); 
+			printf("timeOut\n");
 				timeout_cnt = 0;
 				ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
  				closeGPSPort();
@@ -399,7 +399,10 @@ void GPSmgr::GPSReader(){
 					u_int8_t c;
 					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
 					
-					if(nbytes == 1){
+					if(nbytes == 0){
+						readMore = false;
+					}
+					else if(nbytes == 1){
 						if(_nmea.process(c)){
 							processNMEA();
 						}

@@ -1735,7 +1735,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	uint8_t col = 0;
 	uint8_t row = 7;
 	string str;
-	static uint8_t lastcol = col;
+	static uint8_t lastrow = row;
 
 	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
@@ -1800,10 +1800,10 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 		
-		lastcol = col+10;
+		lastrow = row+10;
 	}
 	
-	col = lastcol;
+	row = lastrow;
 	row += 7;  _vfd.setCursor(col+10, row );
 	_vfd.setFont(VFD::FONT_MINI);
 	

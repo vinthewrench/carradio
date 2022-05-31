@@ -971,7 +971,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
 	char buffer[30];
 	uint8_t col = 10;
- 	uint8_t row = 5;
+ 	uint8_t row = 7;
 
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
@@ -985,31 +985,27 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Starting Up...");
-		
-		row += 18;
+ 		row+=2;
 		
 		memset(buffer, ' ', sizeof(buffer));
- 		_vfd.setCursor(col, row);
+		row+=8; _vfd.setCursor(col, row);
 		if(radio->isConnected()){
 			RtlSdr::device_info_t info;
 
 			sprintf( buffer ,"\xBA  Radio");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
-			row += 8;
 			_vfd.setFont(VFD::FONT_MINI);
- 			_vfd.setCursor(col+5, row); row += 8;
+			row += 6;  _vfd.setCursor(col+5, row );
 			_vfd.write(info.name);
 			_vfd.setFont(VFD::FONT_5x7);
 		}
 		else {
-			row += 8;
-			sprintf( buffer ,"X  Radio Not Connected");
+	 		sprintf( buffer ,"X  Radio Not Connected");
 			_vfd.writePacket( (const uint8_t*) buffer,21);
  		}
  
 		memset(buffer, ' ', sizeof(buffer));
-		row += 8;
- 		_vfd.setCursor(col, row);
+		row += 8; _vfd.setCursor(col, row);
 		if(gps->isConnected()){
 			sprintf( buffer ,"\xBA  GPS");
 			_vfd.writePacket( (const uint8_t*) buffer,21);

@@ -1736,8 +1736,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	uint8_t row = 7;
 
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-//	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
-
+	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
+	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
+ 
 	if(transition == TRANS_ENTERING){
 	 
 		_vfd.clearScreen();
@@ -1769,12 +1770,27 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 		
 		row += 7;  _vfd.setCursor(col+10, row );
-		
 		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
 			str =   "RADIO: " +  string(rtlInfo.product);
  		else
 			str =   string("RADIO: ") + string("NOT CONNECTED");
- 
+ 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		row += 7;  _vfd.setCursor(col+10, row );
+		if(gps->isConnected() && radio->getDeviceInfo(rtlInfo) )
+			str =   string("GPS: ") + string("OK");
+		else
+			str =   string("GPS: ") + string("NOT CONNECTED");
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		row += 7;  _vfd.setCursor(col+10, row );
+		string compassVersion;
+	 		if(compass->isConnected() && compass->versionString(compassVersion))
+			str =   string("COMPASS: ") + compassVersion;
+		else
+			str =   string("COMPASS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 

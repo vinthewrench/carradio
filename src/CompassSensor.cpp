@@ -62,6 +62,20 @@ bool CompassSensor::isConnected(){
 	
 }
  
+
+bool CompassSensor::versionString(string & version){
+	
+	BNO055_Compass::BNO055_info_t info;
+	
+	if(isConnected() && _compass.getInfo(info)){
+		string str = "BNO055 " + to_string( info.sw_rev_id);
+		version = str;
+		return true;
+	}
+	
+	return false;
+}
+
 void CompassSensor::reset(){
 //	_sensor.reset();
 }

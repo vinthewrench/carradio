@@ -32,7 +32,9 @@ public:
 	void setQueryDelay(uint64_t);
 
 	bool isConnected();
- 
+	bool versionString(string & version);
+
+	
 	response_result_t rcvResponse(std::function<void(map<string,string>)> callback = NULL);
 	
 	void idle(); 	// called from loop

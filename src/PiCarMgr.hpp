@@ -74,6 +74,7 @@ class PiCarMgr {
 	PiCarDB * 	db() 		{return &_db;};
 	GPSmgr * 	gps() 		{return &_gps;};
 	PiCarCAN * 	can() 		{return &_can;};
+	CompassSensor* compass() {return &_compass;};
 
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();

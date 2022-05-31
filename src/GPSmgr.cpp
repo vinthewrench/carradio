@@ -338,7 +338,7 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 
 
 void GPSmgr::GPSReader(){
-	 
+	
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
 	int lastError = 0;
 	
@@ -351,7 +351,7 @@ void GPSmgr::GPSReader(){
 			sleep(5);
 			continue;
 		}
-	 
+		
 		// is the port setup yet?
 		if (! isConnected()){
 			if(!openGPSPort(lastError)){
@@ -362,7 +362,7 @@ void GPSmgr::GPSReader(){
 				timeout_cnt = 0;
 			}
 		}
-	 
+		
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 5;       /* timeout (secs.) */
@@ -381,16 +381,16 @@ void GPSmgr::GPSReader(){
 		
 		// timeout -- nothing from GPS
 		if(numReady == 0){
-	//		if (timeout_cnt ++ > 2){
-				
+			//		if (timeout_cnt ++ > 2){
+			
 			printf("timeOut\n");
-				timeout_cnt = 0;
-				ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
- 				closeGPSPort();
-// 			}
- 			continue;
+			timeout_cnt = 0;
+			ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
+			closeGPSPort();
+			// 			}
+			continue;
 		}
-	 
+		
 		if(numReady > 0) {
 			timeout_cnt = 0;
 			if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
@@ -399,20 +399,21 @@ void GPSmgr::GPSReader(){
 					
 					u_int8_t c;
 					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
-				
+					
 					readMore = false;
-	
+					
 					if(nbytes == 1){
+						readMore = true;;
+						
 						if(_nmea.process(c)){
 							processNMEA();
-							readMore = true;;
 						}
 					}
 					else if( nbytes == -1) {
-	 					int lastError = errno;
+						int lastError = errno;
 						
 						// no data try later
-						if(lastError == EAGAIN){
+						if(lastError == EAGAIN)
 							continue;
 						
 						if(lastError == ENXIO){  // device disconnected..
@@ -430,8 +431,8 @@ void GPSmgr::GPSReader(){
 				}
 			}
 		}
-
 	}
+	
 }
 
 

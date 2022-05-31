@@ -56,10 +56,10 @@ using namespace std;
  
 class PiCarMgr {
  
-	static const char* 	PiCarMgr_Version;
 
 	public:
-	
+	static const char* 	PiCarMgr_Version;
+
 	static PiCarMgr *shared();
  
 	PiCarMgr();
@@ -121,7 +121,8 @@ private:
 		MENU_CANBUS,
 		MENU_GPS,
 		MENU_TIME,
-		MENU_SETTINGS
+		MENU_SETTINGS,
+		MENU_INFO,
 	} menu_mode_t;
 	
 	vector < pair<PiCarMgr::menu_mode_t, string>> _main_menu_map;

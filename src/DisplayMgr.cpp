@@ -328,6 +328,12 @@ void DisplayMgr::showStartup(){
 void DisplayMgr::showTime(){
 	setEvent(EVT_PUSH, MODE_TIME);
 }
+
+
+void DisplayMgr::showInfo(){
+	setEvent(EVT_PUSH, MODE_INFO);
+}
+
  
 void DisplayMgr::showSettings(uint8_t page){
 	
@@ -343,7 +349,6 @@ void DisplayMgr::showSettings(uint8_t page){
 		default:
 			setEvent(EVT_PUSH, MODE_SETTINGS);
 	}
-	
 }
 
  
@@ -663,6 +668,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_SETTINGS:
 		case MODE_SETTINGS1:
 		case MODE_GPS:
+		case MODE_INFO:
 		case MODE_CANBUS:
 		case MODE_CANBUS1:
 			isSticky = true;
@@ -949,6 +955,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				drawCANBusScreen1(transition);
 				break;
  				
+			case MODE_INFO:
+				drawInfoScreen(transition);
+				break;
+	 
 			case MODE_UNKNOWN:
 				// we will always leave the UNKNOWN state at start
 				if(transition == TRANS_LEAVING)
@@ -1717,6 +1727,50 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
  
 }
 		  
+ 
+void DisplayMgr::drawInfoScreen(modeTransition_t transition){
+	
+	
+	char buffer[30];
+	uint8_t col = 0;
+	uint8_t row = 7;
+
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
+
+	if(transition == TRANS_ENTERING){
+		
+	 	_vfd.clearScreen();
+		
+		_vfd.setCursor(col, row);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.write("Car Radio");
+  
+		// version number.
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "Version: %s", PiCarMgr::PiCarMgr_Version);
+		_vfd.setFont(VFD::FONT_MINI);
+		row+=8; _vfd.setCursor(col + 10, row);
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+
+		 
+		RtlSdr::device_info_t info;
+ 		if(radio->isConnected() && radio->getDeviceInfo(info) ){
+			sprintf( buffer ,"\xBA RADIO OK");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+			row += 6;  _vfd.setCursor(col+10, row );
+			std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
+			_vfd.write(info.product);
+		}
+		else {
+			sprintf( buffer ,"X RADIO FAIL");
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+		}
+
+	}
+ 
+	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+}
 
 
 // MARK: -  isplay value formatting

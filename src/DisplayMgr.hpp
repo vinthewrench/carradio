@@ -68,6 +68,8 @@ public:
 		MODE_SETTINGS,
 		MODE_SETTINGS1,
 		
+		MODE_INFO,
+
 		MODE_DEV_STATUS,
 		MODE_MENU,
 	}mode_state_t;
@@ -103,6 +105,8 @@ public:
 	void showTime();
 	void showGPS();
 	void showStartup();
+	void showInfo();
+
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
 	void showRadioChange();
@@ -153,6 +157,8 @@ private:
 	void drawSettingsScreen(modeTransition_t transition);
 	void drawSettingsScreen1(modeTransition_t transition);
 	
+	void drawInfoScreen(modeTransition_t transition);
+ 
 	void drawInternalError(modeTransition_t transition);
  
 	void drawShutdownScreen();

@@ -108,6 +108,7 @@ PiCarMgr::PiCarMgr(){
 		  {MENU_TIME,		"Time"},
 		  {MENU_UNKNOWN, "-"},
 		  {MENU_SETTINGS,"Settings"},
+		  {MENU_INFO,"Info"},
 	  };
 
 	_isRunning = true;
@@ -802,6 +803,10 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			mode = MENU_GPS;
 			break;
 
+		case DisplayMgr::MODE_INFO:
+			mode = MENU_INFO;
+			break;
+ 
 		case DisplayMgr::MODE_SETTINGS:
 		case DisplayMgr::MODE_SETTINGS1:
 			mode = MENU_SETTINGS;
@@ -811,6 +816,8 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_CANBUS1:
 			mode = MENU_CANBUS;
 			break;
+	
+	
 
 		default:
 			break;
@@ -906,9 +913,12 @@ void PiCarMgr::displayMenu(){
 	
 				case MENU_SETTINGS:
 					displaySettingsMenu();
-	//				_display.showSettings();
-						break;
-					
+	 					break;
+	 
+				case MENU_INFO:
+					_display.showInfo();
+					break;
+ 
 				case 	MENU_UNKNOWN:
 				default:
 					// do nothing

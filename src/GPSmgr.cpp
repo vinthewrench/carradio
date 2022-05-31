@@ -382,6 +382,7 @@ void GPSmgr::GPSReader(){
 		if(numReady == 0){
 	//		if (timeout_cnt ++ > 2){
 				
+			printf("timeOut\n");
 				timeout_cnt = 0;
 				ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS Timeout", _ttyPath);
  				closeGPSPort();

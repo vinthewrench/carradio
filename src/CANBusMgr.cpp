@@ -177,9 +177,9 @@ bool CANBusMgr::getStatus(vector<can_status_t> & statsOut){
 	for (auto& [key, fd]  : _interfaces){
 		if(fd != -1){
 			can_status_t stat;
-			
 			stat.ifName = key;
 			
+			printf("gs: %s\n", key);
 			if(_lastFrameTime.count(key))
 				stat.lastFrameTime = _lastFrameTime[key];
 			

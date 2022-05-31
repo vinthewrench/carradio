@@ -373,6 +373,7 @@ void GPSmgr::GPSReader(){
 		
 		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
 		
+		printf("Select returns %d\n",numReady );
 		if( numReady == -1 ) {
 			perror("select");
 			continue;
@@ -398,21 +399,20 @@ void GPSmgr::GPSReader(){
 					
 					u_int8_t c;
 					size_t nbytes =  (size_t)::read( _fd, &c, 1 );
-					
-					if(nbytes == 0){
-						readMore = false;
-					}
-					else if(nbytes == 1){
+				
+					readMore = false;
+	
+					if(nbytes == 1){
 						if(_nmea.process(c)){
 							processNMEA();
+							readMore = true;;
 						}
 					}
 					else if( nbytes == -1) {
-						readMore = false;
-						int lastError = errno;
+	 					int lastError = errno;
 						
 						// no data try later
-						if(lastError == EAGAIN)
+						if(lastError == EAGAIN){
 							continue;
 						
 						if(lastError == ENXIO){  // device disconnected..

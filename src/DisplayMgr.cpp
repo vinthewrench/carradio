@@ -1029,9 +1029,10 @@ void DisplayMgr::drawDeviceStatus(){
 	row+=8; _vfd.setCursor(col, row);
 	_vfd.setFont(VFD::FONT_MINI);
 
-	if(radio->isConnected()){
-		RtlSdr::device_info_t info;
-		sprintf( buffer ,"\xBA RADIO OK");
+	RtlSdr::device_info_t info;
+
+	if(radio->isConnected() && radio->getDeviceInfo(info) ){
+ 		sprintf( buffer ,"\xBA RADIO OK");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 		row += 6;  _vfd.setCursor(col+5, row );
 		_vfd.write(info.name);

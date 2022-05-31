@@ -1035,6 +1035,8 @@ void DisplayMgr::drawDeviceStatus(){
  		sprintf( buffer ,"\xBA RADIO OK");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 		row += 6;  _vfd.setCursor(col+5, row );
+		
+		printf("device |%s|\n", info.name.c_str());
 		_vfd.write(info.name);
 	}
 	else {

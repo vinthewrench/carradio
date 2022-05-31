@@ -1108,14 +1108,14 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		TRY(_vfd.write(buffer));
 	}
 	
-	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-		char buffer[64] = {0};
-		
-		TRY(_vfd.setCursor(64, 55));
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
-		TRY(_vfd.write(buffer));
-	}
+//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+//		char buffer[64] = {0};
+//		
+//		TRY(_vfd.setCursor(64, 55));
+//		TRY(_vfd.setFont(VFD::FONT_5x7));
+//		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
+//		TRY(_vfd.write(buffer));
+//	}
 	
 }
 

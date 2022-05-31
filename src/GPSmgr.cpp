@@ -112,9 +112,14 @@ bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 
 	reset();
 	_nmea.clear();
-	
-	_isSetup = true;
+	 
+	{
+		int ignoreError;
+		openGPSPort(ignoreError);
+ 	}
  
+	_isSetup = true;
+
 	return _isSetup;
 }
 

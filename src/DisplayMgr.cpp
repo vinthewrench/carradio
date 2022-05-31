@@ -1019,7 +1019,7 @@ void DisplayMgr::drawDeviceStatus(){
  
 	char buffer[30];
 	uint8_t col = 10;
-	uint8_t row = 7;
+	uint8_t row = 10;
 
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*	gps 		= PiCarMgr::shared()->gps();

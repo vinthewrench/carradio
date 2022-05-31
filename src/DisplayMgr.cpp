@@ -1731,9 +1731,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		  
  
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
-	
-	struct utsname utsBuff;
-	char buffer[30];
+ 
 	uint8_t col = 0;
 	uint8_t row = 7;
 
@@ -1741,9 +1739,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 //	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
 
 	if(transition == TRANS_ENTERING){
-	
-	
-	 	_vfd.clearScreen();
+	 
+		_vfd.clearScreen();
 	
 		// top line
 		_vfd.setCursor(col, row);
@@ -1751,6 +1748,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.printPacket("Car Radio ");
 		
 		string str;
+		
+		struct utsname utsBuff;
+		RtlSdr::device_info_t rtlInfo;
 		
 		str = string(PiCarMgr::PiCarMgr_Version);
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
@@ -1763,25 +1763,20 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 		uname(&utsBuff);
 		row += 7;  _vfd.setCursor(col+10, row );
-		str =   string(utsBuff.sysname)  + " " +  string(utsBuff.release);
+		str =   string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 
-//
-//		row += 8;
-//		_vfd.setFont(VFD::FONT_5x7);
-// 		RtlSdr::device_info_t info;
-// 		if(radio->isConnected() && radio->getDeviceInfo(info) ){
-//			sprintf( buffer ,"\xBA RADIO OK");
-//			_vfd.writePacket( (const uint8_t*) buffer,21);
-//			row += 6;  _vfd.setCursor(col+10, row );
-//			std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
-//			_vfd.write(info.product);
-//		}
-//		else {
-//			sprintf( buffer ,"X RADIO FAIL");
-//			_vfd.writePacket( (const uint8_t*) buffer,21);
-//		}
+		
+		row += 7;  _vfd.setCursor(col+10, row );
+		
+		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
+			str =   "RADIO: " +  string(rtlInfo.product);
+ 		else
+			str =   string("RADIO: ") + string("NOT CONNECTED");
+ 
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
 
 	}
  

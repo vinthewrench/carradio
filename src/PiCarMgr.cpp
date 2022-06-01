@@ -45,10 +45,7 @@ const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 //const char* dev_audio  = "hw:CARD=DAC,DEV=0";
 
-//const char* dev_audio  = "default";
-
- const char* dev_audio  = "Headphones";
-
+const char* dev_audio  = "default";
 constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);

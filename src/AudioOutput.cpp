@@ -48,6 +48,13 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
+#define _MIXER_ "hw:1"
+#define _MIXER_NAME_  "PCM"
+
+
+#define _MIXER_ "hw:0"
+#define _MIXER_NAME_  "Headphones"
+
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
 	
 	bool success = false;
@@ -83,7 +90,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 		} 	else {
 			
 			snd_mixer_open(&_mixer , SND_MIXER_ELEM_SIMPLE);
-			snd_mixer_attach(_mixer, "hw:1");
+			snd_mixer_attach(_mixer, _MIXER_);
 			snd_mixer_selem_register(_mixer, NULL, NULL);
 			snd_mixer_load(_mixer);
 			snd_mixer_handle_events(_mixer);
@@ -91,7 +98,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
-			snd_mixer_selem_id_set_name(sid, "PCM");
+			snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			

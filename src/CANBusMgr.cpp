@@ -445,6 +445,8 @@ void CANBusMgr::processODBrequests() {
 	
 	if(shouldQuery){
 		
+		printf("shouldQuery\n");
+		
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
 			if(fd != -1){

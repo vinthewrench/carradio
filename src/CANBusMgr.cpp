@@ -157,6 +157,16 @@ bool CANBusMgr::start(string ifName, int &error){
 					return false;
 				}
 				else {
+					
+					{
+						printf("pollableInterfaces ");
+						for( auto e : _frameDB.pollableInterfaces()){
+							printf("%s ", e.c_str());
+						}
+						printf("\n");
+					}
+
+					
 					_isSetup = true;
 					return true;;
 				}
@@ -168,14 +178,7 @@ bool CANBusMgr::start(string ifName, int &error){
 		}
 	}
 	
-	{
-		printf("pollableInterfaces ");
-		for( auto e : _frameDB.pollableInterfaces()){
-			printf("%s ", e.c_str());
-		}
-		printf("\n");
-	}
-	
+		
 	error = ENXIO;
 	return false;
 }

@@ -1508,7 +1508,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.printPacket("%-8s", v[1].c_str());
 
 		row += 10;
-		_vfd.setCursor(col+30, row );
+		_vfd.setCursor(col+30 - 6, row );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
 	}

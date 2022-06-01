@@ -346,7 +346,7 @@ void GPSmgr::processNMEA(){
 		pthread_mutex_lock (&_mutex);
 		memset((void*)&_lastVelocity, 0, sizeof(_lastVelocity));
 		_lastVelocity.isValid = _nmea.isValid();
-		_lastVelocity.heading = _nmea.getCourse() /1000.;
+		_lastVelocity.heading = _nmea.getCourse() /10000.;
 		_lastVelocity.speed = _nmea.getSpeed();
 		_lastVelocity.timestamp = now;
 		pthread_mutex_unlock (&_mutex);

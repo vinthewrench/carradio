@@ -1493,7 +1493,8 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		return;
 	}
   
- 
+	_vfd.setFont(VFD::FONT_5x7);
+	
 	row += 15;
 	
 	GPSLocation_t location;
@@ -1513,14 +1514,16 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 	}
 	
-	
-//		row += 10;
-//		if(location.altitudeIsValid)  {
-//			_vfd.setCursor(col+10, row );
-// 			constexpr double  M2FT = 	3.2808399;
-// 			_vfd.printPacket("%.1f",location.altitude * M2FT);
-//		}
-//
+ 	row += 15;
+		if(location.altitudeIsValid)  {
+			_vfd.setCursor(col+10, row );
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.printPacket("ALT: ");
+			_vfd.setFont(VFD::FONT_5x7);
+	 		constexpr double  M2FT = 	3.2808399;
+			_vfd.printPacket("%.1f",location.altitude * M2FT);
+ 			}
+
 	
 //	char buffer[64] = {0};
 //		sprintf(buffer, "%s:%2d DOP:%.1f",

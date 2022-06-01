@@ -434,14 +434,14 @@ void CANBusMgr::processODBrequests() {
 		shouldQuery = true;
 	} else {
 		
-		timeval now, diff;
+		timeval now; 
 		gettimeofday(&now, NULL);
-		timersub(&now, &_lastPollTime, &diff);
-
-		if(timercmp(&diff, &_pollDelay, >=)){
+	//	timersub(&now, &_lastPollTime, &diff);
+		
+		if(timercmp(&now, &_pollDelay, >=)){
 			shouldQuery = true;
 		}
- 	}
+	}
 	
 	if(shouldQuery){
 		
@@ -454,31 +454,31 @@ void CANBusMgr::processODBrequests() {
 					
 					if(_keysToPoll.empty())
 						_keysToPoll = all_keys(_odb_polling);
-				 
+					
 					if(!_keysToPoll.empty()){
 						auto odbKey = _keysToPoll.back();
 						_keysToPoll.pop_back();
-					
+						
 						if( _odb_polling.find(odbKey) == _odb_polling.end()){
 							
 							auto pInfo = 	_odb_polling[odbKey];
-				
+							
 							///
 							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
 							for(auto i = 0; i < pInfo.request.size() ; i++)
 								printf("%02x ",pInfo.request[i]);
 							printf("\n");
-							 
-						////
+							
+							////
 						}
- 
+						
 					}
-	 			};
+				};
+			}
 		}
+		gettimeofday(&_lastPollTime, NULL);
+		
 	}
- 		gettimeofday(&_lastPollTime, NULL);
-
- }
 }
 
 

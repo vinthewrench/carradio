@@ -453,11 +453,12 @@ void CANBusMgr::processODBrequests() {
 			if(fd != -1){
 				if (find(ifNames.begin(), ifNames.end(), key) != ifNames.end()){
 					
-					printf("shouldQuery %s\n", key.c_str());
 				
 					if(_keysToPoll.empty())
 						_keysToPoll = all_keys(_odb_polling);
-					
+		
+					printf("shouldQuery %s %d\n", key.c_str(), _keysToPoll.size());
+	
 					if(!_keysToPoll.empty()){
 						auto odbKey = _keysToPoll.back();
 						_keysToPoll.pop_back();

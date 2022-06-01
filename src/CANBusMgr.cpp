@@ -45,14 +45,12 @@ CANBusMgr::CANBusMgr(){
 	_packetCount = {};
 	_lastFrameTime  = {};
 	
-	
 	_lastPollTime = {0,0};
-//	_pollDelay = 200 * 1000 ; //  200 ms
-	_pollDelay = 5;
+	_pollDelay = {0, 200 * 1000 }; //  200 ms
+	_pollDelay = {1, 200 * 1000 }; //  200 ms
 
 	pthread_create(&_TID, NULL,
 										  (THREADFUNCPTR) &CANBusMgr::CANReaderThread, (void*)this);
-
 
 }
 
@@ -64,6 +62,7 @@ CANBusMgr::~CANBusMgr(){
 	
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
+
 	
 	_isRunning = false;
 	pthread_join(_TID, NULL);
@@ -433,31 +432,22 @@ void CANBusMgr::processODBrequests() {
 	
 	bool shouldQuery = false;
 	
-	if(_lastPollTime.tv_sec == 0
-		&&  _lastPollTime.tv_usec == 0 ){
+	if(_lastPollTime.tv_sec == 0 &&  _lastPollTime.tv_usec == 0 ){
 		shouldQuery = true;
-		
-		printf("first run\n");
 	} else {
 		
 		timeval now, diff;
 		gettimeofday(&now, NULL);
 		timersub(&now, &_lastPollTime, &diff);
 		
-//		if(diff.tv_usec >=  _pollDelay)
-		if(diff.tv_sec >=  _pollDelay){
+		if(timercmp(&diff, &_pollDelay, >=)){
 			shouldQuery = true;
-
-			printf("diff %d > %d \n",diff.tv_sec, _pollDelay );
 		}
-		
 	}
 	
 	if(shouldQuery){
 		
 		printf("shouldQuery\n");
-		
-		gettimeofday(&_lastPollTime, NULL);
 		
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
@@ -488,8 +478,7 @@ void CANBusMgr::processODBrequests() {
 				};
 			}
 		}
-
-		
+		gettimeofday(&_lastPollTime, NULL);
 	}
 }
 

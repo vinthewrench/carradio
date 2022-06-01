@@ -90,7 +90,7 @@ private:
 	map<string, odb_polling_t> 	_odb_polling = {};
 	
 	timeval			_lastPollTime;
-	uint64_t     	_pollDelay;			// how long to wait before next ODB poll
+	timeval     	_pollDelay;			// how long to wait before next ODB poll
 	vector<string> _keysToPoll = {};
 
 	fd_set					_master_fds;		// Can sockets that are ready for read

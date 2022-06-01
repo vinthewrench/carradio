@@ -1502,14 +1502,14 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		string utm = GPSmgr::UTMString(location);
 		vector<string> v = split<string>(utm, " ");
 	
-		_vfd.setCursor(col+10, row );
+		_vfd.setCursor(col+7, row );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		_vfd.setCursor(col+33, row );
+		_vfd.setCursor(col+30, row );
 		_vfd.printPacket("%-8s", v[1].c_str());
 
 		row += 10;
-		_vfd.setCursor(col+33 - 6, row );
+		_vfd.setCursor(col+30 - 6, row );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
 		row += 12;
@@ -1518,7 +1518,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket("ALT: ");
 			
-			_vfd.setCursor(col+33, row );
+			_vfd.setCursor(col+30, row );
 			_vfd.setFont(VFD::FONT_5x7);
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);

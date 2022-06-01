@@ -1535,7 +1535,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
-		printf("h: %f.2  s: %f.2\n", velocity.heading, velocity.speed);
+		printf("h: %.2f   s: %.2f\n", velocity.heading, velocity.speed);
 		
 	}
 

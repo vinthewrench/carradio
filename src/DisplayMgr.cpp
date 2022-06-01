@@ -1512,17 +1512,18 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(col+30 - 6, row );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
-	}
-	
- 	row += 15;
+		row += 15;
 		if(location.altitudeIsValid)  {
-			_vfd.setCursor(col+10, row );
+			_vfd.setCursor(col+5, row );
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket("ALT: ");
 			_vfd.setFont(VFD::FONT_5x7);
-	 		constexpr double  M2FT = 	3.2808399;
+			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%.1f",location.altitude * M2FT);
- 			}
+		}
+
+	}
+	
 
 	
 //	char buffer[64] = {0};

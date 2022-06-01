@@ -89,7 +89,7 @@ s8 BNO055_Compass::BNO055_I2C_bus_write(void *context, u8 reg_addr, u8 *reg_data
 	BNO055_Compass* d = (BNO055_Compass*)context;
 	bool success = false;
 
-	printf("BNO055 write (%02x, %d) \n", reg_addr, cnt);
+//	printf("BNO055 write (%02x, %d) \n", reg_addr, cnt);
 
 	if(cnt == 1)
 		success = d->_i2cPort.writeByte(reg_addr, reg_data[0]);
@@ -106,7 +106,7 @@ s8 BNO055_Compass::BNO055_I2C_bus_read(void *context, u8 reg_addr, u8 *reg_data,
 	BNO055_Compass* d = (BNO055_Compass*)context;
 	bool success = false;
 	
-	printf("BNO055 read  (%02x, %d) \n", reg_addr, cnt);
+//	printf("BNO055 read  (%02x, %d) \n", reg_addr, cnt);
 	
 	if(cnt == 1)
  		success = d->_i2cPort.readByte(reg_addr, reg_data);
@@ -145,6 +145,9 @@ bool BNO055_Compass::getHRP(HRP_t&  hrp){
 		struct bno055_euler_t eul;
 		
 		if( bno055_read_euler_hrp(&eul)== BNO055_SUCCESS){
+			
+			printf("h:%4d r:%4d p:%04\n", eul.h,eul.r,eul.p );
+			
 			hrp.h = float(eul.h) / 16.0 ;
 			hrp.r = float(eul.r) / 16.0 ;
 			hrp.p = float(eul.p) / 16.0 ;

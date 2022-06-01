@@ -164,7 +164,7 @@ void CompassSensor::idle(){
 //						float 		p; //Pitch
 //						float 		r; //Roll
 
-						printf("r: %2.2f p: %2.2f h: %2.2f\n", hrp.r, hrp.p, hrp.h);
+	//					printf("r: %2.2f p: %2.2f h: %2.2f\n", hrp.r, hrp.p, hrp.h);
 					}
 				}
 			}

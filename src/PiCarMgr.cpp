@@ -259,7 +259,7 @@ void PiCarMgr::stop(){
 
 void PiCarMgr::doShutdown(){
 	
-	
+#if 0
 	pid_t reboot_pid;
 	if( 0 == (reboot_pid = fork()) ) {
 		 execlp("/sbin/shutdown", "/sbin/shutdown", NULL);
@@ -283,16 +283,16 @@ void PiCarMgr::doShutdown(){
 		  * programs to terminate by sending SIGTERM, followed by SIGKILL to
 		  * programs that didn't terminate gracefully. */
 	}
+#endif
 	
-//#if defined(__APPLE__)
-//	system("/bin/sh shutdown -P now");
-//#else
-//	stop();
-//	sync();
-//	sleep(1)
-// 
-// 	reboot(RB_POWER_OFF);
-//#endif
+#if defined(__APPLE__)
+	system("/bin/sh shutdown -P now");
+#else
+	stop();
+	sync();
+	sleep(2)
+  	reboot(RB_POWER_OFF);
+#endif
 
 }
 

@@ -459,10 +459,10 @@ void CANBusMgr::processODBrequests() {
 					
 						if( _odb_polling.find(odbKey) == _odb_polling.end()){
 							
-								auto pInfo = 	_odb_polling[key];
+							auto pInfo = 	_odb_polling[odbKey];
 				
 							///
-							printf("send ODB %10s ", string(key).c_str());
+							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
 							for(auto i = 0; i < pInfo.request.size() ; i++)
 								printf("%02x ",pInfo.request[i]);
 							printf("\n");

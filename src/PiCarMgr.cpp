@@ -188,9 +188,10 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to set brightness ");
   
 		// SETUP CANBUS
-		if(!_can.begin(error))
-			throw Exception("failed to setup CANBUS ", error);
-
+//		if(!_can.begin(error))
+//			throw Exception("failed to setup CANBUS ", error);
+		_can.begin();
+	 
 		_display.showStartup();  // show startup
 	
 		restoreStationsFromFile();

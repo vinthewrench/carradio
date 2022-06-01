@@ -51,10 +51,7 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 #define _MIXER_ "hw:1"
 #define _MIXER_NAME_  "PCM"
 
-
-#define _MIXER_ "hw:0"
-#define _MIXER_NAME_  "Headphones"
-
+ 
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
 	
 	bool success = false;

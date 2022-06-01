@@ -1512,7 +1512,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(col+30 - 6, row );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
-		row += 15;
+		row += 12;
 		if(location.altitudeIsValid)  {
 			_vfd.setCursor(col, row );
 			_vfd.setFont(VFD::FONT_MINI);

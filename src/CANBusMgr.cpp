@@ -434,6 +434,8 @@ void CANBusMgr::processODBrequests() {
 	if(_lastPollTime.tv_sec == 0
 		&&  _lastPollTime.tv_usec == 0 ){
 		shouldQuery = true;
+		
+		printf("first run\n");
 	} else {
 		
 		timeval now, diff;
@@ -441,14 +443,19 @@ void CANBusMgr::processODBrequests() {
 		timersub(&now, &_lastPollTime, &diff);
 		
 //		if(diff.tv_usec >=  _pollDelay)
-		if(diff.tv_sec >=  _pollDelay)
-				shouldQuery = true;
+		if(diff.tv_sec >=  _pollDelay){
+			shouldQuery = true;
+
+			printf("diff %d > %d \n",diff.tv_sec, _pollDelay );
+		}
 		
 	}
 	
 	if(shouldQuery){
 		
 		printf("shouldQuery\n");
+		
+		gettimeofday(&_lastPollTime, NULL);
 		
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
@@ -479,7 +486,7 @@ void CANBusMgr::processODBrequests() {
 				};
 			}
 		}
-		gettimeofday(&_lastPollTime, NULL);
+
 		
 	}
 }

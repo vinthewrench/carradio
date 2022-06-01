@@ -457,17 +457,16 @@ void CANBusMgr::processODBrequests() {
 					if(_keysToPoll.empty())
 						_keysToPoll = all_keys(_odb_polling);
 		
-					printf("shouldQuery %s %d\n", key.c_str(), _keysToPoll.size());
-	
-					if(!_keysToPoll.empty()){
+		 			if(!_keysToPoll.empty()){
 						auto odbKey = _keysToPoll.back();
 						_keysToPoll.pop_back();
 						
-						if( _odb_polling.find(odbKey) == _odb_polling.end()){
+						printf("shouldQuery %s %s\n", key.c_str(), odbKey.c_str());
+		
+						if( _odb_polling.find(odbKey) != _odb_polling.end()){
 							
 							auto pInfo = 	_odb_polling[odbKey];
-							
-							///
+		 					///
 							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
 							for(auto i = 0; i < pInfo.request.size() ; i++)
 								printf("%02x ",pInfo.request[i]);

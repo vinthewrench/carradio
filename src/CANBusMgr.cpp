@@ -44,6 +44,12 @@ CANBusMgr::CANBusMgr(){
 	_isRunning = true;
 	_packetCount = {};
 	_lastFrameTime  = {};
+	
+	
+	_lastPollTime = {0,0};
+//	_pollDelay = 200 * 1000 ; //  200 ms
+	_pollDelay = 5;
+
 	pthread_create(&_TID, NULL,
 										  (THREADFUNCPTR) &CANBusMgr::CANReaderThread, (void*)this);
 
@@ -58,10 +64,6 @@ CANBusMgr::~CANBusMgr(){
 	
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
-
-	_lastPollTime = {0,0};
-//	_pollDelay = 200 * 1000 ; //  200 ms
-	_pollDelay = 5;
 	
 	_isRunning = false;
 	pthread_join(_TID, NULL);

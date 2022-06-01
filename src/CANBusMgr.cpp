@@ -447,13 +447,14 @@ void CANBusMgr::processODBrequests() {
 	
 	if(shouldQuery){
 		
-		printf("shouldQuery\n");
-		
+	
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
 			if(fd != -1){
 				if (find(ifNames.begin(), ifNames.end(), key) != ifNames.end()){
 					
+					printf("shouldQuery %s\n", key.c_str());
+				
 					if(_keysToPoll.empty())
 						_keysToPoll = all_keys(_odb_polling);
 					

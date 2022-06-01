@@ -256,9 +256,7 @@ void PiCarMgr::stop(){
 void PiCarMgr::doShutdown(){
 #if defined(__APPLE__)
 #else
-	reboot(LINUX_REBOOT_MAGIC1,
-				 LINUX_REBOOT_MAGIC2,
-				 LINUX_REBOOT_CMD_POWER_OFF, 0);
+	reboot(RB_POWER_OFF);
 #endif
 
 }

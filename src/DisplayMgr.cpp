@@ -1494,7 +1494,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	}
   
  
-	row += 10;
+	row += 15;
 	
 	GPSLocation_t location;
 	if(gps->GetLocation(location)){
@@ -1506,11 +1506,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setCursor(col+30, row );
 		_vfd.printPacket("%-8s", v[1].c_str());
-//
-//		row += 10;
-//		_vfd.setCursor(col+10, row+5 );
-//		_vfd.printPacket("%-8s", v[2].c_str());
-//
+
+		row += 10;
+		_vfd.setCursor(col+30, row );
+		_vfd.printPacket("%-8s", v[2].c_str());
+
 	}
 	
 	

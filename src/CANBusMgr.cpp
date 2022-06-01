@@ -122,8 +122,6 @@ bool CANBusMgr::request_ODBpolling(string key){
 			
 			_odb_polling[key] = poll_info;
 			
-	//		printf("ODB request %s\n", key.c_str());
-			
 			success = true;
 		}
 	}
@@ -132,17 +130,8 @@ bool CANBusMgr::request_ODBpolling(string key){
 }
 
 bool CANBusMgr::cancel_ODBpolling(string key){
-	bool success = false;
-
-	
-//	if( _odb_polling.find(key) == _odb_polling.end()){
-		_odb_polling.erase(key);
-		
-//		printf("ODB cancel %s \n", key.c_str());
-		success = true;
-
-//	}
-	return success;
+	_odb_polling.erase(key);
+	return true;
 }
 
 

@@ -15,6 +15,12 @@
 #include <execinfo.h>
 #include <time.h>
 #include <sys/time.h>
+#include <unistd.h>
+
+#if defined(__APPLE__)
+#else
+#include <linux/reboot.h>
+#endif
 
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
@@ -242,6 +248,17 @@ void PiCarMgr::stop(){
 		_radio.stop();
 		_audio.stop();
 	}
+}
+
+
+void PiCarMgr::doShutdown(){
+#if defined(__APPLE__)
+#else
+	reboot(LINUX_REBOOT_MAGIC1,
+				 LINUX_REBOOT_MAGIC2,
+				 LINUX_REBOOT_CMD_POWER_OFF, 0);
+#endif
+
 }
 
 
@@ -950,7 +967,9 @@ void PiCarMgr::displaySettingsMenu(){
 	vector<string> menu_items = {
 			"Dim Screen",
 			"Exit",
-	};
+			"-",
+			"Shutdown"
+	 	};
  
 	_display.showMenuScreen(menu_items,
 									0,
@@ -961,6 +980,9 @@ void PiCarMgr::displaySettingsMenu(){
 		if(didSucceed) {
 			
 			switch (newSelectedItem) {
+				case 3:
+					doShutdown();
+					break;
 //				case 1:
 // //					_display.showSettings(1);
 //					break;

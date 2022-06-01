@@ -1535,7 +1535,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
-		double mph = velocity.speed * 0.6213711922;
+//		double mph = velocity.speed * 0.6213711922;
 		
 //		printf("h: %.2f   s: %.2fmph\n", velocity.heading, mph);
 		

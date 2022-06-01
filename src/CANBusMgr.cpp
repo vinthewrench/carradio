@@ -60,7 +60,7 @@ CANBusMgr::~CANBusMgr(){
 	_max_fds = 0;
 
 	_lastPollTime = {0,0};
-	_pollDelay = 200 * 1000 ; //  200 ms
+//	_pollDelay = 200 * 1000 ; //  200 ms
 	_pollDelay = 5;
 	
 	_isRunning = false;
@@ -431,7 +431,8 @@ void CANBusMgr::processODBrequests() {
 	
 	bool shouldQuery = false;
 	
-	if(_lastPollTime.tv_sec == 0 &&  _lastPollTime.tv_usec == 0 ){
+	if(_lastPollTime.tv_sec == 0
+		&&  _lastPollTime.tv_usec == 0 ){
 		shouldQuery = true;
 	} else {
 		
@@ -442,6 +443,7 @@ void CANBusMgr::processODBrequests() {
 //		if(diff.tv_usec >=  _pollDelay)
 		if(diff.tv_sec >=  _pollDelay)
 				shouldQuery = true;
+		
 	}
 	
 	if(shouldQuery){

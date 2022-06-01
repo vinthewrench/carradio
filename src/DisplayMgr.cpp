@@ -1523,9 +1523,15 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}
+  	}
 
+	GPSVelocity_t velocity;
+	if(gps->GetVelocity(velocity)){
+		
+		printf("h: %f.2  s: %f.2\n", velocity.heading, velocity.speed);
+		
 	}
-	
+
 
 	
 //	char buffer[64] = {0};

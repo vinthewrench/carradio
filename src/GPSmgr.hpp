@@ -82,9 +82,16 @@ typedef struct {
 	bool isValid;
 	bool altitudeIsValid;
 	bool geoidHeightValid;
-	
-	
+ 
 } GPSLocation_t;
+
+
+typedef struct {
+	double 					speed;
+ 	double					heading;
+	time_t					timestamp;	//local timestamp of reading
+ 	bool						 isValid;
+} GPSVelocity_t;
 
 class GPSmgr {
 	
@@ -104,16 +111,20 @@ public:
 	static string UTMString(GPSLocation_t location);
 	static string NavString(char navSystem );
 	
+	bool GetVelocity(GPSVelocity_t & velocity);
+	
+	
+	
 private:
 	bool 				_isSetup = false;
 	GPSLocation_t	_lastLocation;
-	
+	GPSVelocity_t	_lastVelocity;
 	
 	MicroNMEA		_nmea;
 	uint8_t			_nmeaBuffer[128];
   
 	const char* 	_ttyPath = NULL;
-	speed_t 			_speed;
+	speed_t 			_ttySpeed;
 	
 	bool openGPSPort(int &error);
 	void closeGPSPort();

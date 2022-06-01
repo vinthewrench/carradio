@@ -56,7 +56,7 @@ GPSmgr::GPSmgr() : _nmea( (void*)_nmeaBuffer, sizeof(_nmeaBuffer), this ){
 	_max_fds = 0;
 	
 	_ttyPath = NULL;
-	_speed = B0;
+	_ttySpeed = B0;
 
 	_fd = -1;
 //	_nmea.setBuffer( (void*)_nmeaBuffer, sizeof(_nmeaBuffer));
@@ -107,7 +107,7 @@ bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 
 	pthread_mutex_lock (&_mutex);
 	_ttyPath = strdup(path);
-	_speed = speed;
+	_ttySpeed = speed;
 	pthread_mutex_unlock (&_mutex);
 
 	reset();
@@ -125,7 +125,7 @@ bool GPSmgr::begin(const char* path, speed_t speed,  int &error){
 
 bool GPSmgr::openGPSPort( int &error){
 
-	if(!_ttyPath  || _speed == B0) {
+	if(!_ttyPath  || _ttySpeed == B0) {
 		error = EINVAL;
 		return false;
 	}
@@ -169,8 +169,8 @@ bool GPSmgr::openGPSPort( int &error){
 	options.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
 	options.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
 	
-	cfsetospeed (&options, _speed);
-	cfsetispeed (&options, _speed);
+	cfsetospeed (&options, _ttySpeed);
+	cfsetispeed (&options, _ttySpeed);
 	
 	if (tcsetattr(fd, TCSANOW, &options) < 0){
 		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "Unable to tcsetattr %s", _ttyPath);
@@ -244,6 +244,21 @@ bool	GPSmgr::GetLocation(GPSLocation_t & location){
 	pthread_mutex_unlock (&_mutex);
 	return success;
 }
+
+
+bool GPSmgr::GetVelocity(GPSVelocity_t& velocity){
+	bool success = false;
+	pthread_mutex_lock (&_mutex);
+ 
+	if(_lastVelocity.isValid ){
+		velocity = _lastVelocity;
+		success = true;
+	}
+ 
+	pthread_mutex_unlock (&_mutex);
+	return success;
+}
+
 
 // MARK: -  Utilities
  
@@ -322,6 +337,20 @@ void GPSmgr::processNMEA(){
 			
 		}
 		
+	}
+	else 	if( msgID ==  "RMC") {
+		//Recommended Minimum
+		
+		time_t now = time(NULL);
+
+		pthread_mutex_lock (&_mutex);
+		memset((void*)&_lastVelocity, 0, sizeof(_lastVelocity));
+		_lastVelocity.isValid = _nmea.isValid();
+		_lastVelocity.heading = _nmea.getCourse();
+		_lastVelocity.speed = _nmea.getSpeed();
+		_lastVelocity.timestamp = now;
+		pthread_mutex_unlock (&_mutex);
+
 	}
 }
 

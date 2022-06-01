@@ -20,6 +20,8 @@
 #if defined(__APPLE__)
 #else
 #include <linux/reboot.h>
+#include <sys/reboot.h>
+
 #endif
 
 #include "Utils.hpp"

@@ -21,8 +21,7 @@
 		 { "line" : 2, "title": "TRANS TEMP",	 		"key" : "GM_TRANS_TEMP"},
 		 { "line" : 3, "title": "OIL PRESSURE", 		"key" : "GM_OIL_PRESSURE"},
 		 { "line" : 4, "title": "FUEL TRIM B1", 		"key" : "OBD_LONG_FUEL_TRIM_1"},
-		 { "line" : 5, "title": "FUEL TRIM B2", 		"key" : "OBD_LONG_FUEL_TRIM_1"},
+		 { "line" : 5, "title": "FUEL TRIM B2", 		"key" : "OBD_LONG_FUEL_TRIM_2"},
 		 { "line" : 6, "title": "ODB OIL PRES", 		"key" : "OBD_OIL_PRESSURE"}
- 
-		 ]
+ 		 ]
 }

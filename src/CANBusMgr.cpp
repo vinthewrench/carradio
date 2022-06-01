@@ -60,7 +60,7 @@ CANBusMgr::~CANBusMgr(){
 	_max_fds = 0;
 
 	_lastPollTime = {0,0};
-	_pollDelay = {5, 200 * 1000 }; //  200 ms
+	_pollDelay = 200 * 1000 ; //  200 ms
 	
 	_isRunning = false;
 	pthread_join(_TID, NULL);
@@ -434,13 +434,12 @@ void CANBusMgr::processODBrequests() {
 		shouldQuery = true;
 	} else {
 		
-		timeval now; 
+		timeval now, diff;
 		gettimeofday(&now, NULL);
-	//	timersub(&now, &_lastPollTime, &diff);
+		timersub(&now, &_lastPollTime, &diff);
 		
-		if(timercmp(&now, &_pollDelay, >=)){
-			shouldQuery = true;
-		}
+		if(diff.tv_usec >=  _pollDelay)
+ 			shouldQuery = true;
 	}
 	
 	if(shouldQuery){

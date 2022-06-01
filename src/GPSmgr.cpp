@@ -346,7 +346,7 @@ void GPSmgr::GPSReader(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			sleep(5);
+			sleep(2);
 			continue;
 		}
 	 

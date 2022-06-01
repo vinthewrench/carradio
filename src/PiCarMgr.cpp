@@ -290,7 +290,7 @@ void PiCarMgr::doShutdown(){
 #else
 	stop();
 	sync();
-	sleep(2)
+	sleep(2);
   	reboot(RB_POWER_OFF);
 #endif
 

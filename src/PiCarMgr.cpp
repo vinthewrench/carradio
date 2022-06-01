@@ -255,16 +255,16 @@ void PiCarMgr::stop(){
 
 void PiCarMgr::doShutdown(){
 	
-	system("/bin/sh shutdown -P now");
 	
-//#if defined(__APPLE__)
-//#else
-//	
-//	system("/bin/sh shutdown -P now");
-////	sync();
-////
-////	reboot(RB_POWER_OFF);
-//#endif
+#if defined(__APPLE__)
+	system("/bin/sh shutdown -P now");
+#else
+	stop();
+	sync();
+	sleep(1)
+ 
+ 	reboot(RB_POWER_OFF);
+#endif
 
 }
 

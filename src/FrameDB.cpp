@@ -24,6 +24,7 @@ FrameDB::FrameDB(){
 	_lastInterfaceTag = 0;
 	_interfaces.clear();
 	_schema.clear();
+	_odb_request.clear();
 	_values.clear();
 }
 
@@ -119,11 +120,34 @@ FrameDB::valueSchema_t FrameDB::schemaForKey(string_view key){
 	return schema;
 }
 
-void FrameDB::addSchema(string_view key,  valueSchema_t schema){
-	if( _schema.find(key) == _schema.end())
+void FrameDB::addSchema(string_view key,  valueSchema_t schema, vector<uint8_t>odb_request){
+	if( _schema.find(key) == _schema.end()){
 		_schema[key] = schema;
+		if(!odb_request.empty()){
+			_odb_request[key] = odb_request;
+		}
+	}
 }
  
+
+bool FrameDB::odb_request(string key, vector <uint8_t> & request){
+	bool success = false;
+	if(_odb_request.count(key)){
+		auto foundReq = _odb_request[key];
+		uint8_t len = static_cast<uint8_t>(foundReq.size());
+			vector <uint8_t> req;
+		req.reserve(len+1);
+		req.push_back(len);
+		move(foundReq.begin(), foundReq.end(), std::back_inserter(req));
+		
+//
+//		req.insert(req.end(), foundReq.begin(), foundReq.end());
+		request = req;
+		success = true;
+	}
+	
+	return success;
+}
 
 
 // MARK: -  FRAMES

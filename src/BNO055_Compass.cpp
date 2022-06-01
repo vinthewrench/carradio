@@ -146,7 +146,7 @@ bool BNO055_Compass::getHRP(HRP_t&  hrp){
 		
 		if( bno055_read_euler_hrp(&eul)== BNO055_SUCCESS){
 			
-			printf("h:%4d r:%4d p:%04d\n", eul.h,eul.r,eul.p );
+		//	printf("h:%4d r:%4d p:%04d\n", eul.h,eul.r,eul.p );
 			
 			hrp.h = float(eul.h) / 16.0 ;
 			hrp.r = float(eul.r) / 16.0 ;

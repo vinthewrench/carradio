@@ -119,3 +119,32 @@ bool PiCarCAN::resetPacketCount(pican_bus_t bus){
 bool PiCarCAN::getStatus(vector<CANBusMgr::can_status_t> & stats){
 	return  _CANbus.getStatus(stats);
 }
+
+
+bool PiCarCAN::request_ODBpolling(string key){
+	bool success = false;
+	
+	auto db = _CANbus.frameDB();
+	
+	vector<uint8_t>  request;
+	if( db->odb_request(key, request)) {
+		printf("ODB request %s ", key.c_str());
+		for(auto i = 0; i < request.size(); i++)
+			printf("%02x ",request[i]);
+		printf("\n");
+		
+		
+		success= true;
+ 	}
+	
+	
+	return success;
+}
+
+bool PiCarCAN::cancel_ODBpolling(string key){
+ 
+	printf("ODB cancel %s \n", key.c_str());
+
+	return true;
+
+}

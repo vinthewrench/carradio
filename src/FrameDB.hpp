@@ -101,9 +101,11 @@ public:
 	} valueSchema_t;
 
 
-	void addSchema(string_view key,  valueSchema_t schema);
+	void addSchema(string_view key,  valueSchema_t schema, vector<uint8_t>odb_request = {});
 	valueSchema_t schemaForKey(string_view key);
-
+	
+	bool odb_request(string key, vector <uint8_t> & request);
+	
 	void updateValue(string_view key, string value, time_t when);
 	void clearValues();
 	int valuesCount();
@@ -149,6 +151,7 @@ private:
 		} value_t;
 
 	map<string_view, valueSchema_t>			_schema;
+	map<string_view, vector <uint8_t>>		_odb_request;
 	map<string_view, value_t> _values;
   };
 

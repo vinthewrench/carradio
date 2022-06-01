@@ -1648,9 +1648,9 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 
 	static map <uint8_t, PiCarDB::canbusdisplay_prop_t> cachedProps;
 
- //	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
-	uint8_t width = _vfd.width();
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	PiCarDB*		db 	= PiCarMgr::shared()->db();
+	uint8_t width 	= _vfd.width();
 	uint8_t midX = width/2;
 	
 	uint8_t col1 = 5;
@@ -1661,11 +1661,11 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		
-		 db->getCanbusDisplayProps(cachedProps);
+		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
-	
+		
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		
@@ -1674,11 +1674,13 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				auto item = cachedProps[i+1];
 				
 				if(i < 3){
+					can->request_ODBpolling(item.key);
 					_vfd.setCursor(col1, row1 + (i  * rowsize ));
 					_vfd.write(item.title);
 					
 				}
 				else {
+					can->request_ODBpolling(item.key);
 					_vfd.setCursor(col2, row1 + ( (i-3)  * rowsize ));
 					_vfd.write(item.title);
 				}
@@ -1686,6 +1688,12 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	}
 		
 		if(transition == TRANS_LEAVING) {
+			
+			for(uint8_t	 i = 0; i < 6; i++)
+				if(cachedProps.count(i+1)){
+					auto item = cachedProps[i+1];
+					can->cancel_ODBpolling(item.key);
+				}
 			
 			cachedProps.clear();
 			_rightKnob.setAntiBounce(antiBounceDefault);

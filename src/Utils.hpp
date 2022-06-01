@@ -12,7 +12,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
-
+#include <map>
  
 namespace Utils {
 
@@ -197,4 +197,22 @@ inline std::string truncate(std::string str, size_t width, bool show_ellipsis=fa
 		 }
 	}
 	 return str;
+}
+
+template<typename TK, typename TV>
+std::vector<TK> all_keys(std::map<TK, TV> const& input_map) {
+  std::vector<TK> retval;
+  for (auto const& element : input_map) {
+	 retval.push_back(element.first);
+  }
+  return retval;
+}
+
+template<typename TK, typename TV>
+std::vector<TV> all_values(std::map<TK, TV> const& input_map) {
+  std::vector<TV> retval;
+  for (auto const& element : input_map) {
+	 retval.push_back(element.second);
+  }
+  return retval;
 }

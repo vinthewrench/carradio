@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include "Utils.hpp"
  
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
@@ -58,6 +59,9 @@ CANBusMgr::~CANBusMgr(){
 	FD_ZERO(&_master_fds);
 	_max_fds = 0;
 
+	_lastPollTime = {0,0};
+	_pollDelay = {5, 200 * 1000 }; //  200 ms
+	
 	_isRunning = false;
 	pthread_join(_TID, NULL);
  }
@@ -107,8 +111,7 @@ bool CANBusMgr::request_ODBpolling(string key){
 	bool success = false;
 	
 	if( _odb_polling.find(key) == _odb_polling.end()){
-		
-		
+ 
 		vector<uint8_t>  request;
 		if( _frameDB.odb_request(key, request)) {
 			
@@ -117,7 +120,7 @@ bool CANBusMgr::request_ODBpolling(string key){
 			
 			_odb_polling[key] = poll_info;
 			
-			printf("ODB request %s\n", key.c_str());
+	//		printf("ODB request %s\n", key.c_str());
 			
 			success = true;
 		}
@@ -133,7 +136,7 @@ bool CANBusMgr::cancel_ODBpolling(string key){
 	if( _odb_polling.find(key) == _odb_polling.end()){
 		_odb_polling.erase(key);
 		
-		printf("ODB cancel %s \n", key.c_str());
+//		printf("ODB cancel %s \n", key.c_str());
 		success = true;
 
 	}
@@ -157,16 +160,6 @@ bool CANBusMgr::start(string ifName, int &error){
 					return false;
 				}
 				else {
-					
-					{
-						printf("pollableInterfaces ");
-						for( auto e : _frameDB.pollableInterfaces()){
-							printf("%s ", e.c_str());
-						}
-						printf("\n");
-					}
-
-					
 					_isSetup = true;
 					return true;;
 				}
@@ -177,7 +170,6 @@ bool CANBusMgr::start(string ifName, int &error){
 			}
 		}
 	}
-	
 		
 	error = ENXIO;
 	return false;
@@ -402,7 +394,7 @@ void CANBusMgr::CANReader(){
 	//		_running = false;
 		}
 		
-		/* check which fd is avaialbe for read */
+		/* check which fd is avail for read */
 		for (auto& [ifName, fd]  : _interfaces) {
 			if ((fd != -1)  && FD_ISSET(fd, &dup)) {
 				
@@ -426,10 +418,65 @@ void CANBusMgr::CANReader(){
 			}
 		}
 
-		
+		// process any needed ODB requests 
+		processODBrequests();
 	}
 }
 
+void CANBusMgr::processODBrequests() {
+	auto ifNames =  _frameDB.pollableInterfaces();
+	if(ifNames.empty())
+		return;
+	
+	bool shouldQuery = false;
+	
+	if(_lastPollTime.tv_sec == 0 &&  _lastPollTime.tv_usec == 0 ){
+		shouldQuery = true;
+	} else {
+		
+		timeval now, diff;
+		gettimeofday(&now, NULL);
+		timersub(&now, &_lastPollTime, &diff);
+
+		if(timercmp(&diff, &_pollDelay, >=)){
+			shouldQuery = true;
+		}
+ 	}
+	
+	if(shouldQuery){
+		
+		// walk any open interfaces and find the onse that are pollable
+		for (auto& [key, fd]  : _interfaces){
+			if(fd != -1){
+				if (find(ifNames.begin(), ifNames.end(), key) != ifNames.end()){
+					
+					if(_keysToPoll.empty())
+						_keysToPoll = all_keys(_odb_polling);
+				 
+					if(!_keysToPoll.empty()){
+						auto odbKey = _keysToPoll.back();
+						_keysToPoll.pop_back();
+					
+						if( _odb_polling.find(odbKey) == _odb_polling.end()){
+							
+								auto pInfo = 	_odb_polling[key];
+				
+							///
+							printf("send ODB %10s ", string(key).c_str());
+							for(auto i = 0; i < pInfo.request.size() ; i++)
+								printf("%02x ",pInfo.request[i]);
+							printf("\n");
+							 
+						////
+						}
+ 
+					}
+	 			};
+		}
+		gettimeofday(&_lastPollTime, NULL);
+	}
+ }
+}
 
 
 void* CANBusMgr::CANReaderThread(void *context){

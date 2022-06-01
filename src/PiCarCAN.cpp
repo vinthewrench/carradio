@@ -65,6 +65,9 @@ bool PiCarCAN::begin( int &error){
 	
 #if defined(__APPLE__)
 	_isSetup = true;
+	
+	_CANbus.start(bus_map[CAN_GM], error) ;
+	
 #else
 	 
 #if DEBUG_CAN

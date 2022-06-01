@@ -436,29 +436,34 @@ void CANBusMgr::processODBrequests() {
 	
 	if(shouldQuery){
 		
-	
+		
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
 			if(fd != -1){
 				if (find(ifNames.begin(), ifNames.end(), key) != ifNames.end()){
 					
-				
+					
 					if(_keysToPoll.empty())
 						_keysToPoll = all_keys(_odb_polling);
-		
-		 			if(!_keysToPoll.empty()){
+					
+					if(!_keysToPoll.empty()){
 						auto odbKey = _keysToPoll.back();
 						_keysToPoll.pop_back();
 						if( _odb_polling.find(odbKey) != _odb_polling.end()){
 							
 							auto pInfo = 	_odb_polling[odbKey];
-		 					///
-							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
-							for(auto i = 0; i < pInfo.request.size() ; i++)
-								printf("%02x ",pInfo.request[i]);
-							printf("\n");
 							
-							////
+							// send out a frame
+							sendFrame(key, 0x7DF, pInfo.request);
+							//
+							//		 					///
+							//
+							//							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
+							//							for(auto i = 0; i < pInfo.re7DFquest.size() ; i++)
+							//								printf("%02x ",pInfo.request[i]);
+							//							printf("\n");
+							//
+							//							////
 						}
 						
 					}

@@ -1471,46 +1471,51 @@ void DisplayMgr::drawInternalError(modeTransition_t transition){
 }
 
 void DisplayMgr::drawGPSScreen(modeTransition_t transition){
-	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
+ 
+	uint8_t col = 0;
+	uint8_t row = 7;
+	string str;
 
-//	printf("GPS  %d\n",transition);
-	
+	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
+ 
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
-	}
+		
+		// top line
+		_vfd.setCursor(col, row);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("GPS ");
+ 	}
 
 	if(transition == TRANS_LEAVING) {
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("GPS"));
-	
+ 
 	GPSLocation_t location;
 	if(gps->GetLocation(location)){
 		string utm = GPSmgr::UTMString(location);
 		vector<string> v = split<string>(utm, " ");
 		
 		char buffer[64] = {0};
+ 
+		row += 10;
+		_vfd.setCursor(col+10, row );
+		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		sprintf(buffer, "%-3s",v[0].c_str());
-		TRY(_vfd.setCursor(20,25));
-		TRY(_vfd.write(buffer));
-		
-		TRY(_vfd.setCursor(40,25));
-		TRY(_vfd.write(v[1]));
-		
-		TRY(_vfd.setCursor(40,35));
-		TRY(_vfd.write(v[2]));
-		
- 		if(location.altitudeIsValid)  {
-			constexpr double  M2FT = 	3.2808399;  
-			sprintf(buffer, "%.1f",location.altitude * M2FT);
-			TRY(_vfd.setCursor(20,48));
-			TRY(_vfd.write(buffer));
+		_vfd.setCursor(col+15, row );
+		_vfd.printPacket("%-8s", v[1].c_str());
+
+		row += 10;
+		_vfd.setCursor(col+10, row+5 );
+		_vfd.printPacket("%-8s", v[2].c_str());
+ 
+		row += 10;
+		if(location.altitudeIsValid)  {
+			_vfd.setCursor(col+10, row );
+ 			constexpr double  M2FT = 	3.2808399;
+ 			_vfd.printPacket("%.1f",location.altitude * M2FT);
 		}
 		
 		sprintf(buffer, "%s:%2d DOP:%.1f",

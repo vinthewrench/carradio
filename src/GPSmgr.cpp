@@ -135,7 +135,7 @@ bool GPSmgr::openGPSPort( int &error){
 	int fd ;
 	
 	if((fd = ::open( _ttyPath, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY  )) <0) {
-		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
+	//	ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
 		error = errno;
 		return false;
 	}

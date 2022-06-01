@@ -376,7 +376,7 @@ void CANBusMgr::CANReader(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			sleep(10);
+			sleep(2);
 			continue;
 		}
 	 
@@ -475,8 +475,9 @@ void CANBusMgr::processODBrequests() {
 					}
 	 			};
 		}
-		gettimeofday(&_lastPollTime, NULL);
 	}
+ 		gettimeofday(&_lastPollTime, NULL);
+
  }
 }
 

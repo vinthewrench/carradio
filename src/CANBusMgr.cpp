@@ -168,6 +168,14 @@ bool CANBusMgr::start(string ifName, int &error){
 		}
 	}
 	
+	{
+		printf("pollableInterfaces ");
+		for( auto e : _frameDB.pollableInterfaces()){
+			printf("%s ", e.c_str());
+		}
+		printf("\n");
+	}
+	
 	error = ENXIO;
 	return false;
 }
@@ -363,9 +371,6 @@ bool CANBusMgr::resetPacketCount(string ifName){
 	}
 	return false;
 }
-
-
- bool resetPacketCount(string ifName);
 
 // MARK: -  CANReader thread
 

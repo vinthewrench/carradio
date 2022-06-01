@@ -89,6 +89,24 @@ void FrameDB::unRegisterProtocol(string ifName, CanProtocol *protocol){
 	}
 	
 }
+ 
+
+vector<string> FrameDB::pollableInterfaces(){
+
+	vector<string> ifNames;
+	
+	for (const auto& [name ,_ ] : _interfaces){
+		auto info = &_interfaces[name];
+		for( auto p : info->protocols){
+			if(p->canBePolled()){
+				ifNames.push_back(name);
+				break;
+ 			}
+		}
+ 	}
+ 
+	return ifNames;
+}
 
 
 vector<CanProtocol*>	FrameDB::protocolsForTag(frameTag_t tag){

@@ -87,9 +87,8 @@ private:
 		
 	} odb_polling_t;
 	map<string, odb_polling_t> 	_odb_polling = {};
-	
-	
-	fd_set			 	_master_fds;		// Can sockets that are ready for read
+ 
+		fd_set			 	_master_fds;		// Can sockets that are ready for read
 	int					_max_fds;
 };
 

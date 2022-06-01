@@ -23,6 +23,8 @@ public:
 
 	virtual string descriptionForFrame(can_frame_t frame);
   
+	virtual bool canBePolled() {return true;};
+
 private:
 	
 	void processOBDResponse(FrameDB* db,time_t when,

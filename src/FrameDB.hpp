@@ -43,6 +43,8 @@ public:
 	bool registerProtocol(string ifName,  CanProtocol *protocol = NULL);
 	void unRegisterProtocol(string ifName, CanProtocol *protocol);
 	vector<CanProtocol*>	protocolsForTag(frameTag_t tag);
+	vector<string> pollableInterfaces();
+	 
 
 	eTag_t lastEtag() { return  _lastEtag;};
  

@@ -38,7 +38,7 @@ bool CompassSensor::begin(int deviceAddress, int &error){
 	
 	if(status){
 		_state = INS_IDLE;
-		_queryDelay = 1;	// seconds
+		_queryDelay = 5;	// seconds
 		_lastQueryTime = {0,0};
 		_resultMap.clear();
 		reset();

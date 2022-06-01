@@ -426,12 +426,14 @@ bool MicroNMEA::processRMC(const char* s)
 
 /* new sentences fill in later -- VINNIE */
 
+// $GPGSV - GPS Satellites in view
 bool MicroNMEA::processGSV(const char *s)
 {
 	return false;
 }
 
 
+//$GPVTG - Track made good and ground speed
 bool MicroNMEA::processVTG(const char *s)
 {
 	 
@@ -439,11 +441,13 @@ bool MicroNMEA::processVTG(const char *s)
 	return false;
 }
 
+//  $GPGSA - GPS DOP and active satellites
 bool MicroNMEA::processGSA(const char *s)
 {
 	return false;
 }
 
+//  $GPGLL - Geographic position, latitude / longitude
 bool MicroNMEA::processGLL(const char *s)
 {
 	return false;

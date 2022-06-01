@@ -1523,7 +1523,14 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}
-  	}
+		
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(0,60)	;
+		
+		_vfd.printPacket( "%s:%2d DOP:%.1f",
+			GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
+	}
+	
 
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
@@ -1532,20 +1539,6 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 	}
 
-
-	
-//	char buffer[64] = {0};
-//		sprintf(buffer, "%s:%2d DOP:%.1f",
-//				  GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
-//		TRY(_vfd.setFont(VFD::FONT_MINI));
-//		TRY(_vfd.setCursor(0,60));
-//		TRY(_vfd.write(buffer));
-// 	}
-//	else {
-////		TRY(_vfd.setCursor(20,22));
-////		TRY(_vfd.write("-- No Data --"));
-//
-//	}
 	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);

@@ -60,6 +60,9 @@ public:
  
 	FrameDB* frameDB() {return &_frameDB;};
  
+	bool request_ODBpolling(string key);
+	bool cancel_ODBpolling(string key);
+
 private:
 	
 	bool 				_isSetup = false;
@@ -75,10 +78,17 @@ private:
 
 	int openSocket(string ifName, int &error);
 
-	map<string, int> 		_interfaces;
-	map<string, time_t> 	_lastFrameTime;
-	map<string, size_t> 	_packetCount;
+	map<string, int> 		_interfaces = {};
+	map<string, time_t> 	_lastFrameTime = {};
+	map<string, size_t> 	_packetCount = {};
 
+	typedef struct {
+		vector<uint8_t> request;
+		
+	} odb_polling_t;
+	map<string, odb_polling_t> 	_odb_polling = {};
+	
+	
 	fd_set			 	_master_fds;		// Can sockets that are ready for read
 	int					_max_fds;
 };

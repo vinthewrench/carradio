@@ -101,6 +101,46 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 	return success;
 }
 
+// MARK: -  ODB polling
+
+bool CANBusMgr::request_ODBpolling(string key){
+	bool success = false;
+	
+	if( _odb_polling.find(key) == _odb_polling.end()){
+		
+		
+		vector<uint8_t>  request;
+		if( _frameDB.odb_request(key, request)) {
+			
+			odb_polling_t poll_info;
+			poll_info.request = request;
+			
+			_odb_polling[key] = poll_info;
+			
+			printf("ODB request %s\n", key.c_str());
+			
+			success = true;
+		}
+	}
+	
+	return success;
+}
+
+bool CANBusMgr::cancel_ODBpolling(string key){
+	bool success = false;
+
+	
+	if( _odb_polling.find(key) == _odb_polling.end()){
+		_odb_polling.erase(key);
+		
+		printf("ODB cancel %s \n", key.c_str());
+		success = true;
+
+	}
+	return success;
+}
+
+
 // MARK: -  CANReader control
 
 bool CANBusMgr::start(string ifName, int &error){

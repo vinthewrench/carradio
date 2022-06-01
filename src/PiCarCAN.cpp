@@ -122,29 +122,9 @@ bool PiCarCAN::getStatus(vector<CANBusMgr::can_status_t> & stats){
 
 
 bool PiCarCAN::request_ODBpolling(string key){
-	bool success = false;
-	
-	auto db = _CANbus.frameDB();
-	
-	vector<uint8_t>  request;
-	if( db->odb_request(key, request)) {
-		printf("ODB request %s ", key.c_str());
-		for(auto i = 0; i < request.size(); i++)
-			printf("%02x ",request[i]);
-		printf("\n");
-		
-		
-		success= true;
- 	}
-	
-	
-	return success;
+	return _CANbus.request_ODBpolling(key);
 }
 
 bool PiCarCAN::cancel_ODBpolling(string key){
- 
-	printf("ODB cancel %s \n", key.c_str());
-
-	return true;
-
+	return _CANbus.cancel_ODBpolling(key);
 }

@@ -135,13 +135,13 @@ bool CANBusMgr::cancel_ODBpolling(string key){
 	bool success = false;
 
 	
-	if( _odb_polling.find(key) == _odb_polling.end()){
+//	if( _odb_polling.find(key) == _odb_polling.end()){
 		_odb_polling.erase(key);
 		
 //		printf("ODB cancel %s \n", key.c_str());
 		success = true;
 
-	}
+//	}
 	return success;
 }
 
@@ -460,9 +460,6 @@ void CANBusMgr::processODBrequests() {
 		 			if(!_keysToPoll.empty()){
 						auto odbKey = _keysToPoll.back();
 						_keysToPoll.pop_back();
-						
-						printf("shouldQuery %s %s\n", key.c_str(), odbKey.c_str());
-		
 						if( _odb_polling.find(odbKey) != _odb_polling.end()){
 							
 							auto pInfo = 	_odb_polling[odbKey];

@@ -158,7 +158,14 @@ void CompassSensor::idle(){
 				
 				if(shouldQuery){
 					
-					
+					BNO055_Compass::HRP_t hrp;
+					if(_compass.getHRP(hrp)){
+//						float 		h; //Heading (Yaw)
+//						float 		p; //Pitch
+//						float 		r; //Roll
+
+						printf("r: %2.2f p: %2.2f h: %2.2f\n", hrp.r, hrp.p, hrp.h);
+					}
 				}
 			}
 				break;

@@ -51,9 +51,7 @@ private:
 		INS_INVALID,
 		INS_RESPONSE,
 		
-		INS_WAITING_FOR_TEMP,
-		INS_WAITING_FOR_MAG,
- 
+	  
 	}in_state_t;
 
 	

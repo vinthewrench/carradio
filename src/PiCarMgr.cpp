@@ -256,15 +256,39 @@ void PiCarMgr::stop(){
 void PiCarMgr::doShutdown(){
 	
 	
-#if defined(__APPLE__)
-	system("/bin/sh shutdown -P now");
-#else
-	stop();
-	sync();
-	sleep(1)
- 
- 	reboot(RB_POWER_OFF);
-#endif
+	pid_t reboot_pid;
+	if( 0 == (reboot_pid = fork()) ) {
+		 execlp("/sbin/shutdown", "/sbin/shutdown", NULL);
+		 exit(1); /* never reached if execlp succeeds. */
+	}
+	if( -1 == reboot_pid ) {
+		 /* fork error... deal with it somehow */
+	}
+	int reboot_status;
+	waitpid(reboot_pid, &reboot_status, 0);
+	if( !WIFEXITED(reboot_status) ) {
+		 /* reboot process did not exit sanely... deal with it somehow */
+	}
+	if( 0 != WEXITSTATUS(reboot_status) ) {
+		 /* reboot process exited with error;
+		  * most likely the user lacks the required privileges */
+	}
+	else {
+		 printf("reboot call sucessfull -- system is about to shutdown.");
+		 /* The init system is now shutting down the system. It will signals all
+		  * programs to terminate by sending SIGTERM, followed by SIGKILL to
+		  * programs that didn't terminate gracefully. */
+	}
+	
+//#if defined(__APPLE__)
+//	system("/bin/sh shutdown -P now");
+//#else
+//	stop();
+//	sync();
+//	sleep(1)
+// 
+// 	reboot(RB_POWER_OFF);
+//#endif
 
 }
 

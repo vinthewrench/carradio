@@ -1533,7 +1533,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(0,row);
 		_vfd.printPacket("UTM");
 		
-		_vfd.setCursor(0,40);
+		_vfd.setCursor(0,35);
 		_vfd.printPacket("ALTITUDE");
 	
  	}
@@ -1542,42 +1542,34 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
-  
-	_vfd.setFont(VFD::FONT_5x7);
-	row += 10;
-	
-	GPSLocation_t location;
+   	GPSLocation_t location;
 	if(gps->GetLocation(location)){
 		string utm = GPSmgr::UTMString(location);
 		vector<string> v = split<string>(utm, " ");
-	
-		_vfd.setCursor(col+7, row );
+		
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		_vfd.setCursor(col+7, row+10 );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		_vfd.setCursor(col+30, row );
+		_vfd.setCursor(col+30, row+10 );
 		_vfd.printPacket("%-8s", v[1].c_str());
-
-		row += 10;
-		_vfd.setCursor(col+30 - 6, row );
-		_vfd.printPacket("%-8s", v[2].c_str());
-
-//		row += 12;
-//		if(location.altitudeIsValid)  {
-//			_vfd.setCursor(col, row );
-//			_vfd.setFont(VFD::FONT_MINI);
-//			_vfd.printPacket("ALT: ");
-//
-//			_vfd.setCursor(col+30, row );
-//			_vfd.setFont(VFD::FONT_5x7);
-//			constexpr double  M2FT = 	3.2808399;
-//			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
-//		}
 		
-//		_vfd.setFont(VFD::FONT_MINI);
-//		_vfd.setCursor(0,60)	;
-//
-//		_vfd.printPacket( "%s:%2d DOP:%.1f",
-//			GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
+		
+		_vfd.setCursor(col+30 - 6, row+20 );
+		_vfd.printPacket("%-8s", v[2].c_str());
+		
+		if(location.altitudeIsValid)  {
+			_vfd.setCursor(col+30, row+40 );
+			constexpr double  M2FT = 	3.2808399;
+			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
+		}
+		
+		//		_vfd.setFont(VFD::FONT_MINI);
+		//		_vfd.setCursor(0,60)	;
+		//
+		//		_vfd.printPacket( "%s:%2d DOP:%.1f",
+		//			GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
 	}
 	
 

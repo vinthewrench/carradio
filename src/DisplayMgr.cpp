@@ -1588,8 +1588,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
-		_vfd.setCursor(midX +30 ,utmRow+20);
-		
+		_vfd.setCursor(midX +20 ,utmRow+20);
 		velocity.heading = 270;
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
 		

@@ -117,8 +117,8 @@ public:
 	vector<string_view>  	valuesOlderthan(time_t time);
 	bool 							valueWithKey(string_view key, string *value);
 	bool							boolForKey(string key, bool &state);
+	bool							bitsForKey(string key, bitset<8> &bits);
 
-	
 	valueSchemaUnits_t 		unitsForKey(string key);
 	string 						unitSuffixForKey(string key);
 	double 						normalizedDoubleForValue(string key, string value);

@@ -1129,6 +1129,7 @@ void DisplayMgr::drawEngineCheck(){
 
 	
 	bool engineCheck = false;
+	bitset<8>  bits = {0};
 		
 	_vfd.setCursor(midX, 60);
 
@@ -1151,6 +1152,12 @@ void DisplayMgr::drawEngineCheck(){
 		&& engineCheck) {
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHECK FUEL CAP");
+	}
+	
+	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("DOOR OPEN");
+
 	}
 	else {
 		_vfd.setFont(VFD::FONT_5x7);

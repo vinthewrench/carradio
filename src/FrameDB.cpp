@@ -648,3 +648,24 @@ bool	 FrameDB::boolForKey(string key, bool &state){
 	return valid;
 
 };
+
+
+bool	  FrameDB::bitsForKey(string key, bitset<8> &bitsout){
+	bool valid = false;
+	
+	try {
+		if(_values.count(key) &&  unitsForKey(key) == BINARY){
+			string bit_string = _values[key].value;
+			std::bitset<8> bits(bit_string);
+			
+			valid = true;
+			bitsout = bits;
+		}
+	}
+	catch (...) {
+		valid = false;
+	}
+	
+	return valid;
+
+}

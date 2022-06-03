@@ -1113,9 +1113,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	}
 	
 	bool engineCheck = false;
-	
-	
-	_vfd.setCursor(10, midX);
+		
+	_vfd.setCursor(midX, 60);
 
 	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
 		&& engineCheck) {
@@ -1125,7 +1124,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	else {
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%11s", " ");
+		_vfd.printPacket("%10s", " ");
 
 	}
 	

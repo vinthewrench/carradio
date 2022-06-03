@@ -1167,7 +1167,7 @@ void DisplayMgr::drawEngineCheck(){
 	///
 	string val = "";
 	if(fDB->valueWithKey("JK_DOORS", &val) ){
-		printf("JK_DOORS = |%s|\n " val.c_str());
+		printf("JK_DOORS = |%s|\n ", val.c_str());
 	}
 	////
 	

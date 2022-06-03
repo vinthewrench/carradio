@@ -1542,8 +1542,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(2,altRow);
 		_vfd.printPacket("ALTITUDE");
 	
-		_vfd.setCursor(midX +30 ,utmRow+10);
+		_vfd.setCursor(midX +25 ,utmRow+10);
 		_vfd.printPacket("HEADING");
+
+		_vfd.setCursor(midX +25 ,altRow);
+		_vfd.printPacket("SPEED");
 
  	}
 
@@ -1585,7 +1588,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
-		_vfd.setCursor(midX +35 ,utmRow+20);
+		_vfd.setCursor(midX +30 ,utmRow+20);
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
 		
 //		double mph = velocity.speed * 0.6213711922;

@@ -1534,6 +1534,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 //		_vfd.printPacket("GPS ");
 		
 		// draw titles
+		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(0,row);
 		_vfd.printPacket("UTM");
  	}
@@ -1566,7 +1567,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 //			_vfd.setCursor(col, row );
 //			_vfd.setFont(VFD::FONT_MINI);
 //			_vfd.printPacket("ALT: ");
-//			
+//
 //			_vfd.setCursor(col+30, row );
 //			_vfd.setFont(VFD::FONT_5x7);
 //			constexpr double  M2FT = 	3.2808399;
@@ -1575,7 +1576,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 //		_vfd.setFont(VFD::FONT_MINI);
 //		_vfd.setCursor(0,60)	;
-//		
+//
 //		_vfd.printPacket( "%s:%2d DOP:%.1f",
 //			GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
 	}

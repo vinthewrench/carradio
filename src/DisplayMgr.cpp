@@ -1599,7 +1599,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		mph = 100.0;
 		_vfd.printPacket("%3d",int(mph));
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("MPH");
+		_vfd.printPacket("M/H");
 	}
 
 	

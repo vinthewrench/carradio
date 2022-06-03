@@ -6,7 +6,8 @@
 //
 
 #include "FrameDB.hpp"
- 
+#include <regex>
+
 static inline frameTag_t makeFrameTag(ifTag_t tag, canid_t canID){
 	return  (( (uint64_t) tag) << 32) | canID;
 };
@@ -582,6 +583,7 @@ double FrameDB::normalizedDoubleForValue(string key, string value){
 	}
 	return retVal;
 }
+
  int FrameDB::intForValue(string key, string value){
 	
 	int retVal = 0;
@@ -607,3 +609,42 @@ double FrameDB::normalizedDoubleForValue(string key, string value){
 	  
 	return retVal;
 }
+
+bool	 FrameDB::boolForKey(string key, bool &state){
+	
+	bool valid = false;
+
+	if(_values.count(key) &&  unitsForKey(key) == BOOL){
+		string str = _values[key].value;
+		
+		const char * param1 = str.c_str();
+		int intValue = atoi(param1);
+
+		// check for level
+		if(std::regex_match(param1, std::regex("^[0-1]$"))){
+			state = bool(intValue);
+			valid = true;
+		}
+		else {
+			if(caseInSensStringCompare(str,"off")) {
+				state = false;
+				valid = true;
+			}
+			else if(caseInSensStringCompare(str,"on")) {
+				state = true;
+				valid = true;
+			}
+			else if(caseInSensStringCompare(str,"true")) {
+				state = true;
+				valid = true;
+			}
+			else if(caseInSensStringCompare(str,"false")) {
+				state = false;
+				valid = true;
+			}
+ 		}
+	}
+	
+	return valid;
+
+};

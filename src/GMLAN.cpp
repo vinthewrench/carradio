@@ -449,3 +449,43 @@ void GMLAN::processVehicleSpeed(FrameDB* db, can_frame_t frame, time_t when){
 //
 //	}
 };
+
+
+// MARK: -  Useful CAN messages
+
+/*
+can messages
+
+#normal
+cansend can1 4D1#000002031E3E0000
+
+# change oil  GM_CHANGE_OIL
+cansend can1 4D1#080002031E3E0000
+
+#check engine GM_CHECK_ENGINE
+cansend can1 4D1#000002031E3E0400
+
+#check fuelcap GM_CHECK_FUELCAP
+cansend can1 4D1#000002271E3E8000
+
+#reduced power GM_REDUCED_POWER
+cansend can1 4D1#000002271E3E8000
+
+#low oil GM_OIL_LOW
+cansend can1 4D1#100002031E3E0000
+
+
+#oil reset  (40 TIMES 4 SECONDS
+cansend can1 3D1#0033800010000000
+
+cansend can1 3D1#0033800000000000
+
+#OIL 99.22 %   GM_OLF
+cansend can1 3F9#800000005500FD0E
+
+#OIL 100%
+cansend can1 3F9#040000005500FF0D
+
+#OIL 65.88 %
+cansend can1 3F9#040000005500A80D
+*/

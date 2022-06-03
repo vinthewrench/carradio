@@ -1072,8 +1072,12 @@ void DisplayMgr::drawDeviceStatus(){
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
-	
+	PiCarDB*		db 	= PiCarMgr::shared()->db();
+	FrameDB*		fDB 	= PiCarMgr::shared()->can()->frameDB();
+
+	uint8_t width = _vfd.width();
+	uint8_t midX = width/2;
+ 
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
@@ -1089,12 +1093,12 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
-	TRY(_vfd.setCursor(10,35));
-	TRY(_vfd.setFont(VFD::FONT_10x14));
-	TRY(_vfd.write(buffer));
+	_vfd.setCursor(10,35) ;
+	_vfd.setFont(VFD::FONT_10x14) ;
+	_vfd.write(buffer) ;
 	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.write( (t->tm_hour > 12)?"PM":"AM"));
+	_vfd.setFont(VFD::FONT_5x7) ;
+	_vfd.write( (t->tm_hour > 12)?"PM":"AM");
 	
 	float cTemp = 0;
 	if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
@@ -1102,10 +1106,27 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		float fTemp = cTemp *9.0/5.0 + 32.0;
 		char buffer[64] = {0};
 		
-		TRY(_vfd.setCursor(10, 60));
-		TRY(_vfd.setFont(VFD::FONT_5x7));
+		_vfd.setCursor(10, 60)	;
+		_vfd.setFont(VFD::FONT_5x7);
 		sprintf(buffer, "%3d\xa0" "F", (int) round(fTemp) );
-		TRY(_vfd.write(buffer));
+		_vfd.write(buffer) ;
+	}
+	
+	bool engineCheck = false;
+	
+	
+	_vfd.setCursor(10, midX);
+
+	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
+		&& engineCheck) {
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CHECK ENGINE");
+	}
+	
+	else {
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("%11s", " ");
+
 	}
 	
 //	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){

@@ -8,7 +8,7 @@
 #include "PiCarCAN.hpp"
 
 
-#define DEBUG_CAN 1
+//#define DEBUG_CAN 1
 
 static map<PiCarCAN::pican_bus_t, string>bus_map  = {};
 

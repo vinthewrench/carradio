@@ -116,13 +116,13 @@ public:
 	vector<string_view>  	valuesUpdateSinceEtag(eTag_t eTag, eTag_t *newEtag);
 	vector<string_view>  	valuesOlderthan(time_t time);
 	bool 							valueWithKey(string_view key, string *value);
- 
+	bool							boolForKey(string key, bool &state);
+
 	
 	valueSchemaUnits_t 		unitsForKey(string key);
 	string 						unitSuffixForKey(string key);
 	double 						normalizedDoubleForValue(string key, string value);
 	int 							intForValue(string key, string value);
-	
 	
  protected:
  

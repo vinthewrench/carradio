@@ -1533,7 +1533,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(0,row);
 		_vfd.printPacket("UTM");
 		
-		_vfd.setCursor(0,row+35);
+		_vfd.setCursor(0,row+32);
 		_vfd.printPacket("ALTITUDE");
 	
  	}

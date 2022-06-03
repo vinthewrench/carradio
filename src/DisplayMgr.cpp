@@ -1527,16 +1527,15 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
-//
-//		// top line
-//		_vfd.setCursor(col, row);
-//		_vfd.setFont(VFD::FONT_5x7);
-//		_vfd.printPacket("GPS ");
-		
+
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(0,row);
 		_vfd.printPacket("UTM");
+		
+		_vfd.setCursor(0,22);
+		_vfd.printPacket("ALTITUDE");
+	
  	}
 
 	if(transition == TRANS_LEAVING) {

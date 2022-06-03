@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <string>
+#include <bitset>
 
 static map<uint, string> knownPid = {
 
@@ -200,7 +201,9 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 		case 0x244: //Door Status
 		{
 			int doors = 	 frame.data[0] ;
-			db->updateValue(schemaKeyForValueKey(DOORS), to_string(doors), when);
+			bitset<8> doorBits  = bitset<8>(doors);
+			
+			db->updateValue(schemaKeyForValueKey(DOORS), doorBits.to_string(), when);
 			
 			int locks = 	 frame.data[4] ;
 			if(locks & 0x80)

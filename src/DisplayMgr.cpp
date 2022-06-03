@@ -1522,6 +1522,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	uint8_t row = 7;
 	string str;
 
+	uint8_t utmRow = row;
+	uint8_t altRow = utmRow+32;
+
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
  
 	if(transition == TRANS_ENTERING) {
@@ -1530,10 +1533,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(0,row);
+		_vfd.setCursor(0,utmRow);
 		_vfd.printPacket("UTM");
 		
-		_vfd.setCursor(0,row+32);
+		_vfd.setCursor(0,altRow);
 		_vfd.printPacket("ALTITUDE");
 	
  	}
@@ -1549,18 +1552,18 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		_vfd.setCursor(col+7, row+10 );
+		_vfd.setCursor(col+7, utmRow+10 );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		_vfd.setCursor(col+30, row+10 );
+		_vfd.setCursor(col+30, utmRow+10 );
 		_vfd.printPacket("%-8s", v[1].c_str());
 		
 		
-		_vfd.setCursor(col+30 - 6, row+20 );
+		_vfd.setCursor(col+30 - 6, utmRow+20 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 		
 		if(location.altitudeIsValid)  {
-			_vfd.setCursor(col+30, row+41 );
+			_vfd.setCursor(col+30, altRow+5);
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}

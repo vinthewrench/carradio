@@ -1588,6 +1588,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
+		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(midX +20 ,utmRow+20);
 		velocity.heading = 270;
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
@@ -1595,11 +1596,8 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
  
 		_vfd.setCursor(midX +20 ,altRow+10);
 		double mph = velocity.speed * 0.6213711922;
-		
 		mph = 100.0;
-		
 		_vfd.printPacket("%3d m/h",int(mph));
- 
 	}
 
 	
@@ -1607,9 +1605,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	struct tm *t = localtime(&now);
 	char buffer[16] = {0};
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M%P", t);
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7));
-	TRY(_vfd.write(buffer));
+	_vfd.setFont(VFD::FONT_5x7);
+	_vfd.setCursor(_vfd.width() - (strlen(buffer) * 6) ,7) ;
+	_vfd.write(buffer) ;
 
 }
 

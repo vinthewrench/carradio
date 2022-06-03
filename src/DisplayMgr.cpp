@@ -1163,14 +1163,6 @@ void DisplayMgr::drawEngineCheck(){
 		_vfd.printPacket("%10s", " ");
 
 	}
-
-	///
-	string val = "";
-	if(fDB->valueWithKey("JK_DOORS", &val) ){
-		printf("JK_DOORS = |%s|\n ", val.c_str());
-	}
-	////
-	
 }
 
 void DisplayMgr::drawVolumeScreen(modeTransition_t transition){

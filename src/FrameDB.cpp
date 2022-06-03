@@ -658,6 +658,10 @@ bool	  FrameDB::bitsForKey(string key, bitset<8> &bitsout){
 			string bit_string = _values[key].value;
 			std::bitset<8> bits(bit_string);
 			
+			for( int i = 0; i <7; i++)
+				printf("%s ", bits[i]?"1":"0");
+			printf("\n");
+			
 			valid = true;
 			bitsout = bits;
 		}

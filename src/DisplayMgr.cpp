@@ -1522,6 +1522,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	uint8_t row = 7;
 	string str;
 
+	uint8_t width = _vfd.width();
+ 	uint8_t midX = width/2;
+ 
 	uint8_t utmRow = row;
 	uint8_t altRow = utmRow+30;
 
@@ -1539,6 +1542,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(2,altRow);
 		_vfd.printPacket("ALTITUDE");
 	
+		_vfd.setCursor(midX +10 ,altRow);
+		_vfd.printPacket("HEADING");
+
  	}
 
 	if(transition == TRANS_LEAVING) {

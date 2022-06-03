@@ -1533,10 +1533,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(0,utmRow);
+		_vfd.setCursor(2,utmRow);
 		_vfd.printPacket("UTM");
 		
-		_vfd.setCursor(0,altRow);
+		_vfd.setCursor(2,altRow);
 		_vfd.printPacket("ALTITUDE");
 	
  	}

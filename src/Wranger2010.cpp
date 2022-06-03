@@ -200,7 +200,7 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 
 		case 0x244: //Door Status
 		{
-			int doors = 	 frame.data[0] ;
+			int doors = 	 frame.data[0] & 0x1F ;
 			bitset<8> doorBits  = bitset<8>(doors);
 			
 			db->updateValue(schemaKeyForValueKey(DOORS), doorBits.to_string(), when);

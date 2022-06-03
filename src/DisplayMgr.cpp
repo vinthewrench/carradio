@@ -1155,7 +1155,7 @@ void DisplayMgr::drawEngineCheck(){
 	}
 	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("DOOR OPEN");
+		_vfd.printPacket("DOOR%s OPEN", bits.count()>1?"S":"" );
 
 	}
 	else {

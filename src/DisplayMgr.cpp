@@ -1523,7 +1523,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	string str;
 
 	uint8_t utmRow = row;
-	uint8_t altRow = utmRow+32;
+	uint8_t altRow = utmRow+30;
 
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
  
@@ -1563,7 +1563,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.printPacket("%-8s", v[2].c_str());
 		
 		if(location.altitudeIsValid)  {
-			_vfd.setCursor(col+30, altRow+5);
+			_vfd.setCursor(col+30, altRow+10);
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}

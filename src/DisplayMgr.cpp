@@ -1591,10 +1591,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(midX +30 ,utmRow+20);
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
 		
-//		double mph = velocity.speed * 0.6213711922;
-		
-//		printf("h: %.2f   s: %.2fmph\n", velocity.heading, mph);
-		
+ 
+		_vfd.setCursor(midX +30 ,altRow+10);
+		double mph = velocity.speed * 0.6213711922;
+		_vfd.printPacket("%3d m/h",int(mph));
+ 
 	}
 
 	

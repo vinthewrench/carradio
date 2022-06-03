@@ -1590,13 +1590,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(midX +20 ,utmRow+20);
-		velocity.heading = 270;
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
-		
- 
+	 
 		_vfd.setCursor(midX +20 ,altRow+10);
 		double mph = velocity.speed * 0.6213711922;
-		mph = 100.0;
 		_vfd.printPacket("%3d",int(mph));
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket(" M/H");

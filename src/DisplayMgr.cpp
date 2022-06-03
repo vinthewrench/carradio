@@ -1577,11 +1577,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}
 		
-		//		_vfd.setFont(VFD::FONT_MINI);
-		//		_vfd.setCursor(0,60)	;
-		//
-		//		_vfd.printPacket( "%s:%2d DOP:%.1f",
-		//			GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.setCursor(0,60)	;
+		
+				_vfd.printPacket( "%s:%2d DOP:%.1f",
+					GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
 	}
 	
 

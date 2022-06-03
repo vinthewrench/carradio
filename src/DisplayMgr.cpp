@@ -1542,10 +1542,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(2,altRow);
 		_vfd.printPacket("ALTITUDE");
 	
-		_vfd.setCursor(midX +25 ,utmRow+10);
+		_vfd.setCursor(midX +20 ,utmRow+10);
 		_vfd.printPacket("HEADING");
 
-		_vfd.setCursor(midX +25 ,altRow);
+		_vfd.setCursor(midX +20 ,altRow);
 		_vfd.printPacket("SPEED");
 
  	}

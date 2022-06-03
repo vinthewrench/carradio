@@ -1153,7 +1153,6 @@ void DisplayMgr::drawEngineCheck(){
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHECK FUEL CAP");
 	}
-	
 	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("DOOR OPEN");
@@ -1165,6 +1164,13 @@ void DisplayMgr::drawEngineCheck(){
 
 	}
 
+	///
+	string val = "";
+	if(fDB->valueWithKey("JK_DOORS", &val) ){
+		printf("JK_DOORS = |%s|\n " val.c_str());
+	}
+	////
+	
 }
 
 void DisplayMgr::drawVolumeScreen(modeTransition_t transition){

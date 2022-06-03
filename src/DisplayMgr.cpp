@@ -1533,7 +1533,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(0,row);
 		_vfd.printPacket("UTM");
 		
-		_vfd.setCursor(0,35);
+		_vfd.setCursor(0,row+40);
 		_vfd.printPacket("ALTITUDE");
 	
  	}
@@ -1560,7 +1560,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.printPacket("%-8s", v[2].c_str());
 		
 		if(location.altitudeIsValid)  {
-			_vfd.setCursor(col+30, row+40 );
+			_vfd.setCursor(col+30, row+47 );
 			constexpr double  M2FT = 	3.2808399;
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}

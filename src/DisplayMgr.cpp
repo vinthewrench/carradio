@@ -1073,10 +1073,7 @@ void DisplayMgr::drawDeviceStatus(){
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	PiCarDB*		db 	= PiCarMgr::shared()->db();
-	FrameDB*		fDB 	= PiCarMgr::shared()->can()->frameDB();
 
-	uint8_t width = _vfd.width();
-	uint8_t midX = width/2;
  
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
@@ -1112,21 +1109,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.write(buffer) ;
 	}
 	
-	bool engineCheck = false;
-		
-	_vfd.setCursor(midX, 60);
-
-	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
-		&& engineCheck) {
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("CHECK ENGINE");
-	}
-	
-	else {
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%10s", " ");
-
-	}
+	drawEngineCheck();
 	
 //	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 //		char buffer[64] = {0};
@@ -1139,6 +1122,43 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 }
 
+void DisplayMgr::drawEngineCheck(){
+	FrameDB*		fDB 	= PiCarMgr::shared()->can()->frameDB();
+	uint8_t width = _vfd.width();
+	uint8_t midX = width/2;
+
+	
+	bool engineCheck = false;
+		
+	_vfd.setCursor(midX, 60);
+
+	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
+		&& engineCheck) {
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CHECK ENGINE");
+	}
+	else if(fDB->boolForKey("GM_OIL_LOW", engineCheck)
+		&& engineCheck) {
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("OIL LOW");
+	}
+	else if(fDB->boolForKey("GM_CHANGE_OIL", engineCheck)
+		&& engineCheck) {
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CHANGE OIL");
+	}
+	else if(fDB->boolForKey("GM_CHECK_FUELCAP", engineCheck)
+		&& engineCheck) {
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CHECK FUEL CAP");
+	}
+	else {
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("%10s", " ");
+
+	}
+
+}
 
 void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	
@@ -1411,7 +1431,9 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_MINI));
 	TRY(_vfd.setCursor(8, centerY+5));
 	TRY(_vfd.write(muxstring));
-
+ 
+	drawEngineCheck();
+ 
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[16] = {0};

@@ -164,6 +164,8 @@ private:
 	void drawShutdownScreen();
 	void drawDeviceStatus();
 	
+	void drawEngineCheck();
+	
 	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);

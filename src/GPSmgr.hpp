@@ -7,8 +7,6 @@
 
 #pragma once
 
-
-#define USE_SERIAL 0
  
 
 #include <mutex>
@@ -24,7 +22,7 @@
 #include <unistd.h>
 #include <pthread.h>
  
-#if USE_SERIAL
+#if USE_SERIAL_GPS
 #include <termios.h>
 #else
 #include "I2C.hpp"
@@ -107,7 +105,7 @@ public:
 	~GPSmgr();
 	
 	
-#if USE_SERIAL
+#if USE_SERIAL_GPS
 	bool begin(const char* path = "/dev/ttyAMA0", speed_t speed =  B9600);
 	bool begin(const char* path, speed_t speed, int &error);
 #else
@@ -137,7 +135,7 @@ private:
 	MicroNMEA		_nmea;
 	uint8_t			_nmeaBuffer[128];
   
-#if USE_SERIAL
+#if USE_SERIAL_GPS
 	const char* 	_ttyPath = NULL;
 	speed_t 			_ttySpeed;
 	

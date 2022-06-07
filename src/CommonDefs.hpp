@@ -19,6 +19,8 @@
 
 #include "Utils.hpp"
 
+#define USE_SERIAL_GPS 1
+
 
 typedef uint64_t eTag_t;
 #define MAX_ETAG UINT64_MAX

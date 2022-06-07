@@ -25,7 +25,7 @@
 
 typedef void * (*THREADFUNCPTR)(void *);
 
-#if USE_SERIAL
+#if USE_SERIAL_GPS
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
 	 assert(max_fd != NULL);
@@ -447,7 +447,7 @@ void GPSmgr::GPSReader(){
 			continue;
 		}
 		
-#if USE_SERIAL
+#if USE_SERIAL_GPS
 		int lastError = 0;
 
 		// is the port setup yet?

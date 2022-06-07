@@ -26,9 +26,7 @@
 #include <sys/reboot.h>
 
 #endif
-
-
-#define USE_SERIAL_GPS 0
+ 
 
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
@@ -42,13 +40,7 @@ const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 8";
 
 
 const char* path_display  = "/dev/ttyUSB0";
-
-#if defined(__APPLE__)
-const char* path_gps  = "/dev/cu.usbmodem14101";
-#else
-const char* path_gps  = "/dev/ttyACM0";
-#endif
-
+ 
 #if USE_GPIO_INTERRUPT
 const char* 		gpioPath 				= "/dev/gpiochip0";
 constexpr uint 	gpio_int_line_number	= 27;
@@ -180,6 +172,13 @@ bool PiCarMgr::begin(){
  		}
 
 #if USE_SERIAL_GPS
+		
+#if defined(__APPLE__)
+const char* path_gps  = "/dev/cu.usbmodem14101";
+#else
+const char* path_gps  = "/dev/ttyACM0";
+#endif
+
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
 #else

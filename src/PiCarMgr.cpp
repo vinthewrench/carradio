@@ -152,7 +152,7 @@ bool PiCarMgr::begin(){
  
 		// if we fail, no big deal..
 		startTempSensors();
-		startCompass();
+	//	startCompass();
 		startControls();
 		
 		// setup audio out

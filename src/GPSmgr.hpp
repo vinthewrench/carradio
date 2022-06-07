@@ -7,15 +7,14 @@
 
 #pragma once
 
-#include <stdio.h>
-#include <pthread.h>
 
+#define USE_SERIAL 0
+ 
 
 #include <mutex>
 #include <utility>      // std::pair, std::make_pair
 #include <string>       // std::string
 #include <queue>
-#include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -23,14 +22,21 @@
 #include <string.h>
 #include <stddef.h>
 #include <unistd.h>
-#include <termios.h>
 #include <pthread.h>
  
+#if USE_SERIAL
+#include <termios.h>
+#else
+#include "I2C.hpp"
+#endif
+
 #include <sys/time.h>
 
  #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 #include "MicroNMEA.hpp"
+
+
 
 using namespace std;
  
@@ -99,9 +105,17 @@ public:
 
 	GPSmgr();
 	~GPSmgr();
-		
+	
+	
+#if USE_SERIAL
 	bool begin(const char* path = "/dev/ttyAMA0", speed_t speed =  B9600);
 	bool begin(const char* path, speed_t speed, int &error);
+#else
+	bool begin(uint8_t deviceAddress = 0x42);
+	bool begin(uint8_t deviceAddress,  int &error);
+	uint8_t	getDevAddr();
+#endif
+
 	void stop();
 
 	bool reset();
@@ -123,11 +137,20 @@ private:
 	MicroNMEA		_nmea;
 	uint8_t			_nmeaBuffer[128];
   
+#if USE_SERIAL
 	const char* 	_ttyPath = NULL;
 	speed_t 			_ttySpeed;
 	
 	bool openGPSPort(int &error);
 	void closeGPSPort();
+	
+	  struct termios _tty_opts_backup;
+	  fd_set	 			_master_fds;		// Can sockets that are ready for read
+	  int					_max_fds;
+	  int	 				_fd;
+#else
+	I2C 				_i2cPort;
+#endif
 	
 	void processNMEA();
  
@@ -137,11 +160,6 @@ private:
 	static void GPSReaderThreadCleanup(void *context);
 	bool 			_isRunning = false;
  
-	struct termios _tty_opts_backup;
-	fd_set	 			_master_fds;		// Can sockets that are ready for read
-	int					_max_fds;
-	int	 				_fd;
-
   pthread_cond_t 		_cond = PTHREAD_COND_INITIALIZER;
   pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_t				_TID;

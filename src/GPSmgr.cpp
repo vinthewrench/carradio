@@ -23,7 +23,9 @@
 #endif
 
 
+typedef void * (*THREADFUNCPTR)(void *);
 
+#if USE_SERIAL
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
 	 assert(max_fd != NULL);
@@ -46,8 +48,6 @@ static int safe_fd_clr(int fd, fd_set* fds, int* max_fd) {
 	 return 0;
 }
 
-
-typedef void * (*THREADFUNCPTR)(void *);
 
 GPSmgr::GPSmgr() : _nmea( (void*)_nmeaBuffer, sizeof(_nmeaBuffer), this ){
 	_isSetup = false;
@@ -219,6 +219,75 @@ void GPSmgr::stop(){
 		}
 }
 
+#else
+
+enum UBLOX_Register
+{
+  UBLOX_BYTES_AVAIL  = 0xFD,
+  UBLOX_DATA_STREAM = 0xFF,
+};
+
+
+GPSmgr::GPSmgr() : _nmea( (void*)_nmeaBuffer, sizeof(_nmeaBuffer), this ){
+	_isSetup = false;
+	_nmea.clear();
+	
+	_isRunning = true;
+
+	pthread_create(&_TID, NULL,
+										  (THREADFUNCPTR) &GPSmgr::GPSReaderThread, (void*)this);
+
+	
+}
+
+GPSmgr::~GPSmgr(){
+	stop();
+	
+	pthread_mutex_lock (&_mutex);
+	_isRunning = false;
+	pthread_cond_signal(&_cond);
+	pthread_mutex_unlock (&_mutex);
+	pthread_join(_TID, NULL);
+ }
+
+
+bool GPSmgr::begin(uint8_t deviceAddress){
+	int error = 0;
+
+	return begin(deviceAddress, error);
+}
+ 
+bool GPSmgr::begin(uint8_t deviceAddress,   int &error){
+	
+	reset();
+	_nmea.clear();
+
+	if(  _i2cPort.begin(deviceAddress, error) ){
+			_isSetup = true;
+	}
+	
+	return _isSetup;
+}
+ 
+void GPSmgr::stop(){
+	_isSetup = false;
+	reset();
+	_nmea.clear();
+
+	_i2cPort.stop();
+}
+
+uint8_t	GPSmgr::getDevAddr(){
+	return _i2cPort.getDevAddr();
+};
+
+ 
+
+bool  GPSmgr::isConnected() {
+	return _isSetup;
+};
+
+#endif
 
 
 bool GPSmgr::reset(){
@@ -369,8 +438,7 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 void GPSmgr::GPSReader(){
 	 
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
-	int lastError = 0;
-	
+		
 	while(_isRunning){
 		
 		// if not setup // check back later
@@ -378,7 +446,10 @@ void GPSmgr::GPSReader(){
 			sleep(2);
 			continue;
 		}
-	 
+		
+#if USE_SERIAL
+		int lastError = 0;
+
 		// is the port setup yet?
 		if (! isConnected()){
 			if(!openGPSPort(lastError)){
@@ -441,6 +512,29 @@ void GPSmgr::GPSReader(){
 			} while (readMore);
 			
 		}
+		
+#else
+		
+		uint16_t len = 0;
+		if(_i2cPort.readWord(UBLOX_BYTES_AVAIL, len) && len > 0){
+			
+			for(uint16_t i = 0; i < len; i++){
+				uint8_t b;
+				
+				if(i == 0){
+					if(! _i2cPort.readByte(UBLOX_DATA_STREAM, b)) break;
+				}
+				else {
+					if(! _i2cPort.readByte(b)) break;
+				}
+				
+				if(_nmea.process(b)){
+					processNMEA();
+				}
+			}
+		}
+#endif
+		
 	}
 }
 

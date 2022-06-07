@@ -27,6 +27,9 @@
 
 #endif
 
+
+#define USE_SERIAL_GPS 0
+
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
 
@@ -175,10 +178,16 @@ bool PiCarMgr::begin(){
 	 		if(!_radio.begin(devices[0].index))
 			 throw Exception("failed to setup Radio ");
  		}
-	 
+
+#if USE_SERIAL_GPS
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
-
+#else
+		constexpr uint8_t  GPSAddress = 0x42;
+		if(!_gps.begin(GPSAddress, error))
+			throw Exception("failed to setup GPS ", error);
+	
+#endif
 		// setup display device
 		if(!_display.begin(path_display,B9600))
 			throw Exception("failed to setup Display ");
@@ -260,11 +269,11 @@ void PiCarMgr::stop(){
 void PiCarMgr::doShutdown(){
 	
 #if defined(__APPLE__)
-	system("/bin/sh shutdown -P now");
+//	system("/bin/sh shutdown -P now");
 #else
 	stop();
 	sync();
-	sleep(2);
+	sleep(1);
   	reboot(RB_POWER_OFF);
 #endif
 

@@ -96,31 +96,39 @@ bool I2C::begin(uint8_t	devAddr){
 
 bool I2C::begin(uint8_t	devAddr,   int &error){
 	static const char *ic2_device = "/dev/i2c-1";
- 
-	_isSetup = false;
-	int fd ;
+ 	return begin(devAddr, ic2_device, error);
+ }
 
-	if((fd = open( ic2_device, O_RDWR)) <0) {
- 
-		ELOG_ERROR(ErrorMgr::FAC_I2C, 0, errno, "OPEN %s", ic2_device);
 
-		error = errno;
-		return false;
-	}
+
+bool  I2C::begin(uint8_t	devAddr,  const char* path, int &error){
 	
-	if (::ioctl(fd, I2C_SLAVE, devAddr) < 0) {
-		
-		ELOG_ERROR(ErrorMgr::FAC_I2C, devAddr, errno, "I2C_SLAVE");
-		error = errno;
-		return false;
-	}
+	  _isSetup = false;
+	  int fd ;
 
-	_fd = fd;
-	_isSetup = true;
-	_devAddr = devAddr;
+	  if((fd = open( path, O_RDWR)) <0) {
 	
-	return _isSetup;
+		  ELOG_ERROR(ErrorMgr::FAC_I2C, 0, errno, "OPEN %s", path);
+
+		  error = errno;
+		  return false;
+	  }
+	  
+	  if (::ioctl(fd, I2C_SLAVE, devAddr) < 0) {
+		  
+		  ELOG_ERROR(ErrorMgr::FAC_I2C, devAddr, errno, "I2C_SLAVE");
+		  error = errno;
+		  return false;
+	  }
+
+	  _fd = fd;
+	  _isSetup = true;
+	  _devAddr = devAddr;
+	  
+	  return _isSetup;
+
 }
+
 
 
 void I2C::stop(){

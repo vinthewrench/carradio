@@ -25,6 +25,7 @@
 
 typedef void * (*THREADFUNCPTR)(void *);
 
+// MARK: -  SERIAL GPS
 #if USE_SERIAL_GPS
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
@@ -220,7 +221,7 @@ void GPSmgr::stop(){
 }
 
 #else
-
+// MARK: -  I2C GPS
 enum UBLOX_Register
 {
   UBLOX_BYTES_AVAIL  = 0xFD,
@@ -262,7 +263,9 @@ bool GPSmgr::begin(uint8_t deviceAddress,   int &error){
 	reset();
 	_nmea.clear();
 
-	if(  _i2cPort.begin(deviceAddress, error) ){
+	static const char *ic2_device = "/dev/i2c-22";
+
+	if(  _i2cPort.begin(deviceAddress,ic2_device, error) ){
 			_isSetup = true;
 	}
 	
@@ -289,6 +292,7 @@ bool  GPSmgr::isConnected() {
 
 #endif
 
+// MARK: -
 
 bool GPSmgr::reset(){
 

@@ -19,7 +19,7 @@
 
 #include "Utils.hpp"
 
-#define USE_SERIAL_GPS 1
+#define USE_SERIAL_GPS 0
 
 
 typedef uint64_t eTag_t;

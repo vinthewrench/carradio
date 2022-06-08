@@ -721,7 +721,7 @@ void PiCarMgr::PiCanLoop(){
 				
 // MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
-				print("Tuner Double Clicked\n");
+				printf("Tuner Double Clicked\n");
 			}
 
 			if(tunerWasClicked){

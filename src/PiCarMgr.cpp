@@ -557,9 +557,12 @@ void PiCarMgr::PiCanLoop(){
 			
 			bool volMovedCW 		= false;
 			bool volWasClicked 	= false;
+			bool volWasDoubleClicked 	= false;
 			bool volWasMoved 		= false;
+			
 			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
+			bool tunerWasDoubleClicked 	= false;
 			bool tunerWasMoved 	= false;
 			
 			// loop until status changes
@@ -614,11 +617,18 @@ void PiCarMgr::PiCanLoop(){
 			if(!_isRunning) continue;
 			
 			volWasClicked 		= volKnob->wasClicked();
+			volWasDoubleClicked = volKnob->wasDoubleClicked();
 			volWasMoved 		= volKnob->wasMoved(volMovedCW);
+			
 			tunerWasClicked 	= tunerKnob->wasClicked();
+			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
 			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
 			
 // MARK:   Volume button Clicked
+			if(volWasDoubleClicked){
+				printf("Volume Double Clicked\n");
+			}
+			
 			if(volWasClicked){
 				
 				if(_radio.isConnected()){
@@ -708,7 +718,12 @@ void PiCarMgr::PiCanLoop(){
 				}
 			}
 			
+				
 // MARK:   Tuner button clicked
+			if(tunerWasDoubleClicked){
+				print("Tuner Double Clicked\n");
+			}
+
 			if(tunerWasClicked){
 				if(_display.isScreenDisplayedMultiPage()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){

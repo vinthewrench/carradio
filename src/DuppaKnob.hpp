@@ -28,6 +28,7 @@ public:
   
 	
 	bool wasClicked();
+	bool wasDoubleClicked();
 	bool wasMoved( bool &cw);
 
 	bool updateStatus();
@@ -38,6 +39,7 @@ public:
 
 	
 	bool setAntiBounce(uint8_t period); // period * 0.192ms
+	bool setDoubleClickTime(uint8_t period);  // period * 10ms
 
 	
 private:

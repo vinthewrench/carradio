@@ -37,6 +37,7 @@ constexpr uint8_t leftRingAddress = 0x61;
 constexpr uint8_t antiBounceDefault = 1;
 constexpr uint8_t antiBounceSlow = 32;
 
+constexpr uint8_t doubleClickTime = 50;   // 50 * 10 ms
 
 
 DisplayMgr::DisplayMgr(){
@@ -96,6 +97,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		_leftKnob.setAntiBounce(antiBounceDefault);
 		
+		_rightKnob.setDoubleClickTime(doubleClickTime);
+		_leftKnob.setDoubleClickTime(doubleClickTime);
+	
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
 
@@ -532,8 +536,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				break;
 				
 			case KNOB_CLICK:
-				
-				// ignore menu separators
+			// ignore menu separators
 				if(_menuItems[_currentMenuItem] == "-")
 					break;
 				

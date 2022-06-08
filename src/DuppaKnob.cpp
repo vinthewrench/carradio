@@ -78,12 +78,13 @@ bool DuppaKnob::updateStatus(uint8_t &statusOut) {
 }
 
 	
-	bool DuppaKnob::wasClicked(){
-	
+bool DuppaKnob::wasClicked(){
  	return _isSetup && _duppa.wasClicked();
-	
 }
 
+bool DuppaKnob::wasDoubleClicked(){
+	return _isSetup && _duppa.wasDoubleClicked();
+}
 
 bool DuppaKnob::wasMoved( bool &cw){
 	return _isSetup && _duppa.wasMoved(cw);
@@ -102,5 +103,8 @@ bool DuppaKnob::setColor(uint8_t red, uint8_t green, uint8_t blue ){
 
 bool DuppaKnob::setAntiBounce(uint8_t period){
 	return _isSetup && _duppa.setAntiBounce(period);
+}
 
+bool DuppaKnob::setDoubleClickTime(uint8_t period){
+	return _isSetup && _duppa.setDoubleClickTime(period);
 }

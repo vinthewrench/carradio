@@ -173,6 +173,10 @@ bool DuppaEncoder::wasPressed() {
 	return  (_lastStatus & PUSHP) != 0;
 }
 
+bool DuppaEncoder::wasDoubleClicked() {
+	return  (_lastStatus & PUSHD) != 0;
+}
+
 bool DuppaEncoder::wasMoved(bool &cw) {
 	
 	if( (_lastStatus & (RINC | RDEC)) != 0){
@@ -214,6 +218,22 @@ bool DuppaEncoder::setAntiBounce(uint8_t period){  // period * 0.192ms
 	if(_i2cPort.isAvailable()){
 		
 		success = _i2cPort.writeByte(REG_ANTBOUNC, period);
+	}
+	
+	return success;
+	
+}
+
+
+bool DuppaEncoder::setDoubleClickTime(uint8_t period){  // period * 10ms
+	bool success = false;
+#if defined(__APPLE__)
+	return(true);
+#endif
+	
+	if(_i2cPort.isAvailable()){
+		
+		success = _i2cPort.writeByte(REG_DPPERIOD, period);
 	}
 	
 	return success;

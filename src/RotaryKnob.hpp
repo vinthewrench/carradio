@@ -21,6 +21,7 @@ public:
 //	bool begin(int deviceAddress,  int &error);
 	
 	virtual bool wasClicked() = 0;
+	virtual bool wasDoubleClicked() = 0;
 	virtual bool wasMoved( bool &up) = 0;
 	
 	virtual void stop() = 0;

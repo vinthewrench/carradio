@@ -10,7 +10,7 @@
 
 	 "audio_setting" : {
 		 "bal": 0.0,
-		 "vol": 0.2
+		 "vol": 0.05
 	},
 	 "temp-query-delay": 4,
 	 

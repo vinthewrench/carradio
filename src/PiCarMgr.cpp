@@ -1054,9 +1054,9 @@ void PiCarMgr::tunerDoubleClicked(){
 			(tune_mode ==  TUNE_PRESETS ?MINI_CHECK"Presets": MINI_SPACE"Presets"),
 			(tune_mode ==  TUNE_KNOWN ?MINI_CHECK"Known stations": MINI_SPACE"Known stations"),
 			(tune_mode ==  TUNE_ALL ?	MINI_CHECK"All channels": MINI_SPACE"All channels"),
-			"---",
-			" Set",
-			"---",
+			"-",
+			"Set",
+			"-",
 			"Clear all presets"
 		};
  

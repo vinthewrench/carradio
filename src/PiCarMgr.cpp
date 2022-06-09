@@ -79,6 +79,10 @@ static void sigHandler (int signum) {
  
 	printf("%s sigHandler %d\n", TimeStamp(false).logFileString().c_str(), signum);
 	
+	// ignore hangup
+	if(signum == SIGHUP)
+		return;
+	
 	auto picanMgr = PiCarMgr::shared();
 	picanMgr->stop();
 	exit(0);

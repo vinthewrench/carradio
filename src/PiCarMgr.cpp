@@ -1116,7 +1116,7 @@ void PiCarMgr::tunerDoubleClicked(){
 			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": " Known stations"),
 			(tune_mode ==  TUNE_ALL ?	"[All channels]": " All channels"),
 			"-",
-			isPresetChannel(mode, freq)?"Clear":"Set",
+			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
 			"-",
 			"Clear all presets"
 		};
@@ -1155,13 +1155,11 @@ void PiCarMgr::tunerDoubleClicked(){
 							
 							if(clearPresetChannel(mode, freq))
 								saveRadioSettings();
-							
 						}
 						else
 						{
 							if(setPresetChannel(mode, freq))
 								saveRadioSettings();
-							
 						}
 					}
 						

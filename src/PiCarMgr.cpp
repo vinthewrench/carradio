@@ -1047,14 +1047,17 @@ void PiCarMgr::tunerDoubleClicked(){
 			  tune_mode = static_cast<tuner_knob_mode_t>(val);
 		  }
 
+#define MINI_CHECK "\x1c\x0b\x1d"
+#define MINI_SPACE "\x1c \x1d"
+
 		vector<string> menu_items = {
-				"Set",
-				"-",
-			(tune_mode ==  TUNE_PRESETS ?"\xB9""Presets": " Presets"),
-			(tune_mode ==  TUNE_KNOWN ?"\xB9""Known stations": " Known stations"),
-			(tune_mode ==  TUNE_ALL ?	"\xB9""All channels": " All channels"),
-				"-",
-				"Clear all presets"
+				" Set",
+				"---",
+			(tune_mode ==  TUNE_PRESETS ?MINI_CHECK"Presets": MINI_SPACE"Presets"),
+			(tune_mode ==  TUNE_KNOWN ?MINI_CHECK"Known stations": MINI_SPACE"Known stations"),
+			(tune_mode ==  TUNE_ALL ?	MINI_CHECK"All channels": MINI_SPACE"All channels"),
+				"---",
+				"  Clear all presets"
 			};
 		 
 		

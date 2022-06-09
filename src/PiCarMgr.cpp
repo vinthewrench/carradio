@@ -898,7 +898,7 @@ void PiCarMgr::PiCanLoop(){
  							break;
 					}
 					
-					printf("tuner mode %d nextFrequency %d\n", _tuner_mode,nextFreq  );
+//					printf("tuner mode %d nextFrequency %d\n", _tuner_mode,nextFreq  );
 
 					_radio.setFrequencyandMode(mode, nextFreq);
 				}
@@ -907,6 +907,8 @@ void PiCarMgr::PiCanLoop(){
 				
 // MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
+				printf("Tuner Double Clicked\n");
+
 				tunerDoubleClicked();
 				continue;
  			}

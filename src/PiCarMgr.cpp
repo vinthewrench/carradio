@@ -1096,9 +1096,11 @@ void PiCarMgr::tunerDoubleClicked(){
 		&& _radio.isOn()){
 		// display set/preset menu
 		
+		RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+		uint32_t 					freq =  _radio.frequency();
+		
 		constexpr time_t timeout_secs = 10;
-		
-		
+ 
 		  tuner_knob_mode_t tune_mode = TUNE_ALL;
 		  
 		  uint16_t val = 0;
@@ -1110,11 +1112,11 @@ void PiCarMgr::tunerDoubleClicked(){
 #define MINI_SPACE " "
 
 		vector<string> menu_items = {
-			(tune_mode ==  TUNE_PRESETS ?MINI_CHECK"Presets": MINI_SPACE"Presets"),
-			(tune_mode ==  TUNE_KNOWN ?MINI_CHECK"Known stations": MINI_SPACE"Known stations"),
-			(tune_mode ==  TUNE_ALL ?	MINI_CHECK"All channels": MINI_SPACE"All channels"),
+			(tune_mode ==  TUNE_PRESETS ?"[Presets]": " Presets"),
+			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": " Known stations"),
+			(tune_mode ==  TUNE_ALL ?	"[All channels]": " All channels"),
 			"-",
-			"Set",
+			isPresetChannel(mode, freq)?"Clear":"Set",
 			"-",
 			"Clear all presets"
 		};
@@ -1128,7 +1130,7 @@ void PiCarMgr::tunerDoubleClicked(){
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
-		
+						
 						
 					case 0: // Tune presets
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
@@ -1144,16 +1146,33 @@ void PiCarMgr::tunerDoubleClicked(){
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_ALL));
 						_db.savePropertiesToFile();
 						break;
-	
+						
 					case 4: // set/clear
+					{
+						RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+						uint32_t 					freq =  _radio.frequency();
+						if( isPresetChannel(mode, freq)){
+							
+							if(clearPresetChannel(mode, freq))
+								saveRadioSettings();
+							
+						}
+						else
+						{
+							if(setPresetChannel(mode, freq))
+								saveRadioSettings();
+							
+						}
+					}
+						
 						break;
 						
 					case 6: // clear all presets
-	
+						
 					default:
 						break;
 				}
-		 
+				
 			}
 			
 			_display.showRadioChange();

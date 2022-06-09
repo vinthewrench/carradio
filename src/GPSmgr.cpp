@@ -533,7 +533,7 @@ void GPSmgr::GPSReader(){
 		
 		// if not setup // check back later
 		if(!_shouldRead ){
-			sleep(1);
+			usleep(500000);
 			continue;
 		}
 

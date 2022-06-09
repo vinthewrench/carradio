@@ -1026,9 +1026,7 @@ void PiCarMgr::displaySettingsMenu(){
 			}
 	 
 		}
-
-		_display.showRadioChange();
- 	});
+	});
 									
 }
  
@@ -1063,6 +1061,9 @@ void PiCarMgr::tunerDoubleClicked(){
 				}
 		 
 			}
+			
+			_display.showRadioChange();
+			
 		});
 	}
  }

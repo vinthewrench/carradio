@@ -116,6 +116,12 @@ class PiCarMgr {
 	bool clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
 	bool isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
 
+ 	bool nextPresetStation(RadioMgr::radio_mode_t band,
+									uint32_t frequency,
+									bool up,
+									station_info_t &info);
+
+	
 private:
 	
 	typedef enum :int {

@@ -397,6 +397,9 @@ void PiCarMgr::restoreRadioSettings(){
 	if(_db.getJSONProperty(PROP_PRESETS,&j)
 		&&  j.is_array()){
 		
+		vector < pair<RadioMgr::radio_mode_t,uint32_t>>  presets;
+		presets.clear();
+	 
 		for(auto item : j ){
 			if(item.is_object()
 				&&  item.contains(PROP_PRESET_MODE)
@@ -407,9 +410,18 @@ void PiCarMgr::restoreRadioSettings(){
 				auto mode = RadioMgr::stringToMode( item[PROP_PRESET_MODE]);
 				auto freq = item[PROP_PRESET_FREQ] ;
 			 
-				_preset_stations.push_back(make_pair(mode, freq));
+				presets.push_back(make_pair(mode, freq));
 			}
 		}
+		
+			//sort them in order of frequency
+		if( presets.size() >0 ){
+			sort(presets.begin(), presets.end(),
+				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
+						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
+ 		}
+		
+		_preset_stations = presets;
 	}
 	
 	_tuner_mode = TUNE_ALL;
@@ -418,7 +430,6 @@ void PiCarMgr::restoreRadioSettings(){
 		_tuner_mode = static_cast<tuner_knob_mode_t>(val);
 	}
  
-	
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
 		auto mode = RadioMgr::stringToMode(str);
@@ -429,6 +440,8 @@ void PiCarMgr::restoreRadioSettings(){
 nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 	json j;
  
+	
+	
 	for (auto& entry : _preset_stations) {
 		json j1;
 		j1[PROP_PRESET_MODE] = RadioMgr::modeString(entry.first);
@@ -442,8 +455,18 @@ nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
  
 	if(!isPresetChannel(mode,freq)){
-		_preset_stations.push_back(make_pair(mode, freq));
-		return true;
+		
+		auto presets = _preset_stations;
+		
+		presets.push_back(make_pair(mode, freq));
+ 
+		// re-sort them
+		sort(presets.begin(), presets.end(),
+				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
+						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
+		
+		_preset_stations = presets;
+ 		return true;
 	}
 	
 	return false;
@@ -583,7 +606,6 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 	
 	if(_stations.count(band) == 0 ) {
 		// if there are no known frequencies  all then to fallback to all.
-		
 		info.band = band;
 		info.frequency =  _radio.nextFrequency(tunerMovedCW);
 		info.title = "";
@@ -594,36 +616,69 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 	auto v = _stations[band];
 	// scan for next known freq
 	
-	printf("band %d moved %s ", band, tunerMovedCW?"CW":"CCW");
 	if(tunerMovedCW){
 		
 		for ( auto i = v.begin(); i != v.end(); ++i ) {
-			
-			printf("scan  %d  > %d \n", frequency,  i->frequency);
-
 			if(frequency >= i->frequency)
 				continue;
-		 
+			
 			info =  *(i);
-			printf("selected  %d %d \n", info.band,  info.frequency);
-
 			return true;;
 		}
 	}
 	else {
-		
 		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
 			if(frequency <= i->frequency)
 				continue;
 			info =  *(i);
-			printf("selected  %d %d \n", info.band,  info.frequency);
-
 			return true;;
-			
 		}
 	}
+	
+	return false;
+}
+
+
+bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
+								uint32_t frequency,
+								bool tunerMovedCW,
+									station_info_t &info){
+	
+	if(_preset_stations.size() == 0 ) {
+		// if there are no known frequencies  all then to fallback to all.
+		info.band = band;
+		info.frequency =  _radio.nextFrequency(tunerMovedCW);
+		info.title = "";
+		info.location = "";
+		return true;
+	} 
  
-	printf("selected  none\n");
+	auto v = _preset_stations;
+
+	if(tunerMovedCW){
+		
+		for ( auto i = v.begin(); i != v.end(); ++i ) {
+			if(frequency >= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+			return true;;
+		}
+	}
+	else {
+		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
+			if(frequency <= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+		}
+	}
 
 	return false;
 }
@@ -834,9 +889,12 @@ void PiCarMgr::PiCanLoop(){
 							break;
 							
 						case TUNE_PRESETS:
-							nextFreq = _radio.nextFrequency(tunerMovedCW);
-							
-							break;
+							PiCarMgr::station_info_t info;
+							if(nextPresetStation(mode, nextFreq, tunerMovedCW, info)){
+								nextFreq = info.frequency;
+								mode = info.band;
+							}
+ 							break;
 					}
 					
 					printf("tuner mode %d nextFrequency %d\n", _tuner_mode,nextFreq  );

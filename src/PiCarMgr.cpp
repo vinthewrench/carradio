@@ -651,9 +651,10 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 		info.title = "";
 		info.location = "";
 		return true;
-	} 
+	}
  
 	auto v = _preset_stations;
+	printf("band %d moved %s ", band, tunerMovedCW?"CW":"CCW");
 
 	if(tunerMovedCW){
 		
@@ -665,6 +666,9 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 			info.location = "";
 			info.band = i->first;
 			info.frequency =  i->second;
+			
+			printf("selected  %d %d \n", info.band,  info.frequency);
+
 			return true;;
 		}
 	}
@@ -677,6 +681,9 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 			info.location = "";
 			info.band = i->first;
 			info.frequency =  i->second;
+			
+			printf("selected  %d %d \n", info.band,  info.frequency);
+			return true;;
 		}
 	}
 

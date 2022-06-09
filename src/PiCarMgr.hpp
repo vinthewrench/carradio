@@ -142,8 +142,9 @@ private:
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
-
-
+	
+ 	nlohmann::json GetRadioPresetsJSON();
+ 
 	void displayMenu();
 	void displaySettingsMenu();
 

@@ -354,6 +354,7 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
+	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
  }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -417,6 +418,19 @@ void PiCarMgr::restoreRadioSettings(){
 	}
 }
  
+nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
+	json j;
+ 
+	for (auto& entry : _preset_stations) {
+		json j1;
+		j1[PROP_PRESET_MODE] = RadioMgr::modeString(entry.first);
+		j1[PROP_PRESET_FREQ] =  entry.second;
+		j.push_back(j1);
+	}
+	
+	return j;
+}
+
 bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
  
 	if(!isPresetChannel(mode,freq)){

@@ -110,6 +110,9 @@ class PiCarMgr {
 								bool up,
 								station_info_t &info);
 
+	bool setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
 
 private:
 	
@@ -139,7 +142,8 @@ private:
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
-	
+
+
 	void displayMenu();
 	void displaySettingsMenu();
 
@@ -163,6 +167,9 @@ private:
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
 	 
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
+	
+	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
+
 	
 	DisplayMgr			_display;
 	AudioOutput 		_audio;

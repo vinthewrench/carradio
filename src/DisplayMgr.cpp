@@ -1428,9 +1428,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			};
 			TRY(_vfd.setCursor( titleStart ,titleBottom ));
 			TRY(_vfd.write( titlebuff));
+			
+			if(mgr->isPresetChannel(mode, freq)){
+				_vfd.setCursor(0, 60);
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.printPacket("PRESET");
+			}
 		}
  	}
-	
 	
 	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 	string muxstring = RadioMgr::muxstring(mux);

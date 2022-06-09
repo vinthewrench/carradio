@@ -123,6 +123,7 @@ PiCarMgr::PiCarMgr(){
 											 (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
 
 	_stations.clear();
+	_preset_stations.clear();
 	
 }
 
@@ -155,6 +156,7 @@ bool PiCarMgr::begin(){
 	//	startCompass();
 		startControls();
 		
+	
 		// setup audio out
 		if(!_audio.begin(dev_audio ,pcmrate, true ))
 			throw Exception("failed to setup Audio ");
@@ -170,6 +172,9 @@ bool PiCarMgr::begin(){
 	 		if(!_radio.begin(devices[0].index))
 			 throw Exception("failed to setup Radio ");
  		}
+
+		restoreStationsFromFile();
+		restoreRadioSettings();
 
 #if USE_SERIAL_GPS
 		
@@ -202,8 +207,6 @@ const char* path_gps  = "/dev/ttyACM0";
 	 
 		_display.showStartup();  // show startup
 	
-		restoreStationsFromFile();
-		restoreRadioSettings();
 		_isSetup = true;
 
 		bool firstRunToday = true;
@@ -381,14 +384,65 @@ void PiCarMgr::restoreRadioSettings(){
 		}
 	}
 	
+	
+	// SET Preset stations
+	
+	_preset_stations.clear();
+	if(_db.getJSONProperty(PROP_PRESETS,&j)
+		&&  j.is_array()){
+		
+		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_PRESET_MODE)
+				&&  item[PROP_PRESET_MODE].is_string()
+				&&  item.contains(PROP_PRESET_FREQ)
+				&&  item[(PROP_PRESET_FREQ)].is_number()){
+				
+				auto mode = RadioMgr::stringToMode( item[PROP_PRESET_MODE]);
+				auto freq = item[PROP_PRESET_FREQ] ;
+			 
+				_preset_stations.push_back(make_pair(mode, freq));
+			}
+		}
+	}
+	
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
 		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
- 
 }
  
+bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+	bool success = false;
+
+	if(!isPresetChannel(mode,freq)){
+		
+	}
+	
+	return success;
+}
+
+bool PiCarMgr::clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+	bool success = false;
+
+	if(isPresetChannel(mode,freq)){
+		
+	}
+
+	return success;
+}
+ 
+bool PiCarMgr::isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+ 
+	for(auto e: _preset_stations){
+		if(e.first == mode && e.second == freq){
+			return true;
+		}
+	}
+	return false;
+}
+
 
 void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &freqOut){
 	
@@ -416,6 +470,7 @@ bool PiCarMgr::getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &
 }
 	
 
+
 // MARK: - stations File
  
 
@@ -432,7 +487,7 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 		string line;
 		
 		_stations.clear();
-		
+	
 		// open the file
 		ifs.open(filePath, ios::in);
 		if(!ifs.is_open()) return false;

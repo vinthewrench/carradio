@@ -421,20 +421,22 @@ bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
 	bool success = false;
 
 	if(!isPresetChannel(mode,freq)){
-		
+		_preset_stations.push_back(make_pair(mode, freq));
 	}
 	
 	return success;
 }
 
 bool PiCarMgr::clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
-	bool success = false;
-
-	if(isPresetChannel(mode,freq)){
-		
+ 
+	for(auto it = _preset_stations.begin(); it != _preset_stations.end(); it++){
+		if(it->first == mode && it->second == freq){
+			_preset_stations.erase(it);
+			return true;
+		}
 	}
-
-	return success;
+	 
+	return false;
 }
  
 bool PiCarMgr::isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){

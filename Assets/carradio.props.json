@@ -36,15 +36,15 @@
 		  }
 	 ],
 	 "cputemp-query-delay": 4,
-	 "last_menu": "3",
-	 "last_radio_mode": "VHF",
+	 "last_menu": "1",
+	 "last_radio_mode": "FM",
 	 "last_radio_modes": [
 		  {
 				"freq": 1440000,
 				"mode": "AM"
 		  },
 		  {
-				"freq": 103500000,
+				"freq": 106700000,
 				"mode": "FM"
 		  },
 		  {
@@ -56,7 +56,7 @@
 				"mode": "GMRS"
 		  }
 	 ],
-	 "last_write": 1654806012,
+	 "last_write": 1654807694,
 	 "temp-query-delay": 4,
 	 "tuner_knob_mode": 2,
 	 "tuner_presets": [

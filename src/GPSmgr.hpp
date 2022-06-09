@@ -25,6 +25,8 @@
 #if USE_SERIAL_GPS
 #include <termios.h>
 #else
+
+#define UBLOX_CURRENT_ADDRESS_READ 1
 #include "I2C.hpp"
 #endif
 
@@ -112,6 +114,10 @@ public:
 	bool begin(uint8_t deviceAddress = 0x42);
 	bool begin(uint8_t deviceAddress,  int &error);
 	uint8_t	getDevAddr();
+	
+	bool setShouldRead(bool shouldRead);
+	bool shouldRead() {return _shouldRead;};
+
 #endif
 
 	void stop();
@@ -148,6 +154,8 @@ private:
 	  int	 				_fd;
 #else
 	I2C 				_i2cPort;
+	bool				_shouldRead = false;
+
 #endif
 	
 	void processNMEA();

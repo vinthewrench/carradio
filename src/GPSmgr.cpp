@@ -13,9 +13,6 @@
 #include <stdlib.h>
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
-//#include "PiCarMgr.hpp"
-//#include "PiCarDB.hpp"
-//#include "PropValKeys.hpp"
 #include "utm.hpp"
 
 #ifndef PI
@@ -231,6 +228,8 @@ enum UBLOX_Register
 
 GPSmgr::GPSmgr() : _nmea( (void*)_nmeaBuffer, sizeof(_nmeaBuffer), this ){
 	_isSetup = false;
+	_shouldRead = false;
+
 	_nmea.clear();
 	
 	_isRunning = true;
@@ -246,6 +245,8 @@ GPSmgr::~GPSmgr(){
 	
 	pthread_mutex_lock (&_mutex);
 	_isRunning = false;
+	_shouldRead = false;
+
 	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);
 	pthread_join(_TID, NULL);
@@ -262,6 +263,7 @@ bool GPSmgr::begin(uint8_t deviceAddress,   int &error){
 	
 	reset();
 	_nmea.clear();
+	_shouldRead = false;
 
 	static const char *ic2_device = "/dev/i2c-22";
 
@@ -289,6 +291,15 @@ uint8_t	GPSmgr::getDevAddr(){
 bool  GPSmgr::isConnected() {
 	return _isSetup;
 };
+
+bool GPSmgr::setShouldRead(bool shouldRead){
+	if(_isSetup && _isRunning){
+		_shouldRead = true;
+		return true;
+	}
+	return false;
+}
+
 
 #endif
 
@@ -445,13 +456,14 @@ void GPSmgr::GPSReader(){
 		
 	while(_isRunning){
 		
+		
+#if USE_SERIAL_GPS
 		// if not setup // check back later
 		if(!_isSetup){
 			sleep(2);
 			continue;
 		}
-		
-#if USE_SERIAL_GPS
+
 		int lastError = 0;
 
 		// is the port setup yet?
@@ -519,8 +531,37 @@ void GPSmgr::GPSReader(){
 		
 #else
 		
+		// if not setup // check back later
+		if(!_shouldRead ){
+			sleep(1);
+			continue;
+		}
+
+#if UBLOX_CURRENT_ADDRESS_READ
+		uint8_t b;
+		
+		if(_i2cPort.readByte(b)){
+			if(b == 0xff){
+				// not ready.. wait a bit
+				usleep(10000);
+			}
+			else {
+				if(_nmea.process(b)){
+					processNMEA();
+				}
+			}
+		}
+		else {
+			ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS I2C READ FAILED");
+			_shouldRead = false;
+		}
+
+#else
+ 
+		
 		uint16_t len = 0;
-		if(_i2cPort.readWord(UBLOX_BYTES_AVAIL, len) && len > 0){
+		if(_i2cPort.readWord(UBLOX_BYTES_AVAIL, len)
+			&& (len > 0) && (len != 0xffff)){
 			
 			for(uint16_t i = 0; i < len; i++){
 				uint8_t b;
@@ -536,7 +577,13 @@ void GPSmgr::GPSReader(){
 					processNMEA();
 				}
 			}
+			
 		}
+		else {
+			usleep(1000);
+		}
+		
+#endif
 #endif
 		
 	}

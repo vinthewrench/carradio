@@ -898,8 +898,6 @@ void PiCarMgr::PiCanLoop(){
  							break;
 					}
 					
- 				printf("tuner mode %d nextFrequency %d\n", _tuner_mode,nextFreq  );
-
 					_radio.setFrequencyandMode(mode, nextFreq);
 				}
 			}
@@ -1019,8 +1017,6 @@ PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radio
 		default: break;
 	}
 
-	printf("radioModeToMenuMode %d ->  %d\n", radioMode,mode  );
-
 	return mode;
 }
 
@@ -1088,9 +1084,6 @@ void PiCarMgr::displayMenu(){
 	vector<string> menu_items = {};
 	int selectedItem = -1;
 	menu_mode_t mode = currentMode();
-	
-	printf("currentMode %d \n",mode  );
-
  
 // if the radio is on.. keep that mode
 	if( mode == MENU_AM || mode == MENU_FM || mode == MENU_VHF || mode == MENU_GMRS ){

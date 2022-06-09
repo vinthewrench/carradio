@@ -75,7 +75,7 @@ public:
 
 	uint32_t nextFrequency(bool up);
 	
-	uint32_t nextFrequency(bool up, bool constrain = false);
+//	uint32_t nextFrequency(bool up, bool constrain = false);
 	
 
 private:

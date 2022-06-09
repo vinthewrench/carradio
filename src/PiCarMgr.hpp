@@ -44,6 +44,7 @@
 #include "RadioMgr.hpp"
 #include "GPSmgr.hpp"
 #include "PiCarCAN.hpp"
+#include "PropValKeys.hpp"
 
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
@@ -58,6 +59,7 @@ class PiCarMgr {
  
 
 	public:
+	
 	static const char* 	PiCarMgr_Version;
 
 	static PiCarMgr *shared();
@@ -164,14 +166,20 @@ private:
 	
 	menu_mode_t radioModeToMenuMode(RadioMgr::radio_mode_t);
 	
-	RadioMgr::radio_mode_t		_lastRadioMode;
+	RadioMgr::radio_mode_t					  _lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
-	 
+	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
-	
 	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
+ 
+	typedef enum  {
+	 TUNE_ALL = 0,
+	 TUNE_KNOWN ,
+	 TUNE_PRESETS,
+ 	}tuner_knob_mode_t;
+ 
+	tuner_knob_mode_t			_tuner_mode;
 
-	
 	DisplayMgr			_display;
 	AudioOutput 		_audio;
 	RadioMgr				_radio;

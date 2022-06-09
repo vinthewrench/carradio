@@ -434,54 +434,54 @@ uint32_t RadioMgr::nextFrequency(bool up){
 	return newfreq;
 }
 
-
-uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
-	
-	uint32_t newfreq = _frequency;
-	
-	if(constrain){
-		PiCarMgr*		mgr 	= PiCarMgr::shared();
-		PiCarMgr::station_info_t info;
-		
-		if(mgr->nextPresetStation(_mode, _frequency, up, info)){
-			newfreq = info.frequency;
-		}
-	}else {
-		switch (_mode) {
-			case BROADCAST_AM:
-				// AM steps are 10khz
-				if(up) {
-					newfreq+=10.e3;
-				}
-				else {
-					newfreq-=10.e3;
-				}
-				newfreq = fmax(530e3, fmin(1710e3, newfreq));  //  pin freq
-				break;
-				
-			case BROADCAST_FM:
-				// AM steps are 200khz
-				if(up) {
-					newfreq+=200.e3;
-				}
-				else {
-					newfreq-=200.e3;
-				}
-				newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
-				break;
-				
-			default:
-				if(up) {
-					newfreq+=1.e3;
-				}
-				else {
-					newfreq-=1.e3;
-				}
-				break;
-		}
-	}
-	return newfreq;
-}
+//
+//uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
+//
+//	uint32_t newfreq = _frequency;
+//
+//	if(constrain){
+//		PiCarMgr*		mgr 	= PiCarMgr::shared();
+//		PiCarMgr::station_info_t info;
+//
+//		if(mgr->nextPresetStation(_mode, _frequency, up, info)){
+//			newfreq = info.frequency;
+//		}
+//	}else {
+//		switch (_mode) {
+//			case BROADCAST_AM:
+//				// AM steps are 10khz
+//				if(up) {
+//					newfreq+=10.e3;
+//				}
+//				else {
+//					newfreq-=10.e3;
+//				}
+//				newfreq = fmax(530e3, fmin(1710e3, newfreq));  //  pin freq
+//				break;
+//
+//			case BROADCAST_FM:
+//				// AM steps are 200khz
+//				if(up) {
+//					newfreq+=200.e3;
+//				}
+//				else {
+//					newfreq-=200.e3;
+//				}
+//				newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
+//				break;
+//
+//			default:
+//				if(up) {
+//					newfreq+=1.e3;
+//				}
+//				else {
+//					newfreq-=1.e3;
+//				}
+//				break;
+//		}
+//	}
+//	return newfreq;
+//}
 
 string  RadioMgr::hertz_to_string(double hz, int precision){
 	

@@ -6,7 +6,6 @@
 //
 
 #include "PiCarMgr.hpp"
-#include "PropValKeys.hpp"
 
 #include <iostream>
 #include <iostream>
@@ -146,6 +145,7 @@ bool PiCarMgr::begin(){
 		
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
+		_tuner_mode = TUNE_ALL;
 		
 		// clear DB
 		_db.clearValues();
@@ -351,6 +351,7 @@ void PiCarMgr::saveRadioSettings(){
 
 	updateRadioPrefs();
 	
+	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
@@ -410,6 +411,13 @@ void PiCarMgr::restoreRadioSettings(){
 			}
 		}
 	}
+	
+	_tuner_mode = TUNE_ALL;
+ 	uint16_t val = 0;
+	if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
+		_tuner_mode = static_cast<tuner_knob_mode_t>(val);
+	}
+ 
 	
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
@@ -784,12 +792,30 @@ void PiCarMgr::PiCanLoop(){
 				}
 				// change tuner
 				else if(_radio.isOn() ){
-					// change  stations
-					bool shouldConstrain = _stations.count(_radio.radioMode()) > 0;
 					
-					auto newfreq = _radio.nextFrequency(tunerMovedCW, shouldConstrain);
-					auto mode  = _radio.radioMode();
-					_radio.setFrequencyandMode(mode, newfreq);
+					auto nextFreq = _radio.frequency();
+					auto mode 	   = _radio.radioMode();
+					
+					switch(_tuner_mode){
+						case TUNE_ALL:
+							nextFreq = _radio.nextFrequency(tunerMovedCW);
+							break;
+							
+						case TUNE_KNOWN:
+						{
+							PiCarMgr::station_info_t info;
+							if(nextPresetStation(mode, nextFreq, tunerMovedCW, info)){
+								nextFreq = info.frequency;
+							}
+						}
+							break;
+							
+						case TUNE_PRESETS:
+							nextFreq = _radio.nextFrequency(tunerMovedCW);
+							
+							break;
+					}
+					_radio.setFrequencyandMode(mode, nextFreq);
 				}
 			}
 			
@@ -1116,31 +1142,24 @@ void PiCarMgr::tunerDoubleClicked(){
 		uint32_t 					freq =  _radio.frequency();
 		
 		constexpr time_t timeout_secs = 10;
- 
-		  tuner_knob_mode_t tune_mode = TUNE_ALL;
-		  
-		  uint16_t val = 0;
-		  if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
-			  tune_mode = static_cast<tuner_knob_mode_t>(val);
-		  }
- 
 		
 		vector<string> menu_items = {
-			_preset_stations.size() == 0?"No Presets" : ((tune_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
-			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
-			(tune_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
+			_preset_stations.size() == 0?"No Presets"
+			: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
+			(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
+			(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
 			"-",
 			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
 			"-",
 			"Clear all presets"
 		};
- 
+		
 		_display.showMenuScreen(menu_items,
 										4,
 										"Channel Presets",
 										timeout_secs,
 										[=](bool didSucceed, uint newSelectedItem ){
-		
+			
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
@@ -1148,18 +1167,20 @@ void PiCarMgr::tunerDoubleClicked(){
 						
 					case 0: // Tune presets
 						if(_preset_stations.size() > 0){
- 							_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
+							_tuner_mode = TUNE_PRESETS;
+							saveRadioSettings();
 							_db.savePropertiesToFile();
- 						}
+						}
 						break;
 						
 					case 1: // Tune known
-						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_KNOWN));
-						_db.savePropertiesToFile();
+						_tuner_mode = TUNE_KNOWN;
+						saveRadioSettings();
 						break;
 						
 					case 2: // Tune All
-						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_ALL));
+						_tuner_mode = TUNE_ALL;
+						saveRadioSettings();
 						_db.savePropertiesToFile();
 						break;
 						
@@ -1193,7 +1214,7 @@ void PiCarMgr::tunerDoubleClicked(){
 			
 		});
 	}
- }
+}
 
 
 

@@ -721,8 +721,9 @@ void PiCarMgr::PiCanLoop(){
 				
 // MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
-				printf("Tuner Double Clicked\n");
-			}
+				tunerDoubleClicked();
+				continue;
+ 			}
 
 			if(tunerWasClicked){
 				if(_display.isScreenDisplayedMultiPage()
@@ -807,6 +808,8 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 //	printf("cleanup sdr\n");
 }
 
+
+
 // MARK: -   Menu Management
 
 PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radioMode){
@@ -834,7 +837,6 @@ PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radio
 
 PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 	menu_mode_t mode = MENU_UNKNOWN;
-	
 	
 	switch( _display.active_mode()){
 			
@@ -1028,6 +1030,42 @@ void PiCarMgr::displaySettingsMenu(){
 									
 }
  
+void PiCarMgr::tunerDoubleClicked(){
+	DisplayMgr::mode_state_t dMode = _display.active_mode();
+	
+	if(dMode == DisplayMgr::MODE_RADIO
+		&& _radio.isOn()){
+		// display set/preset menu
+		
+		constexpr time_t timeout_secs = 10;
+		
+		vector<string> menu_items = {
+				"Set",
+				"Clear",
+				"-",
+				"Clear all"
+			};
+	 
+		_display.showMenuScreen(menu_items,
+										0,
+										"Channel Presets",
+										timeout_secs,
+										[=](bool didSucceed, uint newSelectedItem ){
+		
+			if(didSucceed) {
+				
+				switch (newSelectedItem) {
+		 
+					default:
+						break;
+				}
+		 
+			}
+		});
+	}
+ }
+
+
 
 // MARK: -   Knobs and Buttons
 

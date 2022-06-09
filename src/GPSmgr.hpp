@@ -25,7 +25,6 @@
 #if USE_SERIAL_GPS
 #include <termios.h>
 #else
-
 #define UBLOX_CURRENT_ADDRESS_READ 1
 #include "I2C.hpp"
 #endif

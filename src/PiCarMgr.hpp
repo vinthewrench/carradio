@@ -143,6 +143,8 @@ private:
 	void displayMenu();
 	void displaySettingsMenu();
 
+	void tunerDoubleClicked();
+	
 	void doShutdown();
 	
 	nlohmann::json GetAudioJSON();

@@ -1026,7 +1026,9 @@ void PiCarMgr::displaySettingsMenu(){
 			}
 	 
 		}
-	});
+
+		_display.showRadioChange();
+ 	});
 									
 }
  

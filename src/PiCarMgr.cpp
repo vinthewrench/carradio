@@ -815,6 +815,9 @@ void PiCarMgr::PiCanLoop(){
 							
 							break;
 					}
+					
+					printf("tuner mode %d nextFrequency %d\n", _tuner_mode,nextFreq  );
+
 					_radio.setFrequencyandMode(mode, nextFreq);
 				}
 			}

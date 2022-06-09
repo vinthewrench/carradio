@@ -203,9 +203,6 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  
 		
 		// SOMETHING ABOUT MODES HERE?
-		
-		if(newMode != _mode) printf("RadioMgr change mode %d\n", newMode);
-
 		_frequency = newFreq;
 		_mode = newMode;
 		_mux =  MUX_MONO;

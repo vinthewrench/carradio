@@ -1047,7 +1047,7 @@ void PiCarMgr::tunerDoubleClicked(){
 			  tune_mode = static_cast<tuner_knob_mode_t>(val);
 		  }
 
-#define MINI_CHECK "-"
+#define MINI_CHECK "\xbb"
 #define MINI_SPACE " "
 
 		vector<string> menu_items = {

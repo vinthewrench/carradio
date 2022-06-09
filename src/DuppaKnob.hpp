@@ -25,8 +25,7 @@ public:
 	void stop();
  
 	bool isConnected();
-  
-	
+ 	
 	bool wasClicked();
 	bool wasDoubleClicked();
 	bool wasMoved( bool &cw);

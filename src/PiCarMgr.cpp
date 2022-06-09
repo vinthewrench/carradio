@@ -1088,16 +1088,24 @@ void PiCarMgr::displayMenu(){
 	vector<string> menu_items = {};
 	int selectedItem = -1;
 	menu_mode_t mode = currentMode();
- 
-	// fall back the selection for usability
 	
-	uint16_t lastSelect;
-	if(_db.getUint16Property(PROP_LAST_MENU_SELECTED, &lastSelect)){
-		selectedItem = lastSelect;
+	printf("currentMode %d \n",mode  );
+
+ 
+// if the radio is on.. keep that mode
+	if( mode == MENU_AM || mode == MENU_FM || mode == MENU_VHF || mode == MENU_GMRS ){
+		// keep that mode.
 	}
-	else if(selectedItem == -1
-			  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
-		mode = MENU_FM;
+	else {
+		// fall back the selection for usability
+		uint16_t lastSelect;
+		if(_db.getUint16Property(PROP_LAST_MENU_SELECTED, &lastSelect)){
+			selectedItem = lastSelect;
+		}
+		else if(selectedItem == -1
+				  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
+			mode = MENU_FM;
+	}
 	
 	menu_items.reserve(_main_menu_map.size());
 	

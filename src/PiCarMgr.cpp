@@ -1071,25 +1071,25 @@ void PiCarMgr::tunerDoubleClicked(){
 				switch (newSelectedItem) {
 		
 						
-					case 1: // Tune presets
+					case 0: // Tune presets
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
 						_db.savePropertiesToFile();
 						break;
 						
-					case 2: // Tune known
+					case 1: // Tune known
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_KNOWN));
 						_db.savePropertiesToFile();
 						break;
 						
-					case 3: // Tune All
+					case 2: // Tune All
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_ALL));
 						_db.savePropertiesToFile();
 						break;
 	
-					case 5: // set/clear
+					case 4: // set/clear
 						break;
 						
-					case 7: // clear all presets
+					case 6: // clear all presets
 	
 					default:
 						break;

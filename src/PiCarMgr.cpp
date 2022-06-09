@@ -1057,7 +1057,7 @@ void PiCarMgr::tunerDoubleClicked(){
 			"---",
 			" Set",
 			"---",
-			" Clear all presets"
+			"Clear all presets"
 		};
  
 		_display.showMenuScreen(menu_items,
@@ -1069,25 +1069,27 @@ void PiCarMgr::tunerDoubleClicked(){
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
-					case 0: // set/clear
-						break;
+		
 						
-					case 2: // Tune presets
+					case 1: // Tune presets
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
 						_db.savePropertiesToFile();
 						break;
 						
-					case 3: // Tune known
+					case 2: // Tune known
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_KNOWN));
 						_db.savePropertiesToFile();
 						break;
 						
-					case 4: // Tune All
+					case 3: // Tune All
 						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_ALL));
 						_db.savePropertiesToFile();
 						break;
 	
-					case 5: // clear all presets
+					case 5: // set/clear
+						break;
+						
+					case 7: // clear all presets
 	
 					default:
 						break;

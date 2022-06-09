@@ -355,7 +355,7 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
 	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
- }
+}
 
 void PiCarMgr::restoreRadioSettings(){
 	
@@ -1123,12 +1123,10 @@ void PiCarMgr::tunerDoubleClicked(){
 		  if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
 			  tune_mode = static_cast<tuner_knob_mode_t>(val);
 		  }
-
-#define MINI_CHECK "-"
-#define MINI_SPACE " "
-
+ 
+		
 		vector<string> menu_items = {
-			(tune_mode ==  TUNE_PRESETS ?"[Presets]": "Presets"),
+			_preset_stations.size() == 0?"No Presets" : ((tune_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
 			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
 			(tune_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
 			"-",
@@ -1138,7 +1136,7 @@ void PiCarMgr::tunerDoubleClicked(){
 		};
  
 		_display.showMenuScreen(menu_items,
-										0,
+										4,
 										"Channel Presets",
 										timeout_secs,
 										[=](bool didSucceed, uint newSelectedItem ){
@@ -1149,8 +1147,10 @@ void PiCarMgr::tunerDoubleClicked(){
 						
 						
 					case 0: // Tune presets
-						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
-						_db.savePropertiesToFile();
+						if(_preset_stations.size() > 0){
+ 							_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
+							_db.savePropertiesToFile();
+ 						}
 						break;
 						
 					case 1: // Tune known

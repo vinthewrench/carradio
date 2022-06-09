@@ -1315,6 +1315,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	static bool didSetRing = false;
 	
+	static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
+	
 	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
 	//			 radio->radioMuxMode(),
 	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
@@ -1351,9 +1353,18 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			RadioMgr::radio_mode_t  mode  = radio->radioMode();
 			uint32_t 					freq =  radio->frequency();
 			
+			
+			// we might need an extra refresh if switching modes
+			if(lastMode != mode){
+				_vfd.clearScreen();
+				_rightRing.clearAll();
+				didSetRing = false;
+				lastMode = mode;
+			}
+	
 			uint32_t 	maxFreq, minFreq;
 			bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
-			
+		
 			if(hasRange){
 				uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
  				uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;

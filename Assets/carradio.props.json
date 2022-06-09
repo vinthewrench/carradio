@@ -1,33 +1,84 @@
 {
-	"cputemp-query-delay": 4,
-	
-	"last_radio_mode":"FM",
-	"last_radio_modes" : [
-		{"mode" :"VHF", "freq": 155805000} ,
-		{"mode" :"FM", "freq":  106700000} ,
-		{"mode" :"AM", "freq":	  1440000} ,
-	{"mode" :"GMRS", "freq":  462562500} ],
-	
-	"audio_setting" : {
-		"bal": 0.0,
-		"vol": 0.05
-	},
-	"temp-query-delay": 4,
-	
-	"last_menu" : 5,
-	
-	"canbus-display": [
-		{ "line" : 1, "title": "COOLANT", 				"key" : "GM_COOLANT_TEMP"},
-		{ "line" : 2, "title": "TRANS TEMP",	 		"key" : "GM_TRANS_TEMP"},
-		{ "line" : 3, "title": "OIL PRESSURE", 		"key" : "GM_OIL_PRESSURE"},
-		{ "line" : 4, "title": "FUEL TRIM B1", 		"key" : "OBD_LONG_FUEL_TRIM_1"},
-		{ "line" : 5, "title": "FUEL TRIM B2", 		"key" : "OBD_LONG_FUEL_TRIM_2"},
-		{ "line" : 6, "title": "ODB OIL PRES", 		"key" : "OBD_OIL_PRESSURE"}
-	],
-	
-	"tuner_presets": [
-		{"freq" : 106700000, "mode" :"FM"},
-		{ "freq": 103500000, "mode": "FM"}
-	]
-	
+	 "audio_setting": {
+		  "bal": 0.0,
+		  "vol": 0.049239939777512357
+	 },
+	 "canbus-display": [
+		  {
+				"key": "GM_COOLANT_TEMP",
+				"line": 1,
+				"title": "COOLANT"
+		  },
+		  {
+				"key": "GM_TRANS_TEMP",
+				"line": 2,
+				"title": "TRANS TEMP"
+		  },
+		  {
+				"key": "GM_OIL_PRESSURE",
+				"line": 3,
+				"title": "OIL PRESSURE"
+		  },
+		  {
+				"key": "OBD_LONG_FUEL_TRIM_1",
+				"line": 4,
+				"title": "FUEL TRIM B1"
+		  },
+		  {
+				"key": "OBD_LONG_FUEL_TRIM_2",
+				"line": 5,
+				"title": "FUEL TRIM B2"
+		  },
+		  {
+				"key": "OBD_OIL_PRESSURE",
+				"line": 6,
+				"title": "ODB OIL PRES"
+		  }
+	 ],
+	 "cputemp-query-delay": 4,
+	 "last_menu": "3",
+	 "last_radio_mode": "VHF",
+	 "last_radio_modes": [
+		  {
+				"freq": 1440000,
+				"mode": "AM"
+		  },
+		  {
+				"freq": 103500000,
+				"mode": "FM"
+		  },
+		  {
+				"freq": 155610000,
+				"mode": "VHF"
+		  },
+		  {
+				"freq": 462600000,
+				"mode": "GMRS"
+		  }
+	 ],
+	 "last_write": 1654806012,
+	 "temp-query-delay": 4,
+	 "tuner_knob_mode": 2,
+	 "tuner_presets": [
+		  {
+				"freq": 103500000,
+				"mode": "FM"
+		  },
+		  {
+				"freq": 106700000,
+				"mode": "FM"
+		  },
+		  {
+				"freq": 155610000,
+				"mode": "VHF"
+		  },
+		  {
+				"freq": 155805000,
+				"mode": "VHF"
+		  },
+		  {
+				"freq": 462600000,
+				"mode": "GMRS"
+		  }
+	 ]
 }

@@ -73,6 +73,8 @@ public:
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
+	uint32_t nextFrequency(bool up);
+	
 	uint32_t nextFrequency(bool up, bool constrain = false);
 	
 

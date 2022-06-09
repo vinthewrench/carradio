@@ -396,6 +396,45 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 }
 
 
+uint32_t RadioMgr::nextFrequency(bool up){
+	uint32_t newfreq = _frequency;
+	
+	switch (_mode) {
+		case BROADCAST_AM:
+			// AM steps are 10khz
+			if(up) {
+				newfreq+=10.e3;
+			}
+			else {
+				newfreq-=10.e3;
+			}
+			newfreq = fmax(530e3, fmin(1710e3, newfreq));  //  pin freq
+			break;
+			
+		case BROADCAST_FM:
+			// AM steps are 200khz
+			if(up) {
+				newfreq+=200.e3;
+			}
+			else {
+				newfreq-=200.e3;
+			}
+			newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
+			break;
+			
+		default:
+			if(up) {
+				newfreq+=1.e3;
+			}
+			else {
+				newfreq-=1.e3;
+			}
+			break;
+	}
+	return newfreq;
+}
+
+
 uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
 	
 	uint32_t newfreq = _frequency;

@@ -53,3 +53,12 @@ inline static const string  PROP_TITLE							= "title";
 inline static const string  PROP_KEY							= "key";
 
 inline static const string  PROP_LAST_MENU_SELECTED		= "last_menu";
+
+
+inline static const string  PROP_TUNER_MODE			= "tuner_knob_mode";
+
+typedef enum  {
+	TUNE_ALL = 0,
+	TUNE_KNOWN ,
+	TUNE_PRESETS,
+}tuner_knob_mode_t;

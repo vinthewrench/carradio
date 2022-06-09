@@ -36,7 +36,7 @@ using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 8";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 9";
 
 
 const char* path_display  = "/dev/ttyUSB0";
@@ -1039,13 +1039,25 @@ void PiCarMgr::tunerDoubleClicked(){
 		
 		constexpr time_t timeout_secs = 10;
 		
+		
+		  tuner_knob_mode_t tune_mode = TUNE_ALL;
+		  
+		  uint16_t val = 0;
+		  if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
+			  tune_mode = static_cast<tuner_knob_mode_t>(val);
+		  }
+
 		vector<string> menu_items = {
 				"Set",
-				"Clear",
 				"-",
-				"Clear all"
+			(tune_mode ==  TUNE_PRESETS ?"\x89Tune presets": " Tune presets"),
+			(tune_mode ==  TUNE_KNOWN ?"\x89known channels": " known channels"),
+			(tune_mode ==  TUNE_ALL ?	"\x89Tune all channels": " Tune all channels"),
+				"-"
+				"Clear all presets"
 			};
-	 
+		 
+		
 		_display.showMenuScreen(menu_items,
 										0,
 										"Channel Presets",
@@ -1055,7 +1067,26 @@ void PiCarMgr::tunerDoubleClicked(){
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
-		 
+					case 0: // set/clear
+						break;
+						
+					case 2: // Tune presets
+						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_PRESETS));
+						_db.savePropertiesToFile();
+						break;
+						
+					case 3: // Tune known
+						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_KNOWN));
+						_db.savePropertiesToFile();
+						break;
+						
+					case 4: // Tune All
+						_db.setProperty(PROP_TUNER_MODE, to_string(TUNE_ALL));
+						_db.savePropertiesToFile();
+						break;
+	
+					case 5: // clear all presets
+	
 					default:
 						break;
 				}

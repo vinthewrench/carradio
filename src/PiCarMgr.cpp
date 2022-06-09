@@ -1051,16 +1051,15 @@ void PiCarMgr::tunerDoubleClicked(){
 #define MINI_SPACE " "
 
 		vector<string> menu_items = {
-			"Set",
-			"---",
 			(tune_mode ==  TUNE_PRESETS ?MINI_CHECK"Presets": MINI_SPACE"Presets"),
 			(tune_mode ==  TUNE_KNOWN ?MINI_CHECK"Known stations": MINI_SPACE"Known stations"),
 			(tune_mode ==  TUNE_ALL ?	MINI_CHECK"All channels": MINI_SPACE"All channels"),
 			"---",
-			"Clear all presets"
+			" Set",
+			"---",
+			" Clear all presets"
 		};
-		 
-		
+ 
 		_display.showMenuScreen(menu_items,
 										0,
 										"Channel Presets",

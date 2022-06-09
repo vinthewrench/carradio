@@ -576,32 +576,44 @@ bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
 	return false;
 }
 
-bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
+bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 								  uint32_t frequency,
-								  bool up,
-									station_info_t &info){
+								  bool tunerMovedCW,
+										  station_info_t &info){
 	
-	if(_stations.count(band)){
-		auto v = _stations[band];
-		if(v.size() > 1)
-			for ( auto i = v.begin(); i != v.end(); ++i ) {
-				if(i->frequency == frequency){
-					if(up){
-						if(next(i) != v.end()){
-							info = *(i+1);
-							return true;
-						}
-					}
-					else {
-						if(i != v.begin()){
-							info = *(i-1);
-							return true;
-							
-						}
-					}
-				}
-			}
+	if(_stations.count(band) == 0 ) {
+		// if there are no known frequencies  all then to fallback to all.
+		
+		info.band = band;
+		info.frequency =  _radio.nextFrequency(tunerMovedCW);
+		info.title = "";
+		info.location = "";
+		return true;
 	}
+	
+	auto v = _stations[band];
+	// scan for next known freq
+	if(tunerMovedCW){
+		
+		for ( auto i = v.begin(); i != v.end(); ++i ) {
+			if(frequency < i->frequency)
+				continue;
+			
+			info = *i;
+			return true;;
+		}
+	}
+	else {
+		
+		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
+			if(frequency > i->frequency)
+				continue;
+			info = *i;
+			return true;;
+			
+		}
+	}
+ 
 	return false;
 }
 
@@ -804,7 +816,7 @@ void PiCarMgr::PiCanLoop(){
 						case TUNE_KNOWN:
 						{
 							PiCarMgr::station_info_t info;
-							if(nextPresetStation(mode, nextFreq, tunerMovedCW, info)){
+							if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
 								nextFreq = info.frequency;
 							}
 						}

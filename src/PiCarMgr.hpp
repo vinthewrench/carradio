@@ -107,7 +107,7 @@ class PiCarMgr {
 
 	bool restoreStationsFromFile(string filePath = "stations.tsv");
 	bool getStationInfo(RadioMgr::radio_mode_t band, uint32_t frequency, station_info_t&);
-	bool nextPresetStation(RadioMgr::radio_mode_t band,
+	bool nextKnownStation(RadioMgr::radio_mode_t band,
 								uint32_t frequency,
 								bool up,
 								station_info_t &info);

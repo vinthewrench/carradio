@@ -418,13 +418,13 @@ void PiCarMgr::restoreRadioSettings(){
 }
  
 bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
-	bool success = false;
-
+ 
 	if(!isPresetChannel(mode,freq)){
 		_preset_stations.push_back(make_pair(mode, freq));
+		return true;
 	}
 	
-	return success;
+	return false;
 }
 
 bool PiCarMgr::clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
@@ -1114,9 +1114,9 @@ void PiCarMgr::tunerDoubleClicked(){
 #define MINI_SPACE " "
 
 		vector<string> menu_items = {
-			(tune_mode ==  TUNE_PRESETS ?"[Presets]": " Presets"),
-			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": " Known stations"),
-			(tune_mode ==  TUNE_ALL ?	"[All channels]": " All channels"),
+			(tune_mode ==  TUNE_PRESETS ?"[Presets]": "Presets"),
+			(tune_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
+			(tune_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
 			"-",
 			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
 			"-",

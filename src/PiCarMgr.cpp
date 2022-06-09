@@ -1050,10 +1050,10 @@ void PiCarMgr::tunerDoubleClicked(){
 		vector<string> menu_items = {
 				"Set",
 				"-",
-			(tune_mode ==  TUNE_PRESETS ?"\x89Tune presets": " Tune presets"),
-			(tune_mode ==  TUNE_KNOWN ?"\x89known channels": " known channels"),
-			(tune_mode ==  TUNE_ALL ?	"\x89Tune all channels": " Tune all channels"),
-				"-"
+			(tune_mode ==  TUNE_PRESETS ?"\xB9""Presets": " Presets"),
+			(tune_mode ==  TUNE_KNOWN ?"\xB9""Known stations": " Known stations"),
+			(tune_mode ==  TUNE_ALL ?	"\xB9""All channels": " All channels"),
+				"-",
 				"Clear all presets"
 			};
 		 

@@ -1019,6 +1019,8 @@ PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radio
 		default: break;
 	}
 
+	printf("radioModeToMenuMode %d ->  %d\n", radioMode,mode  );
+
 	return mode;
 }
 

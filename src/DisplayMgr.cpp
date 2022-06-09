@@ -1429,10 +1429,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			TRY(_vfd.setCursor( titleStart ,titleBottom ));
 			TRY(_vfd.write( titlebuff));
 			
+			_vfd.setCursor(0, 60);
 			if(mgr->isPresetChannel(mode, freq)){
-				_vfd.setCursor(0, 60);
 				_vfd.setFont(VFD::FONT_MINI);
 				_vfd.printPacket("PRESET");
+			}
+			else {
+				_vfd.printPacket("      ");
 			}
 		}
  	}

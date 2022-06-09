@@ -601,7 +601,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 			
 			printf("scan  %d  > %d \n", frequency,  i->frequency);
 
-			if(frequency > i->frequency)
+			if(frequency >= i->frequency)
 				continue;
 		 
 			info =  *(i);
@@ -613,7 +613,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 	else {
 		
 		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
-			if(frequency < i->frequency)
+			if(frequency <= i->frequency)
 				continue;
 			info =  *(i);
 			printf("selected  %d %d \n", info.band,  info.frequency);

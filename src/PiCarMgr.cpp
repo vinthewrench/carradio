@@ -642,7 +642,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 								uint32_t frequency,
 								bool tunerMovedCW,
-									station_info_t &info){
+											station_info_t &info){
 	
 	if(_preset_stations.size() == 0 ) {
 		// if there are no known frequencies  all then to fallback to all.
@@ -652,10 +652,9 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 		info.location = "";
 		return true;
 	}
- 
+	
 	auto v = _preset_stations;
-	printf("band %d moved %s ", band, tunerMovedCW?"CW":"CCW");
-
+	
 	if(tunerMovedCW){
 		
 		for ( auto i = v.begin(); i != v.end(); ++i ) {
@@ -666,9 +665,6 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 			info.location = "";
 			info.band = i->first;
 			info.frequency =  i->second;
-			
-			printf("selected  %d %d \n", info.band,  info.frequency);
-
 			return true;;
 		}
 	}
@@ -681,12 +677,10 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 			info.location = "";
 			info.band = i->first;
 			info.frequency =  i->second;
-			
-			printf("selected  %d %d \n", info.band,  info.frequency);
 			return true;;
 		}
 	}
-
+	
 	return false;
 }
 

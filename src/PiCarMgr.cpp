@@ -593,12 +593,16 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 	
 	auto v = _stations[band];
 	// scan for next known freq
+	
+	printf("moved %s ", tunerMovedCW?"CW":"CCW");
 	if(tunerMovedCW){
 		
 		for ( auto i = v.begin(); i != v.end(); ++i ) {
 			if(frequency < i->frequency)
 				continue;
 			
+			printf("selected  %d \n", info.frequency);
+
 			info = *i;
 			return true;;
 		}
@@ -609,11 +613,16 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 			if(frequency > i->frequency)
 				continue;
 			info = *i;
+			
+			printf("selected  %d \n", info.frequency);
+
 			return true;;
 			
 		}
 	}
  
+	printf("selected  none\n");
+
 	return false;
 }
 

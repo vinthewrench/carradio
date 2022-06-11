@@ -1254,15 +1254,15 @@ void PiCarMgr::tunerDoubleClicked(){
 				
 				switch (newSelectedItem) {
 	 
-					case 0: // Tune known
-						_tuner_mode = TUNE_KNOWN;
-						saveRadioSettings();
-						break;
-						
-					case 1: // Tune All
+					case 0: // Tune All
 						_tuner_mode = TUNE_ALL;
 						saveRadioSettings();
 						_db.savePropertiesToFile();
+						break;
+					
+					case 1: // Tune known
+						_tuner_mode = TUNE_KNOWN;
+						saveRadioSettings();
 						break;
 						
 					case 2: // Tune presets

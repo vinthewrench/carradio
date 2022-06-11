@@ -1234,10 +1234,10 @@ void PiCarMgr::tunerDoubleClicked(){
 		constexpr time_t timeout_secs = 10;
 		
 		vector<string> menu_items = {
-			_preset_stations.size() == 0?"No Presets"
-			: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
-			(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
 			(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
+			(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
+		_preset_stations.size() == 0?"No Presets"
+			: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
 			"-",
 			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
 			"-",
@@ -1245,7 +1245,7 @@ void PiCarMgr::tunerDoubleClicked(){
 		};
 		
 		_display.showMenuScreen(menu_items,
-										4,
+										_tuner_mode,		// select the mode we are in - so triple click has no effect
 										"Channel Presets",
 										timeout_secs,
 										[=](bool didSucceed, uint newSelectedItem ){
@@ -1253,27 +1253,26 @@ void PiCarMgr::tunerDoubleClicked(){
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
+	 
+					case 0: // Tune known
+						_tuner_mode = TUNE_KNOWN;
+						saveRadioSettings();
+						break;
 						
+					case 1: // Tune All
+						_tuner_mode = TUNE_ALL;
+						saveRadioSettings();
+						_db.savePropertiesToFile();
+						break;
 						
-					case 0: // Tune presets
+					case 2: // Tune presets
 						if(_preset_stations.size() > 0){
 							_tuner_mode = TUNE_PRESETS;
 							saveRadioSettings();
 							_db.savePropertiesToFile();
 						}
 						break;
-						
-					case 1: // Tune known
-						_tuner_mode = TUNE_KNOWN;
-						saveRadioSettings();
-						break;
-						
-					case 2: // Tune All
-						_tuner_mode = TUNE_ALL;
-						saveRadioSettings();
-						_db.savePropertiesToFile();
-						break;
-						
+
 					case 4: // set/clear
 					{
 						RadioMgr::radio_mode_t  mode  = _radio.radioMode();
@@ -1293,7 +1292,7 @@ void PiCarMgr::tunerDoubleClicked(){
 						break;
 						
 					case 6: // clear all presets
-						
+									// this needs to also take you off of presets mode
 					default:
 						break;
 				}

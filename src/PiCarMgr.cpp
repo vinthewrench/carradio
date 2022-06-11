@@ -160,7 +160,6 @@ bool PiCarMgr::begin(){
 	//	startCompass();
 		startControls();
 		
-	
 		// setup audio out
 		if(!_audio.begin(dev_audio ,pcmrate, true ))
 			throw Exception("failed to setup Audio ");

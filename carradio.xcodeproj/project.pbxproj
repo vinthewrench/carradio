@@ -44,6 +44,9 @@
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
 		2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */; };
+		2EC772912854FFE30083DA3B /* DTC.db in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EC772902854FFD60083DA3B /* DTC.db */; };
+		2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC772922855002C0083DA3B /* DTCcodes.cpp */; };
+		2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EC77298285501CB0083DA3B /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +58,7 @@
 			files = (
 				2E821034282884B1003D074C /* carradio.props.json in CopyFiles */,
 				2E821040282AC43D003D074C /* stations.tsv in CopyFiles */,
+				2EC772912854FFE30083DA3B /* DTC.db in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +154,11 @@
 		2E9F9EA128285F3C00E12F5D /* PiCarDB.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarDB.hpp; sourceTree = "<group>"; };
 		2E9F9EA52828655900E12F5D /* PiCarMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PiCarMgr.hpp; sourceTree = "<group>"; };
 		2E9F9EA62828655900E12F5D /* PiCarMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PiCarMgr.cpp; sourceTree = "<group>"; };
+		2EC772902854FFD60083DA3B /* DTC.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = DTC.db; path = Assets/DTC.db; sourceTree = "<group>"; };
+		2EC772922855002C0083DA3B /* DTCcodes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DTCcodes.cpp; sourceTree = "<group>"; };
+		2EC772932855002C0083DA3B /* DTCcodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DTCcodes.hpp; sourceTree = "<group>"; };
+		2EC77296285501BD0083DA3B /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		2EC77298285501CB0083DA3B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +166,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */,
 				2E62A8FF28244F4100F5066B /* libusb-1.0.0.dylib in Frameworks */,
 				2E62A90028244F4100F5066B /* librtlsdr.0.6git.dylib in Frameworks */,
 			);
@@ -227,6 +237,8 @@
 		2E62A8FC28244F4100F5066B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2EC77298285501CB0083DA3B /* libsqlite3.tbd */,
+				2EC77296285501BD0083DA3B /* libsqlite3.0.tbd */,
 				2E62A8FE28244F4100F5066B /* librtlsdr.0.6git.dylib */,
 				2E62A8FD28244F4100F5066B /* libusb-1.0.0.dylib */,
 			);
@@ -256,6 +268,7 @@
 			children = (
 				2E8210332828848E003D074C /* carradio.props.json */,
 				2E82103F282AC43A003D074C /* stations.tsv */,
+				2EC772902854FFD60083DA3B /* DTC.db */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -363,6 +376,8 @@
 				2E8210EB283EAEB2003D074C /* FrameDB.hpp */,
 				2E8210FD283EB144003D074C /* PiCarCAN.hpp */,
 				2E8210FC283EB144003D074C /* PiCarCAN.cpp */,
+				2EC772922855002C0083DA3B /* DTCcodes.cpp */,
+				2EC772932855002C0083DA3B /* DTCcodes.hpp */,
 			);
 			name = CanBus;
 			sourceTree = "<group>";
@@ -459,6 +474,7 @@
 				2E0EA484284196AE0012E406 /* CompassSensor.cpp in Sources */,
 				2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */,
 				2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */,
+				2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */,
 				2E8210AF2835A4AC003D074C /* AudioOutput.cpp in Sources */,
 				2E0EA48F2843D65B0012E406 /* bno055.c in Sources */,
 				2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */,

@@ -13,6 +13,11 @@ find_package(ALSA REQUIRED)
 # you will need to install the gpiod and the dev libraries before building
 # sudo apt-get install gpiod libgpiod-dev
  
+ #install the sqllite dev tools
+# sudo apt-get install sqlite3
+# sudo apt-get install libsqlite3-dev
+
+  	 
  
 # Find RTL-SDR library (for linking).
 pkg_check_modules(PKG_RTLSDR librtlsdr)
@@ -117,6 +122,7 @@ target_link_libraries(carradio
     ${EXTRA_LIBS}
  	 Threads::Threads
  	 gpiod
+ 	 sqlite3
  	)
 
 target_include_directories(carradio

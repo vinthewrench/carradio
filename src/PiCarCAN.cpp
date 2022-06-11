@@ -131,3 +131,8 @@ bool PiCarCAN::request_ODBpolling(string key){
 bool PiCarCAN::cancel_ODBpolling(string key){
 	return _CANbus.cancel_ODBpolling(key);
 }
+
+bool PiCarCAN::descriptionForDTCCode(string code, string& description){
+	return _dtc.descriptionForDTCCode(code,description);
+}
+

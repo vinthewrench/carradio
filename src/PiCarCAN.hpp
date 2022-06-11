@@ -17,6 +17,7 @@
 #include "GMLAN.hpp"
 #include "OBD2.hpp"
 #include "Wranger2010.hpp"
+#include "DTCcodes.hpp"
 
 using namespace std;
 
@@ -52,6 +53,8 @@ public:
 	bool request_ODBpolling(string key);
 	bool cancel_ODBpolling(string key);
 
+	bool descriptionForDTCCode(string code, string& description);
+
 	
 private:
 	bool 				_isSetup = false;
@@ -60,6 +63,6 @@ private:
 	Wranger2010		_jeep;
 	GMLAN 			_gmlan;
 	OBD2				_obdii;
-
+	DTCcodes			_dtc;
 };
 

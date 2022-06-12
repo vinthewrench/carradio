@@ -1939,7 +1939,19 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 			}
 				break;
 				
-	
+				
+			case FrameDB::LPH:
+			{
+				double lph = fDB->normalizedDoubleForValue(key,rawValue);
+				double gph =  lph * 0.2642;
+				sprintf(p, "%1.1f gph",  gph);
+				value = string(buffer);
+		}
+				break;
+				
+
+				
+				
 				
 				
 			default:

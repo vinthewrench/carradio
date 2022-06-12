@@ -1805,24 +1805,31 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		_vfd.write("DTC Codes");
 	}
  
+	bool hasDTCs = false;
 	string value = "";
 	if(frameDB->valueWithKey("OBD_DTC_PENDING", &value)){
 		vector<string> v = split<string>(value, " ");
-		if(!v.size()){
-			uint8_t buff2[] = {VFD_CLEAR_AREA,
-				static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
-				static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
-	 			_vfd.writePacket(buff2, sizeof(buff2), 1000);
- 
-			_vfd.setCursor(10,height/2);
-			_vfd.write("No Codes");
-		}
-		else {
+		int count = (int) v.size();
+		if(count >0 ){
+			hasDTCs = true;
+			
 			_vfd.setCursor(0,20);
-	 			for(int i = 0; i < v.size(); i++){
-					_vfd.printPacket("%s\r\n",v[i].c_str() );
+			for(int i = 0; i < v.size(); i++){
+				_vfd.printPacket("%s\r\n",v[i].c_str() );
 			}
 		}
+	}
+	
+	if(!hasDTCs){
+ 
+		uint8_t buff2[] = {VFD_CLEAR_AREA,
+			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
+			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
+		_vfd.writePacket(buff2, sizeof(buff2), 1000);
+		
+		_vfd.setCursor(10,height/2);
+		_vfd.write("No Codes");
+		
 	}
 
 	  // Draw time

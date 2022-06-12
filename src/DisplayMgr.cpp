@@ -1686,7 +1686,8 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t row1 = 16;
 	uint8_t rowsize = 19;
 	
-	int start_item = ((_currentPage -1) *6);
+	
+	int start_item = ((_currentPage -1) *6) +1;			// 1-6 for each page
 	int end_item	= start_item + 5;
 	
 	if(transition == TRANS_ENTERING) {
@@ -1697,6 +1698,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
+		
 		
 		for(auto i = 0; i < cachedProps.size(); i++){
 			printf("%d %s\n", i, cachedProps[i].title.c_str());

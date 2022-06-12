@@ -1049,7 +1049,8 @@ void PiCarMgr::displayMenu(){
 	vector<string> menu_items = {};
 	int selectedItem = -1;
 	menu_mode_t mode = currentMode();
-	
+	_lastMenuMode = mode;
+ 
 	// if the radio is on.. keep that mode
 	if( mode == MENU_RADIO){
 		// keep that mode.
@@ -1087,39 +1088,43 @@ void PiCarMgr::displayMenu(){
 			if(selectedMode != MENU_UNKNOWN)
 				_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(newSelectedItem));
 			
-			switch (selectedMode) {
-					
-				case MENU_RADIO:
-					displayRadioMenu();
-					break;
-					
-				case MENU_TIME:
-					_display.showTime();
-					break;
-					
-				case MENU_GPS:
-					_display.showGPS();
-					break;
-					
-				case MENU_CANBUS:
-					_display.showCANbus(1);
-					break;
-					
-				case MENU_SETTINGS:
-					displaySettingsMenu();
-					break;
-					
-				case MENU_INFO:
-					_display.showInfo();
-					break;
-					
-				case 	MENU_UNKNOWN:
-				default:
-					// do nothing
-					break;
-			}
+			setDisplayMode(selectedMode);
 		}
 	});
+}
+
+void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
+	switch (menuMode) {
+			
+		case MENU_RADIO:
+			displayRadioMenu();
+			break;
+			
+		case MENU_TIME:
+			_display.showTime();
+			break;
+			
+		case MENU_GPS:
+			_display.showGPS();
+			break;
+			
+		case MENU_CANBUS:
+			_display.showCANbus(1);
+			break;
+			
+		case MENU_SETTINGS:
+			displaySettingsMenu();
+			break;
+			
+		case MENU_INFO:
+			_display.showInfo();
+			break;
+			
+		case 	MENU_UNKNOWN:
+		default:
+			// do nothing
+			break;
+	}
 }
 
 
@@ -1135,7 +1140,6 @@ void PiCarMgr::displayRadioMenu(){
 		"-",
 		"Exit"
 	};
-	
 	
 	switch(_lastRadioMode){
 		case  RadioMgr::BROADCAST_AM:
@@ -1158,7 +1162,6 @@ void PiCarMgr::displayRadioMenu(){
 			selectedItem = 5;
 			break;
 	}
-	
 	
 	_display.showMenuScreen(menu_items,
 									selectedItem,
@@ -1210,9 +1213,14 @@ void PiCarMgr::displayRadioMenu(){
 					// go back to radio
 					_display.showRadioChange();
 				}
-//				else {
-//					_display.showTime();
-//				}
+				else if(_lastMenuMode != MENU_UNKNOWN){
+					// restore old mode thast was set in main menu
+					setDisplayMode(_lastMenuMode);
+				}
+				else	// fallback
+				{
+					_display.showTime();
+				}
 			}
 		}
 	});

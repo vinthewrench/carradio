@@ -152,9 +152,10 @@ private:
  
 	void displayMenu();
 	void displayRadioMenu();
-
 	void displaySettingsMenu();
 
+	void setDisplayMode(menu_mode_t menuMode);
+	
 	void tunerDoubleClicked();
 	
 	void doShutdown();
@@ -168,11 +169,10 @@ private:
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
 	void idle();  // occasionally called durrig idle time
-	
-	//menu_mode_t radioModeToMenuMode(RadioMgr::radio_mode_t);
-	
+		
 	RadioMgr::radio_mode_t					  _lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
+	menu_mode_t										_lastMenuMode;		// used for unwinding
 	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;

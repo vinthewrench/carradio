@@ -40,6 +40,12 @@ constexpr uint8_t antiBounceSlow = 32;
 
 constexpr uint8_t doubleClickTime = 50;   // 50 * 10 ms
 
+static constexpr uint8_t VFD_OUTLINE = 0x14;
+static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
+static constexpr uint8_t VFD_SET_AREA = 0x11;
+static constexpr uint8_t VFD_SET_CURSOR = 0x10;
+static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
+
 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
@@ -617,6 +623,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_GPS:
 		case MODE_INFO:
 		case MODE_CANBUS:
+		case MODE_DTC:
 			isSticky = true;
 			break;
 			
@@ -948,11 +955,6 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 }
 
 
-static constexpr uint8_t VFD_OUTLINE = 0x14;
-static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
-static constexpr uint8_t VFD_SET_AREA = 0x11;
-static constexpr uint8_t VFD_SET_CURSOR = 0x10;
-static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
@@ -1786,28 +1788,51 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	PiCarDB*		db 	= PiCarMgr::shared()->db();
-	
+	FrameDB*		frameDB 	= can->frameDB();
+
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
+		
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,10);
+		_vfd.write("DTC Codes");
 	}
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,18));
-	TRY(_vfd.write("DTC"));
-	
+ 
+	string value = "";
+	if(frameDB->valueWithKey("OBD_DTC_PENDING", &value)){
+		vector<string> v = split<string>(value, " ");
+		if(!v.size()){
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
+				static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
+	 			_vfd.writePacket(buff2, sizeof(buff2), 1000);
+ 
+			_vfd.setCursor(10,height/2);
+			_vfd.write("No Codes");
+		}
+		else {
+			_vfd.setCursor(0,20);
+	 			for(int i = 0; i < v.size(); i++){
+					_vfd.printPacket("%s\r\n",v[i].c_str() );
+			}
+		}
+	}
+
 	  // Draw time
 	  time_t now = time(NULL);
 	  struct tm *t = localtime(&now);
 	  char timebuffer[16] = {0};
 	  std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
-	  TRY(_vfd.setFont(VFD::FONT_5x7));
-	  TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
-	  TRY(_vfd.write(timebuffer));
+	  _vfd.setFont(VFD::FONT_5x7);
+	  _vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7);
+	 _vfd.write(timebuffer);
 
 }
 

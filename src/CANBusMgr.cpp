@@ -114,12 +114,13 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 bool CANBusMgr::request_ODBpolling(string key){
 	bool success = false;
 	
-	printf("REQUEST %s\n", key.c_str());
 	if( _odb_polling.find(key) == _odb_polling.end()){
  
 		vector<uint8_t>  request;
 		if( _frameDB.odb_request(key, request)) {
-			
+		
+			printf("REQUEST %s\n", key.c_str());
+
 			odb_polling_t poll_info;
 			poll_info.request = request;
 			

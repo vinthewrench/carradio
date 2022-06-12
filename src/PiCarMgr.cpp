@@ -111,9 +111,8 @@ PiCarMgr::PiCarMgr(){
  		  {MENU_GPS,		"GPS"},
 		  {MENU_CANBUS,	"Engine"},
 		  {MENU_TIME,		"Time"},
-		  {MENU_UNKNOWN, "-"},
-		  {MENU_SETTINGS,"Settings"},
-		  {MENU_INFO,"Info"},
+		  {MENU_SETTINGS,	"Settings"},
+		  {MENU_INFO,		"Info"},
 	  };
 
 	_isRunning = true;

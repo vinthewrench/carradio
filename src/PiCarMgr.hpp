@@ -132,6 +132,7 @@ private:
 		MENU_TIME,
 		MENU_SETTINGS,
 		MENU_INFO,
+		MENU_DTC
 	} menu_mode_t;
 	
 	vector < pair<PiCarMgr::menu_mode_t, string>> _main_menu_map;

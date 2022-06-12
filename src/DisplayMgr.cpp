@@ -363,14 +363,17 @@ void DisplayMgr::showBalanceChange(){
 
 void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
-	
 }
+
+void DisplayMgr::showDTC(){
+	setEvent(EVT_PUSH, MODE_DTC);
+}
+
 void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
 void DisplayMgr::showCANbus(uint8_t page){
-	
 	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_CANBUS);
 }
@@ -907,7 +910,11 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 			case MODE_GPS:
 				drawGPSScreen(transition);
 				break;
-	
+				
+			case MODE_DTC:
+				drawDTCScreen(transition);
+				break;
+ 
 			case MODE_CANBUS:
 				if(_currentPage == 0)
 					drawCANBusScreen(transition);
@@ -1773,8 +1780,38 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	TRY(_vfd.write(timebuffer));
 	
 }
-		  
+
  
+
+void DisplayMgr::drawDTCScreen(modeTransition_t transition){
+
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	PiCarDB*		db 	= PiCarMgr::shared()->db();
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING){
+		_vfd.clearScreen();
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,18));
+	TRY(_vfd.write("DTC"));
+	
+	  // Draw time
+	  time_t now = time(NULL);
+	  struct tm *t = localtime(&now);
+	  char timebuffer[16] = {0};
+	  std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	  TRY(_vfd.setFont(VFD::FONT_5x7));
+	  TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
+	  TRY(_vfd.write(timebuffer));
+
+}
+
+
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
  
 	uint8_t col = 0;

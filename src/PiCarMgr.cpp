@@ -107,13 +107,14 @@ PiCarMgr::PiCarMgr(){
 	std::set_terminate( CRASH_Handler );
  
 	_main_menu_map = {
-		 {MENU_RADIO, 		"Radio Band"},
- 		  {MENU_GPS,		"GPS"},
-		  {MENU_CANBUS,	"Engine"},
-		  {MENU_TIME,		"Time"},
-		  {MENU_SETTINGS,	"Settings"},
-		  {MENU_INFO,		"Info"},
-	  };
+		{MENU_RADIO,	"Radio Band"},
+		{MENU_GPS,		"GPS"},
+		{MENU_CANBUS,	"Engine"},
+		{MENU_DTC,		"Diagnostics"},
+		{MENU_TIME,		"Time"},
+		{MENU_INFO,		"Info"},
+		{MENU_SETTINGS, "Settings"},
+	};
 
 	_isRunning = true;
 
@@ -1018,6 +1019,10 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			mode = MENU_CANBUS;
 			break;
 
+		case DisplayMgr::MODE_DTC:
+			mode = MENU_DTC;
+			break;
+			
 		default:
 			break;
 	}
@@ -1116,7 +1121,11 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 		case MENU_INFO:
 			_display.showInfo();
 			break;
-			
+	
+		case MENU_DTC:
+			_display.showDTC();
+			break;
+
 		case 	MENU_UNKNOWN:
 		default:
 			// do nothing

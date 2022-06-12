@@ -848,7 +848,7 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			PiCarDB*		db 	= PiCarMgr::shared()->db();
 			
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
-			count +=  (d.quot + d.rem ? 1 : 0);
+			count +=  d.quot + (d.rem ? 1 : 0);
 			
 			printf("pageCount = %d (%d,%d)\n", count, d.quot,d.rem);
  		}

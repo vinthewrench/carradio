@@ -81,6 +81,7 @@ set(SOURCES
 	src/OBD2.cpp
 	src/Wranger2010.cpp
 	src/PiCarCAN.cpp
+	src/DTCcodes.cpp
 #	src/MMC5983MA.cpp
 	
 #Bosch compass

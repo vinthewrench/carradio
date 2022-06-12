@@ -808,15 +808,7 @@ void PiCarMgr::PiCanLoop(){
 						_radio.setON(true);
 						_display.LEDeventVol();
 						_display.showRadioChange();
-						
-						
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
-	
-//						// save the new radio mode as a PROP_LAST_MENU_SELECTED
-//						auto newMenuSelect =  radioModeToMenuMode(mode);
-//
-//						if(newMenuSelect != MENU_UNKNOWN)
-//							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
  					}
 				}
 				else {
@@ -995,29 +987,6 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 
 
 // MARK: -   Menu Management
-//
-//PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radioMode){
-//	menu_mode_t mode = MENU_UNKNOWN;
-//
-//	switch(radioMode){
-//		case RadioMgr::BROADCAST_AM:
-//			mode = MENU_AM;
-//			break;
-//		case RadioMgr::BROADCAST_FM:
-//			mode = MENU_FM;
-//			break;
-//		case RadioMgr::VHF:
-//			mode = MENU_VHF;
-//			break;
-//		case RadioMgr::GMRS:
-//			mode = MENU_GMRS;
-//			break;
-//		default: break;
-//	}
-//
-//	return mode;
-//}
-//
 
 PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 	menu_mode_t mode = MENU_UNKNOWN;
@@ -1051,8 +1020,6 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_CANBUS1:
 			mode = MENU_CANBUS;
 			break;
-	
-	
 
 		default:
 			break;
@@ -1157,19 +1124,44 @@ void PiCarMgr::displayMenu(){
 
 
 void PiCarMgr::displayRadioMenu(){
-	constexpr time_t timeout_secs = 10;
-	 
+	constexpr time_t timeout_secs = 20;
+	int selectedItem = -1;
+	
 	vector<string> menu_items = {
 		"AM",
 		"FM",
 		"VHF",
-		"GMRS"
+		"GMRS",
 		"-",
 		"Exit"
 	};
 	
+	
+	switch(_lastRadioMode){
+		case  RadioMgr::BROADCAST_AM:
+			selectedItem = 0;
+			break;
+			
+		case  RadioMgr::BROADCAST_FM:
+			selectedItem = 1;
+			break;
+			
+		case  RadioMgr::VHF:
+			selectedItem = 2;
+			break;
+			
+		case  RadioMgr::GMRS:
+			selectedItem = 3;
+			break;
+			
+		default:
+			selectedItem = 5;
+			break;
+	}
+	
+	
 	_display.showMenuScreen(menu_items,
-									0,
+									selectedItem,
 									"Select Radio Band",
 									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){

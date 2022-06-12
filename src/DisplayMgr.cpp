@@ -1698,12 +1698,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
-		
-		
-		for(auto i = 0; i < cachedProps.size(); i++){
-			printf("%d %s\n", i, cachedProps[i].title.c_str());
-		}
-		
+ 
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		

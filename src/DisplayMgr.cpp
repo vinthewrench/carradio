@@ -1692,6 +1692,10 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		
+		// erase any pollingwe might have cached
+		for(auto  e: cachedProps){
+			can->cancel_ODBpolling(e.second.key);
+		}
 		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);
@@ -1723,13 +1727,12 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		
-		for(uint8_t	 i = start_item; i < end_item; i++)
-			if(cachedProps.count(i)){
-				auto item = cachedProps[i];
-				can->cancel_ODBpolling(item.key);
-			}
-		
+		// erase any polling we might have cached
+		for(auto  e: cachedProps){
+			can->cancel_ODBpolling(e.second.key);
+		}
 		cachedProps.clear();
+
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;

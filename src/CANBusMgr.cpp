@@ -134,9 +134,12 @@ bool CANBusMgr::request_ODBpolling(string key){
 }
 
 bool CANBusMgr::cancel_ODBpolling(string key){
-	printf("CANCEL %s\n", key.c_str());
 
-	_odb_polling.erase(key);
+	if( _odb_polling.count(key)){
+		printf("CANCEL %s\n", key.c_str());
+		_odb_polling.erase(key);
+	}
+
 	return true;
 }
 

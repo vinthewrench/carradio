@@ -30,21 +30,22 @@
 				"title": "FUEL TRIM B2"
 		  },
 		  {
-				"key": "OBD_OIL_PRESSURE",
-				"line": 6,
-				"title": "ODB OIL PRES"
-		  },
-		  {
-				"key": "JK_VEHICLE_DISTANCE",
-				"line": 7,
-				"title": "ODOMETER"
-		  },
-		  {
 				"key": "OBD_CONTROL_MODULE_VOLTAGE",
-				"line": 8,
+				"line": 6,
 				"title": "VOLTS"
 		  },
+			{
+				"key": "JK_VIN",
+				"line": 7,
+				"title": "VIN"
+		  },
+
 		  {
+				"key": "JK_VEHICLE_DISTANCE",
+				"line": 8,
+				"title": "ODOMETER"
+		  },
+			  {
 				"key": "JK_FUEL_LEVEL",
 				"line": 9,
 				"title": "FUEL"

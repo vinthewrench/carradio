@@ -1673,9 +1673,9 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 
 
 void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
-
+	
 	static map <uint8_t, PiCarDB::canbusdisplay_prop_t> cachedProps;
-
+	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	PiCarDB*		db 	= PiCarMgr::shared()->db();
 	uint8_t width 	= _vfd.width();
@@ -1698,7 +1698,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
- 
+		
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		
@@ -1724,44 +1724,46 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				}
 			}
 	}
+	
+	if(transition == TRANS_LEAVING) {
 		
-		if(transition == TRANS_LEAVING) {
-			
-			for(uint8_t	 i = start_item; i < end_item; i++)
-				if(cachedProps.count(i+1)){
-					auto item = cachedProps[i+1];
-					can->cancel_ODBpolling(item.key);
-				}
-			
-			cachedProps.clear();
-			_rightKnob.setAntiBounce(antiBounceDefault);
-			setKnobColor(KNOB_RIGHT, RGB::Lime);
-			return;
-		}
-
+		for(uint8_t	 i = start_item; i < end_item; i++)
+			if(cachedProps.count(i+1)){
+				auto item = cachedProps[i+1];
+				can->cancel_ODBpolling(item.key);
+			}
 		
+		cachedProps.clear();
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		return;
+	}
+	
+	
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
 	for(uint8_t	 i = start_item; i < end_item; i++){
+		
+		int line = ((i - 1) % 6);
 
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));
 		
 		string val1 = "";
 		string val2 = "";
- 
+		
 		if(cachedProps.count(i))
 			normalizeCANvalue(cachedProps[i].key, val1);
-
+		
 		if(cachedProps.count(i+3))
 			normalizeCANvalue(cachedProps[i+3].key, val2);
- 		
-	// spread across 21 chars
+		
+		// spread across 21 chars
 		sprintf( buffer , "%-9s  %-9s", val1.c_str(), val2.c_str());
-		_vfd.setCursor(col1 ,(row1 + (i -1)  * rowsize) + 9);
+		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
- 
+	
 	
 	
 	// Draw time
@@ -1772,7 +1774,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7));
 	TRY(_vfd.write(timebuffer));
- 
+	
 }
 		  
  

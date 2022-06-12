@@ -1207,7 +1207,7 @@ void PiCarMgr::displayRadioMenu(){
 			}
 			else {
 				// go back to radio
-				_display->showRadioChange();
+				_display.showRadioChange();
 			}
 		}
 	});

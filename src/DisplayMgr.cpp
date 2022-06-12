@@ -1686,7 +1686,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t row1 = 16;
 	uint8_t rowsize = 19;
 	
-	int start_item = (_currentPage -1) *6;
+	int start_item = ((_currentPage -1) *6 -1);
 	int end_item	= start_item + 6;
 	
 	if(transition == TRANS_ENTERING) {
@@ -1702,18 +1702,18 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_MINI);
 		
 		for(uint8_t	 i = start_item; i < end_item; i++)
-			if(cachedProps.count(i+1)){
-				auto item = cachedProps[i+1];
+			if(cachedProps.count(i)){
+				auto item = cachedProps[i];
 				
-				if(i <  end_item/2){
+				if(i <  end_item - 3){
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col1, row1 + (i  * rowsize ));
+					_vfd.setCursor(col1, row1 + (i +1  * rowsize ));
 					_vfd.write(item.title);
 					
 				}
 				else {
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col2, row1 + ( (i-3)  * rowsize ));
+					_vfd.setCursor(col2, row1 + ( (i-4)  * rowsize ));
 					_vfd.write(item.title);
 				}
 			}
@@ -1736,7 +1736,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
-	for(uint8_t	 i = start_item; i < end_item/2; i++){
+	for(uint8_t	 i = start_item; i < end_item -3; i++){
 		
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));

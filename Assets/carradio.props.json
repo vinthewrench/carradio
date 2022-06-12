@@ -33,7 +33,23 @@
 				"key": "OBD_OIL_PRESSURE",
 				"line": 6,
 				"title": "ODB OIL PRES"
+		  },
+		  {
+				"key": "JK_VEHICLE_DISTANCE",
+				"line": 7,
+				"title": "ODOMETER"
+		  },
+		  {
+				"key": "OBD_CONTROL_MODULE_VOLTAGE",
+				"line": 8,
+				"title": "VOLTS"
+		  },
+		  {
+				"key": "JK_FUEL_LEVEL",
+				"line": 9,
+				"title": "FUEL"
 		  }
+
 	 ],
 	 "cputemp-query-delay": 4,
 	 "last_menu": "0",

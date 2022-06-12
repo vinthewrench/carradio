@@ -59,7 +59,7 @@ class PiCarDB  {
  	} canbusdisplay_prop_t;
 	
 	bool getCanbusDisplayProps(map <uint8_t, canbusdisplay_prop_t> &);
-	
+	uint8_t canbusDisplayPropsCount();
  
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);

@@ -8,6 +8,7 @@
 #include "DisplayMgr.hpp"
 #include <string>
 #include <iomanip>
+#include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
 #include <iostream>
@@ -843,13 +844,18 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 	
 	switch (mode) {
 		case MODE_CANBUS:
-			count = 2;
-			break;
+		{
+			PiCarDB*		db 	= PiCarMgr::shared()->db();
+			
+			div_t d = div(db->canbusDisplayPropsCount(), 6);
+			count +=  (d.quot + d.rem ? 1 : 0);
+ 		}
+		break;
+			
 		default :
 			count = 1;
 	}
-	
-
+ 
 	return count;
 	
 }
@@ -1680,9 +1686,11 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t row1 = 16;
 	uint8_t rowsize = 19;
 	
+	int start_item = (_currentPage -1) *6;
+	int end_item	= start_item + 6;
 	
 	if(transition == TRANS_ENTERING) {
-		
+		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Red);
@@ -1691,7 +1699,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		
-		for(uint8_t	 i = 0; i < 6; i++)
+		for(uint8_t	 i = start_item; i < end_item; i++)
 			if(cachedProps.count(i+1)){
 				auto item = cachedProps[i+1];
 				
@@ -1711,7 +1719,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		
 		if(transition == TRANS_LEAVING) {
 			
-			for(uint8_t	 i = 0; i < 6; i++)
+			for(uint8_t	 i = start_item; i < end_item; i++)
 				if(cachedProps.count(i+1)){
 					auto item = cachedProps[i+1];
 					can->cancel_ODBpolling(item.key);
@@ -1726,7 +1734,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
-	for(uint8_t	 i = 0; i < 3; i++){
+	for(uint8_t	 i = start_item; i < end_item/2; i++){
 		
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));

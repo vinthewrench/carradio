@@ -515,6 +515,29 @@ string PiCarDB::defaultPropertyFilePath(){
 
 // MARK: - convenience utility
 
+uint8_t PiCarDB::canbusDisplayPropsCount(){
+	uint8_t count = 0;
+	
+	nlohmann::json j = {};
+	
+	if(getJSONProperty(PROP_CANBUS_DISPLAY,&j)
+		&&  j.is_array()){
+		
+		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_LINE)  &&  item[PROP_LINE].is_number()
+				&&  item.contains(PROP_TITLE) &&  item[(PROP_TITLE)].is_string()
+				&&  item.contains(PROP_KEY)   &&  item[(PROP_KEY)].is_string()
+				){
+				
+				uint8_t  line = item[PROP_LINE];
+				if(line > count)
+					count = line;
+ 			}
+		}
+	}
+	return count;
+}
 
 bool PiCarDB::getCanbusDisplayProps( map <uint8_t, canbusdisplay_prop_t> &propsOut  ){
 	bool statusOk = false;

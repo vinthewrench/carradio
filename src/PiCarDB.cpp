@@ -560,6 +560,7 @@ bool PiCarDB::getCanbusDisplayProps( map <uint8_t, canbusdisplay_prop_t> &propsO
 				string 		title  = item[PROP_TITLE];
 				props[line] = { .title = title, .key = key};
 				
+				printf("%2d %s %s\n",line, key.c_str(), title.c_str());
 			}
 		}
 		

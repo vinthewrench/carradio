@@ -1703,7 +1703,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			if(cachedProps.count(i+1)){
 				auto item = cachedProps[i+1];
 				
-				if(i < 3){
+				if(i <  end_item/2){
 					can->request_ODBpolling(item.key);
 					_vfd.setCursor(col1, row1 + (i  * rowsize ));
 					_vfd.write(item.title);

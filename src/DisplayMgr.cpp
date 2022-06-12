@@ -1696,7 +1696,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	p = buffer;
 	p  += sprintf(p, "%4s: ", "GM");
 	if(count > 0)
-		p  += sprintf(p, "%zu/sec", count);
+		p  += sprintf(p, "%4zu/sec", count);
 	else
 		p  += sprintf(p, "%-10s"," ---");
 
@@ -1721,7 +1721,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	p = buffer;
 	p  += sprintf(p, "%4s: ", "Jeep");
 	if(count > 0)
-		p  += sprintf(p, "%zu/sec", count);
+		p  += sprintf(p, "%4zu/sec  ", count);
 	else
 		p  += sprintf(p, "%-10s"," ---");
 

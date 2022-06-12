@@ -4,58 +4,76 @@
 		  "vol": 0.049239939777512357
 	 },
 	 "canbus-display": [
-		  {
-				"key": "GM_COOLANT_TEMP",
-				"line": 1,
-				"title": "COOLANT"
-		  },
-		  {
-				"key": "GM_TRANS_TEMP",
-				"line": 2,
-				"title": "TRANS TEMP"
-		  },
-		  {
-				"key": "GM_OIL_PRESSURE",
-				"line": 3,
-				"title": "OIL PRESSURE"
-		  },
-		  {
-				"key": "OBD_LONG_FUEL_TRIM_1",
-				"line": 4,
-				"title": "FUEL TRIM B1"
-		  },
-		  {
-				"key": "OBD_LONG_FUEL_TRIM_2",
-				"line": 5,
-				"title": "FUEL TRIM B2"
-		  },
-		  {
-				"key": "OBD_CONTROL_MODULE_VOLTAGE",
-				"line": 6,
-				"title": "VOLTS"
-		  },
-			{
-				"key": "OBD_VIN",
-				"line": 7,
-				"title": "VIN"
-		  },
+		 {
+			 "key": "GM_COOLANT_TEMP",
+			 "line": 1,
+			 "title": "COOLANT"
+		 },
+		 {
+			 "key": "GM_TRANS_TEMP",
+			 "line": 2,
+			 "title": "TRANS TEMP"
+		 },
+		 {
+			 "key": "GM_OIL_PRESSURE",
+			 "line": 3,
+			 "title": "OIL PRESSURE"
+		 },
+		 {
+			 "key": "OBD_LONG_FUEL_TRIM_1",
+			 "line": 4,
+			 "title": "FUEL TRIM B1"
+		 },
+		 {
+			 "key": "OBD_LONG_FUEL_TRIM_2",
+			 "line": 5,
+			 "title": "FUEL TRIM B2"
+		 },
+		 {
+			 "key": "OBD_CONTROL_MODULE_VOLTAGE",
+			 "line": 6,
+			 "title": "VOLTS"
+		 },
+		 
+		 {
+			 "key": "JK_FUEL_LEVEL",
+			 "line": 7,
+			 "title": "FUEL"
+		 },
+		 {
+			 "key": "GM_FUEL_CONSUMPTION",
+			 "line": 8,
+			 "title": "CONSUME"
+		 },
+		 {
+			 "key": "GM_VEHICLE_SPEED",
+			 "line": 9,
+			 "title": "SPEED"
+		 },
+		 {
+			 "key": "GM_OLF",
+			 "line": 10,
+			 "title": "OIL LIFE"
+		 },
 
-		  {
-				"key": "JK_VEHICLE_DISTANCE",
-				"line": 8,
-				"title": "ODOMETER"
-		  },
-			  {
-				"key": "JK_FUEL_LEVEL",
-				"line": 9,
-				"title": "FUEL"
-		  },
-		  {
-				"key": "GM_FUEL_CONSUMPTION",
-				"line": 12,
-				"title": "CONSUME"
-		  }
-	 
+		 {
+			 "key": "OBD_VIN",
+			 "line": 13,
+			 "title": "GM VIN"
+		 },
+		 {
+			 "key": "JK_VIN",
+			 "line": 14,
+			 "title": "JK VIN"
+		 },
+		 {
+			 "key": "JK_VEHICLE_DISTANCE",
+			 "line": 15,
+			 "title": "ODOMETER"
+		 },
+		 
+		 
+		 
 	 ],
 	 "cputemp-query-delay": 4,
 	 "last_menu": "0",

@@ -1706,17 +1706,20 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			if(cachedProps.count(i)){
 				auto item = cachedProps[i];
 				
-				printf("%d  %s\n", i, item.title.c_str());
+				int line = ((i - 1) % 6);
+				
+				printf("%d %d  %s\n", line, i, item.title.c_str());
+				
 				
 				if(i <  end_item - 3){
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col1, row1 + (i -1)  * rowsize );
+					_vfd.setCursor(col1, row1 + (line)  * rowsize );
 					_vfd.write(item.title);
 					
 				}
 				else {
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col2, row1 + ( (i-4)  * rowsize ));
+					_vfd.setCursor(col2, row1 + ( (line - 3)  * rowsize ));
 					_vfd.write(item.title);
 				}
 			}

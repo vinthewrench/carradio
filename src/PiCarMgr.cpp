@@ -1124,6 +1124,7 @@ void PiCarMgr::displayMenu(){
 					
 				case MENU_RADIO:
 					displayRadioMenu();
+					break;
 					
 				case MENU_TIME:
 					_display.showTime();
@@ -1157,71 +1158,64 @@ void PiCarMgr::displayMenu(){
 
 void PiCarMgr::displayRadioMenu(){
 	constexpr time_t timeout_secs = 10;
-	
-//				case MENU_AM:
-//	//				radioMode = RadioMgr::BROADCAST_AM;
-//					break;
-//
-//				case MENU_FM:
-//					radioMode = RadioMgr::BROADCAST_FM;
-//					break;
-//
-//				case MENU_VHF:
-//					radioMode = RadioMgr::VHF;
-//					break;
-//
-//				case MENU_GMRS:
-//					radioMode = RadioMgr::GMRS;
-//					break;
-
-//	{MENU_AM, 		"AM"},
-//	{MENU_FM, 		"FM"},
-//	{MENU_VHF, 		"VHF"},
-//	{MENU_GMRS, 	"GMRS"},
-
-
+	 
 	vector<string> menu_items = {
-			"AM",
-			"FM",
-			"VHF",
-			"GMRS"
-			"-",
-			"Exit"
-		};
- 
+		"AM",
+		"FM",
+		"VHF",
+		"GMRS"
+		"-",
+		"Exit"
+	};
+	
 	_display.showMenuScreen(menu_items,
 									0,
 									"Select Radio Band",
 									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
-	
+		
 		if(didSucceed) {
 			
+			RadioMgr::radio_mode_t  radioMode  = RadioMgr::MODE_UNKNOWN;
+			
 			switch (newSelectedItem) {
-		 
-				default:
+					
+				case 0: // AM not supported yet
+					//				radioMode  = RadioMgr::BROADCAST_AM;
+					break;
+					
+				case 1: // FM
+					radioMode  = RadioMgr::BROADCAST_FM;
+					break;
+					
+				case 2: // VHF
+					radioMode  = RadioMgr::VHF;
+					break;
+					
+				case 3: // GMRS
+					radioMode  = RadioMgr::GMRS;
+					break;
+					
+				default:		//ignore
 					break;
 			}
-	 
+			
+			// if it was a radio selection, turn it one and select
+			if(radioMode != RadioMgr::MODE_UNKNOWN){
+				uint32_t freq;
+				
+				if( ! getSavedFrequencyForMode(radioMode, freq) ){
+					uint32_t maxFreq;
+					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
+				}
+				_radio.setFrequencyandMode(radioMode, freq, true);
+				_radio.setON(true);
+				saveRadioSettings();
+				_db.savePropertiesToFile();
+				
+			}
 		}
 	});
-
-	
-//	// if it was a radio selection, turn it one and select
-//	if(radioMode != RadioMgr::MODE_UNKNOWN){
-//		uint32_t freq;
-//
-//		if( ! getSavedFrequencyForMode(radioMode, freq) ){
-//			uint32_t maxFreq;
-//			RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
-//		}
-//		_radio.setFrequencyandMode(radioMode, freq, true);
-//		_radio.setON(true);
-//		saveRadioSettings();
-//		_db.savePropertiesToFile();
-//
-//	}
-
 };
 
 void PiCarMgr::displaySettingsMenu(){

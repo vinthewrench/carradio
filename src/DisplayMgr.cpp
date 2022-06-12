@@ -1692,7 +1692,6 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		
-		printf("CANBUS ENTER page %d  (%d,%d)\n", _currentPage, start_item, end_item);
 		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);
@@ -1707,10 +1706,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				auto item = cachedProps[i];
 				
 				int line = ((i - 1) % 6);
-				
-				printf("%d %d  %s\n", line, i, item.title.c_str());
-				
-				
+					
 				if(i <  end_item - 3){
 					can->request_ODBpolling(item.key);
 					_vfd.setCursor(col1, row1 + (line)  * rowsize );
@@ -1763,9 +1759,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
-	
-	
-	
+ 
 	// Draw time
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
@@ -1918,17 +1912,34 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 			case	FrameDB::VOLTS:
 			{
 				float volts =   stof(rawValue);
-				sprintf(p, "%2.2fV",  volts);
+				sprintf(p, "%2.2f V",  volts);
 				value = string(buffer);
 			}
 				break;
-				
+	 
+			case	FrameDB::KM:
+			{
+				float miles = (stof(rawValue) / 10) *  0.6213712;
+	 			sprintf(p, "%2.1f",  miles);
+				value = string(buffer);
+			}
+				break;
+
 			case FrameDB::FUEL_TRIM:{
 				double trim = fDB->normalizedDoubleForValue(key,rawValue);
 				sprintf(p, "%1.1f%%",  trim);
 				value = string(buffer);
 			}
 				break;
+				
+			case FrameDB::PERCENT:{
+				double pc = fDB->normalizedDoubleForValue(key,rawValue);
+				sprintf(p, "%d%%",  int(pc));
+				value = string(buffer);
+			}
+				break;
+				
+	
 				
 				
 			default:

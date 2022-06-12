@@ -35,7 +35,7 @@
 				"title": "VOLTS"
 		  },
 			{
-				"key": "JK_VIN",
+				"key": "OBD_VIN",
 				"line": 7,
 				"title": "VIN"
 		  },

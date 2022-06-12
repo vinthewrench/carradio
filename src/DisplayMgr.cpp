@@ -427,7 +427,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 		else {
 			
 			if(action == KNOB_UP){
-				if(_currentPage <= pageCountForMode(_current_mode)) {
+				if(_currentPage < pageCountForMode(_current_mode)) {
 					_currentPage++;
 					setEvent(EVT_REDRAW, _current_mode );
 					wasHandled = true;
@@ -849,8 +849,6 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  d.quot + (d.rem ? 1 : 0);
-			
-			printf("pageCount = %d (%d,%d)\n", count, d.quot,d.rem);
  		}
 		break;
 			

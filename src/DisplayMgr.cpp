@@ -1672,10 +1672,9 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	}
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("CANbus"));
-	
-	
+	TRY(_vfd.setCursor(0,18));
+	TRY(_vfd.write("CANbus Activity"));
+	 
 	char buffer[64] = {0};
 	char* p = buffer;
 	
@@ -1698,10 +1697,10 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(count > 0)
 		p  += sprintf(p, "%4zu/sec", count);
 	else
-		p  += sprintf(p, "%-10s"," ---");
+		p  += sprintf(p, "%10s"," ---");
 
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,25));
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(10,23));
 	TRY(_vfd.write(buffer));
  
 	// JEEP BUS
@@ -1723,11 +1722,11 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(count > 0)
 		p  += sprintf(p, "%4zu/sec  ", count);
 	else
-		p  += sprintf(p, "%-10s"," ---");
+		p  += sprintf(p, "%10s"," ---");
 
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,35));
+	TRY(_vfd.setCursor(10,45));
 	TRY(_vfd.write(buffer));
 
 

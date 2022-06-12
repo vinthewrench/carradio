@@ -126,10 +126,7 @@ private:
 	
 	typedef enum :int {
 		MENU_UNKNOWN = 0,
-		MENU_AM,
-		MENU_FM,
-		MENU_VHF,
-		MENU_GMRS,
+		MENU_RADIO,
 		MENU_CANBUS,
 		MENU_GPS,
 		MENU_TIME,
@@ -154,6 +151,8 @@ private:
  	nlohmann::json GetRadioPresetsJSON();
  
 	void displayMenu();
+	void displayRadioMenu();
+
 	void displaySettingsMenu();
 
 	void tunerDoubleClicked();
@@ -170,7 +169,7 @@ private:
 	static void PiCanLoopThreadCleanup(void *context);
 	void idle();  // occasionally called durrig idle time
 	
-	menu_mode_t radioModeToMenuMode(RadioMgr::radio_mode_t);
+	//menu_mode_t radioModeToMenuMode(RadioMgr::radio_mode_t);
 	
 	RadioMgr::radio_mode_t					  _lastRadioMode;
  	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;

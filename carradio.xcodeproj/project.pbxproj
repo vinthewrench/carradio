@@ -47,6 +47,7 @@
 		2EC772912854FFE30083DA3B /* DTC.db in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EC772902854FFD60083DA3B /* DTC.db */; };
 		2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC772922855002C0083DA3B /* DTCcodes.cpp */; };
 		2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EC77298285501CB0083DA3B /* libsqlite3.tbd */; };
+		2EC7729B2855644C0083DA3B /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 2EC7729A2855644C0083DA3B /* Makefile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -159,6 +160,7 @@
 		2EC772932855002C0083DA3B /* DTCcodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DTCcodes.hpp; sourceTree = "<group>"; };
 		2EC77296285501BD0083DA3B /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		2EC77298285501CB0083DA3B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		2EC7729A2855644C0083DA3B /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,6 +231,7 @@
 			isa = PBXGroup;
 			children = (
 				2E62A8592807364F00F5066B /* CMakeLists.txt */,
+				2EC7729A2855644C0083DA3B /* Makefile */,
 				2E62A9012824597800F5066B /* macincludes */,
 			);
 			name = "Build Stuff";
@@ -457,6 +460,7 @@
 				2E8210B62835A551003D074C /* TimeStamp.cpp in Sources */,
 				2E8210CB2835A593003D074C /* TMP117.cpp in Sources */,
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
+				2EC7729B2855644C0083DA3B /* Makefile in Sources */,
 				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
 				2E8210F3283EAEB2003D074C /* FrameDB.cpp in Sources */,

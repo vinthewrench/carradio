@@ -107,11 +107,8 @@ PiCarMgr::PiCarMgr(){
 	std::set_terminate( CRASH_Handler );
  
 	_main_menu_map = {
-		  {MENU_AM, 		"AM"},
-		  {MENU_FM, 		"FM"},
-		  {MENU_VHF, 		"VHF"},
-		  {MENU_GMRS, 	"GMRS"},
-		  {MENU_UNKNOWN, "-"},
+		 {MENU_RADIO, "Radio Band"},
+ 		  {MENU_UNKNOWN, "-"},
 		  {MENU_GPS,		"GPS"},
 		  {MENU_CANBUS,	"Engine"},
 		  {MENU_TIME,		"Time"},
@@ -813,12 +810,15 @@ void PiCarMgr::PiCanLoop(){
 						_display.LEDeventVol();
 						_display.showRadioChange();
 						
-						// save the new radio mode as a PROP_LAST_MENU_SELECTED
-						auto newMenuSelect =  radioModeToMenuMode(mode);
 						
-						if(newMenuSelect != MENU_UNKNOWN)
-							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
-					}
+						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
+	
+//						// save the new radio mode as a PROP_LAST_MENU_SELECTED
+//						auto newMenuSelect =  radioModeToMenuMode(mode);
+//
+//						if(newMenuSelect != MENU_UNKNOWN)
+//							_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(newMenuSelect)));
+ 					}
 				}
 				else {
 					auto devices = RtlSdr::get_devices();
@@ -996,29 +996,29 @@ void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 
 
 // MARK: -   Menu Management
-
-PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radioMode){
-	menu_mode_t mode = MENU_UNKNOWN;
-
-	switch(radioMode){
-		case RadioMgr::BROADCAST_AM:
-			mode = MENU_AM;
-			break;
-		case RadioMgr::BROADCAST_FM:
-			mode = MENU_FM;
-			break;
-		case RadioMgr::VHF:
-			mode = MENU_VHF;
-			break;
-		case RadioMgr::GMRS:
-			mode = MENU_GMRS;
-			break;
-		default: break;
-	}
-
-	return mode;
-}
-
+//
+//PiCarMgr::menu_mode_t PiCarMgr::radioModeToMenuMode(RadioMgr::radio_mode_t radioMode){
+//	menu_mode_t mode = MENU_UNKNOWN;
+//
+//	switch(radioMode){
+//		case RadioMgr::BROADCAST_AM:
+//			mode = MENU_AM;
+//			break;
+//		case RadioMgr::BROADCAST_FM:
+//			mode = MENU_FM;
+//			break;
+//		case RadioMgr::VHF:
+//			mode = MENU_VHF;
+//			break;
+//		case RadioMgr::GMRS:
+//			mode = MENU_GMRS;
+//			break;
+//		default: break;
+//	}
+//
+//	return mode;
+//}
+//
 
 PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 	menu_mode_t mode = MENU_UNKNOWN;
@@ -1027,7 +1027,7 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			
 		case DisplayMgr::MODE_RADIO:
 			if(_radio.isOn()){
-				mode  = radioModeToMenuMode(_radio.radioMode());
+				mode = MENU_RADIO;
 			}
 			break;
 			
@@ -1085,7 +1085,7 @@ void PiCarMgr::displayMenu(){
 	menu_mode_t mode = currentMode();
  
 // if the radio is on.. keep that mode
-	if( mode == MENU_AM || mode == MENU_FM || mode == MENU_VHF || mode == MENU_GMRS ){
+	if( mode == MENU_RADIO){
 		// keep that mode.
 	}
 	else {
@@ -1096,7 +1096,7 @@ void PiCarMgr::displayMenu(){
 		}
 		else if(selectedItem == -1
 				  && (mode == MENU_TIME || mode == MENU_UNKNOWN))
-			mode = MENU_FM;
+			mode = MENU_RADIO;
 	}
 	
 	menu_items.reserve(_main_menu_map.size());
@@ -1124,21 +1124,24 @@ void PiCarMgr::displayMenu(){
  
 			switch (selectedMode) {
  
-				case MENU_AM:
-	//				radioMode = RadioMgr::BROADCAST_AM;
-					break;
+				case MENU_RADIO:
+					displayRadioMenu();
 					
-				case MENU_FM:
-					radioMode = RadioMgr::BROADCAST_FM;
-					break;
-					
-				case MENU_VHF:
-					radioMode = RadioMgr::VHF;
-					break;
-					
-				case MENU_GMRS:
-					radioMode = RadioMgr::GMRS;
-					break;
+//				case MENU_AM:
+//	//				radioMode = RadioMgr::BROADCAST_AM;
+//					break;
+//
+//				case MENU_FM:
+//					radioMode = RadioMgr::BROADCAST_FM;
+//					break;
+//
+//				case MENU_VHF:
+//					radioMode = RadioMgr::VHF;
+//					break;
+//
+//				case MENU_GMRS:
+//					radioMode = RadioMgr::GMRS;
+//					break;
 					
 				case MENU_TIME:
 					_display.showTime();
@@ -1183,6 +1186,47 @@ void PiCarMgr::displayMenu(){
 	});
 }
 
+
+void PiCarMgr::displayRadioMenu(){
+	constexpr time_t timeout_secs = 10;
+	
+//	{MENU_AM, 		"AM"},
+//	{MENU_FM, 		"FM"},
+//	{MENU_VHF, 		"VHF"},
+//	{MENU_GMRS, 	"GMRS"},
+
+
+	vector<string> menu_items = {
+			"Dim Screen",
+			"Exit",
+			"-",
+			"Shutdown"
+		};
+ 
+	_display.showMenuScreen(menu_items,
+									0,
+									"Radio Band",
+									timeout_secs,
+									[=](bool didSucceed, uint newSelectedItem ){
+	
+		if(didSucceed) {
+			
+			switch (newSelectedItem) {
+				case 3:
+					doShutdown();
+					break;
+//				case 1:
+// //					_display.showSettings(1);
+//					break;
+					
+				default:
+					break;
+			}
+	 
+		}
+	});
+
+};
 
 void PiCarMgr::displaySettingsMenu(){
 	

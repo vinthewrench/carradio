@@ -1724,8 +1724,8 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		
 		for(uint8_t	 i = start_item; i < end_item; i++)
-			if(cachedProps.count(i+1)){
-				auto item = cachedProps[i+1];
+			if(cachedProps.count(i)){
+				auto item = cachedProps[i];
 				can->cancel_ODBpolling(item.key);
 			}
 		

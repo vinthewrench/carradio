@@ -1690,6 +1690,8 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	int end_item	= start_item + 6;
 	
 	if(transition == TRANS_ENTERING) {
+		
+		printf("CANBUS ENTER (%d,%d)\n", start_item, end_item);
 		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);

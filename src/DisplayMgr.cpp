@@ -427,7 +427,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 		else {
 			
 			if(action == KNOB_UP){
-				if(_currentPage < pageCountForMode(_current_mode)) {
+				if(_currentPage < (pageCountForMode(_current_mode) -1 )) {
 					_currentPage++;
 					setEvent(EVT_REDRAW, _current_mode );
 					wasHandled = true;

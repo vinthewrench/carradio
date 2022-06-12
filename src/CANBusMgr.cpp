@@ -119,7 +119,7 @@ bool CANBusMgr::request_ODBpolling(string key){
 		vector<uint8_t>  request;
 		if( _frameDB.odb_request(key, request)) {
 		
-			printf("REQUEST %s\n", key.c_str());
+//			printf("REQUEST %s\n", key.c_str());
 
 			odb_polling_t poll_info;
 			poll_info.request = request;
@@ -136,7 +136,7 @@ bool CANBusMgr::request_ODBpolling(string key){
 bool CANBusMgr::cancel_ODBpolling(string key){
 
 	if( _odb_polling.count(key)){
-		printf("CANCEL %s\n", key.c_str());
+//		printf("CANCEL %s\n", key.c_str());
 		_odb_polling.erase(key);
 	}
 

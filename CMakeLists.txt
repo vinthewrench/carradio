@@ -2,7 +2,12 @@ SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_CXX_COMPILER            "clang++")
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O2 -ffast-math -ftree-vectorize ${EXTRA_FLAGS}")
 
+
 cmake_minimum_required(VERSION 3.0)
+
+if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
+    message( FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt." )
+endif()
 
 project(carradio)
 
@@ -16,8 +21,6 @@ find_package(ALSA REQUIRED)
  #install the sqllite dev tools
 # sudo apt-get install sqlite3
 # sudo apt-get install libsqlite3-dev
-
-  	 
  
 # Find RTL-SDR library (for linking).
 pkg_check_modules(PKG_RTLSDR librtlsdr)

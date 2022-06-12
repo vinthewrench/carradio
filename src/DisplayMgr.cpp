@@ -1705,6 +1705,8 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			if(cachedProps.count(i)){
 				auto item = cachedProps[i];
 				
+				printf("%d  %s\n", i, item.title.c_str());
+				
 				if(i <  end_item - 3){
 					can->request_ODBpolling(item.key);
 					_vfd.setCursor(col1, row1 + (i +1  * rowsize ));

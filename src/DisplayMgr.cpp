@@ -850,7 +850,7 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  (d.quot + d.rem ? 1 : 0);
 			
-			printf("pageCount = %d\n", count);
+			printf("pageCount = %d (%d,%d)\n", count, d.quot,d.rem);
  		}
 		break;
 			

@@ -341,20 +341,8 @@ void DisplayMgr::showInfo(){
 }
 
  
-void DisplayMgr::showSettings(uint8_t page){
-	
-	switch (page) {
-		case 0:
-			setEvent(EVT_PUSH, MODE_SETTINGS);
-			break;
-			
-		case 1:
-			setEvent(EVT_PUSH, MODE_SETTINGS1);
-			break;
-			
-		default:
-			setEvent(EVT_PUSH, MODE_SETTINGS);
-	}
+void DisplayMgr::showSettings(){
+	setEvent(EVT_PUSH, MODE_SETTINGS);
 }
 
  
@@ -382,19 +370,8 @@ void DisplayMgr::showGPS(){
 
 void DisplayMgr::showCANbus(uint8_t page){
 	
-	switch (page) {
-		case 0:
-			setEvent(EVT_PUSH, MODE_CANBUS);
-			break;
-			
-		case 1:
-			setEvent(EVT_PUSH, MODE_CANBUS1);
-			break;
-			
-		default:
-			setEvent(EVT_PUSH, MODE_CANBUS);
-	}
-	
+	_currentPage = page;
+	setEvent(EVT_PUSH, MODE_CANBUS);
 }
 
 
@@ -425,11 +402,7 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 bool  DisplayMgr::isScreenDisplayedMultiPage(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
-		case MODE_CANBUS1:
-			
-		case MODE_SETTINGS:
-		case MODE_SETTINGS1:
-
+	
 		case MODE_MENU:
 			return true;
 	 
@@ -443,36 +416,35 @@ bool  DisplayMgr::isScreenDisplayedMultiPage(){
 bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	bool wasHandled = false;
-	
-//	printf("selectorKnobAction (%d)\n", action);
-	
-	typedef   map <knob_action_t,  mode_state_t> next_state_t;
-	static map <mode_state_t,  next_state_t> next_mode_map  = {
-		{ MODE_CANBUS,  { {KNOB_UP , 	 MODE_CANBUS1},  {KNOB_DOWN , MODE_NOCHANGE} } },
-		{ MODE_CANBUS1, { {KNOB_DOWN ,  MODE_CANBUS},  {KNOB_UP ,  MODE_NOCHANGE}  } },
+	//
+	////	printf("selectorKnobAction (%d)\n", action);
  
-	};
-	
 	if(isScreenDisplayedMultiPage()){
 		if(_current_mode == MODE_MENU){
 			wasHandled =  menuSelectAction(action);
 		}
 		else {
 			
-			mode_state_t nextMode = MODE_UNKNOWN;
-			
-			if(next_mode_map.count(_current_mode)
-				&& next_mode_map[_current_mode].count(action))
-				nextMode = next_mode_map[_current_mode][action];
-			
-			if(nextMode == MODE_NOCHANGE){		// ignore event
-				wasHandled = true;
+			if(action == KNOB_UP){
+				if(_currentPage < pageCountForMode(_current_mode)) {
+					_currentPage++;
+					setEvent(EVT_REDRAW, _current_mode );
+					wasHandled = true;
+				}
 			}
-			else if(nextMode != MODE_UNKNOWN) {
-				setEvent(EVT_PUSH, nextMode );
-				wasHandled = true;
+			else if(action == KNOB_DOWN){
+				if(_currentPage > 0) {
+					_currentPage--;
+					setEvent(EVT_REDRAW, _current_mode );
+					wasHandled = true;
+				}
+				
+			}
+			else if(action == KNOB_CLICK){
+				// no clue?
 			}
 		}
+		
 	}
 	return wasHandled;
 }
@@ -631,39 +603,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 
 // MARK: -  mode utils
 
-
-bool DisplayMgr::isScreenDisplayed(mode_state_t mode, uint8_t &page){
-	
-	// for main page
-	if( mode == _current_mode){
-		page = 0;
-		return true;
-	}
-	// handle multi page
-	else switch(mode) {
-		case MODE_CANBUS:
-			
-			if(_current_mode == MODE_CANBUS1){
-				page = 1;
-				return true;
-			}
-			break;
-
-		case MODE_SETTINGS:
-			
-			if(_current_mode == MODE_SETTINGS1){
-				page = 1;
-				return true;
-			}
-			break;
-
-		default: break;
-	}
-	
-	return false;
-	
-}
-
 bool DisplayMgr::isStickyMode(mode_state_t md){
 	bool isSticky = false;
 	
@@ -671,11 +610,9 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_TIME:
 		case MODE_RADIO:
 		case MODE_SETTINGS:
-		case MODE_SETTINGS1:
 		case MODE_GPS:
 		case MODE_INFO:
 		case MODE_CANBUS:
-		case MODE_CANBUS1:
 			isSticky = true;
 			break;
 			
@@ -691,9 +628,11 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 	
 	bool didChange = false;
 	if(_current_mode != newMode){
-		if(isStickyMode(_current_mode))
+		if(isStickyMode(_current_mode)){
 			_saved_mode = _current_mode;
+		}
 		_current_mode = newMode;
+		
 		didChange = true;
 		
 	}
@@ -899,6 +838,21 @@ void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
 
 // MARK: -  Display Draw code
 
+uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
+	uint8_t count = 1;
+	
+	switch (mode) {
+		case MODE_CANBUS:
+			count = 2;
+			break;
+		default :
+			count = 1;
+	}
+	
+
+	return count;
+	
+}
 
 void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	
@@ -939,11 +893,7 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 			case MODE_SETTINGS:
 				drawSettingsScreen(transition);
 				break;
-	
-			case MODE_SETTINGS1:
-				drawSettingsScreen1(transition);
-				break;
-	
+		
 			case MODE_MENU:
 				drawMenuScreen(transition);
 				break;
@@ -953,13 +903,12 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				break;
 	
 			case MODE_CANBUS:
-				drawCANBusScreen(transition);
+				if(_currentPage == 0)
+					drawCANBusScreen(transition);
+				else
+					drawCANBusScreen1(transition);
 				break;
 				
-			case MODE_CANBUS1:
-				drawCANBusScreen1(transition);
-				break;
- 				
 			case MODE_INFO:
 				drawInfoScreen(transition);
 				break;
@@ -1493,33 +1442,6 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width()-5,60));
 	TRY(_vfd.write(">"));
-
-}
-
-void DisplayMgr::drawSettingsScreen1(modeTransition_t transition){
-//	printf("displayDiagScreen %d\n",transition);
-	
-	if(transition == TRANS_ENTERING) {
-		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::Orange);
-		_vfd.clearScreen();
-	}
-
-	if(transition == TRANS_LEAVING) {
-		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		return;
-	}
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("Settings(1)"));
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,60));
-	TRY(_vfd.write("<"));
-
-
 }
 
 

@@ -62,12 +62,10 @@ public:
 		MODE_BALANCE,
 		MODE_RADIO,
 		MODE_CANBUS,
-		MODE_CANBUS1,
 
 		MODE_GPS,
 		MODE_SETTINGS,
-		MODE_SETTINGS1,
-		
+
 		MODE_INFO,
 
 		MODE_DEV_STATUS,
@@ -111,12 +109,10 @@ public:
 	void showBalanceChange();
 	void showRadioChange();
 	void showCANbus(uint8_t page = 0);
-	void showSettings(uint8_t page = 0);
+	void showSettings();
 
 	void showDevStatus();
 
-	bool isScreenDisplayed(mode_state_t mode, uint8_t &page);
-	
  	// Menu Screen Management
 	typedef string menuItem_t;
 	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
@@ -142,6 +138,8 @@ private:
 		TRANS_LEAVING,
 	}modeTransition_t;
 		
+	uint8_t pageCountForMode(mode_state_t mode);
+
 	void drawMode(modeTransition_t transition, mode_state_t mode);
 	void drawStartupScreen(modeTransition_t transition);
 	void drawDeviceStatusScreen(modeTransition_t transition);
@@ -155,7 +153,6 @@ private:
 	void drawCANBusScreen1(modeTransition_t transition);
 
 	void drawSettingsScreen(modeTransition_t transition);
-	void drawSettingsScreen1(modeTransition_t transition);
 	
 	void drawInfoScreen(modeTransition_t transition);
  
@@ -165,7 +162,6 @@ private:
 	void drawDeviceStatus();
 	
 	void drawEngineCheck();
-	
 	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);
@@ -184,7 +180,9 @@ private:
 //
 	
 	mode_state_t _current_mode = MODE_UNKNOWN;
+	uint8_t		 _currentPage  = 0;			// used for multipage
 	mode_state_t _saved_mode   = MODE_UNKNOWN;
+	
 	timeval		_lastEventTime = {0,0};
  
 	mode_state_t handleRadioEvent();

@@ -1700,7 +1700,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		p  += sprintf(p, "%10s"," ---");
 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,23));
+	TRY(_vfd.setCursor(10,33));
 	TRY(_vfd.write(buffer));
  
 	// JEEP BUS
@@ -1723,10 +1723,9 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		p  += sprintf(p, "%4zu/sec  ", count);
 	else
 		p  += sprintf(p, "%10s"," ---");
-
-	
+ 
 	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(10,45));
+	TRY(_vfd.setCursor(10,43));
 	TRY(_vfd.write(buffer));
 
 

@@ -1705,9 +1705,8 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.write(buffer));
  
 	// JEEP BUS
-	time_t lastTime = 0;
-	size_t count = 0;
-
+	lastTime = 0;
+	 count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
 		time_t diff = now - lastTime;
  

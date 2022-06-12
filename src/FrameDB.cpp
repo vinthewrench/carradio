@@ -573,11 +573,9 @@ double FrameDB::normalizedDoubleForValue(string key, string value){
 			case FUEL_TRIM:
 			case KM:
 			case KPH:
-				
- 				retVal = val;
-				break;
-				
 			default:
+				retVal = val;
+				
 				break;
 		}
 	}

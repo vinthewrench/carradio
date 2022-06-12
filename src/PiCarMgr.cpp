@@ -107,11 +107,11 @@ PiCarMgr::PiCarMgr(){
 	std::set_terminate( CRASH_Handler );
  
 	_main_menu_map = {
-		 {MENU_RADIO, 		"Radio Band..."},
+		 {MENU_RADIO, 		"Radio Band"},
  		  {MENU_GPS,		"GPS"},
 		  {MENU_CANBUS,	"Engine"},
 		  {MENU_TIME,		"Time"},
-		  {MENU_SETTINGS,	"Settings..."},
+		  {MENU_SETTINGS,	"Settings"},
 		  {MENU_INFO,		"Info"},
 	  };
 

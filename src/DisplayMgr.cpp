@@ -1687,7 +1687,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t rowsize = 19;
 	
 	int start_item = ((_currentPage -1) *6);
-	int end_item	= start_item + 6;
+	int end_item	= start_item + 5;
 	
 	if(transition == TRANS_ENTERING) {
 		

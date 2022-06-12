@@ -34,7 +34,6 @@
 			 "line": 6,
 			 "title": "VOLTS"
 		 },
-		 
 		 {
 			 "key": "JK_FUEL_LEVEL",
 			 "line": 7,
@@ -55,7 +54,6 @@
 			 "line": 10,
 			 "title": "OIL LIFE"
 		 },
-
 		 {
 			 "key": "OBD_VIN",
 			 "line": 13,
@@ -70,10 +68,7 @@
 			 "key": "JK_VEHICLE_DISTANCE",
 			 "line": 15,
 			 "title": "ODOMETER"
-		 },
-		 
-		 
-		 
+		 }
 	 ],
 	 "cputemp-query-delay": 4,
 	 "last_menu": "0",

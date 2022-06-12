@@ -48,8 +48,13 @@
 				"key": "JK_FUEL_LEVEL",
 				"line": 9,
 				"title": "FUEL"
+		  },
+		  {
+				"key": "GM_FUEL_CONSUMPTION",
+				"line": 10,
+				"title": "CONSUME"
 		  }
-
+	 
 	 ],
 	 "cputemp-query-delay": 4,
 	 "last_menu": "0",

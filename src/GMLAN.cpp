@@ -437,7 +437,8 @@ void GMLAN::processVehicleSpeed(FrameDB* db, can_frame_t frame, time_t when){
 	
 	bool speedValid = (frame.data[0] & 0x80) == 0x00;
 //	bool distValid = (frame.data[2] & 0x40) == 0x00;
-
+	speedValid = true;
+//
 	if(speedValid) {
 		float speed	= (((frame.data[0] & 0x7F) <<8)  | frame.data[1]) * 0.015625;
 		db->updateValue(schemaKeyForValueKey(VEHICLE_SPEED), to_string(speed),when);

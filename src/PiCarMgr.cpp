@@ -1208,22 +1208,16 @@ void PiCarMgr::displayRadioMenu(){
 				saveRadioSettings();
 				_db.savePropertiesToFile();
 			}
-			else {
-//				if(_radio.isOn()){
-//					// go back to radio
-//					_display.showRadioChange();
-//				}
-//				else
-				if(_lastMenuMode != MENU_UNKNOWN){
-					// restore old mode thast was set in main menu
-					setDisplayMode(_lastMenuMode);
-				}
-				else	// fallback
-				{
-					_display.showTime();
-				}
+			else if(_lastMenuMode != MENU_UNKNOWN){
+				// restore old mode thast was set in main menu
+				setDisplayMode(_lastMenuMode);
+			}
+			else	// fallback
+			{
+				_display.showTime();
 			}
 		}
+		
 	});
 };
 

@@ -1206,8 +1206,13 @@ void PiCarMgr::displayRadioMenu(){
 				_db.savePropertiesToFile();
 			}
 			else {
-				// go back to radio
-				_display.showRadioChange();
+				if(_radio.isOn()){
+					// go back to radio
+					_display.showRadioChange();
+				}
+//				else {
+//					_display.showTime();
+//				}
 			}
 		}
 	});

@@ -1710,13 +1710,13 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				
 				if(i <  end_item - 3){
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col1, row1 + (i  * rowsize ));
+					_vfd.setCursor(col1, row1 + (i -1)  * rowsize );
 					_vfd.write(item.title);
 					
 				}
 				else {
 					can->request_ODBpolling(item.key);
-					_vfd.setCursor(col2, row1 + ( (i-3)  * rowsize ));
+					_vfd.setCursor(col2, row1 + ( (i-4)  * rowsize ));
 					_vfd.write(item.title);
 				}
 			}

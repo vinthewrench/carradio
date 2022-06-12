@@ -1675,13 +1675,13 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("CANbus"));
 	
-	time_t lastTime = 0;
-	size_t count = 0;
 	
 	char buffer[64] = {0};
 	char* p = buffer;
 	
 	// GM BUS
+	time_t lastTime = 0;
+	size_t count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
  
@@ -1705,6 +1705,9 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.write(buffer));
  
 	// JEEP BUS
+	time_t lastTime = 0;
+	size_t count = 0;
+
 	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
 		time_t diff = now - lastTime;
  

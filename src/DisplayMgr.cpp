@@ -849,6 +849,8 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  (d.quot + d.rem ? 1 : 0);
+			
+			printf("pageCount = %d\n", count);
  		}
 		break;
 			
@@ -1691,7 +1693,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		
-		printf("CANBUS ENTER (%d,%d)\n", start_item, end_item);
+		printf("CANBUS ENTER page %d  (%d,%d)\n", _currentPage, start_item, end_item);
 		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
 		_rightKnob.setAntiBounce(antiBounceSlow);

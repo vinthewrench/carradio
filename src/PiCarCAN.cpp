@@ -108,9 +108,14 @@ bool PiCarCAN::lastFrameTime(pican_bus_t bus, time_t &time){
 }
 
 
-bool PiCarCAN::packetCount(pican_bus_t bus, size_t &count){
+bool PiCarCAN::totalPacketCount(pican_bus_t bus, size_t &count){
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
-	return _CANbus.packetCount(ifName, count);
+	return _CANbus.totalPacketCount(ifName, count);
+}
+
+bool PiCarCAN::packetsPerSecond(pican_bus_t bus, size_t &count){
+	string ifName  = bus == CAN_ALL?"":bus_map[bus];
+	return _CANbus.packetsPerSecond(ifName, count);
 }
 
 

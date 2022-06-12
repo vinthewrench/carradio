@@ -41,7 +41,8 @@ public:
 	bool reset();
 
 	bool lastFrameTime(pican_bus_t bus, time_t &time);
-	bool packetCount(pican_bus_t bus, size_t &count);
+	bool totalPacketCount(pican_bus_t bus, size_t &count);
+	bool packetsPerSecond(pican_bus_t bus, size_t &count);
 	bool resetPacketCount(pican_bus_t bus);
  
 	bool getStatus(vector<CANBusMgr::can_status_t> & stats);

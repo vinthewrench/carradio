@@ -45,7 +45,9 @@ public:
 	bool stop(string ifName, int &error);
 	
 	bool lastFrameTime(string ifName, time_t &time);
-	bool packetCount(string ifName, size_t &count);
+	bool totalPacketCount(string ifName, size_t &count);
+	bool packetsPerSecond(string ifName, size_t &count);
+
 	bool resetPacketCount(string ifName);
 	
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
@@ -81,8 +83,11 @@ private:
 
 	map<string, int> 		_interfaces = {};
 	map<string, time_t> 	_lastFrameTime = {};
-	map<string, size_t> 	_packetCount = {};
+	map<string, size_t> 	_totalPacketCount = {};
 	
+	map<string, size_t> 	_runningPacketCount = {};
+	map<string, time_t> 	_avgPacketsPerSecond = {};
+
 	typedef struct {
 		vector<uint8_t> request;
 		

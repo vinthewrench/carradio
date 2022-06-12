@@ -1686,7 +1686,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		time_t diff = now - lastTime;
  
 		if(diff < busTimeout ){
-			if(can->packetCount(PiCarCAN::CAN_GM, count)){
+			if(can->packetsPerSecond(PiCarCAN::CAN_GM, count)){
 				
 			}
 		}
@@ -1696,7 +1696,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	p = buffer;
 	p  += sprintf(p, "%4s: ", "GM");
 	if(count > 0)
-		p  += sprintf(p, "%zu", count);
+		p  += sprintf(p, "%zu/sec", count);
 	else
 		p  += sprintf(p, "%-10s"," ---");
 
@@ -1709,7 +1709,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		time_t diff = now - lastTime;
  
 		if(diff < busTimeout ){
-			if(can->packetCount(PiCarCAN::CAN_JEEP, count)){
+			if(can->packetsPerSecond(PiCarCAN::CAN_JEEP, count)){
 				
 			}
 		}
@@ -1719,7 +1719,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	p = buffer;
 	p  += sprintf(p, "%4s: ", "Jeep");
 	if(count > 0)
-		p  += sprintf(p, "%zu", count);
+		p  += sprintf(p, "%zu/sec", count);
 	else
 		p  += sprintf(p, "%-10s"," ---");
 

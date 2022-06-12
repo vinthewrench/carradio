@@ -42,9 +42,11 @@ CANBusMgr::CANBusMgr(){
 	
 	_isSetup = false;
 	_isRunning = true;
-	_packetCount = {};
+	_totalPacketCount = {};
 	_lastFrameTime  = {};
-	
+	_runningPacketCount = {};
+	_avgPacketsPerSecond = {};
+
 	_lastPollTime = {0,0};
 	_pollDelay = {0, 200 * 1000 }; //  200 ms
 	_pollDelay = {1, 200 * 1000 }; //  200 ms
@@ -216,8 +218,8 @@ bool CANBusMgr::getStatus(vector<can_status_t> & statsOut){
 			if(_lastFrameTime.count(key))
 				stat.lastFrameTime = _lastFrameTime[key];
 			
-			if(_packetCount.count(key))
-				stat.packetCount = _packetCount[key];
+			if(_totalPacketCount.count(key))
+				stat.packetCount = _totalPacketCount[key];
 			
 			stats.push_back(stat);
  		}
@@ -320,19 +322,19 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 	return false;
 }
 
-bool CANBusMgr::packetCount(string ifName, size_t &countOut){
+bool CANBusMgr::totalPacketCount(string ifName, size_t &countOut){
 	
 	size_t totalCount = 0;
 	
 	// close all?
 	if(ifName.empty()){
-		for (auto& [_, count]  : _packetCount){
+		for (auto& [_, count]  : _totalPacketCount){
 			totalCount += count;
 		}
 		countOut = totalCount;
  		return true;
 	}
-	else for (auto& [key, count]  : _packetCount){
+	else for (auto& [key, count]  : _totalPacketCount){
 		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
 			
 			countOut = count;
@@ -342,16 +344,49 @@ bool CANBusMgr::packetCount(string ifName, size_t &countOut){
 	return false;
 }
 
+
+bool CANBusMgr::packetsPerSecond(string ifName, size_t &countOut){
+	size_t totalCount = 0;
+	
+ // average total
+	if(ifName.empty()){
+		for (auto& [_, count]  : _avgPacketsPerSecond){
+			totalCount += count;
+		}
+		
+		countOut = 0;
+		if(_avgPacketsPerSecond.size() > 0){
+			countOut = totalCount / _avgPacketsPerSecond.size();
+		}
+		
+		return true;
+	}
+	else for (auto& [key, count]  : _avgPacketsPerSecond){
+		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
+			
+			countOut = count;
+			return true;
+		}
+	}
+	return false;
+
+}
+
+
 bool CANBusMgr::resetPacketCount(string ifName){
 	 
 	// close all?
 	if(ifName.empty()){
-		_packetCount = {};
- 		return true;
+		_totalPacketCount = {};
+		_runningPacketCount = {};
+		_avgPacketsPerSecond = {};
+  		return true;
 	}
-	else for (auto& [key, count]  : _packetCount){
+	else for (auto& [key, count]  : _totalPacketCount){
 		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
-			_packetCount[key] = 0;
+			_totalPacketCount[key] = 0;
+			_runningPacketCount[key] = 0;
+			_avgPacketsPerSecond[key]  = 0;
  			return true;
 		}
 	}
@@ -360,9 +395,14 @@ bool CANBusMgr::resetPacketCount(string ifName){
 
 // MARK: -  CANReader thread
 
+ 
 void CANBusMgr::CANReader(){
 	 
- 	
+	struct timeval one_second_tv = { 1, 0 };
+
+	struct timeval lastTime;
+	gettimeofday(&lastTime, NULL);
+
 	while(_isRunning){
 		
 		// if not setup // check back later
@@ -370,7 +410,7 @@ void CANBusMgr::CANReader(){
 			sleep(2);
 			continue;
 		}
-	 
+		
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
@@ -385,30 +425,43 @@ void CANBusMgr::CANReader(){
 	//		_running = false;
 		}
 		
+		struct timeval now,  diff;
+		gettimeofday(&now, NULL);
+		unsigned long timestamp_secs = (now.tv_sec * 100 ) + (now.tv_usec / 10000);
+		timersub(&now, &lastTime,  &diff);
+
+ 
 		/* check which fd is avail for read */
 		for (auto& [ifName, fd]  : _interfaces) {
 			if ((fd != -1)  && FD_ISSET(fd, &dup)) {
 				
 				struct can_frame frame;
 		 
-				struct timeval tv;
-				gettimeofday(&tv, NULL);
-				
-	 			unsigned long timestamp = (tv.tv_sec * 100 ) + (tv.tv_usec / 10000);
- 
 				size_t nbytes = read(fd, &frame, sizeof(struct can_frame));
 				
 				if(nbytes == 0){ // shutdown
 					_interfaces[ifName] = -1;
 				}
 				else if(nbytes > 0){
-					_frameDB.saveFrame(ifName, frame, timestamp);
-					_lastFrameTime[ifName] =  tv.tv_sec;
-					_packetCount[ifName]++;
+					_frameDB.saveFrame(ifName, frame, timestamp_secs);
+					_lastFrameTime[ifName] =  now.tv_sec;
+					_totalPacketCount[ifName]++;
+					_runningPacketCount[ifName]++;
 				}
 			}
 		}
-
+		
+		// did more than a second go by
+		if(timercmp(&diff, &one_second_tv, >)){
+			lastTime = now;
+	 
+			// calulate avareage
+			for (auto& [ifName, fd]  : _interfaces) {
+				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
+				_runningPacketCount[ifName]  = 0;
+			}
+ 		}
+ 
 		// process any needed ODB requests 
 		processODBrequests();
 	}

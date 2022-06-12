@@ -200,14 +200,11 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 //		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
- 
-		
+ 		
 		// SOMETHING ABOUT MODES HERE?
 		_frequency = newFreq;
 		_mode = newMode;
 		_mux =  MUX_MONO;
-
-		
 		
 		// Intentionally tune at a higher frequency to avoid DC offset.
 		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();

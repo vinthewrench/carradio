@@ -1204,7 +1204,10 @@ void PiCarMgr::displayRadioMenu(){
 				_radio.setON(true);
 				saveRadioSettings();
 				_db.savePropertiesToFile();
-				
+			}
+			else {
+				// go back to radio
+				_display->showRadioChange();
 			}
 		}
 	});

@@ -46,11 +46,16 @@ public:
 		LED_EVENT_NONE = 0,
 		LED_EVENT_STARTUP,
 		LED_EVENT_VOL,
+		LED_EVENT_MUTE,
+		LED_EVENT_STOP,
+
  	}led_event_t;
 
 	void LEDeventStartup();
 	void LEDeventVol();
-	
+	void LEDeventMute();
+	void LEDeventStop();
+
 // active mode
 	typedef enum  {
 		MODE_UNKNOWN = 0,
@@ -99,7 +104,6 @@ public:
 	bool isScreenDisplayedMultiPage();
 	bool selectorKnobAction(knob_action_t action);
 
- 
 	void showTime();
 	void showGPS();
 	void showStartup();
@@ -197,17 +201,22 @@ private:
  
 	// LED effects Bit map
 	
+#define LED_EVENT_ALL					0xFFFFFFFF
+	
 #define LED_EVENT_STARTUP				0x00000001
 #define LED_EVENT_VOL 					0x00000002
-	
+#define LED_EVENT_MUTE					0x00000004
+
 #define LED_EVENT_STARTUP_RUNNING	0x00010000
 #define LED_EVENT_VOL_RUNNING			0x00020000
-	
+#define LED_EVENT_MUTE_RUNNING		0x00040000
+
 	uint32_t  _ledEvent  = 0;
 	void ledEventSet(uint32_t set, uint32_t reset);
 	void ledEventUpdate();
 	void runLEDEventStartup();
 	void runLEDEventVol();
+	void runLEDEventMute();
 
 	void DisplayUpdate();		// C++ version of thread
 	// C wrappers for DisplayUpdate;

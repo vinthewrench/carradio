@@ -241,6 +241,12 @@ bool DuppaLEDRing::setLEDs( led_block_t & leds){
  		return success;
 }
 
+
+bool DuppaLEDRing::setColor(uint8_t led_n, RGB color){
+	return setColor(led_n, color.r, color.g, color.b);
+}
+
+
 bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t blue ){
 	bool success = false;
  

@@ -45,6 +45,9 @@ public:
 	bool 	setVolume(double );		// 0.0 - 1.0  % of max
 	double volume();
 
+	bool setMute(bool shouldMute);
+	bool isMuted() {return _isMuted;};
+ 
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 
@@ -60,7 +63,9 @@ public:
 	snd_mixer_t* 			_mixer;
 	snd_mixer_elem_t* 	_elem;
 	
-	double					_balance;
+ 	double					_balance;
+ 	double					_savedVolume;
+	bool						_isMuted = false;
 	
 	vector<uint8_t>  		_bytebuf;
  

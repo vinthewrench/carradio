@@ -175,7 +175,16 @@ void DisplayMgr::LEDeventStartup(){
 void DisplayMgr::LEDeventVol(){
 	ledEventSet(LED_EVENT_VOL,0);
 }
- 
+
+void DisplayMgr::LEDeventMute(){
+	ledEventSet(LED_EVENT_MUTE,0);
+}
+
+void DisplayMgr::LEDeventStop(){
+	ledEventSet(LED_EVENT_STOP,0);
+}
+
+
  
 void DisplayMgr::ledEventUpdate(){
 	
@@ -184,15 +193,16 @@ void DisplayMgr::ledEventUpdate(){
 
 	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
-
 	
+	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
+		runLEDEventMute();
 }
  
 
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	pthread_mutex_lock (&_mutex);
-	_ledEvent |= set;
 	_ledEvent &= ~reset;
+	_ledEvent |= set;
 	pthread_mutex_unlock (&_mutex);
 	pthread_cond_signal(&_cond);
 	}
@@ -202,7 +212,7 @@ void DisplayMgr::runLEDEventStartup(){
  	static uint8_t 	ledStep = 0;
 	
 	if( _ledEvent & LED_EVENT_STARTUP ){
- 	ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_STARTUP );
+ 	ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_ALL );
 		
 		ledStep = 0;
 //		printf("\nLED STARTUP\n");
@@ -234,6 +244,46 @@ void DisplayMgr::runLEDEventStartup(){
   	}
  }
 
+
+
+void DisplayMgr::runLEDEventMute(){
+	
+	static timeval		lastEvent = {0,0};
+	static bool blinkOn = false;
+	
+	if( _ledEvent & LED_EVENT_MUTE ){
+		gettimeofday(&lastEvent, NULL);
+		blinkOn = false;
+		ledEventSet(LED_EVENT_MUTE_RUNNING, LED_EVENT_ALL);
+	}
+	else if( _ledEvent & LED_EVENT_MUTE_RUNNING ){
+		
+		timeval now, diff;
+		gettimeofday(&now, NULL);
+		timersub(&now, &lastEvent, &diff);
+
+		uint64_t diff_millis = (diff.tv_sec * (uint64_t)1000) + (diff.tv_usec / 1000);
+		
+		if(diff_millis == 500 ){ // 2Hz
+			gettimeofday(&lastEvent, NULL);
+
+			if(blinkOn){
+				for (int i = 0; i < 24; i++)
+					_leftRing.setColor(i, RGB::White);
+	
+			}
+			else {
+				for (int i = 0; i < 24; i++)
+					_leftRing.setColor(i, RGB::Black);
+			}
+			// DO mute event
+
+		}
+	}
+	
+}
+
+
 void DisplayMgr::runLEDEventVol(){
 	
 	static timeval		startedEvent = {0,0};
@@ -241,7 +291,7 @@ void DisplayMgr::runLEDEventVol(){
 
 	if( _ledEvent & LED_EVENT_VOL ){
 		gettimeofday(&startedEvent, NULL);
-		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_VOL );
+		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
 		
 //	 	printf("\nVOL STARTUP\n");
 	}

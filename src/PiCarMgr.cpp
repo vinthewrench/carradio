@@ -783,7 +783,18 @@ void PiCarMgr::PiCanLoop(){
 			
 // MARK:   Volume button Clicked
 			if(volWasDoubleClicked){
-				printf("Volume Double Clicked\n");
+				// toggle mute
+				
+				if(_radio.isConnected() && _radio.isOn()){
+					_audio.setMute(!_audio.isMuted());
+					_display.showRadioChange();
+					
+					if(_audio.isMuted())
+						_display.LEDeventMute();
+					else
+						_display.LEDeventVol();
+				}
+				
 			}
 			
 			if(volWasClicked){
@@ -795,6 +806,12 @@ void PiCarMgr::PiCanLoop(){
 						// just turn it off
 						_radio.setON(false);
 						
+						// always unmute after
+						_audio.setMute(false);
+	
+						// stop any Mute blinking
+						_display.LEDeventStop();
+						
 						// turn it off forces save of stations.
 						saveRadioSettings();
 						_db.savePropertiesToFile();
@@ -803,6 +820,7 @@ void PiCarMgr::PiCanLoop(){
 						RadioMgr::radio_mode_t mode ;
 						uint32_t freq;
 						
+						_audio.setMute(false);
 						getSavedFrequencyandMode(mode,freq);
 						_radio.setFrequencyandMode(mode, freq);
 						_radio.setON(true);

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "I2C.hpp"
+#include "RGB.hpp"
 
 using namespace std;
 
@@ -47,6 +48,7 @@ public:
 	bool setRED(uint8_t led_n, uint8_t color);
 	bool setGREEN(uint8_t led_n, uint8_t color);
 	bool setBLUE(uint8_t led_n, uint8_t color);
+	bool setColor(uint8_t led_n, RGB color);
 
 	uint8_t	getDevAddr();
  

@@ -437,7 +437,6 @@ void CANBusMgr::CANReader(){
 		unsigned long timestamp_secs = (now.tv_sec * 100 ) + (now.tv_usec / 10000);
 		timersub(&now, &lastTime,  &diff);
 
- 
 		/* check which fd is avail for read */
 		for (auto& [ifName, fd]  : _interfaces) {
 			if ((fd != -1)  && FD_ISSET(fd, &dup)) {

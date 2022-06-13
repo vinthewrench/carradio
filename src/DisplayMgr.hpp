@@ -41,16 +41,6 @@ public:
 	 bool reset();
 		
 	// LED effects
-	
-	typedef enum  {
-		LED_EVENT_NONE = 0,
-		LED_EVENT_STARTUP,
-		LED_EVENT_VOL,
-		LED_EVENT_MUTE,
-		LED_EVENT_STOP,
-
- 	}led_event_t;
-
 	void LEDeventStartup();
 	void LEDeventVol();
 	void LEDeventMute();
@@ -206,7 +196,8 @@ private:
 #define LED_EVENT_STARTUP				0x00000001
 #define LED_EVENT_VOL 					0x00000002
 #define LED_EVENT_MUTE					0x00000004
-
+#define LED_EVENT_STOP					0x00008000
+	
 #define LED_EVENT_STARTUP_RUNNING	0x00010000
 #define LED_EVENT_VOL_RUNNING			0x00020000
 #define LED_EVENT_MUTE_RUNNING		0x00040000

@@ -184,7 +184,6 @@ void DisplayMgr::LEDeventStop(){
 	ledEventSet(LED_EVENT_STOP,0);
 }
 
-
  
 void DisplayMgr::ledEventUpdate(){
 	

@@ -267,6 +267,8 @@ void DisplayMgr::runLEDEventMute(){
 		if(diff_millis == 500 ){ // 2Hz
 			gettimeofday(&lastEvent, NULL);
 
+			blinkOn = !blinkOn;
+			
 			if(blinkOn){
 				for (int i = 0; i < 24; i++)
 					_leftRing.setColor(i, RGB::White);

@@ -264,7 +264,7 @@ void DisplayMgr::runLEDEventMute(){
 
 		uint64_t diff_millis = (diff.tv_sec * (uint64_t)1000) + (diff.tv_usec / 1000);
 		
-		if(diff_millis == 500 ){ // 2Hz
+		if(diff_millis >= 500 ){ // 2Hz
 			gettimeofday(&lastEvent, NULL);
 
 			blinkOn = !blinkOn;

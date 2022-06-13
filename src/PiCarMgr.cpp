@@ -845,6 +845,11 @@ void PiCarMgr::PiCanLoop(){
 			
 // MARK:   Volume button moved
 			if(volWasMoved && _radio.isOn() ){
+				
+				//quit mute
+				if(_audio.isMuted())
+					_audio.setMute(false);
+				
 				// change  volume
 				auto volume = _audio.volume();
 				

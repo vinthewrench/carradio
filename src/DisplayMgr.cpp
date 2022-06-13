@@ -192,14 +192,13 @@ void DisplayMgr::ledEventUpdate(){
 		ledEventSet(0, LED_EVENT_ALL);
 		_leftRing.clearAll();
 	}
-	 
-	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
+	else if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 		runLEDEventStartup();
-
-	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
+	
+	else if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
 	
-	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
+	else if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
 		runLEDEventMute();
 }
  
@@ -275,10 +274,13 @@ void DisplayMgr::runLEDEventMute(){
 			blinkOn = !blinkOn;
 			
 			if(blinkOn){
+				printf("blink ON\n");
 				for (int i = 0; i < 24; i++)
 					_leftRing.setColor(i, RGB::White);
 			}
 			else {
+				printf("blink OFF\n");
+
 				_leftRing.clearAll();
 			}
 			// DO mute event

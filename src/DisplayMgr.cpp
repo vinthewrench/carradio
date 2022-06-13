@@ -188,6 +188,11 @@ void DisplayMgr::LEDeventStop(){
  
 void DisplayMgr::ledEventUpdate(){
 	
+	if( _ledEvent & (LED_EVENT_STOP)){
+		ledEventSet(0, LED_EVENT_ALL);
+		_leftRing.clearAll();
+	}
+	 
 	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 		runLEDEventStartup();
 
@@ -272,11 +277,9 @@ void DisplayMgr::runLEDEventMute(){
 			if(blinkOn){
 				for (int i = 0; i < 24; i++)
 					_leftRing.setColor(i, RGB::White);
-	
 			}
 			else {
-				for (int i = 0; i < 24; i++)
-					_leftRing.setColor(i, RGB::Black);
+				_leftRing.clearAll();
 			}
 			// DO mute event
 

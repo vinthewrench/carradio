@@ -260,37 +260,35 @@ void DisplayMgr::runLEDEventMute(){
 	static timeval		lastEvent = {0,0};
 	static bool blinkOn = false;
 	
+	
 	if( _ledEvent & LED_EVENT_MUTE ){
-		gettimeofday(&lastEvent, NULL);
+		lastEvent = {0,0};
 		blinkOn = false;
 		ledEventSet(LED_EVENT_MUTE_RUNNING, LED_EVENT_ALL);
 	}
-	else if( _ledEvent & LED_EVENT_MUTE_RUNNING ){
+	
+	// do the first cycle right away
+	if( _ledEvent & LED_EVENT_MUTE_RUNNING ){
 		
 		timeval now, diff;
 		gettimeofday(&now, NULL);
 		timersub(&now, &lastEvent, &diff);
-
+		
 		uint64_t diff_millis = (diff.tv_sec * (uint64_t)1000) + (diff.tv_usec / 1000);
 		
 		if(diff_millis >= 500 ){ // 2Hz
 			gettimeofday(&lastEvent, NULL);
-
+			
 			blinkOn = !blinkOn;
 			
 			if(blinkOn){
-				printf("blink ON\n");
 				for (int i = 0; i < 24; i++)
 					_leftRing.setColor(i, RGB::Green);
 			}
 			else {
-				printf("blink OFF\n");
-
 				_leftRing.clearAll();
 			}
-			// DO mute event
-
-		}
+ 		}
 	}
 	
 }

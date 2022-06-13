@@ -83,7 +83,7 @@ bool DuppaLEDRing::begin(uint8_t deviceAddress,  int &error){
 void DuppaLEDRing::stop(){
 	
 	clearAll();
-	GlobalCurrent(0);
+	SetGlobalCurrent(0);
 	
 	_isSetup = false;
 	_i2cPort.stop();
@@ -157,7 +157,7 @@ bool DuppaLEDRing::SpreadSpectrum(uint8_t spread){
 }
 
 
-bool DuppaLEDRing::GlobalCurrent(uint8_t curr) {
+bool DuppaLEDRing::SetGlobalCurrent(uint8_t curr) {
 	bool success = false;
 	success =	selectBank(PAGE1)
 	&&  _i2cPort.writeByte(GLOBALCURRENT,	curr);
@@ -165,6 +165,19 @@ bool DuppaLEDRing::GlobalCurrent(uint8_t curr) {
 	
 }
 
+
+
+uint8_t DuppaLEDRing::GlobalCurrent(){
+	
+	uint8_t val  = 0;
+	
+	if(selectBank(PAGE1))
+		_i2cPort.readByte(GLOBALCURRENT, val);
+	
+	return  val;
+}
+
+ 
 bool DuppaLEDRing::SetScaling(uint8_t scal) {
 	bool success = false;
 	

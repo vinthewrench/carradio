@@ -119,8 +119,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_leftRing.SetScaling(0xFF);
 		
 		// dont fool with this.
-		_rightRing.GlobalCurrent(010);
-		_leftRing.GlobalCurrent(010);
+		_rightRing.SetGlobalCurrent(010);
+		_leftRing.SetGlobalCurrent(010);
 		
 		// clear all values
 		_rightRing.clearAll();
@@ -169,7 +169,7 @@ void DisplayMgr::stop(){
 // MARK: -  LED Events
 
 void DisplayMgr::LEDeventStartup(){
-	ledEventSet(LED_EVENT_STARTUP, 0);
+	ledEventSet(LED_EVENT_STARTUP, LED_EVENT_ALL);
 }
 
 void DisplayMgr::LEDeventVol(){
@@ -181,23 +181,29 @@ void DisplayMgr::LEDeventMute(){
 }
 
 void DisplayMgr::LEDeventStop(){
-	ledEventSet(LED_EVENT_STOP,0);
+	ledEventSet(LED_EVENT_STOP,LED_EVENT_ALL);
 }
 
  
 void DisplayMgr::ledEventUpdate(){
 	
 	if( _ledEvent & (LED_EVENT_STOP)){
-		ledEventSet(0, LED_EVENT_ALL);
+		ledEventSet(0, LED_EVENT_STOP);
+		
+		// dim it then restore
+		uint8_t sav =  _leftRing.GlobalCurrent();
 		_leftRing.clearAll();
+		_leftRing.SetGlobalCurrent(sav);
 	}
-	else if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
+	
+	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 		runLEDEventStartup();
 	
-	else if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
+
+	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
 	
-	else if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
+	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
 		runLEDEventMute();
 }
  
@@ -275,7 +281,7 @@ void DisplayMgr::runLEDEventMute(){
 			if(blinkOn){
 				printf("blink ON\n");
 				for (int i = 0; i < 24; i++)
-					_leftRing.setColor(i, RGB::White);
+					_leftRing.setColor(i, RGB::Green);
 			}
 			else {
 				printf("blink OFF\n");

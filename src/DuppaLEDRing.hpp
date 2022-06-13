@@ -57,7 +57,9 @@ public:
 	bool 	PWMFrequencyEnable(uint8_t PWMenable);
 	bool  SpreadSpectrum(uint8_t spread);
 	bool  SetScaling(uint8_t scal);
-	bool  GlobalCurrent(uint8_t curr);
+	bool  SetGlobalCurrent(uint8_t curr);
+	uint8_t GlobalCurrent();
+	
 	
 private:
  

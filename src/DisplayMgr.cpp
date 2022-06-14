@@ -618,13 +618,17 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 	bool wasHandled = false;
 	
 	if(action == KNOB_UP){
-		_lineOffset--;
-		setEvent(EVT_NONE,MODE_DTC);
+		if(_lineOffset < 255){
+			_lineOffset++;
+			setEvent(EVT_NONE,MODE_DTC);
+		}
 		wasHandled = true;
 	}
 	else if(action == KNOB_DOWN){
-		_lineOffset++;
-		setEvent(EVT_NONE,MODE_DTC);
+		if(_lineOffset != 0) {
+			_lineOffset--;
+			setEvent(EVT_NONE,MODE_DTC);
+		}
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
@@ -1970,7 +1974,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	uint8_t height = _vfd.height();
 
 	static uint32_t lastHash = 0;
-	 
+	static uint8_t lastOffset = 0;
+	bool needsRedraw = false;
+
 	if(transition == TRANS_LEAVING) {
 		_lineOffset = 0;
 		return;
@@ -1987,11 +1993,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		_vfd.write("DTC Codes");
 	}
   
-	if(transition == TRANS_REFRESH){
-
-		printf("line %d\n", _lineOffset);
-	}
-	
 	string stored = "";
 	string pending = "";
 	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
@@ -1999,8 +2000,21 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	uint32_t hash = XXHash32::hash(stored+pending);
 
 	// if anything changed, redraw
-	if(hash != lastHash){
-		lastHash = hash;
+	if(hash != lastHash || lastOffset != _lineOffset){
+		
+		if(hash != lastHash){
+			lastHash = hash;
+			_lineOffset = 0;
+		}
+		
+		lastOffset = _lineOffset;
+		needsRedraw = true;
+		
+		printf("line %d\n", _lineOffset);
+	}
+	 
+	if(needsRedraw){
+		needsRedraw = false;
 		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),

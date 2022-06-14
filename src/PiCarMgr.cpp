@@ -787,7 +787,6 @@ void PiCarMgr::PiCanLoop(){
 				
 				if(_radio.isConnected() && _radio.isOn()){
 					_audio.setMute(!_audio.isMuted());
-//					_display.showRadioChange();
 					
 					if(_audio.isMuted())
 						_display.LEDeventMute();
@@ -883,7 +882,7 @@ void PiCarMgr::PiCanLoop(){
 					// was handled - do nothing
 				}
 				// change tuner
-				else if(_radio.isOn() ){
+				else if((_display.active_mode() == DisplayMgr::MODE_RADIO) &&  _radio.isOn() ){
 					
 					auto nextFreq = _radio.frequency();
 					auto mode 	   = _radio.radioMode();

@@ -2019,14 +2019,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	}
 	 
 	if(needsRedraw){
-	 	needsRedraw = false;
+		needsRedraw = false;
 		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
 		
-			if(vStored.size() + vPending.size() == 0 ){
+		if(vStored.size() + vPending.size() == 0 ){
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
@@ -2036,7 +2036,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			vector<string> lines = {};
 			
 			printf("line %d\n", _lineOffset);
-
+			
 			if(vPending.size()){
 				size_t total = vPending.size();
 				
@@ -2049,13 +2049,13 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 					if(++ cnt < 5) continue;
 					lines.push_back(line);
 					line = "";
-	 				}
+				}
 				if(cnt > 0){
 					lines.push_back(line);
 					line = "";
 				}
 			}
-		
+			
 			if(vStored.size()){
 				size_t total = vStored.size();
 				
@@ -2068,12 +2068,15 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 					if(++ cnt < 5) continue;
 					lines.push_back(line);
 					line = "";
-					}
+				}
 				if(cnt > 0){
 					lines.push_back(line);
 					line = "";
 				}
 			}
+			
+			_vfd.setFont(VFD::FONT_MINI) ;
+			
 			
 			int row = 20;
 			
@@ -2082,13 +2085,18 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			if(start_line > lines.size() - max_lines)
 				start_line = start_line - max_lines;
 			
-			for(int i = 0; i < max_lines; i++){
-				string str = lines[start_line + i];
-				_vfd.setCursor(10, row);
-				_vfd.write(str);
-				row+=7;
- 			}
-	 		}
+			printf("start_line = %d\n", start_line);
+			for(int i = 0; i < lines.size(); i++){
+				printf("%2d |%s|\n", i, lines[i].c_str());
+			}
+			
+			//			for(int i = 0; i < max_lines; i++){
+			//				string str = lines[start_line + i];
+			//				_vfd.setCursor(10, row);
+			//				_vfd.write(str);
+			//				row+=7;
+			// 			}
+		}
 	}
  
 	  // Draw time

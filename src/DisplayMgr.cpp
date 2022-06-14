@@ -583,7 +583,7 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	
 	if(action == KNOB_UP){
 		
-		if(balance < 1){
+		if(balance < 1.0){
 			audio->setBalance(balance +.1);
 			setEvent(EVT_NONE,MODE_BALANCE);
 		}
@@ -592,7 +592,7 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	
 	else if(action == KNOB_DOWN){
 		
-		if(balance > -1){
+		if(balance > -1.0){
 			audio->setBalance(balance -.1);
 			setEvent(EVT_NONE,MODE_BALANCE);
 		}
@@ -1385,6 +1385,8 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		double balance = audio->balance();
+		
+		printf("balance = %1.2f\n",balance);
 		
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );

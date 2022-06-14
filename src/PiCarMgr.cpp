@@ -878,7 +878,7 @@ void PiCarMgr::PiCanLoop(){
 // MARK:   Tuner button moved
 			if(tunerWasMoved) {
 				
-				if(_display.isScreenDisplayedMultiPage()
+				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN)){
 					// was handled - do nothing
 				}
@@ -918,14 +918,12 @@ void PiCarMgr::PiCanLoop(){
 				
 // MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
-				printf("Tuner Double Clicked\n");
-
 				tunerDoubleClicked();
 				continue;
  			}
 
 			if(tunerWasClicked){
-				if(_display.isScreenDisplayedMultiPage()
+				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing
 				}
@@ -1255,6 +1253,7 @@ void PiCarMgr::displaySettingsMenu(){
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {
+			"Audio Balance"
 			"Dim Screen",
 			"Exit",
 			"-",
@@ -1270,6 +1269,11 @@ void PiCarMgr::displaySettingsMenu(){
 		if(didSucceed) {
 			
 			switch (newSelectedItem) {
+					
+				case 1:
+					_display.showBalanceChange();
+					break;
+					
 				case 3:
 					doShutdown();
 					break;

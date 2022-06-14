@@ -91,7 +91,7 @@ public:
 	bool setKnobColor(knob_id_t, RGB);
 	
 	// multi page display
-	bool isScreenDisplayedMultiPage();
+	bool usesSelectorKnob();
 	bool selectorKnobAction(knob_action_t action);
 
 	void showTime();
@@ -133,14 +133,19 @@ private:
 		TRANS_LEAVING,
 	}modeTransition_t;
 		
+	bool isMultiPage(mode_state_t mode);
+	bool processSelectorKnobAction( knob_action_t action);
+	
 	uint8_t pageCountForMode(mode_state_t mode);
-
+ 
 	void drawMode(modeTransition_t transition, mode_state_t mode);
 	void drawStartupScreen(modeTransition_t transition);
 	void drawDeviceStatusScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
 	void drawVolumeScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
+	bool processSelectorKnobActionForBalance( knob_action_t action);
+
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
 	

@@ -469,10 +469,10 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 
 // MARK: -  Knob Management
  
-bool  DisplayMgr::isScreenDisplayedMultiPage(){
+bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
-	
+		case MODE_BALANCE:
 		case MODE_MENU:
 			return true;
 	 
@@ -488,13 +488,12 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	bool wasHandled = false;
 	//
 	////	printf("selectorKnobAction (%d)\n", action);
- 
-	if(isScreenDisplayedMultiPage()){
+	
+	if(usesSelectorKnob()){
 		if(_current_mode == MODE_MENU){
 			wasHandled =  menuSelectAction(action);
 		}
-		else {
-			
+		else if(isMultiPage(_current_mode)){
 			if(action == KNOB_UP){
 				if(_currentPage < (pageCountForMode(_current_mode) -1 )) {
 					_currentPage++;
@@ -514,10 +513,86 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 				// no clue?
 			}
 		}
-		
+		else {
+			wasHandled = processSelectorKnobAction(action);
+		}
 	}
+	
+	
 	return wasHandled;
 }
+
+uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
+	uint8_t count = 1;
+	
+	switch (mode) {
+		case MODE_CANBUS:
+		{
+			PiCarDB*		db 	= PiCarMgr::shared()->db();
+			
+			div_t d = div(db->canbusDisplayPropsCount(), 6);
+			count +=  d.quot + (d.rem ? 1 : 0);
+		}
+		break;
+			
+		default :
+			count = 1;
+	}
+ 
+	return count;
+}
+
+
+
+bool DisplayMgr::isMultiPage(mode_state_t mode){
+	
+	bool result = false;
+	
+	switch (mode) {
+		case MODE_CANBUS:
+			result = true;
+			break;
+			
+		default :
+			result = false;
+	}
+	
+	return result;
+}
+
+bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
+	bool wasHandled = false;
+	
+	switch (_current_mode) {
+		case MODE_BALANCE:
+			wasHandled = processSelectorKnobActionForBalance(action);
+			break;
+			
+		default:
+			break;
+	}
+ 	return wasHandled;
+}
+
+
+bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
+	bool wasHandled = false;
+	
+	if(action == KNOB_UP){
+		wasHandled = true;
+	}
+	
+	else if(action == KNOB_DOWN){
+		wasHandled = true;
+	}
+ 	else if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+}
+
+
 
 // MARK: -  Menu Mode
 
@@ -795,6 +870,16 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
+				
+				else if(_current_mode == MODE_BALANCE) {
+
+					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
+					if(item.mode == MODE_BALANCE) {
+						gettimeofday(&_lastEventTime, NULL);
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+				}
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
@@ -803,8 +888,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
-					
-					// check for menu timeout delay
+				// check for menu timeout delay
 					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						if(!isStickyMode(_current_mode)){
 							popMode();
@@ -909,26 +993,6 @@ void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
 
 // MARK: -  Display Draw code
 
-uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
-	uint8_t count = 1;
-	
-	switch (mode) {
-		case MODE_CANBUS:
-		{
-			PiCarDB*		db 	= PiCarMgr::shared()->db();
-			
-			div_t d = div(db->canbusDisplayPropsCount(), 6);
-			count +=  d.quot + (d.rem ? 1 : 0);
- 		}
-		break;
-			
-		default :
-			count = 1;
-	}
- 
-	return count;
-	
-}
 
 void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 	
@@ -1013,8 +1077,6 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 		
 	}
 }
-
-
 
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){

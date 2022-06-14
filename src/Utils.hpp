@@ -13,8 +13,16 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
+#include "xxhash32.h"
  
 namespace Utils {
+
+inline  uint32_t XXHash32(std::string str) {
+	  
+ 	XXHash32 xx(2654435761U);
+	xx.add(str.data(),  str.size());
+	return xx.hash();
+}
 
 
 inline  std::string trimCNTRL(std::string source) {

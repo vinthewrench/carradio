@@ -1841,8 +1841,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t col2 = midX + 5;
 	uint8_t row1 = 16;
 	uint8_t rowsize = 19;
-	
-	
+ 
 	int start_item = ((_currentPage -1) *6) +1;			// 1-6 for each page
 	int end_item	= start_item + 6;
 	
@@ -1940,14 +1939,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 
-	static string cachedDTCs = "";
-	
+	static uint32_t lastHash = 0;
+	 
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING){
- 		cachedDTCs.clear();
+		lastHash = 0;
 	 	_vfd.clearScreen();
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -1955,33 +1954,64 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		_vfd.write("DTC Codes");
 	}
   
-	string value = "";
-	frameDB->valueWithKey("OBD_DTC_STORED", &value);
-	
-	if(value != cachedDTCs){
-		cachedDTCs = value;
+	string stored = "";
+	string pending = "";
+	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
+	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
+	uint32_t hash = Utils::XXHash32(stored+pending);
+
+	// if anything changed, redraw
+	if(hash != lastHash){
+		lastHash = hash;
 
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-	}
+ }
 	
-	vector<string> v = split<string>(value, " ");
- 
-	if(v.size() == 0){
+	vector<string> vStored = split<string>(stored, " ");
+	vector<string> vPending = split<string>(pending, " ");
+	if(vStored.size() + vPending.size() == 0 ){
  		_vfd.setCursor(10,height/2);
 		_vfd.write("No Codes");
 
 	}
 	else {
-		_vfd.setCursor(0,20);
-		_vfd.setFont(VFD::FONT_MINI) ;
-	
-		for(int i = 0; i < v.size(); i++){
-			_vfd.printPacket("%s\r\n",v[i].c_str() );
+		
+		uint8_t row = 20;
+		char buffer[20];
+ 
+		if(vPending.size()){
+			_vfd.setCursor(0,row);
+			_vfd.setFont(VFD::FONT_MINI) ;
+			_vfd.printPacket("PENDING: %d",pending.size());
+			row+=7;
+			
+			char*p = (char*)buffer;
+			int cnt = 0;
+			size_t total = vPending.size();
+			for(int i = 0; i < total;){
+				p += sprintf(p," %s", vPending[i].c_str());
+				if(++cnt < 2) continue;
+				_vfd.setCursor(0,row);
+				_vfd.printPacket("%s", buffer);
+				cnt = 0;
+				row+=7;
+			}
+			if(cnt > 0){
+				_vfd.setCursor(0,row);
+				_vfd.printPacket("%s", buffer);
+				row+=7;
+			}
 		}
+		
 	}
+//
+//		for(int i = 0; i < v.size(); i++){
+//			_vfd.printPacket("%s\r\n",v[i].c_str() );
+//		}
+//	}
 	 
 	  // Draw time
 	  time_t now = time(NULL);

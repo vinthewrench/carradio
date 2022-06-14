@@ -2,7 +2,7 @@
 // xxhash32.h
 // Copyright (c) 2016 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
-//
+// https://github.com/stbrumme/xxhash/blob/master/xxhash32.h
 
 #pragma once
 #include <stdint.h> // for uint32_t and uint64_t

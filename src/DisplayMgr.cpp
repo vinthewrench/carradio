@@ -578,31 +578,28 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	bool wasHandled = false;
 	
 	AudioOutput* audio	= PiCarMgr::shared()->audio();
-
+	
 	double balance = audio->balance();
 	
 	if(action == KNOB_UP){
 		
 		if(balance < 1){
-			balance+=.1;
-			wasHandled = true;
+			audio->setBalance(balance +.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
 		}
+		wasHandled = true;
 	}
 	
 	else if(action == KNOB_DOWN){
 		
 		if(balance > -1){
-			balance-=.1;
- 			wasHandled = true;
+			audio->setBalance(balance -.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
 		}
- 	}
- 	else if(action == KNOB_CLICK){
-		popMode();
+		wasHandled = true;
 	}
-	
-	if(wasHandled){
-		audio->setBalance(balance);
-		setEvent(EVT_NONE,MODE_BALANCE);
+	else if(action == KNOB_CLICK){
+		popMode();
 	}
 	
 	return wasHandled;

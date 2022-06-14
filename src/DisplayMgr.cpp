@@ -1386,12 +1386,12 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		
 		double balance = audio->balance();
 		
-		printf("balance = %1.2f\n",balance);
-		
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
+	
+		printf("balance = %1.2f midx = %d \n",balance, itemX);
+
 		// clear inside of box
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),

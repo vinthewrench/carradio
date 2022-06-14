@@ -2013,7 +2013,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		}
 		else if( lastOffset != _lineOffset){
 			if(vStored.size() + vPending.size() > 0){
-				lastOffset == _lineOffset;
+				lastOffset = _lineOffset;
 				needsRedraw = true;
 			}
 		}

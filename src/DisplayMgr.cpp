@@ -580,6 +580,9 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	AudioOutput* audio	= PiCarMgr::shared()->audio();
 	
 	double balance = audio->balance();
+	// limit the precision
+	balance = std::floor((balance * 100) + .5) / 100;
+ 
 	
 	if(action == KNOB_UP){
 		

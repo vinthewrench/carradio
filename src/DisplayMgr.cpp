@@ -474,6 +474,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
 		case MODE_BALANCE:
+		case MODE_DTC:
 		case MODE_MENU:
 			return true;
 	 
@@ -1988,7 +1989,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
   
 	if(transition == TRANS_REFRESH){
 
-		printf("line %d\n", _lineOffset);	
+		printf("line %d\n", _lineOffset);
 	}
 	
 	string stored = "";

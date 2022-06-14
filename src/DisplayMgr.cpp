@@ -1990,9 +1990,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			char*p = (char*)buffer;
 			int cnt = 0;
 			size_t total = vPending.size();
-			for(int i = 0; i < total;){
+			printf("total = %d\n",total);
+			
+			for(int i = 0; i < total; total++){
 				p += sprintf(p," %s", vPending[i].c_str());
 				if(++cnt < 2) continue;
+				
+				printf("%d %d %s\n",i, cnt, buffer);
+		
 				_vfd.setCursor(0,row);
 				_vfd.printPacket("%s", buffer);
 				cnt = 0;

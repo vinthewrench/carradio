@@ -145,7 +145,8 @@ private:
 	void drawVolumeScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForBalance( knob_action_t action);
-
+	bool processSelectorKnobActionForDTC( knob_action_t action);
+ 
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
 	
@@ -180,6 +181,9 @@ private:
 	menuSelectedCallBack_t _menuCB;
 	string					  _menuTitle;
 //
+	
+	
+	uint8_t   	_lineOffset = 0;	// used for multi-line
 	
 	mode_state_t _current_mode = MODE_UNKNOWN;
 	uint8_t		 _currentPage  = 0;			// used for multipage

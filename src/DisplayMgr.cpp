@@ -567,7 +567,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_BALANCE:
 			wasHandled = processSelectorKnobActionForBalance(action);
 			break;
-			
+
+		case MODE_DTC:
+			wasHandled = processSelectorKnobActionForDTC(action);
+			break;
+
 		default:
 			break;
 	}
@@ -609,6 +613,26 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 }
 
 
+bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
+	bool wasHandled = false;
+	
+	if(action == KNOB_UP){
+		_lineOffset--;
+		setEvent(EVT_NONE,MODE_DTC);
+		wasHandled = true;
+	}
+	else if(action == KNOB_DOWN){
+		_lineOffset++;
+		setEvent(EVT_NONE,MODE_DTC);
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+	
+}
 
 // MARK: -  Menu Mode
 
@@ -886,8 +910,14 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
-				
-				else if(_current_mode == MODE_BALANCE) {
+				else if(_current_mode == MODE_DTC) {
+					// check for {EVT_NONE,MODE_DTC}  which is a scroll change
+					if(item.mode == MODE_DTC) {
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+				}
+ 				else if(_current_mode == MODE_BALANCE) {
 					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
 					if(item.mode == MODE_BALANCE) {
@@ -1941,11 +1971,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	static uint32_t lastHash = 0;
 	 
 	if(transition == TRANS_LEAVING) {
+		_lineOffset = 0;
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING){
 		lastHash = 0;
+		_lineOffset = 0;
+
 	 	_vfd.clearScreen();
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -1953,6 +1986,11 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		_vfd.write("DTC Codes");
 	}
   
+	if(transition == TRANS_REFRESH){
+
+		printf("line %d\n", _lineOffset);	
+	}
+	
 	string stored = "";
 	string pending = "";
 	frameDB->valueWithKey("OBD_DTC_STORED", &stored);

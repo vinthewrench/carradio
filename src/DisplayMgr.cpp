@@ -1987,7 +1987,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		_lineOffset = 0;
 
 	 	_vfd.clearScreen();
-		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
 		_vfd.write("DTC Codes");
@@ -2020,10 +2019,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	}
 	 
 	if(needsRedraw){
-		
-		printf("line %d\n", _lineOffset);
-
-		needsRedraw = false;
+	 	needsRedraw = false;
 		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
@@ -2037,65 +2033,62 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		}
 		else {
 			
-			uint8_t row = 20;
-			char buffer[20];
+			vector<string> lines = {};
 			
+			printf("line %d\n", _lineOffset);
+
 			if(vPending.size()){
 				size_t total = vPending.size();
-				_vfd.setCursor(0,row);
-				_vfd.setFont(VFD::FONT_MINI) ;
-				_vfd.printPacket("PENDING: %d",total);
 				
-	//			_vfd.setFont(VFD::FONT_5x7) ;
-				row+=10;
+				lines.push_back("PENDING " + to_string(total));
 				
-				char*p = (char*)buffer;
+				string line = "";
 				int cnt = 0;
-		 
 				for(int i = 0; i < total; i++){
-					p += sprintf(p," %s", vPending[i].c_str());
-					if(++cnt < 5) continue;
-					_vfd.setCursor(0,row);
-					_vfd.printPacket("%s", buffer);
-					p = (char*)buffer;
-					cnt = 0;
-					row+=10;
-				}
+					line+= vPending[i] + " ";
+					if(++ cnt < 5) continue;
+					lines.push_back(line);
+					line = "";
+	 				}
 				if(cnt > 0){
-					_vfd.setCursor(0,row);
-					_vfd.printPacket("%s", buffer);
-					row+=10;
+					lines.push_back(line);
+					line = "";
+				}
+			}
+		
+			if(vStored.size()){
+				size_t total = vStored.size();
+				
+				lines.push_back("STORED " + to_string(total));
+				
+				string line = "";
+				int cnt = 0;
+				for(int i = 0; i < total; i++){
+					line+= vStored[i] + " ";
+					if(++ cnt < 5) continue;
+					lines.push_back(line);
+					line = "";
+					}
+				if(cnt > 0){
+					lines.push_back(line);
+					line = "";
 				}
 			}
 			
-			if(vStored.size()){
-				size_t total = vStored.size();
-				_vfd.setCursor(0,row);
-				_vfd.setFont(VFD::FONT_MINI) ;
-				_vfd.printPacket("STORED: %d",total);
-				
-	//			_vfd.setFont(VFD::FONT_5x7) ;
-				row+=10;
-				
-				char*p = (char*)buffer;
-				int cnt = 0;
-		 
-				for(int i = 0; i < total; i++){
-					p += sprintf(p," %s", vStored[i].c_str());
-					if(++cnt < 5) continue;
-					_vfd.setCursor(0,row);
-					_vfd.printPacket("%s", buffer);
-					p = (char*)buffer;
-					cnt = 0;
-					row+=10;
-				}
-				if(cnt > 0){
-					_vfd.setCursor(0,row);
-					_vfd.printPacket("%s", buffer);
-					row+=10;
-				}
-			}
-		}
+			int row = 20;
+			
+			int max_lines = 5;
+			int start_line = _lineOffset;
+			if(start_line > lines.size() - max_lines)
+				start_line = start_line - max_lines;
+			
+			for(int i = 0; i < max_lines; i++){
+				string str = lines[start_line + i];
+				_vfd.setCursor(10, row);
+				_vfd.write(str);
+				row+=7;
+ 			}
+	 		}
 	}
  
 	  // Draw time

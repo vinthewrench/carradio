@@ -2094,7 +2094,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			for(size_t i = start_line; i < totalLines; i++){
 				string str = lines[start_line + i];
 				_vfd.setCursor(10, row);
-				vfd.write(str);
+				_vfd.write(str);
 				row+=7;
 			}
 			

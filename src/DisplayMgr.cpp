@@ -529,7 +529,6 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 		case MODE_CANBUS:
 		{
 			PiCarDB*		db 	= PiCarMgr::shared()->db();
-			
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  d.quot + (d.rem ? 1 : 0);
 		}
@@ -578,15 +577,32 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	bool wasHandled = false;
 	
+	AudioOutput* audio	= PiCarMgr::shared()->audio();
+
+	double balance = audio->balance();
+	
 	if(action == KNOB_UP){
-		wasHandled = true;
+		
+		if(balance < 1){
+			balance+=.1;
+			wasHandled = true;
+		}
 	}
 	
 	else if(action == KNOB_DOWN){
-		wasHandled = true;
-	}
+		
+		if(balance > -1){
+			balance-=.1;
+ 			wasHandled = true;
+		}
+ 	}
  	else if(action == KNOB_CLICK){
 		popMode();
+	}
+	
+	if(wasHandled){
+		audio->setBalance(balance);
+		setEvent(EVT_NONE,MODE_BALANCE);
 	}
 	
 	return wasHandled;
@@ -1326,7 +1342,7 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 
 void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 	
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	AudioOutput* audio	= PiCarMgr::shared()->audio();
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -1361,33 +1377,30 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		_vfd.write("R");
 	}
 	
-	float balance = 0;
 	
-	if(db->getFloatValue(VAL_AUDIO_BALANCE, balance)){
-		
-		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
-		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
-		// clear inside of box
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-			// draw marker
-			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD_SET_WRITEMODE, 0x00,};	// Normal
-		
-		_vfd.writePacket(buff2, sizeof(buff2), 0);
-		
-		TRY(_vfd.setCursor(10, 55));
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		char buffer[16] = {0};
-		sprintf(buffer, "Balance: %.2f  ", balance);
-		TRY(_vfd.write(buffer));
-		
-	}
+	double balance = audio->balance();
+	
+	uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
+	itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+	itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+	
+	// clear inside of box
+	uint8_t buff2[] = {VFD_CLEAR_AREA,
+		static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+		// draw marker
+		VFD_SET_WRITEMODE, 0x03, 	// XOR
+		VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+		VFD_SET_WRITEMODE, 0x00,};	// Normal
+	
+	_vfd.writePacket(buff2, sizeof(buff2), 0);
+	
+	_vfd.setCursor(10, 55);
+	_vfd.setFont(VFD::FONT_5x7);
+	char buffer[16] = {0};
+	sprintf(buffer, "Balance: %.2f  ", balance);
+	_vfd.write(buffer);
 }
 
 

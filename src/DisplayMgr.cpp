@@ -1956,7 +1956,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	}
   
 	string value = "";
-	frameDB->valueWithKey("OBD_DTC_PENDING", &value);
+	frameDB->valueWithKey("OBD_DTC_STORED", &value);
 	
 	if(value != cachedDTCs){
 		cachedDTCs = value;

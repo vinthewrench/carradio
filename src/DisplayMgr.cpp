@@ -1986,7 +1986,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				_vfd.setFont(VFD::FONT_MINI) ;
 				_vfd.printPacket("PENDING: %d",total);
 				
-				_vfd.setFont(VFD::FONT_5x7) ;
+	//			_vfd.setFont(VFD::FONT_5x7) ;
 				row+=10;
 				
 				char*p = (char*)buffer;
@@ -1994,7 +1994,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vPending[i].c_str());
-					if(++cnt < 3) continue;
+					if(++cnt < 4) continue;
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
 					p = (char*)buffer;
@@ -2014,7 +2014,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				_vfd.setFont(VFD::FONT_MINI) ;
 				_vfd.printPacket("STORED: %d",total);
 				
-				_vfd.setFont(VFD::FONT_5x7) ;
+	//			_vfd.setFont(VFD::FONT_5x7) ;
 				row+=10;
 				
 				char*p = (char*)buffer;
@@ -2022,7 +2022,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vStored[i].c_str());
-					if(++cnt < 3) continue;
+					if(++cnt < 4) continue;
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
 					p = (char*)buffer;

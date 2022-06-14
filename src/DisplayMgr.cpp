@@ -1374,30 +1374,33 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		_vfd.write("R");
 	}
 	
-	
-	double balance = audio->balance();
-	
-	uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
-	itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-	itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-	
-	// clear inside of box
-	uint8_t buff2[] = {VFD_CLEAR_AREA,
-		static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-		// draw marker
-		VFD_SET_WRITEMODE, 0x03, 	// XOR
-		VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-		VFD_SET_WRITEMODE, 0x00,};	// Normal
-	
-	_vfd.writePacket(buff2, sizeof(buff2), 0);
-	
-	_vfd.setCursor(10, 55);
-	_vfd.setFont(VFD::FONT_5x7);
-	char buffer[16] = {0};
-	sprintf(buffer, "Balance: %.2f  ", balance);
-	_vfd.write(buffer);
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		
+		double balance = audio->balance();
+		
+		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
+		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+		
+		// clear inside of box
+		uint8_t buff2[] = {VFD_CLEAR_AREA,
+			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			// draw marker
+			VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD_SET_WRITEMODE, 0x00,};	// Normal
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 0);
+		
+		//	_vfd.setCursor(10, 55);
+		//	_vfd.setFont(VFD::FONT_5x7);
+		//	char buffer[16] = {0};
+		//	sprintf(buffer, "Balance: %.2f  ", balance);
+		//	_vfd.write(buffer);
+	}
 }
 
 

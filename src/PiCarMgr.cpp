@@ -1253,7 +1253,7 @@ void PiCarMgr::displaySettingsMenu(){
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {
-			"Audio Balance"
+			"Audio Balance",
 			"Dim Screen",
 			"Exit",
 			"-",
@@ -1261,7 +1261,7 @@ void PiCarMgr::displaySettingsMenu(){
 	 	};
  
 	_display.showMenuScreen(menu_items,
-									0,
+									2,
 									"Settings",
 									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
@@ -1270,17 +1270,17 @@ void PiCarMgr::displaySettingsMenu(){
 			
 			switch (newSelectedItem) {
 					
-				case 1:
+				case 0:
 					_display.showBalanceChange();
 					break;
 					
-				case 3:
+				case 4:
 					doShutdown();
 					break;
 					
-//				case 1:
-// //					_display.showSettings(1);
-//					break;
+					//				case 1:
+					// //					_display.showSettings(1);
+					//					break;
 					
 				default:
 					

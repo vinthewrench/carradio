@@ -1389,7 +1389,8 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-	
+		itemX &= 0xfE; // to nearest 2
+		
 		printf("balance = %1.2f midx = %d \n",balance, itemX);
 
 		// clear inside of box

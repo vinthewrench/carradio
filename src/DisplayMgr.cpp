@@ -1998,6 +1998,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
 	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
 	uint32_t hash = XXHash32::hash(stored+pending);
+	
+	  vector<string> vStored = split<string>(stored, " ");
+	  vector<string> vPending = split<string>(pending, " ");
 
 	// if anything changed, redraw
 	if(hash != lastHash || lastOffset != _lineOffset){
@@ -2005,25 +2008,29 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		if(hash != lastHash){
 			lastHash = hash;
 			_lineOffset = 0;
+			needsRedraw = true;
+
 		}
-		
-		lastOffset = _lineOffset;
-		needsRedraw = true;
-		
-		printf("line %d\n", _lineOffset);
+		else if( lastOffset != _lineOffset){
+			if(vStored.size() + vPending.size() > 0){
+				lastOffset == _lineOffset;
+				needsRedraw = true;
+			}
+		}
 	}
 	 
 	if(needsRedraw){
+		
+		printf("line %d\n", _lineOffset);
+
 		needsRedraw = false;
 		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-	 
-		vector<string> vStored = split<string>(stored, " ");
-		vector<string> vPending = split<string>(pending, " ");
-		if(vStored.size() + vPending.size() == 0 ){
+		
+			if(vStored.size() + vPending.size() == 0 ){
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			

@@ -870,7 +870,11 @@ void PiCarMgr::PiCanLoop(){
 				}
 				
 				_display.LEDeventVol();
-				//		_display.showVolumeChange();
+	 
+				// if the radio was not displayed, set it there now
+				if((_display.active_mode() != DisplayMgr::MODE_RADIO)){
+					_display.showRadioChange();
+				}
 			}
 			
 			

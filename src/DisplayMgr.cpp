@@ -1981,17 +1981,16 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			char buffer[20];
 			
 			if(vPending.size()){
+				size_t total = vPending.size();
 				_vfd.setCursor(0,row);
 				_vfd.setFont(VFD::FONT_MINI) ;
-				_vfd.printPacket("PENDING: %d",vPending.size());
+				_vfd.printPacket("PENDING: %d",total);
 				
 				_vfd.setFont(VFD::FONT_5x7) ;
-
-				row+=7;
+				row+=10;
 				
 				char*p = (char*)buffer;
 				int cnt = 0;
-				size_t total = vPending.size();
 		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vPending[i].c_str());
@@ -2008,14 +2007,37 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 					row+=10;
 				}
 			}
+			
+			if(vStored.size()){
+				size_t total = vStored.size();
+				_vfd.setCursor(0,row);
+				_vfd.setFont(VFD::FONT_MINI) ;
+				_vfd.printPacket("STORED: %d",total);
+				
+				_vfd.setFont(VFD::FONT_5x7) ;
+				row+=10;
+				
+				char*p = (char*)buffer;
+				int cnt = 0;
+		 
+				for(int i = 0; i < total; i++){
+					p += sprintf(p," %s", vStored[i].c_str());
+					if(++cnt < 3) continue;
+					_vfd.setCursor(0,row);
+					_vfd.printPacket("%s", buffer);
+					p = (char*)buffer;
+					cnt = 0;
+					row+=10;
+				}
+				if(cnt > 0){
+					_vfd.setCursor(0,row);
+					_vfd.printPacket("%s", buffer);
+					row+=10;
+				}
+			}
 		}
 	}
-//
-//		for(int i = 0; i < v.size(); i++){
-//			_vfd.printPacket("%s\r\n",v[i].c_str() );
-//		}
-//	}
-	 
+ 
 	  // Draw time
 	  time_t now = time(NULL);
 	  struct tm *t = localtime(&now);

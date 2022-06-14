@@ -1994,7 +1994,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vPending[i].c_str());
-					if(++cnt < 4) continue;
+					if(++cnt < 5) continue;
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
 					p = (char*)buffer;
@@ -2022,7 +2022,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vStored[i].c_str());
-					if(++cnt < 4) continue;
+					if(++cnt < 5) continue;
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
 					p = (char*)buffer;

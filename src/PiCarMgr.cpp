@@ -787,7 +787,7 @@ void PiCarMgr::PiCanLoop(){
 				
 				if(_radio.isConnected() && _radio.isOn()){
 					_audio.setMute(!_audio.isMuted());
-					_display.showRadioChange();
+//					_display.showRadioChange();
 					
 					if(_audio.isMuted())
 						_display.LEDeventMute();

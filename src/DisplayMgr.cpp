@@ -1992,7 +1992,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			size_t total = vPending.size();
 			printf("total = %d\n",total);
 			
-			for(int i = 0; i < total; total++){
+			for(int i = 0; i < total; i++){
 				p += sprintf(p," %s", vPending[i].c_str());
 				if(++cnt < 2) continue;
 				

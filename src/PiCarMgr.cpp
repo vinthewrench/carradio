@@ -287,8 +287,15 @@ void PiCarMgr::doShutdown(){
 nlohmann::json PiCarMgr::GetAudioJSON(){
 	json j;
 	
-	j[PROP_LAST_AUDIO_SETTING_VOL] =  _audio.volume();
-	j[PROP_LAST_AUDIO_SETTING_BAL] =  _audio.balance();
+	double  vol = _audio.volume();
+	double  bal = _audio.balance();
+
+	// limit the precisopn on these
+	bal = std::floor((bal * 100) + .5) / 100;
+	vol = std::floor((vol * 100) + .5) / 100;
+	
+	j[PROP_LAST_AUDIO_SETTING_VOL] =  vol;
+	j[PROP_LAST_AUDIO_SETTING_BAL] =  bal;
 
 	return j;
 }
@@ -301,9 +308,13 @@ bool PiCarMgr::SetAudio(nlohmann::json j){
 		&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()
 		&&  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
 		&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number() ){
-		auto vol = j[PROP_LAST_AUDIO_SETTING_VOL];
-		auto bal = j[PROP_LAST_AUDIO_SETTING_BAL];
+		double  vol = j[PROP_LAST_AUDIO_SETTING_VOL];
+		double  bal = j[PROP_LAST_AUDIO_SETTING_BAL];
 		
+		// limit the precisopn on these
+		bal = std::floor((bal * 100) + .5) / 100;
+		vol = std::floor((vol * 100) + .5) / 100;
+
 		_audio.setVolume(vol);
 		_audio.setBalance(bal);
 

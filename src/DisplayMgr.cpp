@@ -1962,54 +1962,54 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	// if anything changed, redraw
 	if(hash != lastHash){
 		lastHash = hash;
-
+		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
- }
-	
-	vector<string> vStored = split<string>(stored, " ");
-	vector<string> vPending = split<string>(pending, " ");
-	if(vStored.size() + vPending.size() == 0 ){
- 		_vfd.setCursor(10,height/2);
-		_vfd.write("No Codes");
-
-	}
-	else {
-		
-		uint8_t row = 20;
-		char buffer[20];
- 
-		if(vPending.size()){
-			_vfd.setCursor(0,row);
-			_vfd.setFont(VFD::FONT_MINI) ;
-			_vfd.printPacket("PENDING: %d",pending.size());
-			row+=7;
+	 
+		vector<string> vStored = split<string>(stored, " ");
+		vector<string> vPending = split<string>(pending, " ");
+		if(vStored.size() + vPending.size() == 0 ){
+			_vfd.setCursor(10,height/2);
+			_vfd.write("No Codes");
 			
-			char*p = (char*)buffer;
-			int cnt = 0;
-			size_t total = vPending.size();
-			printf("total = %d\n",total);
+		}
+		else {
 			
-			for(int i = 0; i < total; i++){
-				p += sprintf(p," %s", vPending[i].c_str());
-				if(++cnt < 2) continue;
+			uint8_t row = 20;
+			char buffer[20];
+			
+			if(vPending.size()){
+				_vfd.setCursor(0,row);
+				_vfd.setFont(VFD::FONT_MINI) ;
+				_vfd.printPacket("PENDING: %d",pending.size());
+				row+=7;
 				
-				printf("%d %d %s\n",i, cnt, buffer);
-		
-				_vfd.setCursor(0,row);
-				_vfd.printPacket("%s", buffer);
-				cnt = 0;
-				row+=7;
-			}
-			if(cnt > 0){
-				_vfd.setCursor(0,row);
-				_vfd.printPacket("%s", buffer);
-				row+=7;
+				char*p = (char*)buffer;
+				int cnt = 0;
+				size_t total = vPending.size();
+				printf("total = %d\n",total);
+				
+				for(int i = 0; i < total; i++){
+					p += sprintf(p," %s", vPending[i].c_str());
+					if(++cnt < 3) continue;
+					
+					printf("%d %d %s\n",i, cnt, buffer);
+					
+					_vfd.setCursor(0,row);
+					_vfd.printPacket("%s", buffer);
+					p = (char*)buffer;
+					cnt = 0;
+					row+=7;
+				}
+				if(cnt > 0){
+					_vfd.setCursor(0,row);
+					_vfd.printPacket("%s", buffer);
+					row+=7;
+				}
 			}
 		}
-		
 	}
 //
 //		for(int i = 0; i < v.size(); i++){

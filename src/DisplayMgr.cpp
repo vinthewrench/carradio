@@ -1976,6 +1976,8 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	}
 	else {
 		_vfd.setCursor(0,20);
+		_vfd.setFont(VFD::FONT_MINI) ;
+	
 		for(int i = 0; i < v.size(); i++){
 			_vfd.printPacket("%s\r\n",v[i].c_str() );
 		}

@@ -885,13 +885,20 @@ void DisplayMgr::DisplayUpdate(){
 				}
 				
 				else if(_current_mode == MODE_BALANCE) {
-
+					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
 					if(item.mode == MODE_BALANCE) {
 						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
+					else if(diff.tv_sec >=  5){
+						// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+					
 				}
 				else if(_current_mode == MODE_MENU) {
 					

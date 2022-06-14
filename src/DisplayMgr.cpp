@@ -1984,29 +1984,28 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				_vfd.setCursor(0,row);
 				_vfd.setFont(VFD::FONT_MINI) ;
 				_vfd.printPacket("PENDING: %d",vPending.size());
+				
+				_vfd.setFont(VFD::FONT_5x7) ;
+
 				row+=7;
 				
 				char*p = (char*)buffer;
 				int cnt = 0;
 				size_t total = vPending.size();
-				printf("total = %d\n",total);
-				
+		 
 				for(int i = 0; i < total; i++){
 					p += sprintf(p," %s", vPending[i].c_str());
-					if(++cnt < 4) continue;
-					
-					printf("%d %d %s\n",i, cnt, buffer);
-					
+					if(++cnt < 3) continue;
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
 					p = (char*)buffer;
 					cnt = 0;
-					row+=7;
+					row+=10;
 				}
 				if(cnt > 0){
 					_vfd.setCursor(0,row);
 					_vfd.printPacket("%s", buffer);
-					row+=7;
+					row+=10;
 				}
 			}
 		}

@@ -18,6 +18,7 @@
 #include <sys/utsname.h>
 
 #include "Utils.hpp"
+#include "XXHash32.h"
 
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
@@ -1929,8 +1930,6 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	
 }
 
- 
-
 void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
@@ -1958,7 +1957,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	string pending = "";
 	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
 	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
-	uint32_t hash = Utils::XXHash32(stored+pending);
+	uint32_t hash = XXHash32::hash(stored+pending);
 
 	// if anything changed, redraw
 	if(hash != lastHash){

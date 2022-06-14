@@ -160,7 +160,7 @@
 		2EC77296285501BD0083DA3B /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		2EC77298285501CB0083DA3B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		2EC7729A2855644C0083DA3B /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		2ECE4C6628591882005E067D /* xxhash32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xxhash32.h; sourceTree = "<group>"; };
+		2ECE4C6628591882005E067D /* XXHash32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXHash32.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -294,7 +294,7 @@
 		2E8210A92835A3B9003D074C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				2ECE4C6628591882005E067D /* xxhash32.h */,
+				2ECE4C6628591882005E067D /* XXHash32.h */,
 				2E8210BA2835A593003D074C /* I2C.cpp */,
 				2E8210C12835A593003D074C /* I2C.hpp */,
 				2E62A8642807383700F5066B /* ErrorMgr.cpp */,

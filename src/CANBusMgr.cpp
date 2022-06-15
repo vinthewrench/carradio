@@ -145,6 +145,7 @@ bool CANBusMgr::cancel_ODBpolling(string key){
 
 bool CANBusMgr::sendDTCEraseRequest(){
 	
+#warning - write this code
 // VINNIE WRITE THIS
 	return true;
 }

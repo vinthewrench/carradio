@@ -885,7 +885,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = true;
 						shouldUpdate = true;
 					}
-					
+				
 				}
 				else if(_current_mode == MODE_MENU) {
 					
@@ -909,6 +909,16 @@ void DisplayMgr::DisplayUpdate(){
 						}
 					}
 				}
+				
+				else if(_current_mode == MODE_DTC_INFO) {
+					// give it 10 seconds
+					if(diff.tv_sec >=  10){
+	 					popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+				}
+
 				// check for ay other timeout delay 1.3 secs
 				
 				else if(diff.tv_sec >=  1){
@@ -2265,9 +2275,14 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 	if(transition == TRANS_ENTERING){
  
 		_vfd.clearScreen();
-		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.setCursor(0,10);
-		_vfd.write("DTC Code " + code );
+		_vfd.write("DIAGNOSTIC TROUBLE CODE" );
+		
+		_vfd.setCursor(10,20);
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.printPacket("%s", code.c_str());
+		
 	}
 
 	drawTimeBox();

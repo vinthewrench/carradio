@@ -2041,7 +2041,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				}
 			}
 			
+			size_t displayedLines = 6;
+ 
+			_vfd.setFont(VFD::FONT_MINI) ;
+			_vfd.printLines(20, 6, lines, 0, displayedLines);
+
 		}
+		
+		
 	}
  
 	

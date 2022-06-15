@@ -268,7 +268,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
 			setCursor(0, y);
-	printf("%2zu  %d |%s|\n", i, y, lines[i].c_str());
+	printf("1 %2zu  %d |%s|\n", i, y, lines[i].c_str());
 			
 			success = printPacket("-%20s", lines[i].c_str());
 			if(!success) break;
@@ -281,7 +281,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
-			printf("%2zu  %d |%s|\n", i, y, lines[i].c_str());
+			printf("2 %2zu  %d |%s|\n", i, y, lines[i].c_str());
 	
 			
 			success = printPacket("-%20s", lines[i].c_str());

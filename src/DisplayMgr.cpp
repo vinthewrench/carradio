@@ -2034,15 +2034,16 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		else {
 			
 			vector<string> lines = {};
+			size_t total =  0;
 			
 			if(vPending.size()){
-				size_t total = vPending.size();
+				size_t lineCount = vPending.size();
 				
-				lines.push_back("PENDING: " + to_string(total));
+				lines.push_back("PENDING: " + to_string(lineCount));
 				
 				string line = " ";
 				int cnt = 0;
-				for(int i = 0; i < total; i++){
+				for(int i = 0; i < lineCount; i++){
 					line+= vPending[i] + " ";
 					if(++cnt < 2) continue;
 					lines.push_back(line);
@@ -2052,16 +2053,17 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
+				total+= lineCount;
 			}
 			
 			if(vStored.size()){
-				size_t total = vStored.size();
+				size_t lineCount = vStored.size();
 				
-				lines.push_back("STORED: " + to_string(total));
+				lines.push_back("STORED: " + to_string(lineCount));
 				
 				string line = " ";
 				int cnt = 0;
-				for(int i = 0; i < total; i++){
+				for(int i = 0; i < lineCount; i++){
 					line+= vStored[i] + " ";
 					if(++cnt < 2) continue;
 					lines.push_back(line);
@@ -2071,7 +2073,11 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
+				total+= lineCount;
 			}
+			
+			if(_lineOffset	> total)
+				_lineOffset = total;
 			
 			_vfd.setFont(VFD::FONT_MINI) ;
 			_vfd.printLines(20, 7, lines, _lineOffset, 6);

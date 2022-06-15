@@ -2331,7 +2331,7 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	}
 	else if(action == KNOB_CLICK){
  			popMode();
-		wasHandled = true;
+//		wasHandled = true;
 
 	}
 	

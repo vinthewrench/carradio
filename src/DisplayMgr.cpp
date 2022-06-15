@@ -2316,22 +2316,16 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	bool wasHandled = false;
 	
 	if(action == KNOB_UP){
-		if(_lineOffset < 255){
-			_lineOffset++;
-			setEvent(EVT_NONE,MODE_DTC_INFO);
-		}
+		setEvent(EVT_NONE,MODE_DTC_INFO);
+		
 		wasHandled = true;
 	}
 	else if(action == KNOB_DOWN){
-		if(_lineOffset != 0) {
-			_lineOffset--;
-			setEvent(EVT_NONE,MODE_DTC_INFO);
-		}
+		setEvent(EVT_NONE,MODE_DTC_INFO);
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
 		popMode();
- 		wasHandled = true;
 	}
 	
 	return wasHandled;

@@ -2218,11 +2218,13 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 			// select a code
 			
 			printf("code %s\n", vCodes[_lineOffset].c_str());
+			wasHandled = true;
 		}
 		else if(_lineOffset == totalCodes){
 			// erase codes.
 			
 			printf("erase codes \n" );
+			wasHandled = true;
 
 		}
 	}

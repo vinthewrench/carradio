@@ -567,7 +567,7 @@ void CANBusMgr::processODBrequests() {
 							
 							// remove any non repeaters
 							if(pInfo.repeat == false){
-								cancel_ODBpolling(key);
+								cancel_ODBpolling(odbKey);
 							}
 						}
 						

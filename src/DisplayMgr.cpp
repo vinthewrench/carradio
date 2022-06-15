@@ -482,6 +482,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_CANBUS:
 		case MODE_BALANCE:
 		case MODE_DTC:
+		case MODE_DTC_INFO:
 		case MODE_MENU:
 			return true;
 	 
@@ -2330,9 +2331,7 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	}
 	else if(action == KNOB_CLICK){
 		popMode();
-		setEvent(EVT_NONE,MODE_DTC);
-		wasHandled = true;
-	//	popMode();
+ 		wasHandled = true;
 	}
 	
 	return wasHandled;

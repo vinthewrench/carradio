@@ -10,6 +10,7 @@
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
 
+static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
 
 VFD::VFD(){
 	_isSetup = false;
@@ -264,10 +265,17 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	
 	auto lineCount = lines.size();
 
+	uint16_t width = VFD::width();
+	
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);			
+	 
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(0),  static_cast<uint8_t> (y+step),
+				static_cast<uint8_t> (width),static_cast<uint8_t> (y)};
+			writePacket(buff2, sizeof(buff2), 100);
+			setCursor(0, y);
 			success = printPacket("%-30s", lines[i].c_str());
 			if(!success) break;
 			y += step;
@@ -281,6 +289,11 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		if( count > maxLines) count = maxLines;
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(0),  static_cast<uint8_t> (y+step),
+				static_cast<uint8_t> (width),static_cast<uint8_t> (y)};
+			writePacket(buff2, sizeof(buff2), 100);
+
 			setCursor(0, y);
 			success = printPacket("%-30s", lines[i].c_str());
 			if(!success) break;

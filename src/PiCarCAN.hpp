@@ -55,6 +55,7 @@ public:
 	bool cancel_ODBpolling(string key);
 
 	bool descriptionForDTCCode(string code, string& description);
+	bool sendDTCEraseRequest();
 
 	
 private:

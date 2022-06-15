@@ -143,6 +143,13 @@ bool CANBusMgr::cancel_ODBpolling(string key){
 	return true;
 }
 
+bool CANBusMgr::sendDTCEraseRequest(){
+	
+// VINNIE WRITE THIS
+	return true;
+}
+
+
 
 // MARK: -  CANReader control
 

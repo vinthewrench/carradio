@@ -64,6 +64,7 @@ public:
 	
 	bool request_ODBpolling(string key);
 	bool cancel_ODBpolling(string key);
+	bool sendDTCEraseRequest();
 	
 private:
 	

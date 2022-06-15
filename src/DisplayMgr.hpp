@@ -60,6 +60,7 @@ public:
 		MODE_GPS,
 		MODE_SETTINGS,
 		MODE_DTC,
+		MODE_DTC_INFO,
 
 		MODE_INFO,
 
@@ -99,6 +100,7 @@ public:
 	void showStartup();
 	void showInfo();
 	void showDTC();
+	void showDTCInfo(string code);
  
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
@@ -138,7 +140,7 @@ private:
 	
 	uint8_t pageCountForMode(mode_state_t mode);
  
-	void drawMode(modeTransition_t transition, mode_state_t mode);
+	void drawMode(modeTransition_t transition, mode_state_t mode, string eventArg = "");
 	void drawStartupScreen(modeTransition_t transition);
 	void drawDeviceStatusScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
@@ -154,7 +156,8 @@ private:
 	void drawCANBusScreen1(modeTransition_t transition);
 
  	void drawDTCScreen(modeTransition_t transition);
- 
+ 	void drawDTCInfoScreen(modeTransition_t transition, string code);
+
 	void drawSettingsScreen(modeTransition_t transition);
 	
 	void drawInfoScreen(modeTransition_t transition);
@@ -197,7 +200,7 @@ private:
 	bool pushMode(mode_state_t);
 	void popMode();
 	
-	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN);
+	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN, string arg = "");
  
 	// LED effects Bit map
 	
@@ -227,6 +230,7 @@ private:
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;
+		string			arg;
 	}  eventQueueItem_t;
 
 	queue<eventQueueItem_t> _eventQueue; // upper 8 bits is mode . lower 8 is event

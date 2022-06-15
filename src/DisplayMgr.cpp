@@ -436,6 +436,11 @@ void DisplayMgr::showDTC(){
 	setEvent(EVT_PUSH, MODE_DTC);
 }
 
+void DisplayMgr::showDTCInfo(string code){
+	setEvent(EVT_PUSH, MODE_DTC_INFO, code);
+}
+
+
 void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
@@ -446,7 +451,9 @@ void DisplayMgr::showCANbus(uint8_t page){
 }
 
 
-void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
+void DisplayMgr::setEvent(event_t evt,
+								  mode_state_t mod,
+								  string arg){
 	
 	pthread_mutex_lock (&_mutex);
 	
@@ -460,7 +467,7 @@ void DisplayMgr::setEvent(event_t evt, mode_state_t mod){
 	}
 	
 	if(shouldPush)
-		_eventQueue.push({evt,mod});
+		_eventQueue.push({evt,mod, arg});
  
 	pthread_mutex_unlock (&_mutex);
 	
@@ -832,6 +839,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
+		string eventArg = "";
 		
 		switch(item.evt){
 			
@@ -918,6 +926,7 @@ void DisplayMgr::DisplayUpdate(){
 				
 			 if(pushMode(item.mode)){
 					shouldRedraw = true;
+					 eventArg = item.arg;
 				}
 				gettimeofday(&_lastEventTime, NULL);
 				shouldUpdate = true;
@@ -942,7 +951,7 @@ void DisplayMgr::DisplayUpdate(){
 			drawMode(TRANS_LEAVING, lastMode );
 		
 		if(shouldRedraw)
-			drawMode(TRANS_ENTERING, _current_mode );
+			drawMode(TRANS_ENTERING, _current_mode, eventArg );
 		else if(shouldUpdate)
 			drawMode(TRANS_REFRESH, _current_mode );
 		else
@@ -993,7 +1002,9 @@ void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
 // MARK: -  Display Draw code
 
 
-void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
+void DisplayMgr::drawMode(modeTransition_t transition,
+								  	mode_state_t mode,
+								  string eventArg  ){
 	
 	if(!_isSetup)
 		return;
@@ -1045,6 +1056,10 @@ void DisplayMgr::drawMode(modeTransition_t transition, mode_state_t mode){
 				drawDTCScreen(transition);
 				break;
  
+			case MODE_DTC_INFO:
+				drawDTCInfoScreen(transition, eventArg);
+				break;
+
 			case MODE_CANBUS:
 				if(_currentPage == 0)
 					drawCANBusScreen(transition);
@@ -2111,7 +2126,7 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 			vector<string> lines = {};
 			size_t displayedLines = 6;
 			size_t firstLine = 0;
-			int codesPerLine = 3;
+			int codesPerLine = 4;
 			
 			if(totalPending)
 			{
@@ -2224,17 +2239,16 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 		}
 		else if(_lineOffset < totalCodes){
 			// select a code
-			
-			printf("code %s\n", vCodes[_lineOffset].c_str());
+			showDTCInfo(vCodes[_lineOffset].c_str());
+	//		printf("code %s\n", vCodes[_lineOffset].c_str());
 			wasHandled = true;
 		}
 		else if(_lineOffset == totalCodes){
 			// erase codes.
-	 		printf("erase codes \n" );
+	  		can->sendDTCEraseRequest();
 			wasHandled = true;
  		}
 		else {
-			printf("exit\n" );
 			popMode();
 		}
 	
@@ -2242,6 +2256,22 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 	
 	return wasHandled;
 	
+}
+
+
+void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
+	
+	
+	if(transition == TRANS_ENTERING){
+ 
+		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,10);
+		_vfd.write("DTC Code " + code );
+	}
+
+	drawTimeBox();
+
 }
 
 

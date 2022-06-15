@@ -141,3 +141,7 @@ bool PiCarCAN::descriptionForDTCCode(string code, string& description){
 	return _dtc.descriptionForDTCCode(code,description);
 }
 
+
+bool PiCarCAN::sendDTCEraseRequest(){
+	return _CANbus.sendDTCEraseRequest();
+}

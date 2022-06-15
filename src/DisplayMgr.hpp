@@ -165,6 +165,7 @@ private:
 	void drawDeviceStatus();
 	
 	void drawEngineCheck();
+	void drawTimeBox();
 	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);

@@ -49,10 +49,10 @@ public:
  
 	FrameDB* frameDB() {return  _CANbus.frameDB();};
 
-	// ODB request need to be polled.. this starts and stops the polling
+	// OBD request need to be polled.. this starts and stops the polling
 	
-	bool request_ODBpolling(string key);
-	bool cancel_ODBpolling(string key);
+	bool request_OBDpolling(string key);
+	bool cancel_OBDpolling(string key);
 
 	bool descriptionForDTCCode(string code, string& description);
 	bool sendDTCEraseRequest();

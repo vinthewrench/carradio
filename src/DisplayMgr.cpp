@@ -1772,7 +1772,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		
 		// erase any pollingwe might have cached
 		for(auto  e: cachedProps){
-			can->cancel_ODBpolling(e.second.key);
+			can->cancel_OBDpolling(e.second.key);
 		}
 		cachedProps.clear();
 		db->getCanbusDisplayProps(cachedProps);
@@ -1790,13 +1790,13 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				int line = ((i - 1) % 6);
 					
 				if(i <  end_item - 3){
-					can->request_ODBpolling(item.key);
+					can->request_OBDpolling(item.key);
 					_vfd.setCursor(col1, row1 + (line)  * rowsize );
 					_vfd.write(item.title);
 					
 				}
 				else {
-					can->request_ODBpolling(item.key);
+					can->request_OBDpolling(item.key);
 					_vfd.setCursor(col2, row1 + ( (line - 3)  * rowsize ));
 					_vfd.write(item.title);
 				}
@@ -1807,7 +1807,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		
 		// erase any polling we might have cached
 		for(auto  e: cachedProps){
-			can->cancel_ODBpolling(e.second.key);
+			can->cancel_OBDpolling(e.second.key);
 		}
 		cachedProps.clear();
 

@@ -38,8 +38,8 @@ PiCarCAN::PiCarCAN() {
 	_CANbus.registerProtocol(bus_map[CAN_GM], &_obdii);
 	_CANbus.registerHandler(bus_map[CAN_GM]);
 
+	// jk bus does not do obdii
 	_CANbus.registerProtocol(bus_map[CAN_JEEP], &_jeep);
-	_CANbus.registerProtocol(bus_map[CAN_JEEP], &_obdii);
 	_CANbus.registerHandler(bus_map[CAN_JEEP]);
 
 #endif
@@ -129,12 +129,12 @@ bool PiCarCAN::getStatus(vector<CANBusMgr::can_status_t> & stats){
 }
 
 
-bool PiCarCAN::request_ODBpolling(string key){
-	return _CANbus.request_ODBpolling(key);
+bool PiCarCAN::request_OBDpolling(string key){
+	return _CANbus.request_OBDpolling(key);
 }
 
-bool PiCarCAN::cancel_ODBpolling(string key){
-	return _CANbus.cancel_ODBpolling(key);
+bool PiCarCAN::cancel_OBDpolling(string key){
+	return _CANbus.cancel_OBDpolling(key);
 }
 
 bool PiCarCAN::descriptionForDTCCode(string code, string& description){

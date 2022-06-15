@@ -63,10 +63,10 @@ public:
 	
 	FrameDB* frameDB() {return &_frameDB;};
 	
-	bool queue_ODBPacket(vector<uint8_t> request);
+	bool queue_OBDPacket(vector<uint8_t> request);
 
-	bool request_ODBpolling(string key);
-	bool cancel_ODBpolling(string key);
+	bool request_OBDpolling(string key);
+	bool cancel_OBDpolling(string key);
 	bool sendDTCEraseRequest();
 	
 private:
@@ -83,7 +83,7 @@ private:
 	pthread_t		_TID;
 	
 	int				openSocket(string ifName, int &error);
-	void 				processODBrequests();
+	void 				processOBDrequests();
 
 	map<string, int> 		_interfaces = {};
 	map<string, time_t> 	_lastFrameTime = {};
@@ -95,13 +95,13 @@ private:
 	typedef struct {
 		vector<uint8_t> request;
 		bool repeat;
-	} odb_polling_t;
+	} obd_polling_t;
 	
-	map<string, odb_polling_t> 	_odb_polling = {};
-	vector<odb_polling_t> 			_odb_requests = {};
+	map<string, obd_polling_t> 	_obd_polling = {};
+	vector<obd_polling_t> 			_obd_requests = {};
 
 	timeval			_lastPollTime;
-	timeval     	_pollDelay;			// how long to wait before next ODB poll
+	timeval     	_pollDelay;			// how long to wait before next OBD poll
 	vector<string> _keysToPoll = {};
 
 	fd_set					_master_fds;		// Can sockets that are ready for read

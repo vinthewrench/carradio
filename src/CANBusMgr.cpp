@@ -60,8 +60,8 @@ CANBusMgr::CANBusMgr(){
 	_pollDelay = {0, 200 * 1000 }; //  200 ms
 	_pollDelay = {1, 200 * 1000 }; //  200 ms
 	
-	_odb_requests = {};
-	_odb_polling = {};
+	_obd_requests = {};
+	_obd_polling = {};
 	
 	// create RNG engine
 	constexpr std::size_t SEED_LENGTH = 8;
@@ -129,39 +129,39 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 	return success;
 }
 
-// MARK: -  ODB polling
+// MARK: -  OBD polling
 
 
 
-bool CANBusMgr::queue_ODBPacket(vector<uint8_t> request){
+bool CANBusMgr::queue_OBDPacket(vector<uint8_t> request){
  
 	std::uniform_int_distribution<long> distribution(LONG_MIN,LONG_MAX);
 	
-	odb_polling_t poll_info;
+	obd_polling_t poll_info;
 	poll_info.request = request;
 	poll_info.repeat = false;
 	string key = to_string( distribution(_rng));
 	
-	_odb_polling[key] = poll_info;
+	_obd_polling[key] = poll_info;
  	return true;
 }
 
 
-bool CANBusMgr::request_ODBpolling(string key){
+bool CANBusMgr::request_OBDpolling(string key){
 	bool success = false;
 	
-	if( _odb_polling.find(key) == _odb_polling.end()){
+	if( _obd_polling.find(key) == _obd_polling.end()){
  
 		vector<uint8_t>  request;
-		if( _frameDB.odb_request(key, request)) {
+		if( _frameDB.obd_request(key, request)) {
 		
 //			printf("REQUEST %s\n", key.c_str());
 
-			odb_polling_t poll_info;
+			obd_polling_t poll_info;
 			poll_info.request = request;
 			poll_info.repeat = true;
 			
-			_odb_polling[key] = poll_info;
+			_obd_polling[key] = poll_info;
 			
 			success = true;
 		}
@@ -170,19 +170,19 @@ bool CANBusMgr::request_ODBpolling(string key){
 	return success;
 }
 
-bool CANBusMgr::cancel_ODBpolling(string key){
+bool CANBusMgr::cancel_OBDpolling(string key){
 
-	if( _odb_polling.count(key)){
+	if( _obd_polling.count(key)){
 //		printf("CANCEL %s\n", key.c_str());
-		_odb_polling.erase(key);
+		_obd_polling.erase(key);
 	}
 
 	return true;
 }
 
 bool CANBusMgr::sendDTCEraseRequest(){
- 	vector<uint8_t> odb_request = {0x01, 0x04 };  //Clear Diagnostic Trouble Codes and stored values
-	return queue_ODBPacket(odb_request);
+ 	vector<uint8_t> obd_request = {0x01, 0x04 };  //Clear Diagnostic Trouble Codes and stored values
+	return queue_OBDPacket(obd_request);
 }
 
 
@@ -511,12 +511,12 @@ void CANBusMgr::CANReader(){
 			}
  		}
  
-		// process any needed ODB requests 
-		processODBrequests();
+		// process any needed OBD requests 
+		processOBDrequests();
 	}
 }
 
-void CANBusMgr::processODBrequests() {
+void CANBusMgr::processOBDrequests() {
 	auto ifNames =  _frameDB.pollableInterfaces();
 	if(ifNames.empty())
 		return;
@@ -544,21 +544,21 @@ void CANBusMgr::processODBrequests() {
 				if (find(ifNames.begin(), ifNames.end(), key) != ifNames.end()){
 					
 					if(_keysToPoll.empty())
-						_keysToPoll = all_keys(_odb_polling);
+						_keysToPoll = all_keys(_obd_polling);
 					
 					if(!_keysToPoll.empty()){
-						auto odbKey = _keysToPoll.back();
+						auto obdKey = _keysToPoll.back();
 						_keysToPoll.pop_back();
-						if( _odb_polling.find(odbKey) != _odb_polling.end()){
+						if( _obd_polling.find(obdKey) != _obd_polling.end()){
 							
-							auto pInfo = 	_odb_polling[odbKey];
+							auto pInfo = 	_obd_polling[obdKey];
 							
 							// send out a frame
 							sendFrame(key, 0x7DF, pInfo.request);
 							//
 							//		 					///
 							
-														printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
+														printf("send(%s) OBD %10s ", key.c_str(), string(obdKey).c_str());
 														for(auto i = 0; i < pInfo.request.size() ; i++)
 															printf("%02x ",pInfo.request[i]);
 														printf("\n");
@@ -567,7 +567,7 @@ void CANBusMgr::processODBrequests() {
 							
 							// remove any non repeaters
 							if(pInfo.repeat == false){
-								cancel_ODBpolling(odbKey);
+								cancel_OBDpolling(obdKey);
 							}
 						}
 						

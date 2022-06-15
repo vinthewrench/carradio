@@ -241,12 +241,12 @@ void OBD2::registerSchema(CANBusMgr* canBus){
 	for (auto it = _schemaMap.begin(); it != _schemaMap.end(); it++){
 		valueSchema_t*  schema = &it->second;
 		
-		vector<uint8_t> odb_request = {};
+		vector<uint8_t> obd_request = {};
 		
 		if(it->first < 0xff)
-			odb_request = {0x01, static_cast<uint8_t>(it->first) };
+			obd_request = {0x01, static_cast<uint8_t>(it->first) };
 		
-		frameDB->addSchema(schema->title,  {schema->title, schema->description, schema->units}, odb_request);
+		frameDB->addSchema(schema->title,  {schema->title, schema->description, schema->units}, obd_request);
 	}
 	
 	for (auto it = _service9schemaMap.begin(); it != _service9schemaMap.end(); it++){
@@ -258,8 +258,8 @@ void OBD2::registerSchema(CANBusMgr* canBus){
 		valueSchema_t*  schema = &it->second;
 		
 		uint16_t b = it->first;
-		vector<uint8_t> odb_request =  {0x22, static_cast<uint8_t>(b >> 8) , static_cast<uint8_t>(b & 0xff)};
-		frameDB->addSchema(schema->title,  {schema->title, schema->description, schema->units}, odb_request);
+		vector<uint8_t> obd_request =  {0x22, static_cast<uint8_t>(b >> 8) , static_cast<uint8_t>(b & 0xff)};
+		frameDB->addSchema(schema->title,  {schema->title, schema->description, schema->units}, obd_request);
 	}
 	
 	for (auto it = _otherServiceSchemaMap.begin(); it != _otherServiceSchemaMap.end(); it++){

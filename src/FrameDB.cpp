@@ -25,7 +25,7 @@ FrameDB::FrameDB(){
 	_lastInterfaceTag = 0;
 	_interfaces.clear();
 	_schema.clear();
-	_odb_request.clear();
+	_obd_request.clear();
 	_values.clear();
 }
 
@@ -139,20 +139,20 @@ FrameDB::valueSchema_t FrameDB::schemaForKey(string_view key){
 	return schema;
 }
 
-void FrameDB::addSchema(string_view key,  valueSchema_t schema, vector<uint8_t>odb_request){
+void FrameDB::addSchema(string_view key,  valueSchema_t schema, vector<uint8_t>obd_request){
 	if( _schema.find(key) == _schema.end()){
 		_schema[key] = schema;
-		if(!odb_request.empty()){
-			_odb_request[key] = odb_request;
+		if(!obd_request.empty()){
+			_obd_request[key] = obd_request;
 		}
 	}
 }
  
 
-bool FrameDB::odb_request(string key, vector <uint8_t> & request){
+bool FrameDB::obd_request(string key, vector <uint8_t> & request){
 	bool success = false;
-	if(_odb_request.count(key)){
-		auto foundReq = _odb_request[key];
+	if(_obd_request.count(key)){
+		auto foundReq = _obd_request[key];
 		uint8_t len = static_cast<uint8_t>(foundReq.size());
 			vector <uint8_t> req;
 		req.reserve(len+1);

@@ -10,7 +10,14 @@
 #include <sstream>
 #include <cassert>
 #include "Utils.hpp"
+#include <random>
+#include <stdlib.h>
+#include <stdint.h>
+#include <array>
  
+
+using namespace std;
+
 /* add a fd to fd_set, and update max_fd */
 static int safe_fd_set(int fd, fd_set* fds, int* max_fd) {
 	 assert(max_fd != NULL);
@@ -50,7 +57,18 @@ CANBusMgr::CANBusMgr(){
 	_lastPollTime = {0,0};
 	_pollDelay = {0, 200 * 1000 }; //  200 ms
 	_pollDelay = {1, 200 * 1000 }; //  200 ms
-
+	
+	_odb_requests = {};
+	_odb_polling = {};
+	
+	// create RNG engine
+	constexpr std::size_t SEED_LENGTH = 8;
+  std::array<uint_fast32_t, SEED_LENGTH> random_data;
+  std::random_device random_source;
+  std::generate(random_data.begin(), random_data.end(), std::ref(random_source));
+  std::seed_seq seed_seq(random_data.begin(), random_data.end());
+	_rng =  std::mt19937{ seed_seq };
+ 
 	pthread_create(&_TID, NULL,
 										  (THREADFUNCPTR) &CANBusMgr::CANReaderThread, (void*)this);
 
@@ -111,6 +129,22 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 
 // MARK: -  ODB polling
 
+
+
+bool CANBusMgr::queue_ODBPacket(vector<uint8_t> request){
+ 
+	std::uniform_int_distribution<long> distribution(LONG_MIN,LONG_MAX);
+	
+	odb_polling_t poll_info;
+	poll_info.request = request;
+	poll_info.repeat = false;
+	string key = to_string( distribution(_rng));
+	
+	_odb_polling[key] = poll_info;
+ 	return true;
+}
+
+
 bool CANBusMgr::request_ODBpolling(string key){
 	bool success = false;
 	
@@ -123,6 +157,7 @@ bool CANBusMgr::request_ODBpolling(string key){
 
 			odb_polling_t poll_info;
 			poll_info.request = request;
+			poll_info.repeat = true;
 			
 			_odb_polling[key] = poll_info;
 			
@@ -144,10 +179,8 @@ bool CANBusMgr::cancel_ODBpolling(string key){
 }
 
 bool CANBusMgr::sendDTCEraseRequest(){
-	
-#warning - write this code
-// VINNIE WRITE THIS
-	return true;
+ 	vector<uint8_t> odb_request = {0x01, 0x04 };  //Clear Diagnostic Trouble Codes and stored values
+	return queue_ODBPacket(odb_request);
 }
 
 
@@ -522,13 +555,18 @@ void CANBusMgr::processODBrequests() {
 							sendFrame(key, 0x7DF, pInfo.request);
 							//
 							//		 					///
-							//
-							//							printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
-							//							for(auto i = 0; i < pInfo.re7DFquest.size() ; i++)
-							//								printf("%02x ",pInfo.request[i]);
-							//							printf("\n");
-							//
+							
+														printf("send(%s) ODB %10s ", key.c_str(), string(odbKey).c_str());
+														for(auto i = 0; i < pInfo.request.size() ; i++)
+															printf("%02x ",pInfo.request[i]);
+														printf("\n");
+							
 							//							////
+							
+							// remove any non repeaters
+							if(pInfo.repeat == false){
+								cancel_ODBpolling(key);
+							}
 						}
 						
 					}

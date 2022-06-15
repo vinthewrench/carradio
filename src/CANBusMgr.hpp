@@ -9,6 +9,7 @@
 
 #include <unistd.h>
 #include <sys/time.h>
+#include <random>
 
 #include <string>
 #include <vector>
@@ -62,6 +63,8 @@ public:
 	
 	FrameDB* frameDB() {return &_frameDB;};
 	
+	bool queue_ODBPacket(vector<uint8_t> request);
+
 	bool request_ODBpolling(string key);
 	bool cancel_ODBpolling(string key);
 	bool sendDTCEraseRequest();
@@ -91,15 +94,20 @@ private:
 
 	typedef struct {
 		vector<uint8_t> request;
-		
+		bool repeat;
 	} odb_polling_t;
-	map<string, odb_polling_t> 	_odb_polling = {};
 	
+	map<string, odb_polling_t> 	_odb_polling = {};
+	vector<odb_polling_t> 			_odb_requests = {};
+
 	timeval			_lastPollTime;
 	timeval     	_pollDelay;			// how long to wait before next ODB poll
 	vector<string> _keysToPoll = {};
 
 	fd_set					_master_fds;		// Can sockets that are ready for read
 	int						_max_fds;
+	
+	mt19937						_rng;
+
 };
 

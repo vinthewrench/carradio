@@ -1971,7 +1971,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
 	uint32_t hash = XXHash32::hash(stored+pending);
 	
-	
 	stringvector vCodes = split<string>(stored, " ");
 	auto totalStored = vCodes.size();
 	
@@ -2017,7 +2016,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			size_t firstLine = 0;
 			int codesPerLine = 3;
 			
-		
 			if(totalPending)
 			{
 				lines.push_back("PENDING: " + to_string(totalPending));
@@ -2048,7 +2046,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				for(auto i = totalPending ; i < totalCodes; i++){
 					bool isSelected = i == _lineOffset;
 					if(isSelected) firstLine = lines.size()-1;
-
+					
 					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
 					if(++cnt < codesPerLine) continue;
 					lines.push_back(line);
@@ -2062,18 +2060,19 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			}
 			
 			if(_lineOffset < totalCodes){
-				lines.push_back("  ERASE ALL CODES?");
+				lines.push_back("   ERASE ALL CODES?  ");
 			}
 			else {
 				_lineOffset = totalCodes;
-				lines.push_back("- ERASE ALL CODES?");
+				lines.push_back(" [ ERASE ALL CODES? ]");
 			}
 			
-			printf("_lineOffset = %d\n", _lineOffset);
-			
 			_vfd.setFont(VFD::FONT_MINI) ;
+			
+			int  maxFirstLine  = (int) (lines.size() - displayedLines);
+			if(firstLine > maxFirstLine) firstLine = maxFirstLine;
+			
 			_vfd.printLines(20, 6, lines, firstLine, displayedLines);
-
 		}
 		
 		

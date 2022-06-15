@@ -2020,14 +2020,13 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	 
 	if(needsRedraw){
 		needsRedraw = false;
-		
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
-			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
-		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-
+ 
 		if(vStored.size() + vPending.size() == 0 ){
-	
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
+				static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
+			_vfd.writePacket(buff2, sizeof(buff2), 1000);
+
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
@@ -2045,7 +2044,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vPending[i] + " ";
-					if(++cnt < 4) continue;
+					if(++cnt < 3) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;
@@ -2064,7 +2063,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vStored[i] + " ";
-					if(++cnt < 4) continue;
+					if(++cnt < 3) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;

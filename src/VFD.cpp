@@ -279,6 +279,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		auto count =  lineCount - firstLine;
 		if( count > maxLines) count = maxLines;
 		
+		printf("count: %d \n", count);
+		
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
 			printf("2 %2zu  %d |%s|\n", i, y, lines[i].c_str());

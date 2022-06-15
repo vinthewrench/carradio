@@ -2044,7 +2044,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vPending[i] + " ";
-					if(++cnt < 3) continue;
+					if(++cnt < 2) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;
@@ -2063,7 +2063,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vStored[i] + " ";
-					if(++cnt < 3) continue;
+					if(++cnt < 2) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;

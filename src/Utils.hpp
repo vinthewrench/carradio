@@ -16,6 +16,33 @@
 #
 namespace Utils {
 
+
+// invariant: line_sz > length of any single word
+inline std::vector<std::string> split( std::string str, std::size_t line_sz )
+{
+	 if( std::all_of( std::begin(str), std::end(str), [] ( char c ) { return std::isspace(c) ; } ) )
+		  return {} ; // empty string or string with all spaces, return an empty vector
+
+	 std::vector<std::string> result(1) ; // vector containing one empty string
+
+	 std::istringstream stm(str) ; // use a string stream to split on white-space
+	 std::string word ;
+	 while( stm >> word ) // for each word in the string
+	 {
+		  // if this word will fit into the current line, append the word to the current line
+		  if( ( result.back().size() + word.size() ) <= line_sz ) result.back() += word + ' ' ;
+
+		  else
+		  {
+				result.back().pop_back() ; // remove the trailing space at the end of the current line
+				result.push_back( word + ' ' ) ; // and place this new word on the next line
+		  }
+	 }
+
+	 result.back().pop_back() ; // remove the trailing space at the end of the last line
+	 return result ;
+}
+
 inline  std::string trimCNTRL(std::string source) {
 	  source.erase(std::find_if(source.rbegin(), source.rend(), [](char c) {
 			return !std::iscntrl(static_cast<unsigned char>(c));

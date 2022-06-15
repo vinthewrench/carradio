@@ -184,7 +184,7 @@ bool VFD::printPacket(const char *fmt, ...){
 	va_start(args, fmt);
 	vasprintf(&s, fmt, args);
 	
-	write(s);
+	success = write(s);
 	free(s);
 	va_end(args);
 	

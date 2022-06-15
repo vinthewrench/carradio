@@ -2018,10 +2018,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			size_t firstLine = 0;
 			int codesPerLine = 3;
 			
-			// pin the cursor to max codes
-			if(_lineOffset > totalCodes)
-				_lineOffset = totalCodes;
-			
+		
 			if(totalPending)
 			{
 				lines.push_back("PENDING: " + to_string(totalPending));
@@ -2069,7 +2066,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				lines.push_back("  ERASE ALL CODES?");
 			}
 			else {
-				_lineOffset = totalCodes; 
+				_lineOffset = totalCodes;
 				lines.push_back("\xb9 ERASE ALL CODES?");
 			}
 			

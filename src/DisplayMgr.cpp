@@ -2015,6 +2015,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			// draw codes with selected code boxed
 			
 			vector<string> lines = {};
+			size_t displayedLines = 6;
+			size_t firstLine = 0;
+			int codesPerLine = 3;
 			
 			// pin the cursor to max codes
 			if(_lineOffset > totalCodes)
@@ -2028,8 +2031,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(auto i = 0 ; i < totalPending; i++){
 					bool isSelected = i == _lineOffset;
+					if(isSelected) firstLine = lines.size();
 					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
-					if(++cnt < 4) continue;
+					if(++cnt < codesPerLine) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;
@@ -2037,6 +2041,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
+				lines.push_back("");
 			}
 			
 			if(totalStored)
@@ -2047,8 +2052,10 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(auto i = totalStored ; i < totalCodes; i++){
 					bool isSelected = i == _lineOffset;
+					if(isSelected) firstLine = lines.size();
+
 					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
-					if(++cnt < 4) continue;
+					if(++cnt < codesPerLine) continue;
 					lines.push_back(line);
 					line = " ";
 					cnt = 0;
@@ -2056,12 +2063,12 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
+				lines.push_back("");
 			}
 			
-			size_t displayedLines = 6;
- 
+	
 			_vfd.setFont(VFD::FONT_MINI) ;
-			_vfd.printLines(20, 6, lines, 0, displayedLines);
+			_vfd.printLines(20, 6, lines, firstLine, displayedLines);
 
 		}
 		

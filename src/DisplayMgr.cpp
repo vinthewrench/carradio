@@ -2076,11 +2076,12 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				total+= lineCount;
 			}
 			
-			if(_lineOffset	> total)
-				_lineOffset = total;
+			size_t displayedLines = 6;
+			if((total > displayedLines) && (_lineOffset > (total - displayedLines)))
+				_lineOffset = total - displayedLines;
 			
 			_vfd.setFont(VFD::FONT_MINI) ;
-			_vfd.printLines(20, 7, lines, _lineOffset, 6);
+			_vfd.printLines(20, 7, lines, _lineOffset, displayedLines);
 		}
 	}
  

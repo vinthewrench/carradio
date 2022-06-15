@@ -2043,18 +2043,17 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				
 				lines.push_back("PENDING: " + to_string(total));
 				
-				string line = "";
+				string line = " ";
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vPending[i] + " ";
 					if(++cnt < 4) continue;
 					lines.push_back(line);
-					line = "";
+					line = " ";
 					cnt = 0;
 				}
 				if(cnt > 0){
 					lines.push_back(line);
-					line = "";
 				}
 			}
 			
@@ -2063,18 +2062,17 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				
 				lines.push_back("STORED: " + to_string(total));
 				
-				string line = "";
+				string line = " ";
 				int cnt = 0;
 				for(int i = 0; i < total; i++){
 					line+= vStored[i] + " ";
 					if(++cnt < 4) continue;
 					lines.push_back(line);
-					line = "";
+					line = " ";
 					cnt = 0;
 				}
 				if(cnt > 0){
 					lines.push_back(line);
-					line = "";
 				}
 			}
 			

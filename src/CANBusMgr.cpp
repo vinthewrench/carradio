@@ -556,7 +556,7 @@ void CANBusMgr::processOBDrequests() {
 							// send out a frame
 							sendFrame(key, 0x7DF, pInfo.request);
  
-#if 1
+#if 0
 		string keyname = pInfo.repeat?string(obdKey):"ONE-TIME";
 		printf("send(%s) OBD %10s ", key.c_str(), keyname.c_str());
 		for(auto i = 0; i < pInfo.request.size() ; i++)

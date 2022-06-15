@@ -269,7 +269,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	printf("lineCount: %d,  firstLine: %d  maxLines: %d \n", lineCount, firstLine, maxLines);
 
 	
-	if(maxLines <= lineCount){
+	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
 			setCursor(0, y);

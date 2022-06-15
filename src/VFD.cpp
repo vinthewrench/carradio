@@ -264,6 +264,11 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	
 	auto lineCount = lines.size();
 	
+	
+	
+	printf("lineCount: %d,  firstLine: %d  maxLines: %d \n", lineCount, firstLine, maxLines);
+
+	
 	if(maxLines <= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){

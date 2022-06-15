@@ -2290,7 +2290,7 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		can->descriptionForDTCCode(code, description);
 		std::transform(description.begin(), description.end(),description.begin(), ::toupper);
  
-		stringvector lines = Utils::split(description, 35);
+		stringvector lines = Utils::split(description, 30);
 	 
 	 	_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.printLines(32, 7, lines, 1, 4);

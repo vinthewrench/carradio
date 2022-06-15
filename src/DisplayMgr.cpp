@@ -2066,10 +2066,11 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			}
 			
 			if(_lineOffset < totalCodes){
-				lines.push_back("  ERASE ALL CODES?  ");
+				lines.push_back("  ERASE ALL CODES?");
 			}
 			else {
-				lines.push_back("[ ERASE ALL CODES? ]");
+				_lineOffset = totalCodes;
+				lines.push_back("\xb9 ERASE ALL CODES?");
 			}
 			
 			_vfd.setFont(VFD::FONT_MINI) ;

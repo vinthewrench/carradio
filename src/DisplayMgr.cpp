@@ -580,65 +580,6 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 }
 
 
-bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
-	bool wasHandled = false;
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	double balance = audio->balance();
-	// limit the precision
-	balance = std::floor((balance * 100) + .5) / 100;
-
-	if(action == KNOB_UP){
-		
-		if(balance < 1.0){
-			audio->setBalance(balance +.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	
-	else if(action == KNOB_DOWN){
-		
-		if(balance > -1.0){
-			audio->setBalance(balance -.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-}
-
-
-bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
-	bool wasHandled = false;
-	
-	if(action == KNOB_UP){
-		if(_lineOffset < 255){
-			_lineOffset++;
-			setEvent(EVT_NONE,MODE_DTC);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_DOWN){
-		if(_lineOffset != 0) {
-			_lineOffset--;
-			setEvent(EVT_NONE,MODE_DTC);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-	
-}
-
 // MARK: -  Menu Mode
 
 void DisplayMgr::resetMenu() {
@@ -1382,76 +1323,6 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 }
 
 
-void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-	uint8_t midX = width/2;
-	uint8_t midY = height/2;
-	
-	uint8_t leftbox 	= 20;
-	uint8_t rightbox 	= width - 20;
-	uint8_t topbox 	= midY -5 ;
-	uint8_t bottombox = midY + 5 ;
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING) {
-		_vfd.clearScreen();
-		
-		// draw centered heading
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Balance";
-		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-		_vfd.write(str);
-		
-		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
-		_vfd.setCursor(leftbox - 10, bottombox -1 );
-		_vfd.write("L");
-		_vfd.setCursor(rightbox + 5, bottombox -1 );
-		_vfd.write("R");
-	}
-	
-	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		
-		double balance = audio->balance();
-		
-		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
-		itemX &= 0xfE; // to nearest 2
-		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
-		printf("balance = %1.2f midx = %d \n",balance, itemX);
-
-		// clear inside of box
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-			// draw marker
-			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD_SET_WRITEMODE, 0x00,};	// Normal
-		
-		_vfd.writePacket(buff2, sizeof(buff2), 0);
-		
-		//	_vfd.setCursor(10, 55);
-		//	_vfd.setFont(VFD::FONT_5x7);
-		//	char buffer[16] = {0};
-		//	sprintf(buffer, "Balance: %.2f  ", balance);
-		//	_vfd.write(buffer);
-	}
-}
-
-
 void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
@@ -1936,8 +1807,234 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	drawTimeBox();
 }
 
-#if 1
-void DisplayMgr::drawDTCScreen(modeTransition_t transition){
+
+
+void DisplayMgr::drawTimeBox(){
+	// Draw time
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char timebuffer[16] = {0};
+	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	_vfd.setFont(VFD::FONT_5x7);
+	_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7);
+  _vfd.write(timebuffer);
+
+}
+
+void DisplayMgr::drawInfoScreen(modeTransition_t transition){
+ 
+	uint8_t col = 0;
+	uint8_t row = 7;
+	string str;
+	static uint8_t lastrow = row;
+
+	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
+	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
+	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
+	PiCarDB*				db 		= PiCarMgr::shared()->db();
+	PiCarCAN*			can 		= PiCarMgr::shared()->can();
+
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING){
+	 
+		_vfd.clearScreen();
+	
+		// top line
+		_vfd.setCursor(col, row);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("Car Radio ");
+	 
+		struct utsname utsBuff;
+		RtlSdr::device_info_t rtlInfo;
+		
+		str = string(PiCarMgr::PiCarMgr_Version);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str.c_str());
+		
+		row += 7;  _vfd.setCursor(col+10, row );
+		str = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		uname(&utsBuff);
+		row += 7;  _vfd.setCursor(col+10, row );
+		str =   string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		row += 7;  _vfd.setCursor(col+10, row );
+		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
+			str =   "RADIO: " +  string(rtlInfo.product);
+ 		else
+			str =   string("RADIO: ") + string("NOT CONNECTED");
+ 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		row += 7;  _vfd.setCursor(col+10, row );
+		if(gps->isConnected() && radio->getDeviceInfo(rtlInfo) )
+			str =   string("GPS: ") + string("OK");
+		else
+			str =   string("GPS: ") + string("NOT CONNECTED");
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+
+		row += 7;  _vfd.setCursor(col+10, row );
+		string compassVersion;
+	 		if(compass->isConnected() && compass->versionString(compassVersion))
+			str =   string("COMPASS: ") + compassVersion;
+		else
+			str =   string("COMPASS: ") + string("NOT CONNECTED");
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+		
+		lastrow = row;
+	}
+	
+	row = lastrow+ 7;
+	_vfd.setCursor(col+10, row );
+	_vfd.setFont(VFD::FONT_MINI);
+	
+	vector<CANBusMgr::can_status_t> canStats;
+	if(can->getStatus(canStats)){
+		str =  string("CAN:");
+		for(auto e :canStats){
+			str  += " " + e.ifName;
+		}
+	}
+	else
+		str =  string("CAN: ") + string("NOT CONNECTED");
+	
+	std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+	_vfd.printPacket("%s", str.c_str());
+	
+	float cTemp = 0;
+	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+		
+		_vfd.setCursor(col+10, 64 );
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("CPU TEMP:%d\xa0" "C ", (int) round(cTemp));
+		}
+
+ 
+	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+}
+
+// MARK: -  Balance Audio Screen
+
+
+void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
+	
+	AudioOutput* audio	= PiCarMgr::shared()->audio();
+	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+	
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = "Balance";
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
+		
+		//draw box outline
+		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+		
+		_vfd.setCursor(leftbox - 10, bottombox -1 );
+		_vfd.write("L");
+		_vfd.setCursor(rightbox + 5, bottombox -1 );
+		_vfd.write("R");
+	}
+	
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		
+		double balance = audio->balance();
+		
+		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
+		itemX &= 0xfE; // to nearest 2
+		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+		
+		printf("balance = %1.2f midx = %d \n",balance, itemX);
+
+		// clear inside of box
+		uint8_t buff2[] = {VFD_CLEAR_AREA,
+			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			// draw marker
+			VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD_SET_WRITEMODE, 0x00,};	// Normal
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 0);
+		
+		//	_vfd.setCursor(10, 55);
+		//	_vfd.setFont(VFD::FONT_5x7);
+		//	char buffer[16] = {0};
+		//	sprintf(buffer, "Balance: %.2f  ", balance);
+		//	_vfd.write(buffer);
+	}
+}
+
+
+bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
+	bool wasHandled = false;
+	
+	AudioOutput* audio	= PiCarMgr::shared()->audio();
+	
+	double balance = audio->balance();
+	// limit the precision
+	balance = std::floor((balance * 100) + .5) / 100;
+
+	if(action == KNOB_UP){
+		
+		if(balance < 1.0){
+			audio->setBalance(balance +.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
+		}
+		wasHandled = true;
+	}
+	
+	else if(action == KNOB_DOWN){
+		
+		if(balance > -1.0){
+			audio->setBalance(balance -.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
+		}
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+}
+
+
+
+// MARK: -  DTC codes screen
+
+
+ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	FrameDB*		frameDB 	= can->frameDB();
@@ -2075,260 +2172,63 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			
 			_vfd.printLines(20, 6, lines, firstLine, displayedLines);
 		}
-		
-		
 	}
- 
-	
 	drawTimeBox();
 }
-#else
 
 
-void DisplayMgr::drawDTCScreen(modeTransition_t transition){
-
-	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	FrameDB*		frameDB 	= can->frameDB();
-
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-
-	static uint32_t lastHash = 0;
-	static uint8_t lastOffset = 0;
-
-	bool needsRedraw = false;
- 
-	if(transition == TRANS_LEAVING) {
-		_lineOffset = 0;
-		return;
-	}
+bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
+	bool wasHandled = false;
 	
-	if(transition == TRANS_ENTERING){
-		lastHash = 0;
-		_lineOffset = 0;
-
-	 	_vfd.clearScreen();
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(0,10);
-		_vfd.write("DTC Codes");
+	if(action == KNOB_UP){
+		if(_lineOffset < 255){
+			_lineOffset++;
+			setEvent(EVT_NONE,MODE_DTC);
+		}
+		wasHandled = true;
 	}
+	else if(action == KNOB_DOWN){
+		if(_lineOffset != 0) {
+			_lineOffset--;
+			setEvent(EVT_NONE,MODE_DTC);
+		}
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		
+		// sigh this code has to calculate the offset the same as drawDTCScreen
+		PiCarCAN*	can 	= PiCarMgr::shared()->can();
+		FrameDB*		frameDB 	= can->frameDB();
+
+		string stored = "";
+		string pending = "";
+		frameDB->valueWithKey("OBD_DTC_STORED", &stored);
+		frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
+		stringvector vCodes = split<string>(stored, " ");
+		auto totalStored = vCodes.size();
+		stringvector vPending = split<string>(pending, " ");
+		auto totalPending = vPending.size();
+		auto totalCodes = totalStored + totalPending;
+		vCodes.insert(vCodes.end(), vPending.begin(), vPending.end());
   
-	string stored = "";
-	string pending = "";
-	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
-	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
-	uint32_t hash = XXHash32::hash(stored+pending);
-	
-	  vector<string> vStored = split<string>(stored, " ");
-	  vector<string> vPending = split<string>(pending, " ");
-
-	// if anything changed, redraw
-	
-	if(hash != lastHash){
-		lastHash = hash;
-		_lineOffset = 0;
-	
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
-			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
-		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-
-		needsRedraw = true;
-	}
-
-	
-	if( lastOffset != _lineOffset){
-		if(vStored.size() + vPending.size() > 0){
-			lastOffset = _lineOffset;
-			needsRedraw = true;
+		if(!totalCodes ){
+			popMode();
 		}
-	}
-	 
-	 
-	if(needsRedraw){
-		needsRedraw = false;
-
-		if(vStored.size() + vPending.size() == 0 ){
+		else if(_lineOffset < totalCodes){
+			// select a code
 			
-			_vfd.setCursor(10,height/2);
-			_vfd.write("No Codes");
-			
+			printf("code %s\n", vCodes[_lineOffset].c_str());
 		}
-		else {
+		else if(_lineOffset == totalCodes){
+			// erase codes.
 			
-			vector<string> lines = {};
-			
-			if(vPending.size()){
-				size_t lineCount = vPending.size();
-				
-				lines.push_back("PENDING: " + to_string(lineCount));
-				
-				string line = " ";
-				int cnt = 0;
-				for(int i = 0; i < lineCount; i++){
-					line+= vPending[i] + " ";
-					if(++cnt < 4) continue;
-					lines.push_back(line);
-					line = " ";
-					cnt = 0;
-				}
-				if(cnt > 0){
-					lines.push_back(line);
-				}
-				
-			}
-			
-			if(vStored.size()){
-				size_t lineCount = vStored.size();
-				
-				if(lines.size()> 0) lines.push_back("");
-				
-				lines.push_back("STORED: " + to_string(lineCount));
-				
-				string line = " ";
-				int cnt = 0;
-				for(int i = 0; i < lineCount; i++){
-					line+= vStored[i] + " ";
-					if(++cnt < 4) continue;
-					lines.push_back(line);
-					line = " ";
-					cnt = 0;
-				}
-				if(cnt > 0){
-					lines.push_back(line);
-				}
-			}
-			
-			// PIN OFFSET AT MAX LINES
-			size_t displayedLines = 6;
-			int  maxFirstLine  = (int) (lines.size() - displayedLines);
-			
-			if(_lineOffset > maxFirstLine)
-				_lineOffset = maxFirstLine;
-			
-			_vfd.setFont(VFD::FONT_MINI) ;
-			_vfd.printLines(20, 7, lines, _lineOffset, displayedLines);
+			printf("erase codes \n" );
+
 		}
-	}
- 
-	drawTimeBox();
-}
-
-#endif
-
-
-void DisplayMgr::drawTimeBox(){
-	// Draw time
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
-	char timebuffer[16] = {0};
-	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
-	_vfd.setFont(VFD::FONT_5x7);
-	_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7);
-  _vfd.write(timebuffer);
-
-}
-
-void DisplayMgr::drawInfoScreen(modeTransition_t transition){
- 
-	uint8_t col = 0;
-	uint8_t row = 7;
-	string str;
-	static uint8_t lastrow = row;
-
-	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
-	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
-	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
-	PiCarDB*				db 		= PiCarMgr::shared()->db();
-	PiCarCAN*			can 		= PiCarMgr::shared()->can();
-
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING){
-	 
-		_vfd.clearScreen();
-	
-		// top line
-		_vfd.setCursor(col, row);
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("Car Radio ");
-	 
-		struct utsname utsBuff;
-		RtlSdr::device_info_t rtlInfo;
 		
-		str = string(PiCarMgr::PiCarMgr_Version);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str.c_str());
-		
-		row += 7;  _vfd.setCursor(col+10, row );
-		str = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-
-		uname(&utsBuff);
-		row += 7;  _vfd.setCursor(col+10, row );
-		str =   string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-
-		row += 7;  _vfd.setCursor(col+10, row );
-		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
-			str =   "RADIO: " +  string(rtlInfo.product);
- 		else
-			str =   string("RADIO: ") + string("NOT CONNECTED");
- 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-
-		row += 7;  _vfd.setCursor(col+10, row );
-		if(gps->isConnected() && radio->getDeviceInfo(rtlInfo) )
-			str =   string("GPS: ") + string("OK");
-		else
-			str =   string("GPS: ") + string("NOT CONNECTED");
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-
-		row += 7;  _vfd.setCursor(col+10, row );
-		string compassVersion;
-	 		if(compass->isConnected() && compass->versionString(compassVersion))
-			str =   string("COMPASS: ") + compassVersion;
-		else
-			str =   string("COMPASS: ") + string("NOT CONNECTED");
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-		
-		lastrow = row;
-	}
 	
-	row = lastrow+ 7;
-	_vfd.setCursor(col+10, row );
-	_vfd.setFont(VFD::FONT_MINI);
+	return wasHandled;
 	
-	vector<CANBusMgr::can_status_t> canStats;
-	if(can->getStatus(canStats)){
-		str =  string("CAN:");
-		for(auto e :canStats){
-			str  += " " + e.ifName;
-		}
-	}
-	else
-		str =  string("CAN: ") + string("NOT CONNECTED");
-	
-	std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-	_vfd.printPacket("%s", str.c_str());
-	
-	float cTemp = 0;
-	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-		
-		_vfd.setCursor(col+10, 64 );
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("CPU TEMP:%d\xa0" "C ", (int) round(cTemp));
-		}
-
- 
-	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
 

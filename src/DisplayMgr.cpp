@@ -2049,7 +2049,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				
 				string line = " ";
 				int cnt = 0;
-				for(auto i = totalStored ; i < totalCodes; i++){
+				for(auto i = totalPending ; i < totalCodes; i++){
 					bool isSelected = i == _lineOffset;
 					if(isSelected) firstLine = lines.size()-1;
 

@@ -2157,14 +2157,22 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 			}
 			
 			if(_lineOffset < totalCodes){
-				lines.push_back("   ERASE ALL CODES?  ");
+				lines.push_back("  ERASE ALL CODES?  ");
+				lines.push_back("  EXIT  ");
+
+			}
+			else if(_lineOffset == totalCodes){
+				lines.push_back("[ ERASE ALL CODES? ]");
+				lines.push_back("  EXIT  ");
+				firstLine = lines.size()-1;
 			}
 			else {
+				lines.push_back("  ERASE ALL CODES? ");
+				lines.push_back(" [EXIT]  ");
 				firstLine = lines.size()-1;
-				_lineOffset = totalCodes;
-				lines.push_back(" [ ERASE ALL CODES? ]");
-			}
-			
+				_lineOffset = totalCodes + 1;
+		}
+ 
 			_vfd.setFont(VFD::FONT_MINI) ;
 			
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
@@ -2222,11 +2230,14 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 		}
 		else if(_lineOffset == totalCodes){
 			// erase codes.
-			
-			printf("erase codes \n" );
+	 		printf("erase codes \n" );
 			wasHandled = true;
-
+ 		}
+		else {
+			printf("exit\n" );
+			popMode();
 		}
+	
 	}
 	
 	return wasHandled;

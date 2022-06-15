@@ -527,7 +527,6 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 		}
 	}
 	
-	
 	return wasHandled;
 }
 
@@ -2330,6 +2329,9 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
+		popMode();
+		setEvent(EVT_NONE,MODE_DTC);
+		wasHandled = true;
 	//	popMode();
 	}
 	

@@ -2079,8 +2079,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			size_t displayedLines = 6;
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			
-			printf("maxFirstLine = %d _lineOffset = %d\n", maxFirstLine, _lineOffset);
-			
 			if(_lineOffset > maxFirstLine)
 				_lineOffset = maxFirstLine;
 			

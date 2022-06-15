@@ -275,7 +275,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			setCursor(0, y);
 	printf("1 %2zu  %d |%s|\n", i, y, lines[i].c_str());
 			
-			success = printPacket("-%20s", lines[i].c_str());
+			success = printPacket("%-20s", lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}
@@ -291,7 +291,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			printf("2 %2zu  %d |%s|\n", i, y, lines[i].c_str());
 	
 			
-			success = printPacket("-%20s", lines[i].c_str());
+			success = printPacket("%-20s", lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}

@@ -2013,7 +2013,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		else {
 			
 			// draw codes with selected code boxed
-			
 			vector<string> lines = {};
 			size_t displayedLines = 6;
 			size_t firstLine = 0;
@@ -2031,7 +2030,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(auto i = 0 ; i < totalPending; i++){
 					bool isSelected = i == _lineOffset;
-					if(isSelected) firstLine = lines.size();
+					if(isSelected) firstLine = lines.size() -1;
 					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
 					if(++cnt < codesPerLine) continue;
 					lines.push_back(line);
@@ -2052,7 +2051,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				int cnt = 0;
 				for(auto i = totalStored ; i < totalCodes; i++){
 					bool isSelected = i == _lineOffset;
-					if(isSelected) firstLine = lines.size();
+					if(isSelected) firstLine = lines.size()-1;
 
 					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
 					if(++cnt < codesPerLine) continue;

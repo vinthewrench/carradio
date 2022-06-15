@@ -2066,7 +2066,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			}
 			else {
 				_lineOffset = totalCodes;
-				lines.push_back("\xb9 ERASE ALL CODES?");
+				lines.push_back("- ERASE ALL CODES?");
 			}
 			
 			printf("_lineOffset = %d\n", _lineOffset);

@@ -2063,6 +2063,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				lines.push_back("   ERASE ALL CODES?  ");
 			}
 			else {
+				firstLine = lines.size()-1;
 				_lineOffset = totalCodes;
 				lines.push_back(" [ ERASE ALL CODES? ]");
 			}

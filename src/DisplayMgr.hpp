@@ -157,7 +157,8 @@ private:
 
  	void drawDTCScreen(modeTransition_t transition);
  	void drawDTCInfoScreen(modeTransition_t transition, string code);
-
+	bool processSelectorKnobActionForDTCInfo( knob_action_t action);
+ 
 	void drawSettingsScreen(modeTransition_t transition);
 	
 	void drawInfoScreen(modeTransition_t transition);

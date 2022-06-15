@@ -580,6 +580,10 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			wasHandled = processSelectorKnobActionForDTC(action);
 			break;
 
+		case MODE_DTC_INFO:
+			wasHandled = processSelectorKnobActionForDTCInfo(action);
+			break;
+ 
 		default:
 			break;
 	}
@@ -911,9 +915,17 @@ void DisplayMgr::DisplayUpdate(){
 				}
 				
 				else if(_current_mode == MODE_DTC_INFO) {
+					
+					// check for {EVT_NONE,MODE_DTC_INFO}  which is a click
+					if(item.mode == MODE_DTC_INFO) {
+						gettimeofday(&_lastEventTime, NULL);
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
 					// give it 10 seconds
-					if(diff.tv_sec >=  10){
-	 					popMode();
+					else if(diff.tv_sec >=  10){
+						// timeout pop mode?
+						popMode();
 						shouldRedraw = true;
 						shouldUpdate = true;
 					}
@@ -2298,6 +2310,33 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 
 	drawTimeBox();
 
+}
+
+bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
+	bool wasHandled = false;
+	
+	if(action == KNOB_UP){
+		if(_lineOffset < 255){
+			_lineOffset++;
+			setEvent(EVT_NONE,MODE_DTC_INFO);
+		}
+		wasHandled = true;
+	}
+	else if(action == KNOB_DOWN){
+		if(_lineOffset != 0) {
+			_lineOffset--;
+			setEvent(EVT_NONE,MODE_DTC_INFO);
+		}
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+ 			popMode();
+		wasHandled = true;
+
+	}
+	
+	return wasHandled;
+	
 }
 
 

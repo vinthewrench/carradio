@@ -1975,8 +1975,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 
 	static uint32_t lastHash = 0;
 	static uint8_t lastOffset = 0;
-	bool needsRedraw = false;
 
+	bool needsRedraw = false;
+ 
 	if(transition == TRANS_LEAVING) {
 		_lineOffset = 0;
 		return;
@@ -2002,29 +2003,30 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	  vector<string> vPending = split<string>(pending, " ");
 
 	// if anything changed, redraw
-	if(hash != lastHash || lastOffset != _lineOffset){
-		
-		if(hash != lastHash){
-			lastHash = hash;
-			_lineOffset = 0;
-			needsRedraw = true;
-
-		}
-		else if( lastOffset != _lineOffset){
-			if(vStored.size() + vPending.size() > 0){
-				lastOffset = _lineOffset;
-				needsRedraw = true;
-			}
-		}
-	}
-	 
-	if(needsRedraw){
-		needsRedraw = false;
-
+	
+	if(hash != lastHash){
+		lastHash = hash;
+		_lineOffset = 0;
+	
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
+
+		needsRedraw = true;
+	}
+
+	
+	if( lastOffset != _lineOffset){
+		if(vStored.size() + vPending.size() > 0){
+			lastOffset = _lineOffset;
+			needsRedraw = true;
+		}
+	}
+	 
+	 
+	if(needsRedraw){
+		needsRedraw = false;
 
 		if(vStored.size() + vPending.size() == 0 ){
 			

@@ -1976,12 +1976,10 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	auto totalStored = vCodes.size();
 	
 	stringvector vPending = split<string>(pending, " ");
-	auto totalPending= vCodes.size();
+	auto totalPending = vPending.size();
 	auto totalCodes = totalStored + totalPending;
 	vCodes.insert(vCodes.end(), vPending.begin(), vPending.end());
-	
-	
-	
+	 
 	// if anything changed, redraw
 	
 	if(hash != lastHash){
@@ -2028,9 +2026,28 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				
 				string line = " ";
 				int cnt = 0;
-				for(int i = 0 ; i < totalPending; i++){
+				for(auto i = 0 ; i < totalPending; i++){
 					bool isSelected = i == _lineOffset;
-					line+=  (isSelected?"[":" ") + vPending[i] + (isSelected?"] ":"  ");
+					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
+					if(++cnt < 4) continue;
+					lines.push_back(line);
+					line = " ";
+					cnt = 0;
+				}
+				if(cnt > 0){
+					lines.push_back(line);
+				}
+			}
+			
+			if(totalStored)
+			{
+				lines.push_back("STORED: " + to_string(totalStored));
+				
+				string line = " ";
+				int cnt = 0;
+				for(auto i = totalStored ; i < totalCodes; i++){
+					bool isSelected = i == _lineOffset;
+					line+=  (isSelected?"[":" ") + vCodes[i] + (isSelected?"] ":"  ");
 					if(++cnt < 4) continue;
 					lines.push_back(line);
 					line = " ";

@@ -2076,10 +2076,11 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				total+= lineCount;
 			}
 			
+			// PIN OFFSET AT MAX LINES
 			size_t displayedLines = 6;
-			if((total > displayedLines) && (_lineOffset > (total - displayedLines)))
-				_lineOffset = total - displayedLines;
-			
+			int  maxFirstLine  = (int) (total - displayedLines);
+			if(_lineOffset > maxFirstLine) _lineOffset = maxFirstLine;
+				 
 			_vfd.setFont(VFD::FONT_MINI) ;
 			_vfd.printLines(20, 7, lines, _lineOffset, displayedLines);
 		}

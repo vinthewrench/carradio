@@ -2079,6 +2079,9 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			// PIN OFFSET AT MAX LINES
 			size_t displayedLines = 6;
 			int  maxFirstLine  = (int) (total - displayedLines);
+			
+			printf("maxFirstLine = %d _lineOffset = %d\n", maxFirstLine, _lineOffset);
+			
 			if(_lineOffset > maxFirstLine)
 				_lineOffset = maxFirstLine;
 				 

@@ -2005,7 +2005,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		needsRedraw = false;
 		
 		if(totalCodes == 0 ){
-			
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
@@ -2069,6 +2068,8 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				_lineOffset = totalCodes;
 				lines.push_back("\xb9 ERASE ALL CODES?");
 			}
+			
+			printf("_lineOffset = %d\n", _lineOffset);
 			
 			_vfd.setFont(VFD::FONT_MINI) ;
 			_vfd.printLines(20, 6, lines, firstLine, displayedLines);

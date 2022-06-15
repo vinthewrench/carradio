@@ -2281,7 +2281,7 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		_vfd.setCursor(0,10);
 		_vfd.write("DIAGNOSTIC CODE" );
 		
-		_vfd.setCursor(0,20);
+		_vfd.setCursor(0,22);
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printPacket("%s", code.c_str());
 
@@ -2290,10 +2290,10 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		can->descriptionForDTCCode(code, description);
 		std::transform(description.begin(), description.end(),description.begin(), ::toupper);
  
-		stringvector lines = Utils::split(description, 30);
+		stringvector lines = Utils::split(description, 35);
 	 
 	 	_vfd.setFont(VFD::FONT_MINI) ;
-		_vfd.printLines(30, 7, lines, 1, 4);
+		_vfd.printLines(32, 7, lines, 1, 4);
 	}
 
 	drawTimeBox();

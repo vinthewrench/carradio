@@ -2061,6 +2061,8 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			if(vStored.size()){
 				size_t lineCount = vStored.size();
 				
+				if(lines.size()> 0) lines.push_back("");
+				
 				lines.push_back("STORED: " + to_string(lineCount));
 				
 				string line = " ";

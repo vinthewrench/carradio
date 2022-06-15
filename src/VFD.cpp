@@ -255,3 +255,57 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	return success;
 }
 
+
+bool VFD:: printLines(uint8_t y, uint8_t step,
+							 stringvector lines,
+							 uint8_t firstLine,
+							 uint8_t maxLines){
+	bool success = false;
+	
+	auto lineCount = lines.size();
+	
+	if(maxLines <= lineCount){
+		//ignore the offset and draw all.
+		for(int i = 0; i < lineCount; i ++){
+			setCursor(0, y);
+			success = printPacket("%20s", lines[i].c_str());
+			if(!success) break;
+			y += step;
+		}
+	}
+	else {
+		auto count =  lineCount - firstLine;
+		if( count > maxLines) count = maxLines;
+		
+		for(auto i = firstLine; i < firstLine + count; i ++){
+			setCursor(0, y);
+			success = printPacket("%20s", lines[i].c_str());
+			if(!success) break;
+			y += step;
+		}
+	}
+ 
+	return success;
+}
+
+
+
+
+//
+//			//		size_t max_lines = 5;
+//			size_t totalLines = lines.size();
+//			size_t start_line = _lineOffset;
+//			if(start_line > totalLines - 1)  start_line = totalLines -1;
+//
+//			printf("start_line = %zu\n", start_line);
+//			for(size_t i = start_line; i < totalLines; i++){
+//				printf("%2zu |%s|\n", i, lines[i].c_str());
+//			}
+//
+//
+//			for(size_t i = start_line; i < totalLines; i++){
+//				string str = lines[i];
+//				_vfd.setCursor(10, row);
+//				_vfd.write(str);
+//				row+=7;
+//			}

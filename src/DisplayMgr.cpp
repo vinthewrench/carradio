@@ -2020,13 +2020,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	 
 	if(needsRedraw){
 		needsRedraw = false;
-		
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
-			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
-		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-		
+			
 		if(vStored.size() + vPending.size() == 0 ){
+			
+			uint8_t buff2[] = {VFD_CLEAR_AREA,
+				static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
+				static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
+			_vfd.writePacket(buff2, sizeof(buff2), 1000);
+
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
@@ -2040,7 +2041,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			if(vPending.size()){
 				size_t total = vPending.size();
 				
-				lines.push_back("PENDING " + to_string(total));
+				lines.push_back("PENDING: " + to_string(total));
 				
 				string line = "";
 				int cnt = 0;
@@ -2060,7 +2061,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			if(vStored.size()){
 				size_t total = vStored.size();
 				
-				lines.push_back("STORED " + to_string(total));
+				lines.push_back("STORED: " + to_string(total));
 				
 				string line = "";
 				int cnt = 0;
@@ -2078,28 +2079,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			}
 			
 			_vfd.setFont(VFD::FONT_MINI) ;
-			
-			
-			int row = 20;
-			
-			//		size_t max_lines = 5;
-			size_t totalLines = lines.size();
-			size_t start_line = _lineOffset;
-			if(start_line > totalLines - 1)  start_line = totalLines -1;
-			
-			printf("start_line = %zu\n", start_line);
-			for(size_t i = start_line; i < totalLines; i++){
-				printf("%2zu |%s|\n", i, lines[i].c_str());
-			}
-			
-			
-			for(size_t i = start_line; i < totalLines; i++){
-				string str = lines[i];
-				_vfd.setCursor(10, row);
-				_vfd.write(str);
-				row+=7;
-			}
-			
+			_vfd.printLines(20, 7, lines, _lineOffset, 6);
 		}
 	}
  

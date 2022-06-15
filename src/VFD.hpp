@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <string>
+#include "CommonDefs.hpp"
 
 
 //#define GU128x64D  1
@@ -46,7 +47,8 @@ public:
 
 	bool printPacket(const char *fmt, ...);
 	
-	
+	bool printLines(uint8_t y, uint8_t step, stringvector lines,  uint8_t firstLine,  uint8_t maxLines);
+		
 	bool setBrightness(uint8_t);  //  0 == off - 7 == max
 	bool setPowerOn(bool setOn);
 	

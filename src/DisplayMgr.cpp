@@ -1938,18 +1938,18 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 
 #if 1
 void DisplayMgr::drawDTCScreen(modeTransition_t transition){
-
+	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	FrameDB*		frameDB 	= can->frameDB();
-
+	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
-
+	
 	static uint32_t lastHash = 0;
 	static uint8_t lastOffset = 0;
-
+	
 	bool needsRedraw = false;
- 
+	
 	if(transition == TRANS_LEAVING) {
 		_lineOffset = 0;
 		return;
@@ -1958,55 +1958,92 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING){
 		lastHash = 0;
 		_lineOffset = 0;
-
+		
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
 		_vfd.write("DTC Codes");
 	}
-  
+	
 	string stored = "";
 	string pending = "";
 	frameDB->valueWithKey("OBD_DTC_STORED", &stored);
 	frameDB->valueWithKey("OBD_DTC_PENDING", &pending);
 	uint32_t hash = XXHash32::hash(stored+pending);
 	
-	  vector<string> vStored = split<string>(stored, " ");
-	  vector<string> vPending = split<string>(pending, " ");
-
+	
+	stringvector vCodes = split<string>(stored, " ");
+	auto totalStored = vCodes.size();
+	
+	stringvector vPending = split<string>(pending, " ");
+	auto totalPending= vCodes.size();
+	auto totalCodes = totalStored + totalPending;
+	vCodes.insert(vCodes.end(), vPending.begin(), vPending.end());
+	
+	
+	
 	// if anything changed, redraw
 	
 	if(hash != lastHash){
 		lastHash = hash;
 		_lineOffset = 0;
-	
+		
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-
+		
 		needsRedraw = true;
 	}
 	
+	
 	if( lastOffset != _lineOffset){
-		if(vStored.size() + vPending.size() > 0){
+		if(totalCodes > 0){
 			lastOffset = _lineOffset;
 			needsRedraw = true;
 		}
 	}
 	if(needsRedraw){
 		needsRedraw = false;
-
-		if(vStored.size() + vPending.size() == 0 ){
+		
+		if(totalCodes == 0 ){
 			
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
 		}
 		else {
-
+			
+			// draw codes with selected code boxed
+			
+			vector<string> lines = {};
+			
+			// pin the cursor to max codes
+			if(_lineOffset > totalCodes)
+				_lineOffset = totalCodes;
+			
+			if(totalPending)
+			{
+				lines.push_back("PENDING: " + to_string(totalPending));
+				
+				string line = " ";
+				int cnt = 0;
+				for(int i = 0 ; i < totalPending; i++){
+					bool isSelected = i == _lineOffset;
+					line+=  (isSelected?"[":" ") + vPending[i] + (isSelected?"] ":"  ");
+					if(++cnt < 4) continue;
+					lines.push_back(line);
+					line = " ";
+					cnt = 0;
+				}
+				if(cnt > 0){
+					lines.push_back(line);
+				}
+			}
+			
 		}
 	}
+ 
 	
 	drawTimeBox();
 }

@@ -2020,13 +2020,13 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	 
 	if(needsRedraw){
 		needsRedraw = false;
- 
+		
 		if(vStored.size() + vPending.size() == 0 ){
 			uint8_t buff2[] = {VFD_CLEAR_AREA,
 				static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 				static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 			_vfd.writePacket(buff2, sizeof(buff2), 1000);
-
+			
 			_vfd.setCursor(10,height/2);
 			_vfd.write("No Codes");
 			
@@ -2034,7 +2034,6 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		else {
 			
 			vector<string> lines = {};
-			size_t total =  0;
 			
 			if(vPending.size()){
 				size_t lineCount = vPending.size();
@@ -2053,7 +2052,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
-				total+= lineCount;
+				
 			}
 			
 			if(vStored.size()){
@@ -2073,18 +2072,17 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				if(cnt > 0){
 					lines.push_back(line);
 				}
-				total+= lineCount;
 			}
 			
 			// PIN OFFSET AT MAX LINES
 			size_t displayedLines = 6;
-			int  maxFirstLine  = (int) (total - displayedLines);
+			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			
 			printf("maxFirstLine = %d _lineOffset = %d\n", maxFirstLine, _lineOffset);
 			
 			if(_lineOffset > maxFirstLine)
 				_lineOffset = maxFirstLine;
-				 
+			
 			_vfd.setFont(VFD::FONT_MINI) ;
 			_vfd.printLines(20, 7, lines, _lineOffset, displayedLines);
 		}

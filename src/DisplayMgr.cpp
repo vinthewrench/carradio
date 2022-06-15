@@ -2288,11 +2288,12 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		string description = "No Description Available";
 		
 		can->descriptionForDTCCode(code, description);
-		
-		stringvector lines = Utils::split(description, 20);
+		std::transform(description.begin(), description.end(),description.begin(), ::toupper);
+ 
+		stringvector lines = Utils::split(description, 30);
 	 
-	 	_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.printLines(30, 10, lines, 1, 4);
+	 	_vfd.setFont(VFD::FONT_MINI) ;
+		_vfd.printLines(30, 7, lines, 1, 4);
 	}
 
 	drawTimeBox();

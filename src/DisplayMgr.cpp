@@ -2225,7 +2225,7 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 			printf("erase codes \n" );
 
 		}
-		
+	}
 	
 	return wasHandled;
 	

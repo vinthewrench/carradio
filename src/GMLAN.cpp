@@ -375,13 +375,13 @@ void GMLAN::processEngineGenStatus4(FrameDB* db, can_frame_t frame, time_t when)
 	float baro		= 	(frame.data[1]  / 2.0);
 	db->updateValue(schemaKeyForValueKey(BAROMETRIC_PRESSURE), to_string(baro),when);
  
-	float coolTemp = 	frame.data[2];
+	float coolTemp = 	frame.data[2] - 40.;
 	db->updateValue(schemaKeyForValueKey(TEMP_COOLANT), to_string(coolTemp),when);
 
-	float airIn 	=	frame.data[3];
+	float airIn 	=	frame.data[3] - 40.;
 	db->updateValue(schemaKeyForValueKey(TEMP_AIR_INTAKE), to_string(airIn),when);
 
-	float airAmb =  	(frame.data[4] *.5);
+	float airAmb =  	(frame.data[4] *.5) - 40.;
 	db->updateValue(schemaKeyForValueKey(TEMP_AIR_AMBIENT), to_string(airAmb),when);
 
 };
@@ -418,7 +418,7 @@ void GMLAN::processTransmissionStatus2(FrameDB* db, can_frame_t frame, time_t wh
 };
 
 void GMLAN::processTransmissionStatus3(FrameDB* db, can_frame_t frame, time_t when){
-	float transTemp =  frame.data[1];
+	float transTemp =  frame.data[1] - 40.;
 	db->updateValue(schemaKeyForValueKey(TEMP_TRANSMISSION), to_string(transTemp),when);
 
 };

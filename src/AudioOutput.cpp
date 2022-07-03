@@ -49,7 +49,7 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 
  
 #define _MIXER_ "hw:1"
-#define _MIXER_NAME_  "PCM"
+#define _MIXER_NAME_  "ICUSBAUDIO7D"
 
  
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
@@ -122,7 +122,7 @@ void AudioOutput::stop(){
 		  snd_pcm_close(_pcm);
 	 }
 		
-		snd_mixer_detach(_mixer, "hw:0");
+		snd_mixer_detach(_mixer, "surround40:0");
 		snd_mixer_close(_mixer);
 
 #endif

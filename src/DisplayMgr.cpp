@@ -90,8 +90,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 	}
 	
 	// flip the ring numbers
-	_rightRing.setOffset(0,true);
-	_leftRing.setOffset(0, true);		// slight offset for volume control of zero
+	_rightRing.setOffset(14,true);
+	_leftRing.setOffset(14, true);		// slight offset for volume control of zero
 	
 	if( _vfd.reset()
 		&& _rightRing.reset()

@@ -48,8 +48,8 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
-#define _MIXER_ "PCM"
-#define _MIXER_NAME_  "default"
+#define _MIXER_ "default"
+#define _MIXER_NAME_ "PCM"
 
  
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){

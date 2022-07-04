@@ -48,7 +48,7 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
-#define _MIXER_ "Speaker"
+#define _MIXER_ "surround40:0"
 #define _MIXER_NAME_  "ICUSBAUDIO7D"
 
  

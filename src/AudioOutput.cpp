@@ -96,8 +96,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
-			snd_ctl_elem_id_set_id(sid, 1)
-		//	snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
+			snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			

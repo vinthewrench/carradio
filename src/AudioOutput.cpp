@@ -48,7 +48,7 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
-#define _MIXER_ "hw:1"
+#define _MIXER_ "Speaker"
 #define _MIXER_NAME_  "ICUSBAUDIO7D"
 
  
@@ -611,7 +611,7 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 bool 	AudioOutput::setVolume(double volIn){
 
 ///  FIX ME
- return  true;
+// return  true;
 	
  
 	volIn = fmax(0, fmin(1, volIn));  // pin volume
@@ -636,7 +636,7 @@ bool 	AudioOutput::setVolume(double volIn){
 double AudioOutput::volume() {
 	
 ///
-	return .40;
+//	return .40;
 	
 	double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
 	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);

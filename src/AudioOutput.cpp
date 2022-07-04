@@ -100,8 +100,8 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			
-			_isSetup = true;
-			success = true;
+			_isSetup = _elem != NULL;;
+			success = _isSetup;
 		}
 		
 	}

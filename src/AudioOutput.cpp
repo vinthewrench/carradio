@@ -101,7 +101,7 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			
 			_isSetup = _elem != NULL;;
-			success = _isSetup;
+			success = true;
 		}
 		
 	}
@@ -609,11 +609,11 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 }
 
 bool 	AudioOutput::setVolume(double volIn){
-
-///  FIX ME
-// return  true;
+ 	
+	if(!_isSetup)
+		return false;
 	
- 
+	
 	volIn = fmax(0, fmin(1, volIn));  // pin volume
 	
 	double left =  volIn;
@@ -635,8 +635,9 @@ bool 	AudioOutput::setVolume(double volIn){
 
 double AudioOutput::volume() {
 	
-///
-//	return .40;
+	if(!_isSetup)
+		return 0;
+
 	
 	double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
 	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);

@@ -93,6 +93,7 @@
 	 ],
 	 "last_write": 1654807694,
 	 "temp-query-delay": 4,
+	 "fan-query-delay": 4,
 	 "tuner_knob_mode": 2,
 	 "tuner_presets": [
 		  {

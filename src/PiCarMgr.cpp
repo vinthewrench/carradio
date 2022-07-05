@@ -894,7 +894,6 @@ void PiCarMgr::PiCanLoop(){
 				}
 			}
 			
-			
 // MARK:   Tuner button moved
 			if(tunerWasMoved) {
 				

@@ -1981,7 +1981,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				sprintf(buffer, "%d%%", fanspeed);
 	 		}
 			
-			_vfd.printPacket("%4s ", buffer);
+			_vfd.printPacket("%-4s ", buffer);
  		}
 	}
 	

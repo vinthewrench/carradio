@@ -150,6 +150,7 @@ bool PiCarMgr::begin(){
 		_db.restorePropertiesFromFile();
  		
 		startCPUInfo();
+		startFan();
  
 		// if we fail, no big deal..
 		startTempSensors();
@@ -262,6 +263,8 @@ void PiCarMgr::stop(){
 #endif
 		stopTempSensors();
 		stopCPUInfo();
+		stopFan();
+
 		_audio.setVolume(0);
 		_audio.setBalance(0);
 		
@@ -1458,7 +1461,7 @@ void PiCarMgr::stopControls(){
 }
 
 
-// MARK: -   I2C Temp Sensors
+// MARK: -   Devices
 
 void PiCarMgr::startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> cb){
 	
@@ -1488,6 +1491,36 @@ void PiCarMgr::stopCPUInfo(){
 	_cpuInfo.stop();
 
 }
+
+void PiCarMgr::startFan( std::function<void(bool didSucceed, std::string error_text)> cb){
+	
+	int  errnum = 0;
+	bool didSucceed = false;
+
+	didSucceed =  _fan.begin(errnum);
+	if(didSucceed){
+		
+		uint16_t queryDelay = 0;
+		if(_db.getUint16Property(PROP_FAN_QUERY_DELAY, &queryDelay)){
+			_fan.setQueryDelay(queryDelay);
+		}
+		
+	}
+	else {
+		ELOG_ERROR(ErrorMgr::FAC_SENSOR, 0, errnum,  "Start ArgononeFan");
+	}
+	
+	
+	if(cb)
+		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
+	 
+}
+
+void PiCarMgr::stopFan(){
+	_fan.stop();
+}
+
+
 
 
 void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string error_text)> cb){

@@ -82,6 +82,7 @@ set(SOURCES
 	src/Wranger2010.cpp
 	src/PiCarCAN.cpp
 	src/DTCcodes.cpp
+	src/ArgononeFan.cpp
 #	src/MMC5983MA.cpp
 	
 #Bosch compass
@@ -127,6 +128,7 @@ target_link_libraries(carradio
  	 Threads::Threads
  	 gpiod
  	 sqlite3
+ 	 rt
  	)
 
 target_include_directories(carradio

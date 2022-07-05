@@ -1859,12 +1859,12 @@ void DisplayMgr::drawTimeBox(){
 }
 
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
- 
+	
 	uint8_t col = 0;
 	uint8_t row = 7;
 	string str;
 	static uint8_t lastrow = row;
-
+	
 	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
 	PiCarDB*				db 		= PiCarMgr::shared()->db();
@@ -1878,14 +1878,14 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	}
 	
 	if(transition == TRANS_ENTERING){
-	 
+		
 		_vfd.clearScreen();
-	
+		
 		// top line
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("Car Radio ");
-	 
+		
 		struct utsname utsBuff;
 		RtlSdr::device_info_t rtlInfo;
 		
@@ -1897,21 +1897,21 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		str = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-
+		
 		uname(&utsBuff);
 		row += 7;  _vfd.setCursor(col+10, row );
 		str =   string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-
+		
 		row += 7;  _vfd.setCursor(col+10, row );
 		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
 			str =   "RADIO: " +  string(rtlInfo.product);
- 		else
+		else
 			str =   string("RADIO: ") + string("NOT CONNECTED");
- 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-
+		
 		row += 7;  _vfd.setCursor(col+10, row );
 		if(gps->isConnected() && radio->getDeviceInfo(rtlInfo) )
 			str =   string("GPS: ") + string("OK");
@@ -1919,17 +1919,18 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			str =   string("GPS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-
+		
 #if USE_COMPASS
 		row += 7;  _vfd.setCursor(col+10, row );
 		string compassVersion;
-	 		if(compass->isConnected() && compass->versionString(compassVersion))
+		if(compass->isConnected() && compass->versionString(compassVersion))
 			str =   string("COMPASS: ") + compassVersion;
 		else
 			str =   string("COMPASS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 #endif
+		
 		lastrow = row;
 	}
 	
@@ -1951,14 +1952,36 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	_vfd.printPacket("%s", str.c_str());
 	
 	float cTemp = 0;
+	int  fanspeed = 0;
 	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 		
 		_vfd.setCursor(col+10, 64 );
+		
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CPU TEMP: ");
+		
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("CPU TEMP:%d\xa0" "C ", (int) round(cTemp));
-		}
+		_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
+		
+		if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
+			
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.printPacket("FAN: ");
+			_vfd.setFont(VFD::FONT_5x7);
 
- 
+			if(fanspeed == 0){
+				_vfd.printPacket("OFF");
+ 			}
+			else
+			{
+				_vfd.printPacket("%d%%", fanspeed);
+ 			}
+ 		}
+		
+		
+	}
+	
+	
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 

@@ -19,6 +19,8 @@ using namespace std;
 // Well known keys
 
 inline static const string VAL_CPU_INFO_TEMP 	= "CPU_TEMP";
+inline static const string VAL_FAN_SPEED			= "FAN_SPEED";
+
 inline static const string VAL_OUTSIDE_TEMP 		= "OUTSIDE_TEMP";
 inline static const string VAL_COMPASS_BEARING 		= "COMPASS_BEARING";
 inline static const string VAL_COMPASS_TEMP 		= "COMPASS_TEMP";
@@ -35,6 +37,8 @@ inline static const string VAL_RADIO_ON			= "radioON";
 inline static const string  PROP_LAST_WRITE_DATE				= "last_write";
 
 inline static const string PROP_CPU_TEMP_QUERY_DELAY 			= "cputemp-query-delay";
+inline static const string PROP_FAN_QUERY_DELAY 				= "fan-query-delay";
+
 inline static const string  PROP_TEMPSENSOR_QUERY_DELAY		= "temp-query-delay";
 inline static const string  PROP_COMPASS_QUERY_DELAY			= "compass-query-delay";
 

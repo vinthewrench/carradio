@@ -48,6 +48,8 @@
 
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
+#include "ArgononeFan.hpp"
+
 #include "TempSensor.hpp"
 #if USE_COMPASS
 #include "CompassSensor.hpp"
@@ -77,9 +79,13 @@ class PiCarMgr {
 	PiCarDB * 	db() 		{return &_db;};
 	GPSmgr * 	gps() 		{return &_gps;};
 	PiCarCAN * 	can() 		{return &_can;};
+	ArgononeFan* fan() 		{return &_fan;};
 
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
+
+	void startFan( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
+	void stopFan();
 
 	void startTempSensors( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopTempSensors();
@@ -91,6 +97,7 @@ class PiCarMgr {
 	void stopCompass();
 	PiCarMgrDevice::device_state_t compassState();
  #endif
+	
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
@@ -197,7 +204,8 @@ private:
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
 //	CompassSensor		_compass;
-
+	ArgononeFan			_fan;
+	
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;
 	struct gpiod_line*  		_gpio_line_int = NULL;

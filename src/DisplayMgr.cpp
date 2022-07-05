@@ -1963,7 +1963,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.printPacket("CPU TEMP: ");
 		
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%d\xa0" "C", (int) round(cTemp));
+		_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
 		
 		if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
 			
@@ -1974,7 +1974,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			char buffer[10];
 
 			if(fanspeed == 0){
-				sprintf(buffer, "%4s", "OFF");
+				sprintf(buffer, "%-4s", "OFF");
 			}
 			else
 			{

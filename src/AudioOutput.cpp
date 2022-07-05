@@ -630,9 +630,14 @@ bool 	AudioOutput::setVolume(double volIn){
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, right ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, left ,0, PLAYBACK);
-
-	_isMuted = false;
-	
+ 
+	if(volIn == 0.0 ){
+		 _isMuted = true;
+	 }
+	 else {
+		 _isMuted = false;
+	 }
+		
 	return true;
 }
 
@@ -683,7 +688,12 @@ bool AudioOutput::setMute(bool shouldMute){
 		}
 	}else {
 		if(_isMuted) {
-			success = setVolume(_savedVolume);
+			
+			if(_savedVolume > 0)
+				success = setVolume(_savedVolume);
+			else
+				success = true;
+			
 			_savedVolume = 0;
 			_isMuted = false;
 		}

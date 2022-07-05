@@ -969,6 +969,7 @@ void PiCarMgr::idle(){
  
 	_tempSensor1.idle();
 	_cpuInfo.idle();
+	_fan.idle();
 	
 #if USE_COMPASS
 	_compass.idle();
@@ -995,6 +996,13 @@ void PiCarMgr::idle(){
 	if(_cpuInfo.isConnected()){
 		// handle input
 		_cpuInfo.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+	
+	if(_fan.isConnected()){
+		// handle input
+		_fan.rcvResponse([=]( map<string,string> results){
 			_db.updateValues(results);
 		});
 	}

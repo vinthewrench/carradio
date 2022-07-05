@@ -41,7 +41,7 @@ bool ArgononeFan::begin(){
  
 bool ArgononeFan::begin(int &error){
  
-  	_shm_fd =  shm_open(SHM_FILE, O_RDWR, 0664);
+	_shm_fd =  shm_open(SHM_FILE, O_RDWR, 0664);
 	if(_shm_fd == -1){
 		ELOG_ERROR(ErrorMgr::FAC_DEVICE, 0, 0,  "FAN Shared memory open failed %s",SHM_FILE);
 		_state = INS_UNKNOWN;
@@ -170,7 +170,6 @@ bool ArgononeFan::getFanSpeed(uint8_t* fanSpeed){
  
 	if(_shm_ptr ){
  		*fanSpeed = _shm_ptr->fanspeed;
-		printf("Fan Status %s Speed %d%%\n", _shm_ptr->fanspeed == 0x00 ? "OFF" : "ON", _shm_ptr->fanspeed);
  		didSucceed = true;
 	}
 	

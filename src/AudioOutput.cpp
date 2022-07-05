@@ -48,8 +48,8 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
-#define _MIXER_ "default"
-#define _MIXER_NAME_ "PCM"
+#define _MIXER_ "ICUSBAUDIO7D"
+#define _MIXER_NAME_ "surround40:0"
 
  
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
@@ -96,8 +96,8 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 			snd_mixer_selem_id_t *sid;
 			snd_mixer_selem_id_alloca(&sid);
 			snd_mixer_selem_id_set_index(sid, 0);
+			
 			snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
-		 
 			_elem = snd_mixer_find_selem(_mixer, sid);
 			
 			_isSetup = _elem != NULL;

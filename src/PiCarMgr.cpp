@@ -50,7 +50,6 @@ const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 //const char* dev_audio  = "hw:CARD=DAC,DEV=0";
 
-const char* dev_audio  = "default";
 constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);
@@ -160,7 +159,7 @@ bool PiCarMgr::begin(){
 		startControls();
 		
 		// setup audio out
-		if(!_audio.begin(dev_audio ,pcmrate, true ))
+		if(!_audio.begin(pcmrate, true ))
 			throw Exception("failed to setup Audio ");
 		
 		// quiet audio first

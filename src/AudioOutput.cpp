@@ -42,17 +42,17 @@ AudioOutput::~AudioOutput(){
 	stop();
 }
 
-bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo){
+bool AudioOutput::begin(unsigned int samplerate,  bool stereo){
 	int error = 0;
-	return begin(path, samplerate,stereo, error);
+	return begin(samplerate,stereo, error);
 }
 
  
-#define _MIXER_ "default"
+#define _MIXER_ 		"default"
 #define _MIXER_NAME_ "Speaker"
-
+#define _PCM_  		"duplicate"
  
-bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
+bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	
 	bool success = false;
 	
@@ -65,9 +65,8 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 	success = true;
 #else
 	int r;
-	
 	 
-	r = snd_pcm_open(&_pcm, path,
+	r = snd_pcm_open(&_pcm, _PCM_,
 								SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 	if( r < 0){
 		error = r;

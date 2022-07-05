@@ -47,7 +47,9 @@ public:
 
 	bool setMute(bool shouldMute);
 	bool isMuted() {return (_isMuted && (_savedVolume > 0));};
- 
+	double mutedVolume() { return _savedVolume; };
+
+	
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 

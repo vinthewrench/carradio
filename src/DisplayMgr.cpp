@@ -260,7 +260,8 @@ void DisplayMgr::runLEDEventMute(){
 	
 	static timeval		lastEvent = {0,0};
 	static bool blinkOn = false;
-	
+	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
+
 	
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
@@ -283,13 +284,18 @@ void DisplayMgr::runLEDEventMute(){
 			blinkOn = !blinkOn;
 			
 			if(blinkOn){
-				for (int i = 0; i < 24; i++)
-					_leftRing.setColor(i, RGB::Green);
+
+			float volume =  audio->mutedVolume();
+			// muted LED scales between 1 and 24
+			int ledvol = volume*23;
+			for (int i = 0 ; i < 24; i++)
+				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+			 
 			}
 			else {
 				_leftRing.clearAll();
 			}
- 		}
+		}
 	}
 	
 }

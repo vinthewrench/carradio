@@ -48,8 +48,8 @@ bool AudioOutput::begin(const char* path,  unsigned int samplerate,  bool stereo
 }
 
  
-#define _MIXER_ "ICUSBAUDIO7D"
-#define _MIXER_NAME_ "surround40:0"
+#define _MIXER_ "default"
+#define _MIXER_NAME_ "Speaker"
 
  
 bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,  int &error){
@@ -65,7 +65,8 @@ bool AudioOutput::begin(const char* path, unsigned int samplerate,  bool stereo,
 	success = true;
 #else
 	int r;
- 
+	
+	 
 	r = snd_pcm_open(&_pcm, path,
 								SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 	if( r < 0){
@@ -609,7 +610,7 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 }
 
 bool 	AudioOutput::setVolume(double volIn){
- 	
+	
 	if(!_isSetup)
 		return false;
  
@@ -625,8 +626,12 @@ bool 	AudioOutput::setVolume(double volIn){
 	}else if( _balance < 0) {
 		right = adjusted;
 	}
+	
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_REAR_RIGHT, right ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_REAR_LEFT, left ,0, PLAYBACK);
+
 	_isMuted = false;
 	
 	return true;
@@ -637,10 +642,16 @@ double AudioOutput::volume() {
 	if(!_isSetup)
 		return 0;
 	
-	double left = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
-	double right = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
+	double left_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
+	double right_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
 	
-	return fmax(left, right);
+	double left_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_REAR_LEFT, PLAYBACK);
+	double right_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_REAR_RIGHT,PLAYBACK);
+	
+	double front =  fmax(left_front, right_front);
+	double rear =  fmax(left_rear, right_rear);
+
+	return fmax(front, rear);
  }
 
 

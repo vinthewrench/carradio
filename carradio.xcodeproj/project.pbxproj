@@ -10,9 +10,6 @@
 		2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EE283EAEB2003D074C /* Wranger2010.cpp */; };
 		2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EF283EAEB2003D074C /* OBD2.cpp */; };
 		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
-		2E0EA484284196AE0012E406 /* CompassSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA482284196A90012E406 /* CompassSensor.cpp */; };
-		2E0EA48E2843D2C10012E406 /* BNO055_Compass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA48C2843D2C10012E406 /* BNO055_Compass.cpp */; };
-		2E0EA48F2843D65B0012E406 /* bno055.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E0EA4882843174F0012E406 /* bno055.c */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
@@ -456,7 +453,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E0EA48E2843D2C10012E406 /* BNO055_Compass.cpp in Sources */,
 				2E62A86A280738BA00F5066B /* VFD.cpp in Sources */,
 				2E8210B62835A551003D074C /* TimeStamp.cpp in Sources */,
 				2E8210CB2835A593003D074C /* TMP117.cpp in Sources */,
@@ -475,12 +471,10 @@
 				2E8210CA2835A593003D074C /* CPUInfo.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,
 				2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */,
-				2E0EA484284196AE0012E406 /* CompassSensor.cpp in Sources */,
 				2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */,
 				2E9F9EA72828655900E12F5D /* PiCarMgr.cpp in Sources */,
 				2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */,
 				2E8210AF2835A4AC003D074C /* AudioOutput.cpp in Sources */,
-				2E0EA48F2843D65B0012E406 /* bno055.c in Sources */,
 				2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */,
 				2E8210C82835A593003D074C /* I2C.cpp in Sources */,
 				2E0EA47A283EC57A0012E406 /* Wranger2010.cpp in Sources */,

@@ -153,7 +153,9 @@ bool PiCarMgr::begin(){
  
 		// if we fail, no big deal..
 		startTempSensors();
-	//	startCompass();
+#if USE_COMPASS
+		startCompass();
+#endif
 		startControls();
 		
 		// setup audio out
@@ -255,7 +257,9 @@ void PiCarMgr::stop(){
 		_display.stop();
 
 		stopControls();
+#if USE_COMPASS
 		stopCompass();
+#endif
 		stopTempSensors();
 		stopCPUInfo();
 		_audio.setVolume(0);
@@ -960,10 +964,11 @@ void PiCarMgr::PiCanLoop(){
 
 void PiCarMgr::idle(){
  
-	_compass.idle();
 	_tempSensor1.idle();
 	_cpuInfo.idle();
 	
+#if USE_COMPASS
+	_compass.idle();
 	if(_compass.isConnected()){
 		// handle input
 		_compass.rcvResponse([=]( map<string,string> results){
@@ -975,7 +980,8 @@ void PiCarMgr::idle(){
 			_db.updateValues(results);
 		});
 	}
-
+#endif
+	
 	if(_tempSensor1.isConnected()){
 		// handle input
 		_tempSensor1.rcvResponse([=]( map<string,string> results){
@@ -1526,6 +1532,7 @@ PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 }
 
 // MARK: -   I2C Compass
+#if USE_COMPASS
 
 void PiCarMgr::startCompass ( std::function<void(bool didSucceed, std::string error_text)> cb){
 		
@@ -1561,3 +1568,6 @@ void PiCarMgr::stopCompass(){
 PiCarMgrDevice::device_state_t PiCarMgr::compassState(){
 	return _compass.getDeviceState();
 }
+
+#endif
+

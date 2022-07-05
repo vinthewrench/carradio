@@ -85,9 +85,9 @@ set(SOURCES
 #	src/MMC5983MA.cpp
 	
 #Bosch compass
-	src/bno055.c
-	src/BNO055_Compass.cpp
-	src/CompassSensor.cpp
+#	src/bno055.c
+#	src/BNO055_Compass.cpp
+#	src/CompassSensor.cpp
 )
 
  

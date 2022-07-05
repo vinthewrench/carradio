@@ -1867,10 +1867,11 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
-	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
 	PiCarDB*				db 		= PiCarMgr::shared()->db();
 	PiCarCAN*			can 		= PiCarMgr::shared()->can();
-
+#if USE_COMPASS
+	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
+#endif
 	
 	if(transition == TRANS_LEAVING) {
 		return;
@@ -1919,6 +1920,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
 
+#if USE_COMPASS
 		row += 7;  _vfd.setCursor(col+10, row );
 		string compassVersion;
 	 		if(compass->isConnected() && compass->versionString(compassVersion))
@@ -1927,7 +1929,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			str =   string("COMPASS: ") + string("NOT CONNECTED");
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-		
+#endif
 		lastrow = row;
 	}
 	

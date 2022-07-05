@@ -49,8 +49,9 @@
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "TempSensor.hpp"
+#if USE_COMPASS
 #include "CompassSensor.hpp"
-
+#endif
 #include "json.hpp"
 
 using namespace std;
@@ -76,7 +77,6 @@ class PiCarMgr {
 	PiCarDB * 	db() 		{return &_db;};
 	GPSmgr * 	gps() 		{return &_gps;};
 	PiCarCAN * 	can() 		{return &_can;};
-	CompassSensor* compass() {return &_compass;};
 
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
@@ -85,11 +85,12 @@ class PiCarMgr {
 	void stopTempSensors();
 	PiCarMgrDevice::device_state_t tempSensor1State();
 
+	
+#if USE_COMPASS
 	void startCompass( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCompass();
 	PiCarMgrDevice::device_state_t compassState();
-
- 
+ #endif
  	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
@@ -195,7 +196,7 @@ private:
 	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;
-	CompassSensor		_compass;
+//	CompassSensor		_compass;
 
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

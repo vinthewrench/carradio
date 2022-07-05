@@ -628,8 +628,8 @@ bool 	AudioOutput::setVolume(double volIn){
 	
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_REAR_RIGHT, right ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_REAR_LEFT, left ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, right ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, left ,0, PLAYBACK);
 
 	_isMuted = false;
 	
@@ -644,8 +644,8 @@ double AudioOutput::volume() {
 	double left_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
 	double right_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
 	
-	double left_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_REAR_LEFT, PLAYBACK);
-	double right_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_REAR_RIGHT,PLAYBACK);
+	double left_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, PLAYBACK);
+	double right_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT,PLAYBACK);
 	
 	double front =  fmax(left_front, right_front);
 	double rear =  fmax(left_rear, right_rear);

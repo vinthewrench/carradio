@@ -156,7 +156,7 @@ void ArgononeFan::idle(){
 			uint8_t fanSpeed;
 			
 			if(getFanSpeed(&fanSpeed)){
-				_resultMap[VAL_FAN_SPEED] = fanSpeed;
+				_resultMap[VAL_FAN_SPEED] = to_string(fanSpeed);
 				_state = INS_RESPONSE;
 				gettimeofday(&_lastQueryTime, NULL);
 				

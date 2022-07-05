@@ -1953,6 +1953,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 	float cTemp = 0;
 	int  fanspeed = 0;
+	
+	
 	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 		
 		_vfd.setCursor(col+10, 64 );
@@ -1961,7 +1963,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.printPacket("CPU TEMP: ");
 		
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
+		_vfd.printPacket("%d\xa0" "C", (int) round(cTemp));
 		
 		if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
 			
@@ -1969,16 +1971,18 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			_vfd.printPacket("FAN: ");
 			_vfd.setFont(VFD::FONT_5x7);
 
+			char buffer[10];
+
 			if(fanspeed == 0){
-				_vfd.printPacket("OFF");
- 			}
+				sprintf(buffer, "%4s", "OFF");
+			}
 			else
 			{
-				_vfd.printPacket("%d%%", fanspeed);
- 			}
+				sprintf(buffer, "%d%%", fanspeed);
+	 		}
+			
+			_vfd.printPacket("%4s ", buffer);
  		}
-		
-		
 	}
 	
 	

@@ -25,7 +25,7 @@
 #include <sys/reboot.h>
 
 #endif
- 
+
 
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
@@ -39,13 +39,13 @@ const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 9";
 
 
 const char* path_display  = "/dev/ttyUSB0";
- 
+
 #if USE_GPIO_INTERRUPT
 const char* 		gpioPath 				= "/dev/gpiochip0";
 constexpr uint 	gpio_int_line_number	= 27;
 const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
- 
+
 
 //const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
 //const char* dev_audio  = "hw:CARD=DAC,DEV=0";
@@ -55,7 +55,7 @@ constexpr int  pcmrate = 48000;
 typedef void * (*THREADFUNCPTR)(void *);
 
 PiCarMgr *PiCarMgr::sharedInstance = NULL;
- 
+
 
 
 
@@ -66,15 +66,15 @@ static void CRASH_Handler()
 	char **stack_syms(backtrace_symbols( trace_elems, trace_elem_count ));
 	for ( int i = 0 ; i < trace_elem_count ; ++i )
 	{
-		 std::cout << stack_syms[i] << "\r\n";
+		std::cout << stack_syms[i] << "\r\n";
 	}
 	free( stack_syms );
-
+	
 	exit(1);
 }
 
 static void sigHandler (int signum) {
- 
+	
 	printf("%s sigHandler %d\n", TimeStamp(false).logFileString().c_str(), signum);
 	
 	// ignore hangup
@@ -96,17 +96,17 @@ PiCarMgr * PiCarMgr::shared() {
 
 
 PiCarMgr::PiCarMgr(){
- 	signal(SIGKILL, sigHandler);
+	signal(SIGKILL, sigHandler);
 	signal(SIGHUP, sigHandler);
 	signal(SIGQUIT, sigHandler);
-
+	
 	signal(SIGTERM, sigHandler);
 	signal(SIGINT, sigHandler);
- 
+	
 	std::set_terminate( CRASH_Handler );
- 
+	
 	_main_menu_map = {
-		{MENU_RADIO,	"Radio Band"},
+		{MENU_SELECT_BAND,	"Radio Band"},
 		{MENU_GPS,		"GPS"},
 		{MENU_CANBUS,	"Engine"},
 		{MENU_DTC,		"Diagnostics"},
@@ -114,12 +114,12 @@ PiCarMgr::PiCarMgr(){
 		{MENU_INFO,		"Info"},
 		{MENU_SETTINGS, "Settings"},
 	};
-
+	
 	_isRunning = true;
-
+	
 	pthread_create(&_piCanLoopTID, NULL,
-											 (THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
-
+						(THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
+	
 	_stations.clear();
 	_preset_stations.clear();
 	
@@ -128,13 +128,13 @@ PiCarMgr::PiCarMgr(){
 PiCarMgr::~PiCarMgr(){
 	stop();
 	_isRunning = false;
- 	pthread_join(_piCanLoopTID, NULL);
+	pthread_join(_piCanLoopTID, NULL);
 }
 
- 
+
 bool PiCarMgr::begin(){
 	_isSetup = false;
-		
+	
 	try {
 		int error = 0;
 		
@@ -144,13 +144,13 @@ bool PiCarMgr::begin(){
 		
 		// clear DB
 		_db.clearValues();
-
+		
 		// read in any properties
 		_db.restorePropertiesFromFile();
- 		
+		
 		startCPUInfo();
 		startFan();
- 
+		
 		// if we fail, no big deal..
 		startTempSensors();
 #if USE_COMPASS
@@ -166,32 +166,32 @@ bool PiCarMgr::begin(){
 		if(!_audio.setVolume(0)
 			|| ! _audio.setBalance(0))
 			throw Exception("failed to setup Audio levels ");
-	
+		
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
 		if(devices.size() > 0) {
-	 		if(!_radio.begin(devices[0].index))
-			 throw Exception("failed to setup Radio ");
- 		}
-
+			if(!_radio.begin(devices[0].index))
+				throw Exception("failed to setup Radio ");
+		}
+		
 		restoreStationsFromFile();
 		restoreRadioSettings();
-
+		
 #if USE_SERIAL_GPS
 		
 #if defined(__APPLE__)
-const char* path_gps  = "/dev/cu.usbmodem14101";
+		const char* path_gps  = "/dev/cu.usbmodem14101";
 #else
-const char* path_gps  = "/dev/ttyACM0";
+		const char* path_gps  = "/dev/ttyACM0";
 #endif
-
+		
 		if(!_gps.begin(path_gps,B9600, error))
 			throw Exception("failed to setup GPS ", error);
 #else
 		constexpr uint8_t  GPSAddress = 0x42;
 		if(!_gps.begin(GPSAddress, error))
 			throw Exception("failed to setup GPS ", error);
-	
+		
 #endif
 		// setup display device
 		if(!_display.begin(path_display,B9600))
@@ -200,16 +200,16 @@ const char* path_gps  = "/dev/ttyACM0";
 		// set initial brightness?
 		if(!_display.setBrightness(7))
 			throw Exception("failed to set brightness ");
-  
+		
 		// SETUP CANBUS
-//		if(!_can.begin(error))
-//			throw Exception("failed to setup CANBUS ", error);
+		//		if(!_can.begin(error))
+		//			throw Exception("failed to setup CANBUS ", error);
 		_can.begin();
-	 
+		
 		_display.showStartup();  // show startup
-	
+		
 		_isSetup = true;
-
+		
 		bool firstRunToday = true;
 		time_t now = time(NULL);
 		time_t lastRun = 0;
@@ -222,40 +222,40 @@ const char* path_gps  = "/dev/ttyACM0";
 		
 		if(firstRunToday){
 			printf("say hello\n");
-
-//	//		_audio.playSound("BTL.wav", [=](bool success){
-//				
-//				printf("playSound() = %d\n", success);
-//			});
 			
-			}
- 
+			//	//		_audio.playSound("BTL.wav", [=](bool success){
+			//
+			//				printf("playSound() = %d\n", success);
+			//			});
+			
+		}
+		
 	}
 	catch ( const Exception& e)  {
 		
 		// display error on fail..
-
+		
 		printf("\tError %d %s\n\n", e.getErrorNumber(), e.what());
 	}
 	catch (std::invalid_argument& e)
 	{
 		// display error on fail..
-
+		
 		printf("EXCEPTION: %s ",e.what() );
 	}
 	
 	
-		 return _isSetup;
+	return _isSetup;
 }
 
 void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
 		_isSetup = false;
- 
+		
 		_gps.stop();
 		_display.stop();
-
+		
 		stopControls();
 #if USE_COMPASS
 		stopCompass();
@@ -263,7 +263,7 @@ void PiCarMgr::stop(){
 		stopTempSensors();
 		stopCPUInfo();
 		stopFan();
-
+		
 		_audio.setVolume(0);
 		_audio.setBalance(0);
 		
@@ -276,33 +276,33 @@ void PiCarMgr::stop(){
 void PiCarMgr::doShutdown(){
 	
 #if defined(__APPLE__)
-//	system("/bin/sh shutdown -P now");
+	//	system("/bin/sh shutdown -P now");
 #else
 	stop();
 	sync();
 	sleep(1);
-  	reboot(RB_POWER_OFF);
+	reboot(RB_POWER_OFF);
 #endif
-
+	
 }
 
 
 // MARK: -  convert to/from JSON
- 
- 
+
+
 nlohmann::json PiCarMgr::GetAudioJSON(){
 	json j;
 	
 	double  vol = _audio.volume();
 	double  bal = _audio.balance();
-
+	
 	// limit the precisopn on these
 	bal = std::floor((bal * 100) + .5) / 100;
 	vol = std::floor((vol * 100) + .5) / 100;
 	
 	j[PROP_LAST_AUDIO_SETTING_VOL] =  vol;
 	j[PROP_LAST_AUDIO_SETTING_BAL] =  bal;
-
+	
 	return j;
 }
 
@@ -320,19 +320,19 @@ bool PiCarMgr::SetAudio(nlohmann::json j){
 		// limit the precisopn on these
 		bal = std::floor((bal * 100) + .5) / 100;
 		vol = std::floor((vol * 100) + .5) / 100;
-
+		
 		_audio.setVolume(vol);
 		_audio.setBalance(bal);
-
+		
 		success= true;
 	}
-
+	
 	return success;
 }
 
 nlohmann::json PiCarMgr::GetRadioModesJSON(){
 	json j;
- 
+	
 	for (auto& entry : _lastFreqForMode) {
 		json j1;
 		j1[PROP_LAST_RADIO_MODES_MODE] = RadioMgr::modeString(entry.first);
@@ -345,7 +345,7 @@ nlohmann::json PiCarMgr::GetRadioModesJSON(){
 
 bool PiCarMgr::updateRadioPrefs() {
 	bool didUpdate = false;
-
+	
 	if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
 		&&  _radio.frequency() != 0) {
 		
@@ -353,14 +353,14 @@ bool PiCarMgr::updateRadioPrefs() {
 		_lastFreqForMode[mode] = _radio.frequency();
 		_lastRadioMode = mode;
 		didUpdate = true;
-		 
+		
 	}
-
+	
 	return didUpdate;
 }
 
 void PiCarMgr::saveRadioSettings(){
-
+	
 	updateRadioPrefs();
 	
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
@@ -411,7 +411,7 @@ void PiCarMgr::restoreRadioSettings(){
 		
 		vector < pair<RadioMgr::radio_mode_t,uint32_t>>  presets;
 		presets.clear();
-	 
+		
 		for(auto item : j ){
 			if(item.is_object()
 				&&  item.contains(PROP_PRESET_MODE)
@@ -421,37 +421,37 @@ void PiCarMgr::restoreRadioSettings(){
 				
 				auto mode = RadioMgr::stringToMode( item[PROP_PRESET_MODE]);
 				auto freq = item[PROP_PRESET_FREQ] ;
-			 
+				
 				presets.push_back(make_pair(mode, freq));
 			}
 		}
 		
-			//sort them in order of frequency
+		//sort them in order of frequency
 		if( presets.size() >0 ){
 			sort(presets.begin(), presets.end(),
 				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
 						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
- 		}
+		}
 		
 		_preset_stations = presets;
 	}
 	
 	_tuner_mode = TUNE_ALL;
- 	uint16_t val = 0;
+	uint16_t val = 0;
 	if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
 		_tuner_mode = static_cast<tuner_knob_mode_t>(val);
 	}
- 
+	
 	string str;
 	if(_db.getProperty(PROP_LAST_RADIO_MODE,&str)) {
 		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
 }
- 
+
 nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 	json j;
- 
+	
 	
 	
 	for (auto& entry : _preset_stations) {
@@ -465,39 +465,39 @@ nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 }
 
 bool PiCarMgr::setPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
- 
+	
 	if(!isPresetChannel(mode,freq)){
 		
 		auto presets = _preset_stations;
 		
 		presets.push_back(make_pair(mode, freq));
- 
+		
 		// re-sort them
 		sort(presets.begin(), presets.end(),
-				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
-						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
+			  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
+					const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
 		
 		_preset_stations = presets;
- 		return true;
+		return true;
 	}
 	
 	return false;
 }
 
 bool PiCarMgr::clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
- 
+	
 	for(auto it = _preset_stations.begin(); it != _preset_stations.end(); it++){
 		if(it->first == mode && it->second == freq){
 			_preset_stations.erase(it);
 			return true;
 		}
 	}
-	 
+	
 	return false;
 }
- 
+
 bool PiCarMgr::isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
- 
+	
 	for(auto e: _preset_stations){
 		if(e.first == mode && e.second == freq){
 			return true;
@@ -523,19 +523,19 @@ void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32
 
 bool PiCarMgr::getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut){
 	bool success = false;
-
+	
 	if( _lastFreqForMode.count(mode)){
-	  freqOut =  _lastFreqForMode[mode];
+		freqOut =  _lastFreqForMode[mode];
 		success = true;
-  }
-  
+	}
+	
 	return success;
 }
-	
+
 
 
 // MARK: - stations File
- 
+
 
 bool PiCarMgr::restoreStationsFromFile(string filePath){
 	bool success = false;
@@ -550,7 +550,7 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 		string line;
 		
 		_stations.clear();
-	
+		
 		// open the file
 		ifs.open(filePath, ios::in);
 		if(!ifs.is_open()) return false;
@@ -567,7 +567,7 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 			
 			RadioMgr::radio_mode_t mode =  RadioMgr::stringToMode(v[0]);
 			uint32_t freq = atoi(v[1].c_str());
-	 
+			
 			string title = trimCNTRL(v[2]);
 			string location = trimCNTRL((v.size() >2) ?v[2]: string());
 			
@@ -598,7 +598,7 @@ bool PiCarMgr::restoreStationsFromFile(string filePath){
 bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
 										uint32_t frequency,
 										station_info_t &info){
- 
+	
 	if(_stations.count(band)){
 		for(const auto& e : _stations[band]){
 			if(e.frequency == frequency){
@@ -612,8 +612,8 @@ bool PiCarMgr::getStationInfo(RadioMgr::radio_mode_t band,
 }
 
 bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
-								  uint32_t frequency,
-								  bool tunerMovedCW,
+										  uint32_t frequency,
+										  bool tunerMovedCW,
 										  station_info_t &info){
 	
 	if(_stations.count(band) == 0 ) {
@@ -652,8 +652,8 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 
 
 bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
-								uint32_t frequency,
-								bool tunerMovedCW,
+											uint32_t frequency,
+											bool tunerMovedCW,
 											station_info_t &info){
 	
 	if(_preset_stations.size() == 0 ) {
@@ -697,7 +697,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 }
 
 // MARK: -  PiCarMgr main loop  thread
- 
+
 void PiCarMgr::PiCanLoop(){
 	
 	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
@@ -798,7 +798,7 @@ void PiCarMgr::PiCanLoop(){
 			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
 			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
 			
-// MARK:   Volume button Clicked
+			// MARK:   Volume button Clicked
 			if(volWasDoubleClicked){
 				// toggle mute
 				
@@ -824,7 +824,7 @@ void PiCarMgr::PiCanLoop(){
 						
 						// always unmute after
 						_audio.setMute(false);
-	
+						
 						// stop any Mute blinking
 						_display.LEDeventStop();
 						
@@ -843,23 +843,23 @@ void PiCarMgr::PiCanLoop(){
 						_display.LEDeventVol();
 						_display.showRadioChange();
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
- 					}
+					}
 				}
 				else {
 					auto devices = RtlSdr::get_devices();
 					if(devices.size() == 0){
 						printf("no Radio found\n");
 						_display.showDevStatus();  // show startup
-					
+						
 					}
-//					if(devices.size() > 0) {
-//						if(!_radio.begin(devices[0].index))
-
+					//					if(devices.size() > 0) {
+					//						if(!_radio.begin(devices[0].index))
+					
 				}
-
+				
 			}
 			
-// MARK:   Volume button moved
+			// MARK:   Volume button moved
 			if(volWasMoved && _radio.isOn() ){
 				
 				//quit mute
@@ -887,14 +887,14 @@ void PiCarMgr::PiCanLoop(){
 				}
 				
 				_display.LEDeventVol();
-	 
+				
 				// if the radio was not displayed, set it there now
 				if((_display.active_mode() != DisplayMgr::MODE_RADIO)){
 					_display.showRadioChange();
 				}
 			}
 			
-// MARK:   Tuner button moved
+			// MARK:   Tuner button moved
 			if(tunerWasMoved) {
 				
 				if(_display.usesSelectorKnob()
@@ -927,20 +927,20 @@ void PiCarMgr::PiCanLoop(){
 								nextFreq = info.frequency;
 								mode = info.band;
 							}
- 							break;
+							break;
 					}
 					
 					_radio.setFrequencyandMode(mode, nextFreq);
 				}
 			}
 			
-				
-// MARK:   Tuner button clicked
+			
+			// MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
 				tunerDoubleClicked();
 				continue;
- 			}
-
+			}
+			
 			if(tunerWasClicked){
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
@@ -952,19 +952,19 @@ void PiCarMgr::PiCanLoop(){
 			}
 		}
 	}
- 	catch ( const Exception& e)  {
+	catch ( const Exception& e)  {
 		printf("\tError %d %s\n\n", e.getErrorNumber(), e.what());
 		
 		if(e.getErrorNumber()	 == ENXIO){
-	
+			
 		}
 	}
 	
 }
-	// occasionally called durring idle time
+// occasionally called durring idle time
 
 void PiCarMgr::idle(){
- 
+	
 	_tempSensor1.idle();
 	_cpuInfo.idle();
 	_fan.idle();
@@ -975,10 +975,10 @@ void PiCarMgr::idle(){
 		// handle input
 		_compass.rcvResponse([=]( map<string,string> results){
 			
-//			for (const auto& [key, value] : results) {
-//				printf("Compass %s = %s\n", key.c_str(), value.c_str());
-//			}
- 
+			//			for (const auto& [key, value] : results) {
+			//				printf("Compass %s = %s\n", key.c_str(), value.c_str());
+			//			}
+			
 			_db.updateValues(results);
 		});
 	}
@@ -1010,15 +1010,15 @@ void PiCarMgr::idle(){
 	if(_db.propertiesChanged()){
 		_db.savePropertiesToFile();
 	}
-
+	
 }
 
 void* PiCarMgr::PiCanLoopThread(void *context){
 	PiCarMgr* d = (PiCarMgr*)context;
-
+	
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &PiCarMgr::PiCanLoopThreadCleanup ,context);
- 
+	
 	d->PiCanLoop();
 	
 	pthread_exit(NULL);
@@ -1027,11 +1027,11 @@ void* PiCarMgr::PiCanLoopThread(void *context){
 	return((void *)1);
 }
 
- 
+
 void PiCarMgr::PiCanLoopThreadCleanup(void *context){
 	//PiCarMgr* d = (PiCarMgr*)context;
- 
-//	printf("cleanup sdr\n");
+	
+	//	printf("cleanup sdr\n");
 }
 
 
@@ -1052,15 +1052,15 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_TIME:
 			mode = MENU_TIME;
 			break;
-
+			
 		case DisplayMgr::MODE_GPS:
 			mode = MENU_GPS;
 			break;
-
+			
 		case DisplayMgr::MODE_INFO:
 			mode = MENU_INFO;
 			break;
- 
+			
 		case DisplayMgr::MODE_SETTINGS:
 			mode = MENU_SETTINGS;
 			break;
@@ -1068,7 +1068,7 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_CANBUS:
 			mode = MENU_CANBUS;
 			break;
-
+			
 		case DisplayMgr::MODE_DTC:
 			mode = MENU_DTC;
 			break;
@@ -1076,20 +1076,20 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		default:
 			break;
 	}
-	 
+	
 	return mode;
 }
 
 
 int PiCarMgr::main_menu_map_offset(PiCarMgr::menu_mode_t mode ){
 	int selectedItem = -1;
-
+	
 	for(int i = 0; i < _main_menu_map.size(); i++){
 		auto e = _main_menu_map[i];
-	 	if(selectedItem == -1)
+		if(selectedItem == -1)
 			if(e.first == mode) selectedItem = i;
 	}
-
+	
 	return selectedItem;
 }
 
@@ -1102,7 +1102,7 @@ void PiCarMgr::displayMenu(){
 	int selectedItem = -1;
 	menu_mode_t mode = currentMode();
 	_lastMenuMode = mode;
- 
+	
 	// if the radio is on.. keep that mode
 	if( mode == MENU_RADIO){
 		// keep that mode.
@@ -1136,7 +1136,7 @@ void PiCarMgr::displayMenu(){
 		
 		if(didSucceed) {
 			menu_mode_t selectedMode = _main_menu_map[newSelectedItem].first;
-				
+			
 			if(selectedMode != MENU_UNKNOWN)
 				_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(newSelectedItem));
 			
@@ -1146,9 +1146,14 @@ void PiCarMgr::displayMenu(){
 }
 
 void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
+	
 	switch (menuMode) {
 			
 		case MENU_RADIO:
+			_display.showRadioChange();
+			break;
+			
+		case MENU_SELECT_BAND:
 			displayRadioMenu();
 			break;
 			
@@ -1171,11 +1176,11 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 		case MENU_INFO:
 			_display.showInfo();
 			break;
-	
+			
 		case MENU_DTC:
 			_display.showDTC();
 			break;
-
+			
 		case 	MENU_UNKNOWN:
 		default:
 			// do nothing
@@ -1251,6 +1256,7 @@ void PiCarMgr::displayRadioMenu(){
 					break;
 			}
 			
+			
 			// if it was a radio selection, turn it one and select
 			if(radioMode != RadioMgr::MODE_UNKNOWN){
 				uint32_t freq;
@@ -1263,17 +1269,17 @@ void PiCarMgr::displayRadioMenu(){
 				_radio.setON(true);
 				saveRadioSettings();
 				_db.savePropertiesToFile();
-			}
-			else if(_lastMenuMode != MENU_UNKNOWN){
-				// restore old mode that was set in main menu
-				setDisplayMode(MENU_RADIO);
-			}
-			else	// fallback
-			{
-				_display.showTime();
+				return;
 			}
 		}
-		
+		if(_lastMenuMode != MENU_UNKNOWN){
+			// restore old mode thast was set in main menu
+			setDisplayMode(_lastMenuMode);
+		}
+		else	// fallback
+		{
+			_display.showTime();
+		}
 	});
 };
 
@@ -1282,19 +1288,19 @@ void PiCarMgr::displaySettingsMenu(){
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {
-			"Audio Balance",
-			"Dim Screen",
-			"Exit",
-			"-",
-			"Shutdown"
-	 	};
- 
+		"Audio Balance",
+		"Dim Screen",
+		"Exit",
+		"-",
+		"Shutdown"
+	};
+	
 	_display.showMenuScreen(menu_items,
 									2,
 									"Settings",
 									timeout_secs,
 									[=](bool didSucceed, uint newSelectedItem ){
-	
+		
 		if(didSucceed) {
 			
 			switch (newSelectedItem) {
@@ -1323,12 +1329,12 @@ void PiCarMgr::displaySettingsMenu(){
 					}
 					break;
 			}
-	 
+			
 		}
 	});
-									
+	
 }
- 
+
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();
 	
@@ -1344,7 +1350,7 @@ void PiCarMgr::tunerDoubleClicked(){
 		vector<string> menu_items = {
 			(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
 			(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
-		_preset_stations.size() == 0?"No Presets"
+			_preset_stations.size() == 0?"No Presets"
 			: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
 			"-",
 			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
@@ -1361,13 +1367,13 @@ void PiCarMgr::tunerDoubleClicked(){
 			if(didSucceed) {
 				
 				switch (newSelectedItem) {
-	 
+						
 					case 0: // Tune All
 						_tuner_mode = TUNE_ALL;
 						saveRadioSettings();
 						_db.savePropertiesToFile();
 						break;
-					
+						
 					case 1: // Tune known
 						_tuner_mode = TUNE_KNOWN;
 						saveRadioSettings();
@@ -1380,7 +1386,7 @@ void PiCarMgr::tunerDoubleClicked(){
 							_db.savePropertiesToFile();
 						}
 						break;
-
+						
 					case 4: // set/clear
 					{
 						RadioMgr::radio_mode_t  mode  = _radio.radioMode();
@@ -1400,7 +1406,7 @@ void PiCarMgr::tunerDoubleClicked(){
 						break;
 						
 					case 6: // clear all presets
-									// this needs to also take you off of presets mode
+						// this needs to also take you off of presets mode
 					default:
 						break;
 				}
@@ -1435,14 +1441,14 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 		ELOG_MESSAGE("Error gpiod_chip_get_line %d: %s \n",  gpio_int_line_number, strerror(errno));
 		goto done;
 	}
-
+	
 	// setup the l;ine for input and select pull up resistor
 	if(  gpiod_line_request_falling_edge_events_flags(_gpio_line_int,
 																	  GPIOD_CONSUMER,
 																	  GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP) != 0){
 		ELOG_MESSAGE("Error gpiod_line_request_falling_edge_events %d: %s \n",  gpio_int_line_number, strerror(errno));
 	}
-
+	
 	
 #endif
 	
@@ -1462,8 +1468,8 @@ void PiCarMgr::stopControls(){
 	
 	if(_gpio_chip)
 		gpiod_chip_close(_gpio_chip);
- #endif
-
+#endif
+	
 }
 
 
@@ -1473,7 +1479,7 @@ void PiCarMgr::startCPUInfo( std::function<void(bool didSucceed, std::string err
 	
 	int  errnum = 0;
 	bool didSucceed = false;
-
+	
 	didSucceed =  _cpuInfo.begin(errnum);
 	if(didSucceed){
 		
@@ -1490,19 +1496,19 @@ void PiCarMgr::startCPUInfo( std::function<void(bool didSucceed, std::string err
 	
 	if(cb)
 		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
-	 
+	
 }
 
 void PiCarMgr::stopCPUInfo(){
 	_cpuInfo.stop();
-
+	
 }
 
 void PiCarMgr::startFan( std::function<void(bool didSucceed, std::string error_text)> cb){
 	
 	int  errnum = 0;
 	bool didSucceed = false;
-
+	
 	didSucceed =  _fan.begin(errnum);
 	if(didSucceed){
 		
@@ -1519,7 +1525,7 @@ void PiCarMgr::startFan( std::function<void(bool didSucceed, std::string error_t
 	
 	if(cb)
 		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
-	 
+	
 }
 
 void PiCarMgr::stopFan(){
@@ -1533,10 +1539,10 @@ void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string
 	
 	int  errnum = 0;
 	bool didSucceed = false;
- 
- 
+	
+	
 	uint8_t deviceAddress = 0x4A;
- 
+	
 	didSucceed =  _tempSensor1.begin(deviceAddress, VAL_OUTSIDE_TEMP, errnum);
 	if(didSucceed){
 		
@@ -1545,12 +1551,12 @@ void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string
 			_tempSensor1.setQueryDelay(queryDelay);
 		}
 		
-//		_db.addSchema(resultKey,
-//						  CoopMgrDB::DEGREES_C, 2,
-//						  "Coop Temperature",
-//						  CoopMgrDB::TR_TRACK);
+		//		_db.addSchema(resultKey,
+		//						  CoopMgrDB::DEGREES_C, 2,
+		//						  "Coop Temperature",
+		//						  CoopMgrDB::TR_TRACK);
 		
-//		LOGT_DEBUG("Start TempSensor 1 - OK");
+		//		LOGT_DEBUG("Start TempSensor 1 - OK");
 	}
 	else {
 		ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start TempSensor 1 ");
@@ -1574,28 +1580,28 @@ PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 #if USE_COMPASS
 
 void PiCarMgr::startCompass ( std::function<void(bool didSucceed, std::string error_text)> cb){
+	
+	int  errnum = 0;
+	bool didSucceed = false;
+	
+	
+	uint8_t deviceAddress = 0;  // use default
+	
+	didSucceed =  _compass.begin(deviceAddress, errnum);
+	if(didSucceed){
 		
-		int  errnum = 0;
-		bool didSucceed = false;
-	 
-	 
-		uint8_t deviceAddress = 0;  // use default 
-	 
-		didSucceed =  _compass.begin(deviceAddress, errnum);
-		if(didSucceed){
-			
-			uint16_t queryDelay = 0;
-			if(_db.getUint16Property(PROP_COMPASS_QUERY_DELAY, &queryDelay)){
-				_compass.setQueryDelay(queryDelay);
-			}
+		uint16_t queryDelay = 0;
+		if(_db.getUint16Property(PROP_COMPASS_QUERY_DELAY, &queryDelay)){
+			_compass.setQueryDelay(queryDelay);
 		}
-		else {
-			ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass");
-		}
-		
-		
-		if(cb)
-			(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
+	}
+	else {
+		ELOG_ERROR(ErrorMgr::FAC_SENSOR, deviceAddress, errnum,  "Start Compass");
+	}
+	
+	
+	if(cb)
+		(cb)(didSucceed, didSucceed?"": string(strerror(errnum) ));
 }
 
 void PiCarMgr::stopCompass(){

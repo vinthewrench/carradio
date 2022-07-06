@@ -98,7 +98,7 @@ class PiCarMgr {
 	PiCarMgrDevice::device_state_t compassState();
  #endif
 	
- 	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
+	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
 	void saveRadioSettings();
@@ -124,7 +124,7 @@ class PiCarMgr {
 	bool clearPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
 	bool isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
 
- 	bool nextPresetStation(RadioMgr::radio_mode_t band,
+	bool nextPresetStation(RadioMgr::radio_mode_t band,
 									uint32_t frequency,
 									bool up,
 									station_info_t &info);
@@ -135,6 +135,7 @@ private:
 	typedef enum :int {
 		MENU_UNKNOWN = 0,
 		MENU_RADIO,
+		MENU_SELECT_BAND,
 		MENU_CANBUS,
 		MENU_GPS,
 		MENU_TIME,
@@ -157,7 +158,7 @@ private:
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
 	
- 	nlohmann::json GetRadioPresetsJSON();
+	nlohmann::json GetRadioPresetsJSON();
  
 	void displayMenu();
 	void displayRadioMenu();
@@ -180,7 +181,7 @@ private:
 	void idle();  // occasionally called durrig idle time
 		
 	RadioMgr::radio_mode_t					  _lastRadioMode;
- 	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
+	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
 	menu_mode_t										_lastMenuMode;		// used for unwinding
 	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
@@ -190,7 +191,7 @@ private:
 	 TUNE_ALL = 0,
 	 TUNE_KNOWN ,
 	 TUNE_PRESETS,
- 	}tuner_knob_mode_t;
+	}tuner_knob_mode_t;
  
 	tuner_knob_mode_t			_tuner_mode;
 

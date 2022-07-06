@@ -35,7 +35,7 @@ using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 9";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 10";
 
 
 const char* path_display  = "/dev/ttyUSB0";
@@ -45,10 +45,6 @@ const char* 		gpioPath 				= "/dev/gpiochip0";
 constexpr uint 	gpio_int_line_number	= 27;
 const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
-
-
-//const char* dev_audio  = "hw:CARD=wm8960soundcard,DEV=0";
-//const char* dev_audio  = "hw:CARD=DAC,DEV=0";
 
 constexpr int  pcmrate = 48000;
 

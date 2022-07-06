@@ -182,11 +182,11 @@ bool PiCarMgr::begin(){
 #endif
 		
 		if(!_gps.begin(path_gps,B9600, error))
-			throw Exception("failed to setup GPS ", error);
+			throw Exception("failed to setup GPS.  error: %d", error);
 #else
 		constexpr uint8_t  GPSAddress = 0x42;
 		if(!_gps.begin(GPSAddress, error))
-			throw Exception("failed to setup GPS ", error);
+			printf("failed to setup GPS %d ", error);
 		
 #endif
 		// setup display device
@@ -271,15 +271,17 @@ void PiCarMgr::stop(){
 
 void PiCarMgr::doShutdown(){
 	
+	stop();
+
 #if defined(__APPLE__)
 	//	system("/bin/sh shutdown -P now");
 #else
-	stop();
 	sync();
 	sleep(1);
 	reboot(RB_POWER_OFF);
 #endif
-	
+	exit(EXIT_SUCCESS);
+
 }
 
 

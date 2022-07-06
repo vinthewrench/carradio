@@ -122,7 +122,7 @@ void AudioOutput::stop(){
 		  snd_pcm_close(_pcm);
 	 }
 		
-		snd_mixer_detach(_mixer, "surround40:0");
+		snd_mixer_detach(_mixer, _MIXER_);
 		snd_mixer_close(_mixer);
 
 #endif

@@ -510,7 +510,7 @@ void RadioMgr::SDRReader(){
 		
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldRead){
- 				usleep(2);
+ 				usleep(20000);
 				continue;
 			}
 	 

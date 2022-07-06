@@ -26,7 +26,6 @@
 
 #endif
 
-
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
 
@@ -115,7 +114,7 @@ PiCarMgr::PiCarMgr(){
 	
 	pthread_create(&_piCanLoopTID, NULL,
 						(THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
-	
+		
 	_stations.clear();
 	_preset_stations.clear();
 	
@@ -697,6 +696,8 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 // MARK: -  PiCarMgr main loop  thread
 
 void PiCarMgr::PiCanLoop(){
+	
+	PRINT_CLASS_TID;
 	
 	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
 	bool firstRun = false;

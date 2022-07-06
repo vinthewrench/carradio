@@ -448,6 +448,8 @@ bool CANBusMgr::resetPacketCount(string ifName){
  
 void CANBusMgr::CANReader(){
 	 
+	PRINT_CLASS_TID;
+	
 	struct timeval one_second_tv = { 1, 0 };
 
 	struct timeval lastTime;
@@ -464,7 +466,7 @@ void CANBusMgr::CANReader(){
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 100;            /* 100 microseconds */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;

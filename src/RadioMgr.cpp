@@ -502,7 +502,8 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 
  
 void RadioMgr::SDRReader(){
- 
+	PRINT_CLASS_TID;
+	
 	IQSampleVector iqsamples;
 
 	while(!_shouldQuit){
@@ -563,6 +564,8 @@ void adjust_gain(SampleVector& samples, double gain)
 }
 
 void RadioMgr::SDRProcessor(){
+	
+	PRINT_CLASS_TID;
 	
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
@@ -695,6 +698,7 @@ void RadioMgr::SDRProcessorThreadCleanup(void *context){
  
 void RadioMgr::OutputProcessor(){
   
+	PRINT_CLASS_TID;
 	
 	while(!_shouldQuit){
 		

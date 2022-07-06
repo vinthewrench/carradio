@@ -799,6 +799,7 @@ void  DisplayMgr::popMode(){
 void DisplayMgr::DisplayUpdate(){
 	
   	//	printf("start DisplayUpdate\n");
+	PRINT_CLASS_TID;
 	
 	while(_isRunning){
 		

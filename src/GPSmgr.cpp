@@ -294,7 +294,7 @@ bool  GPSmgr::isConnected() {
 
 bool GPSmgr::setShouldRead(bool shouldRead){
 	if(_isSetup && _isRunning){
-		_shouldRead = true;
+		_shouldRead = shouldRead;
 		return true;
 	}
 	return false;
@@ -452,6 +452,8 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 
 void GPSmgr::GPSReader(){
 	 
+	PRINT_CLASS_TID;
+	
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
 		
 	while(_isRunning){
@@ -477,7 +479,7 @@ void GPSmgr::GPSReader(){
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 100;            /* 100 microseconds */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;

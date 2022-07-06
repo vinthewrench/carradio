@@ -19,6 +19,8 @@
 
 #include "Utils.hpp"
 
+#define DEBUG_THREADS 1
+
 #define USE_SERIAL_GPS 0
 #define USE_COMPASS 0
 
@@ -81,3 +83,37 @@ public:
 	}
 };
  
+template <class T>
+class ClassName
+{
+public:
+  static std::string Get()
+  {
+	 // Get function name, which is "ClassName<class T>::Get"
+	 // The template parameter 'T' is the class name we're looking for
+	 std::string name = __FUNCTION__;
+	 // Remove "ClassName<class " ("<class " is 7 characters long)
+	 size_t pos = name.find_first_of('<');
+	 if (pos != std::string::npos)
+		name = name.substr(pos + 7);
+	 // Remove ">::Get"
+	 pos = name.find_last_of('>');
+	 if (pos != std::string::npos)
+		name = name.substr(0, pos);
+	 return name;
+  }
+};
+
+template <class T>
+std::string GetClassName(const T* _this = NULL)
+{
+  return ClassName<T>::Get();
+}
+
+#if DEBUG_THREADS
+#include <sys/syscall.h>
+#define  PRINT_CLASS_TID  printf("%s tid: %u\n",__FUNCTION__,  syscall(SYS_gettid))
+#else
+#define  PRINT_CLASS_TID
+#endif
+

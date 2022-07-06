@@ -19,7 +19,7 @@
 
 #include "Utils.hpp"
 
-#define DEBUG_THREADS 1
+#define DEBUG_THREADS 0
 
 #define USE_SERIAL_GPS 0
 #define USE_COMPASS 0
@@ -46,6 +46,7 @@ inline int mod(int a, int b)
 	if(ret < 0)
 	  ret+=b;
 	return ret;
+	
 }
  
 class Exception: virtual public std::runtime_error {
@@ -112,8 +113,7 @@ std::string GetClassName(const T* _this = NULL)
 
 #if DEBUG_THREADS
 #include <sys/syscall.h>
-#define  PRINT_CLASS_TID  printf("%s tid: %u\n",__FUNCTION__,  syscall(SYS_gettid))
+#define  PRINT_CLASS_TID  printf("%s tid: %ld\n",__FUNCTION__,  (long) syscall(SYS_gettid))
 #else
 #define  PRINT_CLASS_TID
 #endif
-

@@ -1265,8 +1265,8 @@ void PiCarMgr::displayRadioMenu(){
 				_db.savePropertiesToFile();
 			}
 			else if(_lastMenuMode != MENU_UNKNOWN){
-				// restore old mode thast was set in main menu
-				setDisplayMode(_lastMenuMode);
+				// restore old mode that was set in main menu
+				setDisplayMode(MENU_RADIO);
 			}
 			else	// fallback
 			{

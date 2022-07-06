@@ -152,7 +152,7 @@ void DisplayMgr::stop(){
 		_isSetup = false;
 		pthread_cond_signal(&_cond);
 
-		usleep(500);
+		usleep(200000);
 		drawShutdownScreen();
 
 		_rightKnob.stop();
@@ -804,7 +804,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			usleep(1000);
+			usleep(10000);
 			continue;
 		}
 

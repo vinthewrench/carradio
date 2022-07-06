@@ -707,7 +707,7 @@ void PiCarMgr::PiCanLoop(){
 			
 			// if not setup // check back shortly -  we are starting up
 			if(!_isSetup){
-				usleep(10000);
+				usleep(200000);
 				continue;
 			}
 			

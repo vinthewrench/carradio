@@ -672,7 +672,8 @@ bool 	AudioOutput::setVolume(double volIn){
 	}
 	
 	
-	printf( "BAL FR: %1.2f, FL: %1.2f,  BR: %1.2f,  BL: %1.2f\n",
+	printf( "BAL  VOL:  %1.3f,  BAL:  %1.3f,  FAD: %1.3f,  FR: %1.3f, FL: %1.3f,  BR: %1.3f,  BL: %1.3f\n",
+			 volIn, _balance, _fader
 			 (right + front) / 2. , (left + front) / 2. , (right + back) / 2. , (left + back) / 2. );
 	
 			 

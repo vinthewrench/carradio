@@ -638,10 +638,10 @@ bool 	AudioOutput::setVolume(double volIn){
 	}
 	
 	
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right * front ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left * front ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, right * back,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, left * back ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
  
 	if(volIn == 0.0 ){
 		 _isMuted = true;

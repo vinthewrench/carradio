@@ -672,10 +672,10 @@ bool 	AudioOutput::setVolume(double volIn){
 	}
 	
 	
-	printf( "BAL  VOL:  %1.3f,  BAL:  %1.3f,  FAD: %1.3f,  FR: %1.3f, FL: %1.3f,  BR: %1.3f,  BL: %1.3f\n",
-			 volIn, _balance, _fader,
-			 (right + front) / 2. , (left + front) / 2. , (right + back) / 2. , (left + back) / 2. );
-	
+//	printf( "BAL  VOL:  %1.3f,  BAL:  %1.3f,  FAD: %1.3f,  FR: %1.3f, FL: %1.3f,  BR: %1.3f,  BL: %1.3f\n",
+//			 volIn, _balance, _fader,
+//			 (right + front) / 2. , (left + front) / 2. , (right + back) / 2. , (left + back) / 2. );
+//	
 			 
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);

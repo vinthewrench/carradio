@@ -1392,13 +1392,22 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	printf("dim: %.2f itemX: %d\n", dim, itemX);
 	
 	// clear rest of inside of box
-	if(dim < 1){
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
-			static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-	}
-	
+		if(dim < 1)
+		{
+		// there is some kind of bug in the Noritake VFD where id you send
+			// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+			uint8_t start = itemX+1;
+			if(start == 96) start = 95;
+
+			uint8_t buff2[] = {
+			VFD_CLEAR_AREA,
+				// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+			
+			_vfd.writePacket(buff2, sizeof(buff2), 1000);
+		}
+
 	// fill  area box
 	uint8_t buff3[] = {VFD_SET_AREA,
 		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),

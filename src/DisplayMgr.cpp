@@ -2258,6 +2258,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	
 	int brightness = mgr->brightness();
 	
+	printf("bright1 %d\n", brightness);
+	
 	if(brightness > -1){
 		if(action == KNOB_UP){
 			
@@ -2281,7 +2283,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			wasHandled = true;
 		}
 	}
-	
+	printf("bright2 %d\n", brightness);
+
 	if(action == KNOB_CLICK){
 		popMode();
 	}

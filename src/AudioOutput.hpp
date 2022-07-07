@@ -53,6 +53,10 @@ public:
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 
+	bool 	setFader(double );		// -1.0  - 1.0
+	double fader();
+
+	
 //	bool playSound(string filePath, boolCallback_t cb);
 	
  
@@ -66,6 +70,8 @@ public:
 	snd_mixer_elem_t* 	_elem;
 	
  	double					_balance;
+	double					_fader;
+	
  	double					_savedVolume;
 	bool						_isMuted = false;
 	

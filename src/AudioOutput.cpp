@@ -34,6 +34,7 @@ typedef unsigned long snd_pcm_uframes_t;
  AudioOutput::AudioOutput(){
 	_isSetup = false;
 	_balance = 0;
+	_fader = 0;
 	_pcm = NULL;
  
 }
@@ -617,19 +618,30 @@ bool 	AudioOutput::setVolume(double volIn){
 	
 	double left =  volIn;
 	double right  =  volIn;
+ 	double front =  volIn;
+	double back  =  volIn;
  
-	double adjusted =  volIn * (1 - fabs(_balance));
+	double adjustedBalance =  volIn * (1 - fabs(_balance));
 
 	if( _balance > 0) {
-		left = adjusted;
+		left = adjustedBalance;
 	}else if( _balance < 0) {
-		right = adjusted;
+		right = adjustedBalance;
 	}
 	
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, right ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, left ,0, PLAYBACK);
+	double adjustedFade =  volIn * (1 - fabs(_fader));
+
+	if( _fader > 0) {
+		back = adjustedFade;
+	}else if( _fader < 0) {
+		front = adjustedFade;
+	}
+	
+	
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, right * front ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, left * front ,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, right * back,0, PLAYBACK);
+	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, left * back ,0, PLAYBACK);
  
 	if(volIn == 0.0 ){
 		 _isMuted = true;
@@ -662,6 +674,21 @@ double AudioOutput::volume() {
 
 #endif
 
+bool AudioOutput::setFader(double newFader) {
+
+	newFader = fmax(-1, fmin(1, newFader));  // pin balance
+
+	_fader = newFader;
+	return setVolume(volume());
+}
+
+
+double AudioOutput::fader() {
+	return _fader;
+}
+
+
+
 bool AudioOutput::setBalance(double newBal) {
 
 	newBal = fmax(-1, fmin(1, newBal));  // pin balance
@@ -674,7 +701,6 @@ bool AudioOutput::setBalance(double newBal) {
 double AudioOutput::balance() {
 	return _balance;
 }
-
 
 bool AudioOutput::setMute(bool shouldMute){
 	

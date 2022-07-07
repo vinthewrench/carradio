@@ -104,6 +104,7 @@ public:
  
 	void showVolumeChange();	// Deprecated
 	void showBalanceChange();
+	void showFaderChange();
 	void showRadioChange();
 	void showCANbus(uint8_t page = 0);
 	void showSettings();

@@ -261,6 +261,7 @@ void PiCarMgr::stop(){
 		
 		_audio.setVolume(0);
 		_audio.setBalance(0);
+		_audio.setFader(0);
 		
 		_radio.stop();
 		_audio.stop();
@@ -292,13 +293,16 @@ nlohmann::json PiCarMgr::GetAudioJSON(){
 	
 	double  vol = _audio.volume();
 	double  bal = _audio.balance();
+	double  fade = _audio.fader();
 	
 	// limit the precisopn on these
 	bal = std::floor((bal * 100) + .5) / 100;
 	vol = std::floor((vol * 100) + .5) / 100;
-	
+	fade = std::floor((vol * 100) + .5) / 100;
+
 	j[PROP_LAST_AUDIO_SETTING_VOL] =  vol;
 	j[PROP_LAST_AUDIO_SETTING_BAL] =  bal;
+	j[PROP_LAST_AUDIO_SETTING_FADER] =  fade;
 	
 	return j;
 }
@@ -310,17 +314,23 @@ bool PiCarMgr::SetAudio(nlohmann::json j){
 		&&  j.contains(PROP_LAST_AUDIO_SETTING_VOL)
 		&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()
 		&&  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
-		&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number() ){
+		&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number()
+		&&  j.contains(PROP_LAST_AUDIO_SETTING_FADER)
+		&&  j.at(PROP_LAST_AUDIO_SETTING_FADER).is_number()
+		){
 		double  vol = j[PROP_LAST_AUDIO_SETTING_VOL];
 		double  bal = j[PROP_LAST_AUDIO_SETTING_BAL];
-		
+		double  fade = j[PROP_LAST_AUDIO_SETTING_FADER];
+
 		// limit the precisopn on these
 		bal = std::floor((bal * 100) + .5) / 100;
 		vol = std::floor((vol * 100) + .5) / 100;
-		
+		fade = std::floor((vol * 100) + .5) / 100;
+	
 		_audio.setVolume(vol);
 		_audio.setBalance(bal);
-		
+		_audio.setFader(fade);
+	
 		success= true;
 	}
 	
@@ -376,6 +386,7 @@ void PiCarMgr::restoreRadioSettings(){
 		  && SetAudio(j))){
 		_audio.setVolume(.6);
 		_audio.setBalance(0.0);
+		_audio.setFader(0.0);
 	}
 	
 	// SET RADIO Info
@@ -1288,6 +1299,7 @@ void PiCarMgr::displaySettingsMenu(){
 	
 	vector<string> menu_items = {
 		"Audio Balance",
+		"Audio Fader",
 		"Dim Screen",
 		"Exit",
 		"-",
@@ -1307,8 +1319,12 @@ void PiCarMgr::displaySettingsMenu(){
 				case 0:
 					_display.showBalanceChange();
 					break;
-					
-				case 4:
+
+				case 1:
+					_display.showFaderChange();
+					break;
+
+				case 5:
 					doShutdown();
 					break;
 					

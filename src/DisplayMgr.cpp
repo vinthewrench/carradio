@@ -434,6 +434,10 @@ void DisplayMgr::showBalanceChange(){
 	setEvent(EVT_PUSH, MODE_BALANCE );
 }
 
+void DisplayMgr::showFaderChange(){
+//	setEvent(EVT_PUSH, MODE_BALANCE );
+}
+ 
 void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 }

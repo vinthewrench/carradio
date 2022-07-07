@@ -50,6 +50,7 @@ inline static const string  PROP_LAST_RADIO_MODES_MODE		= "mode";
 inline static const string  PROP_LAST_AUDIO_SETTING			= "audio_setting";
 inline static const string  PROP_LAST_AUDIO_SETTING_VOL		= "vol";
 inline static const string  PROP_LAST_AUDIO_SETTING_BAL		= "bal";
+inline static const string  PROP_LAST_AUDIO_SETTING_FADER	= "fade";
 
 inline static const string  PROP_CANBUS_DISPLAY				= "canbus-display";
 inline static const string  PROP_LINE							= "line";

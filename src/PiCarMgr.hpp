@@ -163,8 +163,8 @@ private:
 	void displayMenu();
 	void displayRadioMenu();
 	void displaySettingsMenu();
-
 	void setDisplayMode(menu_mode_t menuMode);
+	void setBrightness(int dimLevel);
 	
 	void tunerDoubleClicked();
 	
@@ -206,6 +206,8 @@ private:
 	TempSensor			_tempSensor1;
 //	CompassSensor		_compass;
 	ArgononeFan			_fan;
+	
+	int					_dimmerMode;		// negative is auto,  0 == off,  7 == max
 	
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

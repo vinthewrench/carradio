@@ -318,14 +318,15 @@ bool PiCarDB::setProperty(string key, nlohmann::json  value){
 
 bool PiCarDB::getProperty(string key, string *value){
 	
-	if( _props.contains(key)
-		&&  _props.at(key).is_string())
-	{
-		if(value)
-			*value  = _props.at(key);
+	if( _props.contains(key)){
+		
+		if(_props.at(key).is_string()){
+			if(value) *value  = _props.at(key);
+		}else if(_props.at(key).is_number()){
+			if(value) *value  =  to_string( _props.at(key));
+		}
 		return true;
- 	}
-
+	}
 	return false;
 }
 

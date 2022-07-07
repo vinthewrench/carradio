@@ -30,6 +30,7 @@ inline static const string VAL_AUDIO_BALANCE		= "bal";
 inline static const string VAL_RADIO_FREQ			= "freq";
 inline static const string VAL_MODULATION_MODE	= "mode";
 inline static const string VAL_RADIO_ON			= "radioON";
+inline static const string VAL_AUTO					= "auto";
 
 
 // json data
@@ -51,6 +52,8 @@ inline static const string  PROP_LAST_AUDIO_SETTING			= "audio_setting";
 inline static const string  PROP_LAST_AUDIO_SETTING_VOL		= "vol";
 inline static const string  PROP_LAST_AUDIO_SETTING_BAL		= "bal";
 inline static const string  PROP_LAST_AUDIO_SETTING_FADER	= "fade";
+
+inline static const string PROP_DIMMER_MODE						= "dimmer_mode";
 
 inline static const string  PROP_CANBUS_DISPLAY				= "canbus-display";
 inline static const string  PROP_LINE							= "line";

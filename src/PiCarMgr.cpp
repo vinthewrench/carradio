@@ -15,6 +15,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <regex>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -136,6 +137,7 @@ bool PiCarMgr::begin(){
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
+		_dimmerMode = -1;
 		
 		// clear DB
 		_db.clearValues();
@@ -370,6 +372,11 @@ void PiCarMgr::saveRadioSettings(){
 	
 	updateRadioPrefs();
 	
+	if(_dimmerMode < 0)
+		_db.setProperty(PROP_DIMMER_MODE, VAL_AUTO);
+	else
+		_db.setProperty(PROP_DIMMER_MODE, _dimmerMode);
+
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
@@ -380,7 +387,15 @@ void PiCarMgr::saveRadioSettings(){
 void PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
-	
+ 
+	// SET Dimmer
+	string dimMode;
+ 	if(_db.getProperty(PROP_DIMMER_MODE, &dimMode)
+		&& 	regex_match( dimMode, std::regex("^[0-7]{1}$"))) 	{
+		setBrightness(atoi(dimMode.c_str()));
+ 	}
+	else setBrightness(-1);
+
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
@@ -1493,6 +1508,17 @@ void PiCarMgr::stopControls(){
 #endif
 	
 }
+
+void PiCarMgr::setBrightness(int dimLevel){
+	dimLevel = min(dimLevel, 7);
+	_dimmerMode = (dimLevel > 0)?dimLevel: -1;
+ 
+	// why-- because a - dimlevel -s auto / set by the CAN bus.  so we set it high here
+	// and let the can make calls to us.
+	_display.setBrightness((dimLevel > 0)?dimLevel: 7 );
+	
+}
+
 
 
 // MARK: -   Devices

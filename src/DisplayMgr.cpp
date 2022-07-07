@@ -350,10 +350,17 @@ void DisplayMgr::runLEDEventVol(){
 // MARK: -  display tools
 
 bool DisplayMgr::setBrightness(uint8_t level) {
-	
+
 	bool success = false;
+
+	level = (level < 0)?7: level;
+	level = min((int) level, 7);
+	_dimLevel = level;
+	
 	if(_isSetup){
+ 
 		success = _vfd.setBrightness(level);
+		
 	}
 	
 	return success;
@@ -425,10 +432,9 @@ void DisplayMgr::showDevStatus(){
 }
 
 
-void DisplayMgr::showVolumeChange(){
- 	setEvent(EVT_PUSH, MODE_VOLUME );
+void DisplayMgr::showDimmerChange(){
+ 	setEvent(EVT_PUSH, MODE_DIMMER );
 }
-
 
 void DisplayMgr::showBalanceChange(){
 	setEvent(EVT_PUSH, MODE_BALANCE );
@@ -491,6 +497,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
 		case MODE_BALANCE:
+		case MODE_DIMMER:
 		case MODE_FADER:
 		case MODE_DTC:
 		case MODE_DTC_INFO:
@@ -589,6 +596,10 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			
 		case MODE_FADER:
 			wasHandled = processSelectorKnobActionForFader(action);
+			break;
+			
+		case MODE_DIMMER:
+			wasHandled = processSelectorKnobActionForDimmer(action);
 			break;
  
 		case MODE_DTC:
@@ -908,7 +919,6 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = true;
 						shouldUpdate = true;
 					}
-				
 				}
 				else if(_current_mode == MODE_FADER) {
 					
@@ -924,7 +934,21 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = true;
 						shouldUpdate = true;
 					}
-				
+				}
+				else if(_current_mode == MODE_DIMMER) {
+					
+					// check for {EVT_NONE,MODE_DIMMER}  which is a dimmer change
+					if(item.mode == MODE_DIMMER) {
+						gettimeofday(&_lastEventTime, NULL);
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					else if(diff.tv_sec >=  5){
+						// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
 				}
 
 				else if(_current_mode == MODE_MENU) {
@@ -1086,8 +1110,8 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				drawTimeScreen(transition);
 				break;
 				
-			case MODE_VOLUME:
-				drawVolumeScreen(transition);
+			case MODE_DIMMER:
+				drawDimmerScreen(transition);
 				break;
 				
 			case MODE_BALANCE:
@@ -1329,7 +1353,7 @@ void DisplayMgr::drawEngineCheck(){
 	}
 }
 
-void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
+void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	
 	PiCarDB*	db 	= PiCarMgr::shared()->db();
 	
@@ -1355,11 +1379,10 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
-		_leftRing.clearAll();
-		
+ 
 		// draw centered heading
 		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Volume";
+		string str = "Brightness";
 		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
 		_vfd.write(str);
 		
@@ -1369,34 +1392,34 @@ void DisplayMgr::drawVolumeScreen(modeTransition_t transition){
 	}
 	
 	float volume = 0;
-		
-	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-		
-		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
 //
-//		// volume LED scales between 1 and 24
-//		int ledvol = volume*23;
-//		for (int i = 0 ; i < 24; i++) {
-//			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+//	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
+//
+//		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
+////
+////		// volume LED scales between 1 and 24
+////		int ledvol = volume*23;
+////		for (int i = 0 ; i < 24; i++) {
+////			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+////		}
+//
+//		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
+//
+//		// clear rest of inside of box
+//		if(volume < 1){
+//			uint8_t buff2[] = {VFD_CLEAR_AREA,
+//				static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+//				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+//			_vfd.writePacket(buff2, sizeof(buff2), 1000);
 //		}
+//
+//		// fill volume area box
+//		uint8_t buff3[] = {VFD_SET_AREA,
+//			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+//			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
+//		_vfd.writePacket(buff3, sizeof(buff3), 1000);
 		
-		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
-		
-		// clear rest of inside of box
-		if(volume < 1){
-			uint8_t buff2[] = {VFD_CLEAR_AREA,
-				static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-			_vfd.writePacket(buff2, sizeof(buff2), 1000);
-		}
-		
-		// fill volume area box
-		uint8_t buff3[] = {VFD_SET_AREA,
-			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
-		_vfd.writePacket(buff3, sizeof(buff3), 1000);
-		
-	}
+//	}
 }
 
 
@@ -2160,7 +2183,7 @@ void DisplayMgr::drawFaderScreen(modeTransition_t transition){
 	}
 }
 
-// MARK: -  Balance Audio Screen
+// MARK: -  Balance/ Fader / Brightness knob selector
 
 bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	bool wasHandled = false;
@@ -2227,6 +2250,45 @@ bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
 	
 	return wasHandled;
 }
+
+bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
+	bool wasHandled = false;
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	
+	int brightness = mgr->brightness();
+	
+	if(brightness > -1){
+		if(action == KNOB_UP){
+			
+			if(brightness < 7){
+				brightness++;
+				mgr->setBrightness(brightness);
+				setBrightness(brightness);
+				setEvent(EVT_NONE,MODE_DIMMER);
+			}
+			wasHandled = true;
+		}
+		
+		else if(action == KNOB_DOWN){
+			
+			if(brightness > 0){
+				brightness--;
+				mgr->setBrightness(brightness);
+				setBrightness(brightness);
+				setEvent(EVT_NONE,MODE_DIMMER);
+			}
+			wasHandled = true;
+		}
+	}
+	
+	if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+}
+
 
 
 

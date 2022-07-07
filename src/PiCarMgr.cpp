@@ -195,7 +195,7 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-		_display.setBrightness( (_dimmerMode < 0)?7: _dimmerMode );
+		_display.setBrightness(_dimmerMode);
  
 		// SETUP CANBUS
 		_can.begin();
@@ -1342,6 +1342,10 @@ void PiCarMgr::displaySettingsMenu(){
 
 				case 1:
 					_display.showFaderChange();
+					break;
+
+				case 2:
+					_display.showDimmerChange();
 					break;
 
 				case 5:

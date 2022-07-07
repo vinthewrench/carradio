@@ -53,7 +53,7 @@ public:
 		
 		MODE_STARTUP,
 		MODE_TIME,
-		MODE_VOLUME,
+		MODE_DIMMER,
 		MODE_BALANCE,
 		MODE_FADER,
 		MODE_RADIO,
@@ -104,7 +104,7 @@ public:
 	void showDTC();
 	void showDTCInfo(string code);
  
-	void showVolumeChange();	// Deprecated
+	void showDimmerChange();	// Deprecated
 	void showBalanceChange();
 	void showFaderChange();
 	void showRadioChange();
@@ -147,11 +147,13 @@ private:
 	void drawStartupScreen(modeTransition_t transition);
 	void drawDeviceStatusScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
-	void drawVolumeScreen(modeTransition_t transition);
+	void drawDimmerScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
 	void drawFaderScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForBalance( knob_action_t action);
 	bool processSelectorKnobActionForFader( knob_action_t action);
+	bool processSelectorKnobActionForDimmer( knob_action_t action);
+
 	bool processSelectorKnobActionForDTC( knob_action_t action);
  
 	void drawRadioScreen(modeTransition_t transition);
@@ -253,7 +255,6 @@ private:
 	RGB 					_rightKnobColor;
 	RGB 					_leftKnobColor;
 	uint8_t				_dimLevel;
-	
 
 	// devices
 	VFD 					_vfd;

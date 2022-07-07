@@ -1513,7 +1513,7 @@ void PiCarMgr::stopControls(){
 
 void PiCarMgr::setBrightness(int dimLevel){
 	dimLevel = min(dimLevel, 7);
-	_dimmerMode = (dimLevel > 0)?dimLevel: -1;
+	_dimmerMode = (dimLevel > -1)?dimLevel: -1;
  
 }
  int PiCarMgr::brightness(){

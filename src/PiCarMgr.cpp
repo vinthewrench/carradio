@@ -298,7 +298,7 @@ nlohmann::json PiCarMgr::GetAudioJSON(){
 	// limit the precisopn on these
 	bal = std::floor((bal * 100) + .5) / 100;
 	vol = std::floor((vol * 100) + .5) / 100;
-	fade = std::floor((vol * 100) + .5) / 100;
+	fade = std::floor((fade * 100) + .5) / 100;
 
 	j[PROP_LAST_AUDIO_SETTING_VOL] =  vol;
 	j[PROP_LAST_AUDIO_SETTING_BAL] =  bal;

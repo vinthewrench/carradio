@@ -55,6 +55,7 @@ public:
 		MODE_TIME,
 		MODE_VOLUME,
 		MODE_BALANCE,
+		MODE_FADER,
 		MODE_RADIO,
 		MODE_CANBUS,
 		MODE_GPS,
@@ -147,7 +148,9 @@ private:
 	void drawTimeScreen(modeTransition_t transition);
 	void drawVolumeScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
+	void drawFaderScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForBalance( knob_action_t action);
+	bool processSelectorKnobActionForFader( knob_action_t action);
 	bool processSelectorKnobActionForDTC( knob_action_t action);
  
 	void drawRadioScreen(modeTransition_t transition);

@@ -665,7 +665,8 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				break;
 				
 			case KNOB_CLICK:
-			// ignore menu separators
+			{
+				// ignore menu separators
 				if(_menuItems[_currentMenuItem] == "-")
 					break;
 				
@@ -685,15 +686,17 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				popMode();			// remove the menu
 				popMode();	// do it twice.. remove the old mode.
 				pthread_mutex_unlock (&_mutex);
-	 
-	 
+				
 				if(cb) {
 					cb(true,  item);
 				}
-				
- 
+			}
+	 			break;
+			
+			case KNOB_DOUBLE_CLICK:
 				break;
-		}
+				
+			}
 		
 	}
 	

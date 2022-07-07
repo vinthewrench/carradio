@@ -77,7 +77,8 @@ public:
 		KNOB_EXIT = 0,
 		KNOB_UP,
 		KNOB_DOWN,
-		KNOB_CLICK
+		KNOB_CLICK,
+		KNOB_DOUBLE_CLICK
 	}knob_action_t;
  
 	typedef enum  {

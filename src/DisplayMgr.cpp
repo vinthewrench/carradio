@@ -1376,7 +1376,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		
 		// draw centered heading
 		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Dimmer";
+		string str = "Dim Screen";
 		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
 		_vfd.write(str);
 		
@@ -1388,8 +1388,6 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	// brightness scales between 0 -7
 	float dim =  mgr->brightness()  * (1. / 7.);
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
-	
-	printf("dim: %.2f itemX: %d\n", dim, itemX);
 	
 	// clear rest of inside of box
 		if(dim < 1)

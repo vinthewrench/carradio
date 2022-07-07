@@ -325,7 +325,7 @@ bool PiCarMgr::SetAudio(nlohmann::json j){
 		// limit the precisopn on these
 		bal = std::floor((bal * 100) + .5) / 100;
 		vol = std::floor((vol * 100) + .5) / 100;
-		fade = std::floor((vol * 100) + .5) / 100;
+		fade = std::floor((fade * 100) + .5) / 100;
 	
 		_audio.setVolume(vol);
 		_audio.setBalance(bal);

@@ -1386,7 +1386,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	}
 	
 	// brightness scales between 0 -7
-	float dim =  mgr->brightness()  * (100.0 / 7.);
+	float dim =  mgr->brightness()  * (1. / 7.);
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
 	
 	printf("dim: %.2f itemX: %d\n", dim, itemX);

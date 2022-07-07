@@ -195,12 +195,9 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-		if(!_display.setBrightness(7))
-			throw Exception("failed to set brightness ");
-		
+		_display.setBrightness( (_dimmerMode < 0)?7: _dimmerMode );
+ 
 		// SETUP CANBUS
-		//		if(!_can.begin(error))
-		//			throw Exception("failed to setup CANBUS ", error);
 		_can.begin();
 		
 		_display.showStartup();  // show startup
@@ -392,10 +389,11 @@ void PiCarMgr::restoreRadioSettings(){
 	string dimMode;
  	if(_db.getProperty(PROP_DIMMER_MODE, &dimMode)
 		&& 	regex_match( dimMode, std::regex("^[0-7]{1}$"))) 	{
-		setBrightness(atoi(dimMode.c_str()));
+		_dimmerMode =  min(atoi(dimMode.c_str()), 7);
  	}
-	else setBrightness(-1);
-
+	// why-- because a -1  dimlevel is auto mode / dimmmer is set by the CAN bus.
+	 else _dimmerMode = -1;
+	
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
@@ -1513,10 +1511,9 @@ void PiCarMgr::setBrightness(int dimLevel){
 	dimLevel = min(dimLevel, 7);
 	_dimmerMode = (dimLevel > 0)?dimLevel: -1;
  
-	// why-- because a - dimlevel -s auto / set by the CAN bus.  so we set it high here
-	// and let the can make calls to us.
-	_display.setBrightness((dimLevel > 0)?dimLevel: 7 );
-	
+}
+ int PiCarMgr::brightness(){
+	return _dimmerMode;
 }
 
 

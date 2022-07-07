@@ -101,6 +101,9 @@ class PiCarMgr {
 	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
+	void setBrightness(int dimLevel);
+	int brightness();
+	
 	void saveRadioSettings();
 	void restoreRadioSettings();
  
@@ -164,7 +167,6 @@ private:
 	void displayRadioMenu();
 	void displaySettingsMenu();
 	void setDisplayMode(menu_mode_t menuMode);
-	void setBrightness(int dimLevel);
 	
 	void tunerDoubleClicked();
 	

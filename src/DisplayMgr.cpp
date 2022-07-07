@@ -1389,6 +1389,8 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	float dim =  mgr->brightness()  * (100.0 / 7.);
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
 	
+	printf("dim: %.2f itemX: %d\n", dim, itemX);
+	
 	// clear rest of inside of box
 	if(dim < 1){
 		uint8_t buff2[] = {VFD_CLEAR_AREA,

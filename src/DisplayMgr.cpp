@@ -1355,7 +1355,7 @@ void DisplayMgr::drawEngineCheck(){
 
 void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	
-	PiCarDB*	db 	= PiCarMgr::shared()->db();
+	PiCarMgr* mgr	= PiCarMgr::shared();
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -1368,21 +1368,15 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	uint8_t bottombox = midY + 5 ;
 	
 	if(transition == TRANS_LEAVING) {
-//
-//		// scan the LEDS off
-//		for (int i = 0; i < 24; i++) {
-//			_leftRing.setColor( i, 0, 0, 0);
-//			usleep(10 * 1000);
-//		}
- 		return;
+		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
- 
+		
 		// draw centered heading
 		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Brightness";
+		string str = "Dimmer";
 		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
 		_vfd.write(str);
 		
@@ -1391,35 +1385,24 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 	}
 	
-	float volume = 0;
-//
-//	if(db->getFloatValue(VAL_AUDIO_VOLUME, volume)){
-//
-//		uint8_t itemX = leftbox +  (rightbox - leftbox) * volume;
-////
-////		// volume LED scales between 1 and 24
-////		int ledvol = volume*23;
-////		for (int i = 0 ; i < 24; i++) {
-////			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-////		}
-//
-//		//	printf("vol: %.2f X:%d L:%d R:%d\n", volume, itemX, leftbox, rightbox);
-//
-//		// clear rest of inside of box
-//		if(volume < 1){
-//			uint8_t buff2[] = {VFD_CLEAR_AREA,
-//				static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-//				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-//			_vfd.writePacket(buff2, sizeof(buff2), 1000);
-//		}
-//
-//		// fill volume area box
-//		uint8_t buff3[] = {VFD_SET_AREA,
-//			static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-//			static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
-//		_vfd.writePacket(buff3, sizeof(buff3), 1000);
-		
-//	}
+	// brightness scales between 0 -7
+	float dim =  mgr->brightness()  * (100.0 / 7.);
+	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
+	
+	// clear rest of inside of box
+	if(dim < 1){
+		uint8_t buff2[] = {VFD_CLEAR_AREA,
+			static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+		_vfd.writePacket(buff2, sizeof(buff2), 1000);
+	}
+	
+	// fill  area box
+	uint8_t buff3[] = {VFD_SET_AREA,
+		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+		static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
+	_vfd.writePacket(buff3, sizeof(buff3), 1000);
+	
 }
 
 

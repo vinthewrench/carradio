@@ -947,8 +947,15 @@ void PiCarMgr::PiCanLoop(){
 			
 			// MARK:   Tuner button clicked
 			if(tunerWasDoubleClicked){
-				tunerDoubleClicked();
-				continue;
+				
+				if(_display.usesSelectorKnob()
+					&& _display.selectorKnobAction(DisplayMgr::KNOB_DOUBLE_CLICK)){
+					// was handled - do nothing
+				}
+				else{
+					tunerDoubleClicked();
+				}
+ 				continue;
 			}
 			
 			if(tunerWasClicked){

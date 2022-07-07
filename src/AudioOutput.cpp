@@ -484,13 +484,47 @@ void AudioOutput::test(char* fname){
 // MARK: -  Mixer Volume
 #if defined(__APPLE__)
 
-bool 	AudioOutput::setVolume(double newVol){
+bool 	AudioOutput::setVolume(double volIn){
+	
+	if(!_isSetup)
+		return false;
+ 
+	volIn = fmax(0, fmin(1, volIn));  // pin volume
+	
+	double left =  volIn;
+	double right  =  volIn;
+	double front =  volIn;
+	double back  =  volIn;
+ 
+	double adjustedBalance =  volIn * (1 - fabs(_balance));
+
+	if( _balance > 0) {
+		left = adjustedBalance;
+	}else if( _balance < 0) {
+		right = adjustedBalance;
+	}
+	
+	double adjustedFade =  volIn * (1 - fabs(_fader));
+
+	if( _fader > 0) {
+		back = adjustedFade;
+	}else if( _fader < 0) {
+		front = adjustedFade;
+	}
+
+ 
+//
+//	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
+//	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
+//	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
+//	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
+
 	
 	return true;
 }
 
 double AudioOutput::volume() {
-	return 50. ;
+	return .5 ;
 }
 
 #else
@@ -638,6 +672,10 @@ bool 	AudioOutput::setVolume(double volIn){
 	}
 	
 	
+	printf( "BAL FR: %1.2f, FL: %1.2f,  BR: %1.2f,  BL: %1.2f\n",
+			 (right + front) / 2. , (left + front) / 2. , (right + back) / 2. , (left + back) / 2. );
+	
+			 
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);

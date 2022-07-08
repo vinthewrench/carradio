@@ -1039,22 +1039,34 @@ void PiCarMgr::idle(){
 		});
 	}
 	
+	// check for change in dimmer
+	if(true /*autoDimmerMode */){
+  
+		static double lastdimSW = 0;
+
+		FrameDB*	fDB 	= can()->frameDB();
+		string key = "JK_DIMMER_SW";
+		string rawValue;
+		if(fDB->valueWithKey(key, &rawValue)) {
+			double dimSW = fDB->normalizedDoubleForValue(key,rawValue);
+			
+			if(lastdimSW != dimSW){
+				lastdimSW = dimSW;
+				printf("dimmer :%.2f\n", dimSW);
+			}
+			
+		}
+		
+
+	}
+ 
 	// ocassionally save properties
 	saveRadioSettings();
 	if(_db.propertiesChanged()){
 		_db.savePropertiesToFile();
 	}
 	
-	
-	if(true /*autoDimmerMode */){
-		double dimSW = 0;
-		static double lastdimSW = 0;
-		
-		if( _db.getDoubleValue("JK_DIMMER_SW", dimSW)) {
-			if(lastdimSW != dimSW)
-				printf("dimmer :%.2f\n", dimSW);
-		}
-	}
+
 }
 
 void* PiCarMgr::PiCanLoopThread(void *context){

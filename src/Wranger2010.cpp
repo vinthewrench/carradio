@@ -242,8 +242,11 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			else if (frame.data[0] == 0x13) dimValue = 255;
 			else  if (frame.data[0] == 0x12) dimValue = frame.data[1];
 			
-			int level = (dimValue * 100.) / 255. ;
+			double level = (dimValue * 100.) / 255. ;
 			db->updateValue(schemaKeyForValueKey(DIMMER_SW), to_string(level), when);
+			
+			printf("DIMMER_SW %.2f \n", level);
+			
 		}
 			break;
 			

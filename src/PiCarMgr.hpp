@@ -166,6 +166,7 @@ private:
 	void displayMenu();
 	void displayRadioMenu();
 	void displaySettingsMenu();
+	vector<string> settingsMenuItems();
 	void setDisplayMode(menu_mode_t menuMode);
 	
 	void tunerDoubleClicked();

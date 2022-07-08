@@ -1045,25 +1045,21 @@ void PiCarMgr::idle(){
 	}
 	
 	// check for change in dimmer
-	if(true /*autoDimmerMode */){
-  
-		static double lastdimSW = 0;
-
+	if( _autoDimmerMode ){
+   
 		FrameDB*	fDB 	= can()->frameDB();
 		string key = "JK_DIMMER_SW";
 		string rawValue;
 		if(fDB->valueWithKey(key, &rawValue)) {
-			double dimSW = fDB->normalizedDoubleForValue(key,rawValue);
 			
-			if(lastdimSW != dimSW){
-				lastdimSW = dimSW;
+			double dimSW = fDB->normalizedDoubleForValue(key,rawValue) / 100. ;
+				
+			if(dimSW != _dimLevel){
 				printf("dimmer :%.2f\n", dimSW);
-			}
-			
-		}
-		
-
-	}
+				setDimLevel(dimSW);
+ 			}
+ 		}
+ 	}
  
 	// ocassionally save properties
 	saveRadioSettings();
@@ -1348,10 +1344,7 @@ void PiCarMgr::displayRadioMenu(){
 	});
 };
 
-void PiCarMgr::displaySettingsMenu(){
-	
-	constexpr time_t timeout_secs = 10;
-	
+vector<string> PiCarMgr::settingsMenuItems(){
 	string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
 	
 	vector<string> menu_items = {
@@ -1362,8 +1355,16 @@ void PiCarMgr::displaySettingsMenu(){
 		"-",
 		"Shutdown"
 	};
+
+	return menu_items;
+}
+
+void PiCarMgr::displaySettingsMenu(){
 	
-	_display.showMenuScreen(menu_items,
+	constexpr time_t timeout_secs = 10;
+	
+		
+	_display.showMenuScreen(settingsMenuItems(),
 									2,
 									"Settings",
 									timeout_secs,
@@ -1391,19 +1392,7 @@ void PiCarMgr::displaySettingsMenu(){
  						}
 						else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
 							_autoDimmerMode = !_autoDimmerMode;
-							
-							string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
-							
-							vector<string> menu_items = {
-								"Audio Balance",
-								"Audio Fader",
-								dim_entry,
-								"Exit",
-								"-",
-								"Shutdown"
-							};
-
-							_display.updateMenuItems(menu_items);
+							_display.updateMenuItems(settingsMenuItems());
  						}
 						break;
 

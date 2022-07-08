@@ -358,7 +358,7 @@ bool DisplayMgr::setBrightness(double level) {
 		_dimLevel = level;
  
 		// vfd 0 -7
-		uint8_t vfdLevel = round(level * 7.0);
+		uint8_t vfdLevel =  level * 7.0 ;
 		success = _vfd.setBrightness(vfdLevel);
 	}
 	
@@ -2248,18 +2248,16 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	
 	double brightness = mgr->dimLevel();
-	double increment = 8./10.;
+	double increment = .125;
 	
 	if(brightness > -1){
 		
 		if(action == KNOB_UP){
 			
 			if(brightness < 1.0){
-				brightness -= increment;
-				
-				double level = brightness / 7.;
-				mgr->setDimLevel(level);
-				setBrightness(level);
+				brightness += increment;
+				mgr->setDimLevel(brightness);
+				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
 			wasHandled = true;
@@ -2267,10 +2265,9 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
  		else if(action == KNOB_DOWN){
 			
 			if(brightness > 0){
-				brightness += increment;
-				double level = brightness / 7.;
-				mgr->setDimLevel(level);
-				setBrightness(level);
+				brightness -= increment;
+				mgr->setDimLevel(brightness);
+				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
 			wasHandled = true;

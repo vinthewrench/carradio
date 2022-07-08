@@ -115,7 +115,7 @@ public:
 
  	// Menu Screen Management
 	typedef string menuItem_t;
-	typedef std::function<void(bool didSucceed, uint selectedItemID)> menuSelectedCallBack_t;
+	typedef std::function<void(bool didSucceed, uint selectedItemID, knob_action_t action)> menuSelectedCallBack_t;
 	void showMenuScreen(vector<menuItem_t> items,
 							  uint intitialItem,
 							  string title,

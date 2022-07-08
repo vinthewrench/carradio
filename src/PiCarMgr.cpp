@@ -1193,9 +1193,11 @@ void PiCarMgr::displayMenu(){
 									selectedItem,
 									"Select Screen",
 									timeout_secs,
-									[=](bool didSucceed, uint newSelectedItem ){
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
 		
-		if(didSucceed) {
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
 			menu_mode_t selectedMode = _main_menu_map[newSelectedItem].first;
 			
 			if(selectedMode != MENU_UNKNOWN)
@@ -1289,9 +1291,11 @@ void PiCarMgr::displayRadioMenu(){
 									selectedItem,
 									"Select Radio Band",
 									timeout_secs,
-									[=](bool didSucceed, uint newSelectedItem ){
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
 		
-		if(didSucceed) {
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
 			
 			RadioMgr::radio_mode_t  radioMode  = RadioMgr::MODE_UNKNOWN;
 			
@@ -1363,43 +1367,54 @@ void PiCarMgr::displaySettingsMenu(){
 									2,
 									"Settings",
 									timeout_secs,
-									[=](bool didSucceed, uint newSelectedItem ){
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
 		
 		if(didSucceed) {
 			
-			switch (newSelectedItem) {
-					
-				case 0:
-					_display.showBalanceChange();
-					break;
+			if(action){
+				switch (newSelectedItem) {
+						
+					case 0:
+						_display.showBalanceChange();
+						break;
 
-				case 1:
-					_display.showFaderChange();
-					break;
+					case 1:
+						_display.showFaderChange();
+						break;
 
-				case 2:
-					if(!_autoDimmerMode) _display.showDimmerChange();
-					break;
+					case 2:
+						if(action == DisplayMgr::KNOB_CLICK){
+							if(!_autoDimmerMode)
+								_display.showDimmerChange();
+ 						}
+						else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
+							printf("change dimmer mode \n");
+						}
+						break;
 
-				case 5:
-					doShutdown();
-					break;
-					
-					//				case 1:
-					// //					_display.showSettings(1);
-					//					break;
-					
-				default:
-					
-					if(_lastMenuMode != MENU_UNKNOWN){
-						// restore old mode thast was set in main menu
-						setDisplayMode(_lastMenuMode);
-					}
-					else	// fallback
-					{
-						_display.showTime();
-					}
-					break;
+					case 5:
+						doShutdown();
+						break;
+						
+						//				case 1:
+						// //					_display.showSettings(1);
+						//					break;
+						
+					default:
+						
+						if(_lastMenuMode != MENU_UNKNOWN){
+							// restore old mode thast was set in main menu
+							setDisplayMode(_lastMenuMode);
+						}
+						else	// fallback
+						{
+							_display.showTime();
+						}
+						break;
+				}
+				
 			}
 			
 		}
@@ -1434,9 +1449,11 @@ void PiCarMgr::tunerDoubleClicked(){
 										_tuner_mode,		// select the mode we are in - so triple click has no effect
 										"Channel Presets",
 										timeout_secs,
-										[=](bool didSucceed, uint newSelectedItem ){
+										[=](bool didSucceed,
+											 uint newSelectedItem,
+										  		DisplayMgr::knob_action_t action ){
 			
-			if(didSucceed) {
+			if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
 				
 				switch (newSelectedItem) {
 						

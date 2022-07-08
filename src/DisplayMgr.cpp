@@ -143,7 +143,7 @@ void DisplayMgr::stop(){
 	
 	if(_isSetup){
 		
-		if(_menuCB) _menuCB(false, 0);
+		if(_menuCB) _menuCB(false, 0, KNOB_EXIT);
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
@@ -660,7 +660,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				
 			case KNOB_EXIT:
 				if(_menuCB) {
-					_menuCB(false, 0);
+					_menuCB(false, 0, action);
 				}
 				setEvent(EVT_POP, MODE_UNKNOWN);
 				resetMenu();
@@ -677,6 +677,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				break;
 				
 			case KNOB_CLICK:
+			case KNOB_DOUBLE_CLICK:
 			{
 				// ignore menu separators
 				if(_menuItems[_currentMenuItem] == "-")
@@ -700,16 +701,11 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				pthread_mutex_unlock (&_mutex);
 				
 				if(cb) {
-					cb(true,  item);
+					cb(true,  item, action);
 				}
 			}
-	 			break;
-			
-			case KNOB_DOUBLE_CLICK:
-				
-				printf("double click in menu\n");
-				break;
-				
+			break;
+		 
 			}
 		
 	}
@@ -968,7 +964,7 @@ void DisplayMgr::DisplayUpdate(){
 							popMode();
 							
 							if(_menuCB) {
-								_menuCB(false, 0);
+								_menuCB(false, 0, KNOB_EXIT);
 							}
 							resetMenu();
 							shouldRedraw = true;

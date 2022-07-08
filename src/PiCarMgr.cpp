@@ -728,8 +728,7 @@ void PiCarMgr::PiCanLoop(){
 	
 	PRINT_CLASS_TID;
 	
-	constexpr time_t pollTime	= 1;  // polling for slow devices sleep in seconds
-	bool firstRun = false;
+ 	bool firstRun = false;
 	
 	try{
 		
@@ -786,8 +785,8 @@ void PiCarMgr::PiCanLoop(){
 				
 				struct timespec timeout;
 				// Timeout in polltime seconds
-				timeout.tv_sec =  pollTime;
-				timeout.tv_nsec = 0;
+				timeout.tv_sec =  0;
+				timeout.tv_nsec = 5e8;  // .5 sec
 				gpiod_line_event evt;
 				
 				// gpiod_line_event_wait return 0 if wait timed out,
@@ -1046,6 +1045,16 @@ void PiCarMgr::idle(){
 		_db.savePropertiesToFile();
 	}
 	
+	
+	if(true /*autoDimmerMode */){
+		double dimSW = 0;
+		static double lastdimSW = 0;
+		
+		if( _db.getDoubleValue("JK_DIMMER_SW", dimSW)) {
+			if(lastdimSW != dimSW)
+				printf("dimmer :%.2f\n", dimSW);
+		}
+	}
 }
 
 void* PiCarMgr::PiCanLoopThread(void *context){

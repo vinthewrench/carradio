@@ -244,9 +244,6 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			
 			double level = (dimValue * 100.) / 255. ;
 			db->updateValue(schemaKeyForValueKey(DIMMER_SW), to_string(level), when);
-			
-			printf("DIMMER_SW %.2f \n", level);
-			
 		}
 			break;
 			

@@ -240,6 +240,7 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			uint8_t dimValue = 0;
 			if(frame.data[0] == 00) dimValue = 0;
 			else if (frame.data[0] == 0x13) dimValue = 255;
+			else if (frame.data[0] == 0x11) dimValue = 255;
 			else  if (frame.data[0] == 0x12) dimValue = frame.data[1];
 			
 			double level = (dimValue * 100.) / 255. ;

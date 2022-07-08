@@ -2247,14 +2247,16 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	
-	int brightness = mgr->dimLevel();
-	 
+	double brightness = mgr->dimLevel();
+	double increment = 8./10.;
+	
 	if(brightness > -1){
 		
 		if(action == KNOB_UP){
 			
-			if(brightness < 7){
-				brightness++;
+			if(brightness < 1.0){
+				brightness -= increment;
+				
 				double level = brightness / 7.;
 				mgr->setDimLevel(level);
 				setBrightness(level);
@@ -2265,7 +2267,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
  		else if(action == KNOB_DOWN){
 			
 			if(brightness > 0){
-				brightness--;
+				brightness += increment;
 				double level = brightness / 7.;
 				mgr->setDimLevel(level);
 				setBrightness(level);

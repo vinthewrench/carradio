@@ -137,7 +137,8 @@ bool PiCarMgr::begin(){
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
-		_dimmerMode = -1;
+		_dimLevel =  7;
+		_autoDimmerMode = false;
 		
 		// clear DB
 		_db.clearValues();
@@ -195,7 +196,7 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-		_display.setBrightness(_dimmerMode);
+		_display.setBrightness(_dimLevel);
  
 		// SETUP CANBUS
 		_can.begin();
@@ -369,10 +370,12 @@ void PiCarMgr::saveRadioSettings(){
 	
 	updateRadioPrefs();
 	
-	if(_dimmerMode < 0)
-		_db.setProperty(PROP_DIMMER_MODE, VAL_AUTO);
+	if(_autoDimmerMode)
+		_db.removeProperty(PROP_DIMMER_LEVEL);
 	else
-		_db.setProperty(PROP_DIMMER_MODE, _dimmerMode);
+		_db.setProperty(PROP_DIMMER_LEVEL, _dimLevel);
+	
+	_db.setProperty(PROP_AUTO_DIMMER_MODE, _autoDimmerMode);
 
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
@@ -386,14 +389,16 @@ void PiCarMgr::restoreRadioSettings(){
 	nlohmann::json j = {};
  
 	// SET Dimmer
-	string dimMode;
- 	if(_db.getProperty(PROP_DIMMER_MODE, &dimMode)
-		&& 	regex_match( dimMode, std::regex("^[0-7]{1}$"))) 	{
-		_dimmerMode =  min(atoi(dimMode.c_str()), 7);
- 	}
-	// why-- because a -1  dimlevel is auto mode / dimmmer is set by the CAN bus.
-	 else _dimmerMode = -1;
-	
+	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
+		setDimLevel(7);
+	}
+	else {
+		uint16_t dimLevel = 7;
+		if(_db.getUint16Property(PROP_DIMMER_LEVEL, &dimLevel)){
+			setDimLevel(dimLevel);
+		}
+	}
+		
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
@@ -1511,13 +1516,12 @@ void PiCarMgr::stopControls(){
 	
 }
 
-void PiCarMgr::setBrightness(int dimLevel){
-	dimLevel = min(dimLevel, 7);
-	_dimmerMode = (dimLevel > -1)?dimLevel: -1;
- 
+void PiCarMgr::setDimLevel(uint8_t dimLevel){
+	_dimLevel = min( (int) dimLevel, 7);
 }
- int PiCarMgr::brightness(){
-	return _dimmerMode;
+
+uint8_t PiCarMgr::dimLevel(){
+	return _dimLevel;
 }
 
 

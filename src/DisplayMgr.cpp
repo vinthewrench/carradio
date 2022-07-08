@@ -1386,7 +1386,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	}
 	
 	// brightness scales between 0 -7
-	float dim =  mgr->brightness()  * (1. / 7.);
+	float dim =  mgr->dimLevel()  * (1. / 7.);
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
 	
 	// clear rest of inside of box
@@ -2248,7 +2248,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	
-	int brightness = mgr->brightness();
+	int brightness = mgr->dimLevel();
 	 
 	if(brightness > -1){
 		
@@ -2256,7 +2256,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness < 7){
 				brightness++;
-				mgr->setBrightness(brightness);
+				mgr->setDimLevel(brightness);
 				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
@@ -2266,7 +2266,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness > 0){
 				brightness--;
-				mgr->setBrightness(brightness);
+				mgr->setDimLevel(brightness);
 				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}

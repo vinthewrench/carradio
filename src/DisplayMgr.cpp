@@ -682,6 +682,8 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				// save the vars that get reset
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
+				
+				printf("double click %d\n", item);
 
 				if(cb) {
 					cb(true,  item, KNOB_DOUBLE_CLICK);

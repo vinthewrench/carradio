@@ -380,7 +380,7 @@ bool  PiCarDB::getFloatProperty(string key, float * valOut){
 	{
 		auto val = _props.at(key);
 		if(valOut)
-				*valOut = (uint16_t) val;
+				*valOut = (float) val;
 			return true;
 		}
    	return false;

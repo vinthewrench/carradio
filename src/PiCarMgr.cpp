@@ -1055,8 +1055,10 @@ void PiCarMgr::idle(){
 			double dimSW = fDB->normalizedDoubleForValue(key,rawValue) / 100. ;
 				
 			if(dimSW != _dimLevel){
-				printf("dimmer :%.2f\n", dimSW);
-				setDimLevel(dimSW);
+					setDimLevel(dimSW);
+ 				// update the brightness
+				_display.setBrightness(_dimLevel);
+
  			}
  		}
  	}

@@ -706,6 +706,8 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 	 			break;
 			
 			case KNOB_DOUBLE_CLICK:
+				
+				printf("double click in menu\n");
 				break;
 				
 			}

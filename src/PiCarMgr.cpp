@@ -373,7 +373,12 @@ void PiCarMgr::saveRadioSettings(){
 	if(_autoDimmerMode)
 		_db.removeProperty(PROP_DIMMER_LEVEL);
 	else
-		_db.setProperty(PROP_DIMMER_LEVEL, _dimLevel);
+	{
+		// force to tenths
+		char buffer[8];
+		sprintf(buffer, "%0.1f", _dimLevel );
+ 		_db.setProperty(PROP_DIMMER_LEVEL,atof(buffer));
+	}
 	
 	_db.setProperty(PROP_AUTO_DIMMER_MODE, _autoDimmerMode);
 

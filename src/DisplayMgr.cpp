@@ -1384,8 +1384,8 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 	}
 	
-	// brightness scales between 0 -7
-	float dim =  mgr->dimLevel()  * (1. / 7.);
+	// brightness scales between 0 - 1.0
+	float dim =  mgr->dimLevel();
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
 	
 	// clear rest of inside of box

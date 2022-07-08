@@ -4,7 +4,7 @@
 		  "fade": 0.0,
 		  "vol": 0.049239939777512357
 	 },
-	 "dimmer_level" :  0.5,
+	 "dimmer_level" :  0.345,
 	 "canbus-display": [
 		 {
 			 "key": "GM_COOLANT_TEMP",

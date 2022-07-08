@@ -688,8 +688,8 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				if(cb) {
 					cb(true,  item, KNOB_DOUBLE_CLICK);
 				}
-				
-				drawMenuScreen(TRANS_REFRESH);
+				// force redraw
+				drawMenuScreen(TRANS_ENTERING);
 			}
 				break;
 				

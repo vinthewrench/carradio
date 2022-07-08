@@ -91,6 +91,7 @@ typedef  enum  {
 		CLOCK,
 		RPM,
 		VIN,
+		DIMMER_SW,
 } value_keys_t;
 
 typedef FrameDB::valueSchema_t valueSchema_t;
@@ -105,6 +106,7 @@ static map<value_keys_t,  valueSchema_t> _schemaMap = {
 	{CLOCK,					{"JK_CLOCK",						"Clock Time",								FrameDB::STRING}},
 	{RPM,						{"JK_ENGINE_RPM",					"Engine RPM",								FrameDB::RPM}},
 	{VIN,						{"JK_VIN",							"Vehicle Identification Number",		FrameDB::STRING}},
+	{DIMMER_SW,				{"JK_DIMMER_SW",					"Dimmer Switch",							FrameDB::PERCENT}}
 	};
 
 
@@ -232,6 +234,19 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 		}
 			break;
 
+			
+		case 0x308: // Dimmer switch
+		{
+			uint8_t dimValue = 0;
+			if(frame.data[0] == 00) dimValue = 0;
+			else if (frame.data[0] == 0x13) dimValue = 255;
+			else  if (frame.data[0] == 0x12) dimValue = frame.data[1];
+			
+			int level = (dimValue * 100.) / 255. ;
+			db->updateValue(schemaKeyForValueKey(DIMMER_SW), to_string(level), when);
+		}
+			break;
+			
 		case 0x219: // JK VIN number
 		{
 			// this repeats with first byte as sequence number

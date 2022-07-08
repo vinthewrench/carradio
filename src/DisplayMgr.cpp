@@ -2258,6 +2258,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness < 1.0){
 				brightness += increment;
+				brightness = min(brightness, 1.0);
+				
 				mgr->setDimLevel(brightness);
 				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
@@ -2268,6 +2270,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness > 0){
 				brightness -= increment;
+				brightness = max(brightness, 0.0);
+	
 				mgr->setDimLevel(brightness);
 				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);

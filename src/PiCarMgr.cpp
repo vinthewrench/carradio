@@ -1409,8 +1409,6 @@ void PiCarMgr::displaySettingsMenu(){
 
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();
-
-	printf("tunerDoubleClicked mode = %d\n", dMode);
 	
 	if(dMode == DisplayMgr::MODE_RADIO
 		&& _radio.isOn()){

@@ -1390,6 +1390,7 @@ void PiCarMgr::displaySettingsMenu(){
 								_display.showDimmerChange();
  						}
 						else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
+							_autoDimmerMode = !_autoDimmerMode;
 							printf("change dimmer mode \n");
 						}
 						break;

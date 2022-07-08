@@ -53,6 +53,7 @@ DisplayMgr::DisplayMgr(){
  	_ledEvent = 0;
 	_isSetup = false;
 	_isRunning = true;
+	_dimLevel = 1.0;
 	
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
@@ -349,18 +350,16 @@ void DisplayMgr::runLEDEventVol(){
 
 // MARK: -  display tools
 
-bool DisplayMgr::setBrightness(uint8_t level) {
+bool DisplayMgr::setBrightness(double level) {
 
 	bool success = false;
 
-	level = (level < 0)?7: level;
-	level = min((int) level, 7);
-	_dimLevel = level;
-	
-	if(_isSetup){
+ 	if(_isSetup){
+		_dimLevel = level;
  
-		success = _vfd.setBrightness(level);
-		
+		// vfd 0 -7
+		uint8_t vfdLevel = round(level * 7.0);
+		success = _vfd.setBrightness(vfdLevel);
 	}
 	
 	return success;
@@ -2256,8 +2255,9 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness < 7){
 				brightness++;
-				mgr->setDimLevel(brightness);
-				setBrightness(brightness);
+				double level = brightness / 7.;
+				mgr->setDimLevel(level);
+				setBrightness(level);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
 			wasHandled = true;
@@ -2266,8 +2266,9 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			
 			if(brightness > 0){
 				brightness--;
-				mgr->setDimLevel(brightness);
-				setBrightness(brightness);
+				double level = brightness / 7.;
+				mgr->setDimLevel(level);
+				setBrightness(level);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
 			wasHandled = true;

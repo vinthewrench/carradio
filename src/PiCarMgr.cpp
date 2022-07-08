@@ -137,7 +137,7 @@ bool PiCarMgr::begin(){
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
-		_dimLevel =  7;
+		_dimLevel =  1.0; // full
 		_autoDimmerMode = false;
 		
 		// clear DB
@@ -390,11 +390,11 @@ void PiCarMgr::restoreRadioSettings(){
  
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
-		setDimLevel(7);
+		setDimLevel(1.0);
 	}
 	else {
-		uint16_t dimLevel = 7;
-		if(_db.getUint16Property(PROP_DIMMER_LEVEL, &dimLevel)){
+		float dimLevel = 1.0;
+		if(_db.getFloatProperty(PROP_DIMMER_LEVEL, &dimLevel)){
 			setDimLevel(dimLevel);
 		}
 	}
@@ -1537,11 +1537,13 @@ void PiCarMgr::stopControls(){
 	
 }
 
-void PiCarMgr::setDimLevel(uint8_t dimLevel){
-	_dimLevel = min( (int) dimLevel, 7);
+void PiCarMgr::setDimLevel(double dimLevel){
+	
+	if(dimLevel < 0) dimLevel = 0;
+	_dimLevel = dimLevel;
 }
 
-uint8_t PiCarMgr::dimLevel(){
+double PiCarMgr::dimLevel(){
 	return _dimLevel;
 }
 

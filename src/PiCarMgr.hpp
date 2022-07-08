@@ -101,8 +101,8 @@ class PiCarMgr {
 	void startControls( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopControls();
 
-	void setDimLevel(uint8_t dimLevel);
-	uint8_t dimLevel();
+	void setDimLevel(double dimLevel);
+	double dimLevel();
 	
 	void saveRadioSettings();
 	void restoreRadioSettings();
@@ -210,7 +210,7 @@ private:
 	ArgononeFan			_fan;
 	
 	bool					_autoDimmerMode;		 // controlled by canbus
-	uint8_t				_dimLevel;		  // 0 == off,  7 == max
+	double				_dimLevel;		  //   0.0 - 1.0 fraction of bright
 
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;

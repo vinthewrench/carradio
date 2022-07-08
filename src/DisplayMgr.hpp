@@ -90,7 +90,7 @@ public:
 	DuppaKnob* leftKnob() { return &_leftKnob;};
 
 	// display related
-	bool setBrightness(uint8_t level);  // 0-7
+	bool setBrightness(double level);   // 0.0 -  1.0
 	bool setKnobColor(knob_id_t, RGB);
 	
 	// multi page display
@@ -254,7 +254,7 @@ private:
 	// colors and brightness
 	RGB 					_rightKnobColor;
 	RGB 					_leftKnobColor;
-	uint8_t				_dimLevel;
+	double				_dimLevel;		// 0.0 = off ,  1.0  = full on.
 
 	// devices
 	VFD 					_vfd;

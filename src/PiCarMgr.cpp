@@ -1348,10 +1348,12 @@ void PiCarMgr::displaySettingsMenu(){
 	
 	constexpr time_t timeout_secs = 10;
 	
+	string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
+	
 	vector<string> menu_items = {
 		"Audio Balance",
 		"Audio Fader",
-		"Dim Screen",
+		dim_entry,
 		"Exit",
 		"-",
 		"Shutdown"
@@ -1376,7 +1378,7 @@ void PiCarMgr::displaySettingsMenu(){
 					break;
 
 				case 2:
-					_display.showDimmerChange();
+					if(!_autoDimmerMode) _display.showDimmerChange();
 					break;
 
 				case 5:

@@ -650,6 +650,13 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
+void  DisplayMgr::updateMenuItems(vector<menuItem_t> items){
+	if(_current_mode == MODE_MENU) {
+		_menuItems = items;
+
+	}
+ }
+
 bool DisplayMgr::menuSelectAction(knob_action_t action){
 	bool wasHandled = false;
 	

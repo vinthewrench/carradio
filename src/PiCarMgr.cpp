@@ -1391,8 +1391,20 @@ void PiCarMgr::displaySettingsMenu(){
  						}
 						else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
 							_autoDimmerMode = !_autoDimmerMode;
-							printf("change dimmer mode \n");
-						}
+							
+							string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
+							
+							vector<string> menu_items = {
+								"Audio Balance",
+								"Audio Fader",
+								dim_entry,
+								"Exit",
+								"-",
+								"Shutdown"
+							};
+
+							_display.updateMenuItems(menu_items);
+ 						}
 						break;
 
 					case 5:

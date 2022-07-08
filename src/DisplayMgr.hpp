@@ -122,6 +122,10 @@ public:
 							  time_t timeout = 0,
 							  menuSelectedCallBack_t cb = nullptr);
  
+	
+	void updateMenuItems(vector<menuItem_t> items);   // can be called from menuSelectedCallBack_t
+	
+	
 private:
 	
 	typedef enum  {

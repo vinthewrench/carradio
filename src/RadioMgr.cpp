@@ -33,23 +33,23 @@ RadioMgr::RadioMgr(){
 	_shouldQuit = false;
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
+  
+	pthread_create(&_auxReaderTID, NULL,
+								  (THREADFUNCPTR) &RadioMgr::AuxReaderThread, (void*)this);
 
-	
 	 pthread_create(&_sdrReaderTID, NULL,
 									(THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
 
 	 pthread_create(&_sdrProcessorTID, NULL,
 									(THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
 
-
 	 pthread_create(&_outputProcessorTID, NULL,
 									(THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
-
-
  }
  
 RadioMgr::~RadioMgr(){
 	stop();
+	pthread_join(_auxReaderTID, NULL);
 	pthread_join(_sdrReaderTID, NULL);
 	pthread_join(_sdrProcessorTID, NULL);
 	pthread_join(_outputProcessorTID, NULL);
@@ -95,8 +95,10 @@ void RadioMgr::stop(){
 		_shouldReadSDR = false;
 		_shouldReadAux = false;
 		_shouldQuit = true;
+		
+		_lineInput.stop();
 		_sdr.stop();
- 	}
+	}
 	
  	_isSetup = false;
  
@@ -490,7 +492,67 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 	return string(buffer);
 }
 
+// MARK: -  AuxReader thread
 
+void RadioMgr::AuxReader(){
+	PRINT_CLASS_TID;
+	constexpr int  pcmrate = 48000;
+
+	static bool aux_setup = false;
+	
+	while(!_shouldQuit){
+		
+			// aux is off sleep for awhile.
+		if(!_isSetup || !_shouldReadAux){
+			
+			if(aux_setup){
+				_lineInput.stop();
+				aux_setup = false;
+			}
+				usleep(200000);
+				continue;
+		}
+	
+		if(!aux_setup){
+			_lineInput.begin(pcmrate, true) ;
+			aux_setup = false;
+		}
+
+		if(_lineInput.iConnected()){
+			
+			// get input
+		}
+		
+		usleep(200000);
+	}
+		
+}
+
+
+// C wrappers for AuxReader;
+
+void* RadioMgr::AuxReaderThread(void *context){
+	RadioMgr* d = (RadioMgr*)context;
+
+	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
+	pthread_cleanup_push(   &RadioMgr::AuxReaderThreadCleanup ,context);
+ 
+	d->AuxReader();
+	
+	pthread_exit(NULL);
+	
+	pthread_cleanup_pop(0);
+	return((void *)1);
+}
+
+ 
+void RadioMgr::AuxReaderThreadCleanup(void *context){
+	RadioMgr* d = (RadioMgr*)context;
+
+//	printf("cleanup Aux\n");
+}
+
+ 
 // MARK: -  SDRReader thread
 
  

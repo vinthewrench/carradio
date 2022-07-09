@@ -23,6 +23,7 @@
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 #include "FmDecode.hpp"
+#include "AudioLineInput.hpp"
 
 using namespace std;
 
@@ -100,12 +101,14 @@ private:
 
 	mutable std::mutex _mutex;		// when changing frequencies and modes.
 	FmDecoder*			_fmDecoder;
+	AudioLineInput		_lineInput;
 	
-	// SDR Reader thread
+	//  Reader threads
 	bool					 _shouldQuit;
 	bool					 _shouldReadSDR;
 	bool					 _shouldReadAux;
-
+	
+	pthread_t			_auxReaderTID;
 	pthread_t			_sdrReaderTID;
 	pthread_t			_sdrProcessorTID;
 	pthread_t			_outputProcessorTID;
@@ -114,8 +117,12 @@ private:
 	// C wrappers for SDRReader;
 	static void* SDRReaderThread(void *context);
 	static void SDRReaderThreadCleanup(void *context);
-
 	
+	void AuxReader();		// C++ version of thread
+	// C wrappers for AuxReader;
+	static void* AuxReaderThread(void *context);
+	static void AuxReaderThreadCleanup(void *context);
+
 	void SDRProcessor();		// C++ version of thread
 	// C wrappers for SDRReader;
 	static void* SDRProcessorThread(void *context);

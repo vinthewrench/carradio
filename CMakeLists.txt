@@ -65,6 +65,7 @@ set(SOURCES
 	src/FmDecode.cpp
 	src/Filter.cpp
 	src/AudioOutput.cpp
+	src/AudioLineInput.cpp
 	src/RtlSdr.cpp
 	src/CPUInfo.cpp
 	src/PiCarDB.cpp

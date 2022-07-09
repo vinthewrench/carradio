@@ -38,6 +38,7 @@
 		2E8210F5283EAEB2003D074C /* CANBusMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210ED283EAEB2003D074C /* CANBusMgr.cpp */; };
 		2E8210FE283EB144003D074C /* PiCarCAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210FC283EB144003D074C /* PiCarCAN.cpp */; };
 		2E8D371B2874BFFF000182E5 /* ArgononeFan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8D37192874BB2B000182E5 /* ArgononeFan.cpp */; };
+		2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8D3720287A3CD0000182E5 /* AudioLineInput.cpp */; };
 		2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9B282727D200E12F5D /* Filter.cpp */; };
 		2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9E9D282727D200E12F5D /* FmDecode.cpp */; };
 		2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */; };
@@ -146,6 +147,8 @@
 		2E8D37182874BAF8000182E5 /* argononed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = argononed.h; sourceTree = "<group>"; };
 		2E8D37192874BB2B000182E5 /* ArgononeFan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ArgononeFan.cpp; sourceTree = "<group>"; };
 		2E8D371A2874BB2B000182E5 /* ArgononeFan.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ArgononeFan.hpp; sourceTree = "<group>"; };
+		2E8D3720287A3CD0000182E5 /* AudioLineInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioLineInput.cpp; sourceTree = "<group>"; };
+		2E8D3721287A3CD0000182E5 /* AudioLineInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioLineInput.hpp; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -350,6 +353,8 @@
 		2E8210AC2835A465003D074C /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				2E8D3721287A3CD0000182E5 /* AudioLineInput.hpp */,
+				2E8D3720287A3CD0000182E5 /* AudioLineInput.cpp */,
 				2E8210AD2835A4AC003D074C /* AudioOutput.cpp */,
 				2E8210AE2835A4AC003D074C /* AudioOutput.hpp */,
 			);
@@ -501,6 +506,7 @@
 				2E8210C92835A593003D074C /* TempSensor.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
 				2E8210A32835A36D003D074C /* tranmerc.cpp in Sources */,
+				2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

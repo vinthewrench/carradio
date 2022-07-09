@@ -367,7 +367,6 @@ bool DisplayMgr::setBrightness(double level) {
 		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
 		_rightRing.SetGlobalCurrent(ledCurrent);
 		_leftRing.SetGlobalCurrent(ledCurrent);
-	
 	}
 	
 	return success;

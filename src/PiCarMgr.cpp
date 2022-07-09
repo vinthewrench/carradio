@@ -102,7 +102,7 @@ PiCarMgr::PiCarMgr(){
 	std::set_terminate( CRASH_Handler );
 	
 	_main_menu_map = {
-		{MENU_SELECT_BAND,	"Radio Band"},
+		{MENU_SELECT_AUDIO_SOURCE,	"Audio Source"},
 		{MENU_GPS,		"GPS"},
 		{MENU_CANBUS,	"Engine"},
 		{MENU_DTC,		"Diagnostics"},
@@ -1214,7 +1214,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			_display.showRadioChange();
 			break;
 			
-		case MENU_SELECT_BAND:
+		case MENU_SELECT_AUDIO_SOURCE:
 			displayRadioMenu();
 			break;
 			
@@ -1287,7 +1287,7 @@ void PiCarMgr::displayRadioMenu(){
 	
 	_display.showMenuScreen(menu_items,
 									selectedItem,
-									"Select Radio Band",
+									"Select Audio Source",
 									timeout_secs,
 									[=](bool didSucceed,
 										 uint newSelectedItem,

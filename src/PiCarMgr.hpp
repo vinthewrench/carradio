@@ -138,7 +138,7 @@ private:
 	typedef enum :int {
 		MENU_UNKNOWN = 0,
 		MENU_RADIO,
-		MENU_SELECT_BAND,
+		MENU_SELECT_AUDIO_SOURCE,
 		MENU_CANBUS,
 		MENU_GPS,
 		MENU_TIME,

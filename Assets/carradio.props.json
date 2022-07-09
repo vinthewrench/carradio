@@ -98,6 +98,10 @@
 	 "fan-query-delay": 4,
 	 "tuner_knob_mode": 2,
 	 "tuner_presets": [
+		 {
+				"freq": 0,
+				"mode": "AUX"
+		  },
 		  {
 				"freq": 103500000,
 				"mode": "FM"

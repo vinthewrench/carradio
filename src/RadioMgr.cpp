@@ -31,6 +31,8 @@ RadioMgr::RadioMgr(){
 	_isSetup = false;
 	
 	_shouldQuit = false;
+	_shouldReadSDR = false;
+	_shouldReadAux = false;
 
 	
 	 pthread_create(&_sdrReaderTID, NULL,
@@ -64,7 +66,9 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	
 	_isSetup = false;
 	_pcmrate = pcmrate;
-	
+	_shouldReadSDR = false;
+	_shouldReadAux = false;
+
 	if(! _sdr.begin(deviceIndex,error ) )
 		return false;
 
@@ -88,7 +92,8 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 void RadioMgr::stop(){
 	
 	if(_isSetup  ){
-		_shouldRead = false;
+		_shouldReadSDR = false;
+		_shouldReadAux = false;
 		_shouldQuit = true;
 		_sdr.stop();
  	}
@@ -128,7 +133,9 @@ bool RadioMgr::setON(bool isOn) {
 	if(!isOn){
 		std::lock_guard<std::mutex> lock(_mutex);
 		
-		_shouldRead = false;
+		_shouldReadSDR = false;
+		_shouldReadAux = false;
+
 		_sdr.resetBuffer();
 		_output_buffer.flush();
 		
@@ -196,7 +203,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
- 		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+ 	//	printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
  		
@@ -212,10 +219,12 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
 		
 		if(_mode == AUX) {
-			_shouldRead = false;
+			_sdr.resetBuffer();
 			_output_buffer.flush();
+			_shouldReadSDR = false;
+	 		_shouldReadAux = true;
+
 			didUpdate = true;
-	
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
@@ -281,10 +290,10 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
 		
 		didUpdate = true;
-		
+		_shouldReadAux = false;
 		_sdr.resetBuffer();
 		_output_buffer.flush();
-		_shouldRead = true;
+		_shouldReadSDR = true;
 	}
 	
 	if(didUpdate){
@@ -485,10 +494,8 @@ void RadioMgr::SDRReader(){
 	IQSampleVector iqsamples;
 
 	while(!_shouldQuit){
-	 
-		
 			// radio is off sleep for awhile.
-			if(!_isSetup || !_shouldRead){
+			if(!_isSetup || !_shouldReadSDR){
  				usleep(200000);
 				continue;
 			}
@@ -576,7 +583,7 @@ void RadioMgr::SDRProcessor(){
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);
 			
-			if(!_shouldRead)
+			if(!_shouldReadSDR)
 				continue;
 			
 			// Decode FM signal.

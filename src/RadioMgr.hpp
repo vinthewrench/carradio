@@ -103,7 +103,8 @@ private:
 	
 	// SDR Reader thread
 	bool					 _shouldQuit;
-	bool					 _shouldRead;
+	bool					 _shouldReadSDR;
+	bool					 _shouldReadAux;
 
 	pthread_t			_sdrReaderTID;
 	pthread_t			_sdrProcessorTID;

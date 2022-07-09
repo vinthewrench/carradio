@@ -261,18 +261,20 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 												bandwidth_pcm,
 												downsample
 												);
+			_shouldReadAux = false;
+			_shouldReadSDR = true;
 		}
- 		else if(_mode == BROADCAST_FM) {
-	 
+		else if(_mode == BROADCAST_FM) {
+			
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-		
+			
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
 			if(! _sdr.setFrequency(tuner_freq))
 				return false;
-
+			
 			// changing FM frequencies means recreating the decoder
 			
 			// The baseband signal is empty above 100 kHz, so we can
@@ -295,13 +297,12 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 												bandwidth_pcm,
 												downsample
 												);
+			
+			_shouldReadAux = false;
+			_shouldReadSDR = true;
 		}
 		
 		didUpdate = true;
-		_shouldReadAux = false;
-//			_sdr.resetBuffer();
-//		_output_buffer.flush();
- 		_shouldReadSDR = true;
 	}
 	
 	if(didUpdate){
@@ -496,6 +497,9 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 
 void RadioMgr::AuxReader(){
 	PRINT_CLASS_TID;
+	
+	printf("%s tid: %ld\n",__FUNCTION__,  (long) syscall(SYS_gettid));
+	
 	constexpr int  pcmrate = 48000;
 
 	static bool aux_setup = false;

@@ -1498,9 +1498,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			
 			if(mode == RadioMgr::AUX){
 	
-				string str = "AUX INPUT";
+				string str = "AUX Input";
 				auto freqCenter =  centerX - (str.size() * 11);
 		
+				printf("%d %d\n", centerX, freqCenter);
 				TRY(_vfd.setFont(VFD::FONT_10x14));
 				TRY(_vfd.setCursor( freqCenter ,centerY+5));
 				TRY(_vfd.write(str));

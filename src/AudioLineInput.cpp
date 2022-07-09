@@ -39,9 +39,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 #if defined(__APPLE__)
 #else
 	int r;
-	
-	int r;
-	
+		
 	r = snd_pcm_open(&_pcm, _PCM_,
 						  SND_PCM_STREAM_CAPTURE, SND_PCM_NONBLOCK);
 	if( r < 0){

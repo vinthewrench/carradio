@@ -547,7 +547,7 @@ void* RadioMgr::AuxReaderThread(void *context){
 
  
 void RadioMgr::AuxReaderThreadCleanup(void *context){
-	RadioMgr* d = (RadioMgr*)context;
+//	RadioMgr* d = (RadioMgr*)context;
 
 //	printf("cleanup Aux\n");
 }

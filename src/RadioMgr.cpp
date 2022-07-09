@@ -497,9 +497,7 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 
 void RadioMgr::AuxReader(){
 	PRINT_CLASS_TID;
-	
-	printf("%s tid: %ld\n",__FUNCTION__,  (long) syscall(SYS_gettid));
-	
+		
 	constexpr int  pcmrate = 48000;
 
 	static bool aux_setup = false;

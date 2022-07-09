@@ -197,7 +197,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
-//		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+ 		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
  		
@@ -205,13 +205,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		_frequency = newFreq;
 		_mode = newMode;
 		_mux =  MUX_MONO;
-		
-		// Intentionally tune at a higher frequency to avoid DC offset.
-		double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
-		
-		if(! _sdr.setFrequency(tuner_freq))
-			return false;
-		
+	 
 		// create proper decoder
 		if(_fmDecoder) {
 			delete _fmDecoder;
@@ -225,7 +219,13 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	
 		}
 		else if(_mode == VHF || _mode == GMRS) {
-	 
+	
+			// Intentionally tune at a higher frequency to avoid DC offset.
+			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+			
+			if(! _sdr.setFrequency(tuner_freq))
+				return false;
+
 			// changing FM frequencies means recreating the decoder
 			
 			// The baseband signal is empty above 100 kHz, so we can
@@ -251,6 +251,12 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
  		else if(_mode == BROADCAST_FM) {
 	 
+			// Intentionally tune at a higher frequency to avoid DC offset.
+			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
+			
+			if(! _sdr.setFrequency(tuner_freq))
+				return false;
+
 			// changing FM frequencies means recreating the decoder
 			
 			// The baseband signal is empty above 100 kHz, so we can
@@ -402,6 +408,12 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			success = true;
 			break;
 
+		case LINE_IN:
+			minFreq = 0;
+			maxFreq = 0;
+			success = true;
+			break;
+
 		default: ;
 	}
  
@@ -413,6 +425,10 @@ uint32_t RadioMgr::nextFrequency(bool up){
 	uint32_t newfreq = _frequency;
 	
 	switch (_mode) {
+		case LINE_IN:
+			newfreq = 0;
+			break;
+			
 		case BROADCAST_AM:
 			// AM steps are 10khz
 			if(up) {
@@ -446,55 +462,6 @@ uint32_t RadioMgr::nextFrequency(bool up){
 	}
 	return newfreq;
 }
-
-//
-//uint32_t RadioMgr::nextFrequency(bool up,bool constrain){
-//
-//	uint32_t newfreq = _frequency;
-//
-//	if(constrain){
-//		PiCarMgr*		mgr 	= PiCarMgr::shared();
-//		PiCarMgr::station_info_t info;
-//
-//		if(mgr->nextPresetStation(_mode, _frequency, up, info)){
-//			newfreq = info.frequency;
-//		}
-//	}else {
-//		switch (_mode) {
-//			case BROADCAST_AM:
-//				// AM steps are 10khz
-//				if(up) {
-//					newfreq+=10.e3;
-//				}
-//				else {
-//					newfreq-=10.e3;
-//				}
-//				newfreq = fmax(530e3, fmin(1710e3, newfreq));  //  pin freq
-//				break;
-//
-//			case BROADCAST_FM:
-//				// AM steps are 200khz
-//				if(up) {
-//					newfreq+=200.e3;
-//				}
-//				else {
-//					newfreq-=200.e3;
-//				}
-//				newfreq = fmax(87.9e6, fmin(107.9e6, newfreq));  //  pin freq
-//				break;
-//
-//			default:
-//				if(up) {
-//					newfreq+=1.e3;
-//				}
-//				else {
-//					newfreq-=1.e3;
-//				}
-//				break;
-//		}
-//	}
-//	return newfreq;
-//}
 
 string  RadioMgr::hertz_to_string(double hz, int precision){
 	

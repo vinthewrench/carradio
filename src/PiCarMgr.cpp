@@ -1259,7 +1259,7 @@ void PiCarMgr::displayRadioMenu(){
 		"FM",
 		"VHF",
 		"GMRS",
-		"LINE IN"
+		"LINE IN",
 		"-",
 		"Exit"
 	};

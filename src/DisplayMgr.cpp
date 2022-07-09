@@ -1499,7 +1499,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			if(mode == RadioMgr::AUX){
 	
 				string str = "AUX Input";
-				auto freqCenter =  centerX; //  - (str.size() * 11) + 18;
+				auto freqCenter =  centerX  -( (str.size() /2)  * 11) ;
 		
 				printf("%d %d %s\n", centerX, freqCenter, str.c_str());
 				TRY(_vfd.setFont(VFD::FONT_10x14));

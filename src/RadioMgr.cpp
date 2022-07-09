@@ -212,7 +212,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			_fmDecoder = NULL;
 		}
 		
-		if(_mode == LINE_IN) {
+		if(_mode == AUX) {
 			_shouldRead = false;
 			_output_buffer.flush();
 			didUpdate = true;
@@ -323,8 +323,8 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "GMRS";
 			break;
 			
-		case LINE_IN:
-			str = "LINE";
+		case AUX:
+			str = "AUX";
 			break;
 
 			
@@ -342,7 +342,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 else  if(str == "FM") mode = BROADCAST_FM;
 	 else if(str == "VHF") mode = VHF;
 	 else if(str == "GMRS") mode = GMRS;
-	 else if(str == "LINE") mode = LINE_IN;
+	 else if(str == "AUX") mode = AUX;
 		return mode;
 		
 }
@@ -408,7 +408,7 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			success = true;
 			break;
 
-		case LINE_IN:
+		case AUX:
 			minFreq = 0;
 			maxFreq = 0;
 			success = true;
@@ -425,7 +425,7 @@ uint32_t RadioMgr::nextFrequency(bool up){
 	uint32_t newfreq = _frequency;
 	
 	switch (_mode) {
-		case LINE_IN:
+		case AUX:
 			newfreq = 0;
 			break;
 			

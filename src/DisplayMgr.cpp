@@ -1487,8 +1487,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		else {
 			RadioMgr::radio_mode_t  mode  = radio->radioMode();
 			uint32_t 					freq =  radio->frequency();
-			
-			
 			// we might need an extra refresh if switching modes
 			if(lastMode != mode){
 				_vfd.clearScreen();
@@ -1496,85 +1494,99 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				didSetRing = false;
 				lastMode = mode;
 			}
+			
+			
+			if(mode == RadioMgr::AUX){
 	
-			uint32_t 	maxFreq, minFreq;
-			bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
+				string str = "AUX INPUT";
+				auto freqCenter =  centerX - (str.size() * 11);
 		
-			if(hasRange){
-				uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
- 				uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+				TRY(_vfd.setFont(VFD::FONT_10x14));
+				TRY(_vfd.setCursor( freqCenter ,centerY+5));
+				TRY(_vfd.write(str));
+	
+			}
+			else {
 				
-				for (int i = 0 ; i < 24; i++) {
-					uint8_t off1 =  mod(offset-1, 24);
-					uint8_t off2 =  mod(offset+1, 24);
- 
-					if( i == offset){
-						_rightRing.setColor(i, 0, 0, 255);
+				uint32_t 	maxFreq, minFreq;
+				bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
+				
+				if(hasRange){
+					uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
+					uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+					
+					for (int i = 0 ; i < 24; i++) {
+						uint8_t off1 =  mod(offset-1, 24);
+						uint8_t off2 =  mod(offset+1, 24);
+						
+						if( i == offset){
+							_rightRing.setColor(i, 0, 0, 255);
+						}
+						else if(i == off1) {
+							_rightRing.setColor(i, 16, 16, 16);
+						}
+						else if(i == off2) {
+							_rightRing.setColor(i, 16, 16, 16);
+						}
+						else {
+							_rightRing.setColor(i, 0, 0, 0);
+						}
 					}
-					else if(i == off1) {
-						_rightRing.setColor(i, 16, 16, 16);
-					}
-					else if(i == off2) {
-						_rightRing.setColor(i, 16, 16, 16);
-					}
-					else {
-						_rightRing.setColor(i, 0, 0, 0);
-					}
+					
+					didSetRing = true;
 				}
 				
-				didSetRing = true;
-			}
+				int precision = 0;
 				
-			int precision = 0;
-			
-			switch (mode) {
-				case RadioMgr::BROADCAST_AM: precision = 0;break;
-				case RadioMgr::BROADCAST_FM: precision = 1;break;
-				default :
-					precision = 3; break;
+				switch (mode) {
+					case RadioMgr::BROADCAST_AM: precision = 0;break;
+					case RadioMgr::BROADCAST_FM: precision = 1;break;
+					default :
+						precision = 3; break;
+				}
+				
+				string str = 	RadioMgr::hertz_to_string(freq, precision);
+				string hzstr =	RadioMgr::freqSuffixString(freq);
+				string modStr = RadioMgr::modeString(mode);
+				
+				auto freqCenter =  centerX - (str.size() * 11) + 18;
+				if(precision > 1)  freqCenter += 10*2;
+				
+				auto modeStart = 5;
+				if(precision == 0)
+					modeStart += 15;
+				else if  (precision == 1)
+					modeStart += 5;
+				
+				TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
+				TRY(_vfd.setCursor(modeStart, centerY-3));
+				TRY(_vfd.write(modStr));
+				
+				TRY(_vfd.setFont(VFD::FONT_10x14));
+				TRY(_vfd.setCursor( freqCenter ,centerY+5));
+				TRY(_vfd.write(str));
+				
+				TRY(_vfd.setFont(VFD::FONT_5x7));
+				TRY(_vfd.write( " " + hzstr));
+				
+				// Draw title centered inb char buffer
+				constexpr int  titleMaxSize = 20;
+				char titlebuff[titleMaxSize + 1];
+				memset(titlebuff,' ', titleMaxSize);
+				titlebuff[titleMaxSize] = '\0';
+				int titleStart =  centerX - ((titleMaxSize * 6)/2);
+				int titleBottom = centerY -14;
+				PiCarMgr::station_info_t info;
+				if(mgr->getStationInfo(mode, freq, info)){
+					string title = truncate(info.title, titleMaxSize);
+					int titleLen = (int)title.size();
+					int offset  = (titleMaxSize /2) - (titleLen/2);
+					memcpy( titlebuff+offset , title.c_str(), titleLen );
+				};
+				TRY(_vfd.setCursor( titleStart ,titleBottom ));
+				TRY(_vfd.write( titlebuff));
+				
 			}
-			
-			string str = 	RadioMgr::hertz_to_string(freq, precision);
-			string hzstr =	RadioMgr::freqSuffixString(freq);
-			string modStr = RadioMgr::modeString(mode);
-			
-			auto freqCenter =  centerX - (str.size() * 11) + 18;
-			if(precision > 1)  freqCenter += 10*2;
-			
-			auto modeStart = 5;
-			if(precision == 0)
-				modeStart += 15;
-			else if  (precision == 1)
-				modeStart += 5;
-			
-			TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
-			TRY(_vfd.setCursor(modeStart, centerY-3));
-			TRY(_vfd.write(modStr));
-						
-			TRY(_vfd.setFont(VFD::FONT_10x14));
-			TRY(_vfd.setCursor( freqCenter ,centerY+5));
-			TRY(_vfd.write(str));
-			
-			TRY(_vfd.setFont(VFD::FONT_5x7));
-			TRY(_vfd.write( " " + hzstr));
-			
-			// Draw title centered inb char buffer
-			constexpr int  titleMaxSize = 20;
-			char titlebuff[titleMaxSize + 1];
-			memset(titlebuff,' ', titleMaxSize);
-			titlebuff[titleMaxSize] = '\0';
-			int titleStart =  centerX - ((titleMaxSize * 6)/2);
-			int titleBottom = centerY -14;
-			PiCarMgr::station_info_t info;
-			if(mgr->getStationInfo(mode, freq, info)){
-				string title = truncate(info.title, titleMaxSize);
-				int titleLen = (int)title.size();
-				int offset  = (titleMaxSize /2) - (titleLen/2);
-				memcpy( titlebuff+offset , title.c_str(), titleLen );
-			};
-			TRY(_vfd.setCursor( titleStart ,titleBottom ));
-			TRY(_vfd.write( titlebuff));
-			
 			_vfd.setCursor(0, 60);
 			if(mgr->isPresetChannel(mode, freq)){
 				_vfd.setFont(VFD::FONT_MINI);
@@ -1584,7 +1596,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.printPacket("      ");
 			}
 		}
- 	}
+	}
 	
 	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 	string muxstring = RadioMgr::muxstring(mux);

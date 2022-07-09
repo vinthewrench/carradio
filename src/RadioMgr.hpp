@@ -36,7 +36,7 @@ public:
 		BROADCAST_FM,
 		VHF,
 		GMRS,
-		LINE_IN,  // not really a radio option.
+		AUX,  // not really a radio option.
 	}radio_mode_t;
 	
 	typedef enum  {

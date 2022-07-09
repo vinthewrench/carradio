@@ -353,9 +353,9 @@ nlohmann::json PiCarMgr::GetRadioModesJSON(){
 bool PiCarMgr::updateRadioPrefs() {
 	bool didUpdate = false;
 	
-	if(_radio.radioMode() == RadioMgr::LINE_IN){
-		_lastFreqForMode[RadioMgr::LINE_IN] = 0;
-		_lastRadioMode = RadioMgr::LINE_IN;
+	if(_radio.radioMode() == RadioMgr::AUX){
+		_lastFreqForMode[RadioMgr::AUX] = 0;
+		_lastRadioMode = RadioMgr::AUX;
 		didUpdate = true;
 	}
 	else if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
@@ -496,6 +496,7 @@ nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 		j.push_back(j1);
 	}
 	
+
 	return j;
 }
 
@@ -1263,7 +1264,7 @@ void PiCarMgr::displayRadioMenu(){
 		"FM",
 		"VHF",
 		"GMRS",
-		"LINE IN",
+		"AUX",
 		"-",
 		"Exit"
 	};
@@ -1325,7 +1326,7 @@ void PiCarMgr::displayRadioMenu(){
 					radioMode  = RadioMgr::GMRS;
 					break;
 	
-				case 4: // LINE IN
+				case 4: // AUX
 					radioMode  = RadioMgr::LINE_IN;
 					break;
 	 

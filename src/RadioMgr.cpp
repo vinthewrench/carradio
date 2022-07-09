@@ -228,6 +228,9 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
+			_sdr.resetBuffer();
+			_output_buffer.flush();
+		
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
@@ -259,6 +262,9 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
  		else if(_mode == BROADCAST_FM) {
 	 
+			_sdr.resetBuffer();
+			_output_buffer.flush();
+		
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
@@ -291,9 +297,9 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		
 		didUpdate = true;
 		_shouldReadAux = false;
-		_sdr.resetBuffer();
-		_output_buffer.flush();
-		_shouldReadSDR = true;
+//			_sdr.resetBuffer();
+//		_output_buffer.flush();
+ 		_shouldReadSDR = true;
 	}
 	
 	if(didUpdate){

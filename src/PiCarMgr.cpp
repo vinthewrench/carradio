@@ -1259,6 +1259,7 @@ void PiCarMgr::displayRadioMenu(){
 		"FM",
 		"VHF",
 		"GMRS",
+		"LINE IN"
 		"-",
 		"Exit"
 	};
@@ -1280,6 +1281,11 @@ void PiCarMgr::displayRadioMenu(){
 			selectedItem = 3;
 			break;
 			
+		case RadioMgr::LINE_IN:
+			selectedItem = 4;
+			break;
+
+			
 		default:
 			selectedItem = 5;
 			break;
@@ -1287,7 +1293,7 @@ void PiCarMgr::displayRadioMenu(){
 	
 	_display.showMenuScreen(menu_items,
 									selectedItem,
-									"Select Audio Source",
+									"Audio Source",
 									timeout_secs,
 									[=](bool didSucceed,
 										 uint newSelectedItem,
@@ -1314,13 +1320,18 @@ void PiCarMgr::displayRadioMenu(){
 				case 3: // GMRS
 					radioMode  = RadioMgr::GMRS;
 					break;
-					
+	
+				case 4: // LINE IN
+					radioMode  = RadioMgr::LINE_IN;
+					break;
+	 
 				default:		//ignore
 					break;
 			}
 			
 			
 			// if it was a radio selection, turn it one and select
+			
 			if(radioMode != RadioMgr::MODE_UNKNOWN){
 				uint32_t freq;
 				

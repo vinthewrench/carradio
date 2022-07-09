@@ -1286,7 +1286,7 @@ void PiCarMgr::displayRadioMenu(){
 			selectedItem = 3;
 			break;
 			
-		case RadioMgr::LINE_IN:
+		case RadioMgr::AUX:
 			selectedItem = 4;
 			break;
 
@@ -1327,7 +1327,7 @@ void PiCarMgr::displayRadioMenu(){
 					break;
 	
 				case 4: // AUX
-					radioMode  = RadioMgr::LINE_IN;
+					radioMode  = RadioMgr::AUX;
 					break;
 	 
 				default:		//ignore

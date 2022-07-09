@@ -1480,9 +1480,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			string str = "OFF";
 			auto textCenter =  centerX - (str.size() * 11);
 			
-			
-			printf(" radio off\n");
-			
 			TRY(_vfd.setFont(VFD::FONT_10x14));
 			TRY(_vfd.setCursor( textCenter ,centerY+5));
 			TRY(_vfd.write(str));
@@ -1497,13 +1494,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				didSetRing = false;
 				lastMode = mode;
 			}
-				
+			
+			
 			if(mode == RadioMgr::AUX){
-				printf(" radio aux\n");
-		
+	
 				string str = "AUX";
 				auto freqCenter =  centerX  -( (str.size() /2)  * 11) ;
 		
+				printf("%d %d %s\n", centerX, freqCenter, str.c_str());
 				TRY(_vfd.setFont(VFD::FONT_10x14));
 				TRY(_vfd.setCursor( freqCenter ,centerY+5));
 				TRY(_vfd.write(str));

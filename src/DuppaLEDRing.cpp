@@ -7,6 +7,7 @@
 
 #include "DuppaLEDRing.hpp"
 #include <unistd.h>
+#include <algorithm>
 
 enum I2C_Register {
 	COMMANDREGISTER 		= 0xFD,
@@ -46,6 +47,11 @@ enum I2C_Register {
 #define ISSI3746_RESET_REG 0x8F
 #define ISSI3746_PWM_FREQUENCY_ENABLE 0xE0
 #define ISSI3746_PWM_FREQUENCY_SET 0xE2
+
+
+// do not fuck with this!!
+constexpr uint8_t max_global_current  = 10;
+ 
 
 DuppaLEDRing::DuppaLEDRing(){
 	_isSetup = false;
@@ -157,8 +163,15 @@ bool DuppaLEDRing::SpreadSpectrum(uint8_t spread){
 }
 
 
+uint8_t DuppaLEDRing::maxGlobalCurrent() {
+	return max_global_current;
+}
+
 bool DuppaLEDRing::SetGlobalCurrent(uint8_t curr) {
 	bool success = false;
+	
+	curr = min(static_cast<int>( curr), static_cast<int>(max_global_current));
+
 	success =	selectBank(PAGE1)
 	&&  _i2cPort.writeByte(GLOBALCURRENT,	curr);
 	return success;

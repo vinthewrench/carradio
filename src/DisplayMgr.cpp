@@ -120,9 +120,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightRing.SetScaling(0xFF);
 		_leftRing.SetScaling(0xFF);
 		
-		// dont fool with this.
-		_rightRing.SetGlobalCurrent(010);
-		_leftRing.SetGlobalCurrent(010);
+		// set full bright
+		_rightRing.SetGlobalCurrent(DuppaLEDRing::maxGlobalCurrent());
+		_leftRing.SetGlobalCurrent(DuppaLEDRing::maxGlobalCurrent());
 		
 		// clear all values
 		_rightRing.clearAll();
@@ -193,9 +193,9 @@ void DisplayMgr::ledEventUpdate(){
 		ledEventSet(0, LED_EVENT_STOP);
 		
 		// dim it then restore
-		uint8_t sav =  _leftRing.GlobalCurrent();
+//		uint8_t sav =  _leftRing.GlobalCurrent();
 		_leftRing.clearAll();
-		_leftRing.SetGlobalCurrent(sav);
+//		_leftRing.SetGlobalCurrent(sav);
 	}
 	
 	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
@@ -362,6 +362,12 @@ bool DisplayMgr::setBrightness(double level) {
 		
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
+		
+		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
+		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
+		_rightRing.SetGlobalCurrent(ledCurrent);
+		_leftRing.SetGlobalCurrent(ledCurrent);
+	
 	}
 	
 	return success;
@@ -689,9 +695,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				// save the vars that get reset
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
-				
-				printf("double click %d\n", item);
-
+	 
 				if(cb) {
 					cb(true,  item, KNOB_DOUBLE_CLICK);
 				}

@@ -59,7 +59,7 @@ public:
 	bool  SetScaling(uint8_t scal);
 	bool  SetGlobalCurrent(uint8_t curr);
 	uint8_t GlobalCurrent();
-	
+	static uint8_t maxGlobalCurrent();
 	
 private:
  

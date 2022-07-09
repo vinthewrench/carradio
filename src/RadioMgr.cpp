@@ -500,12 +500,17 @@ void RadioMgr::AuxReader(){
 
 	static bool aux_setup = false;
 	
+	printf("AuxReader started\n");
+	
 	while(!_shouldQuit){
 		
 			// aux is off sleep for awhile.
 		if(!_isSetup || !_shouldReadAux){
 			
 			if(aux_setup){
+				
+				printf("_lineInput.stop\n");
+
 				_lineInput.stop();
 				aux_setup = false;
 			}
@@ -514,6 +519,9 @@ void RadioMgr::AuxReader(){
 		}
 	
 		if(!aux_setup){
+			
+			printf("_lineInput.begin\n");
+
 			_lineInput.begin(pcmrate, true) ;
 			aux_setup = false;
 		}

@@ -525,7 +525,7 @@ void RadioMgr::AuxReader(){
 			printf("_lineInput.begin\n");
 
 			_lineInput.begin(pcmrate, true) ;
-			aux_setup = false;
+			aux_setup = true;
 		}
 
 		if(_lineInput.iConnected()){

@@ -353,14 +353,18 @@ nlohmann::json PiCarMgr::GetRadioModesJSON(){
 bool PiCarMgr::updateRadioPrefs() {
 	bool didUpdate = false;
 	
-	if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
+	if(_radio.radioMode() == RadioMgr::LINE_IN){
+		_lastFreqForMode[RadioMgr::LINE_IN] = 0;
+		_lastRadioMode = RadioMgr::LINE_IN;
+		didUpdate = true;
+	}
+	else if(_radio.radioMode() != RadioMgr::MODE_UNKNOWN
 		&&  _radio.frequency() != 0) {
 		
 		auto mode = _radio.radioMode();
 		_lastFreqForMode[mode] = _radio.frequency();
 		_lastRadioMode = mode;
 		didUpdate = true;
-		
 	}
 	
 	return didUpdate;

@@ -135,7 +135,9 @@ bool AudioLineInput::getSamples(){
 		if (avail > _blockLength)
 			avail = _blockLength;
 		
-		snd_pcm_readi(_pcm,  buf.data(), avail);
+		int cnt =  snd_pcm_readi(_pcm,  buf.data(), avail);
+		if(cnt > 0)
+			printf("%d frames read \n", cnt);
 	}
 	
 	avail = snd_pcm_avail_update(_pcm);

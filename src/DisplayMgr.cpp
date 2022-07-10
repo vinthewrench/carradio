@@ -2045,7 +2045,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			str =  string("CAN: ") + string("NOT CONNECTED");
 		
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
+		_vfd.printPacket("%30s", str.c_str());
 	}
 	
 	{
@@ -2065,7 +2065,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			}
 		}
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
+		_vfd.printPacket("%30s", str.c_str());
 	}
 	
 	{

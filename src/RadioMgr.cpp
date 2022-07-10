@@ -531,7 +531,7 @@ void RadioMgr::AuxReader(){
 			}
 		}
 		
-		usleep(200000);
+//		usleep(200000);
 	}
 		
 }

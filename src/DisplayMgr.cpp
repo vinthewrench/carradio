@@ -1955,7 +1955,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	uint8_t col = 0;
 	uint8_t row = 7;
 	string str;
-	static uint8_t lastrow = row;
+	static uint8_t lastrow = 0;
 	
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
 	RadioMgr*			radio 	= mgr->radio();
@@ -1967,6 +1967,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 #endif
 	
 	if(transition == TRANS_LEAVING) {
+			lastrow = 0;
 		return;
 	}
 	
@@ -2024,10 +2025,12 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.printPacket("%s", str.c_str());
 #endif
 		
+		// save this in static
 		lastrow = row;
 	}
 	
-	{
+		row = lastrow;
+		{
 		row = row + 7;
 		_vfd.setCursor(col+10, row );
 		_vfd.setFont(VFD::FONT_MINI);
@@ -2044,7 +2047,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-		lastrow = row;
 	}
 	
 	{
@@ -2071,7 +2073,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	{
 		float cTemp = 0;
 		int  fanspeed = 0;
-	 
+		
 		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 			
 			_vfd.setCursor(col+10, 64 );

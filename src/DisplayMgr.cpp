@@ -2044,7 +2044,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-		
+		lastrow = row;
 	}
 	
 	{
@@ -2065,6 +2065,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		}
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
+		lastrow = row;
 	}
 	
 	{

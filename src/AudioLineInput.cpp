@@ -77,7 +77,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 		fprintf(stderr,  "cannot start audio interface - %s \n",  snd_strerror(r));
 		error = r;
 		return false;
-	 
+	}
 	
 	printf("AudioLineInput connected\n");
 	

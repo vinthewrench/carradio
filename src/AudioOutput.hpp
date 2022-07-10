@@ -40,8 +40,9 @@ public:
 	bool begin(unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
  
-	bool write(const SampleVector& samples);
-	
+	bool writeAudio(const SampleVector& samples);
+	bool writeIQ(const SampleVector& samples)
+
 	bool 	setVolume(double );		// 0.0 - 1.0  % of max
 	double volume();
 

@@ -18,6 +18,7 @@
  
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
+#include "IQSample.h"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ public:
 	void stop();
 	bool iConnected() { return _isSetup; }
  
-	bool getSamples();
+	bool getSamples(SampleVector& audio);
  
 	private:
  

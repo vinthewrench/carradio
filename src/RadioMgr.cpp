@@ -504,6 +504,9 @@ void RadioMgr::AuxReader(){
 	
 	printf("AuxReader started\n");
 	
+	
+	SampleVector samples;
+
 	while(!_shouldQuit){
 		
 			// aux is off sleep for awhile.
@@ -525,8 +528,7 @@ void RadioMgr::AuxReader(){
 		if(_lineInput.iConnected()){
 			
 			// get input
-			
-			if( _lineInput.getSamples() ){
+			if( _lineInput.getSamples(samples)){
 				
 			}
 		}

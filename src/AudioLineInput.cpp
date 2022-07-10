@@ -111,7 +111,7 @@ void AudioLineInput::stop(){
 }
 
 
-bool AudioLineInput::getSamples(){
+bool AudioLineInput::getSamples(SampleVector& audio){
 	
 	if(!_isSetup || !_pcm)
 		return  false;
@@ -135,19 +135,15 @@ bool AudioLineInput::getSamples(){
 		if (avail > _blockLength)
 			avail = _blockLength;
 		
-		int cnt =  snd_pcm_readi(_pcm,  buf.data(), avail);
+		audio.resize(2 * avail);
+
+		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
 		if(cnt > 0)
 			printf("%d frames read \n", cnt);
-	}
-	
-	avail = snd_pcm_avail_update(_pcm);
-	if (avail > 0) {
-		if (avail > _blockLength)
-			avail = _blockLength;
 		
-		printf("%d bytes avail\n", avail);
+		
 	}
-	
+		
 #endif
 	
 	

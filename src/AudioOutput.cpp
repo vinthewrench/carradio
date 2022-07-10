@@ -102,7 +102,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 			// set the capture source to line
 			{
 				snd_mixer_selem_id_t *sid;
-				snd_mixer_selem_id_alloca(&sid);
+				snd_mixer_selem_id_malloc(&sid);
 				snd_mixer_selem_id_set_index(sid, 0);
 				
 				snd_mixer_selem_id_set_name(sid, _PCM_CAPTURE_SOURCE_);
@@ -130,7 +130,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 			// find the volume control
 			{
 				snd_mixer_selem_id_t *sid;
-				snd_mixer_selem_id_alloca(&sid);
+				snd_mixer_selem_id_malloc(&sid);
 				snd_mixer_selem_id_set_index(sid, 0);
 				
 				snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);

@@ -111,44 +111,44 @@ void AudioLineInput::stop(){
 }
 
 
-	bool AudioLineInput::getSamples(){
-		
-		if(_isSetup || !_pcm)
-			return  false;
-		
-		vector<uint8_t> buf(2 * _blockLength);
-		
+bool AudioLineInput::getSamples(){
+	
+	if(_isSetup || !_pcm)
+		return  false;
+	
+	vector<uint8_t> buf(2 * _blockLength);
+	
 #if defined(__APPLE__)
 #else
-		
-		int avail;
-		int r;
-		
-		r =  snd_pcm_wait(_pcm, 1000);
-		if( r < 0){
-			fprintf(stderr,  "snd_pcm_wait - %s \n",  snd_strerror(r));
-			return false;
-		}
-		
-		avail = snd_pcm_avail_update(_pcm);
-		if (avail > 0) {
-			if (avail > BUFSIZE)
-				avail = BUFSIZE;
-			
-			snd_pcm_readi(_pcm,  buf.data(), avail);
-		}
-		
-		avail = snd_pcm_avail_update(_pcm);
-		if (avail > 0) {
-			if (avail > BUFSIZE)
-				avail = BUFSIZE;
-			
-			printf("%d bytes avail\n" avail);
-		}
-		
-#endif
-		
-		
-		return true;
+	
+	int avail;
+	int r;
+	
+	r =  snd_pcm_wait(_pcm, 1000);
+	if( r < 0){
+		fprintf(stderr,  "snd_pcm_wait - %s \n",  snd_strerror(r));
+		return false;
 	}
+	
+	avail = snd_pcm_avail_update(_pcm);
+	if (avail > 0) {
+		if (avail > _blockLength)
+			avail = _blockLength;
+		
+		snd_pcm_readi(_pcm,  buf.data(), avail);
+	}
+	
+	avail = snd_pcm_avail_update(_pcm);
+	if (avail > 0) {
+		if (avail > _blockLength)
+			avail = _blockLength;
+		
+		printf("%d bytes avail\n" avail);
+	}
+	
+#endif
+	
+	
+	return true;
+}
 

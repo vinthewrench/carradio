@@ -52,6 +52,10 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo){
 #define _MIXER_ 		"default"
 #define _MIXER_NAME_ "Speaker"
 #define _PCM_  		"duplicate"
+
+#define _PCM_CAPTURE_SOURCE_  "PCM Capture Source"
+#define _PCM_CAPTURE_LINE_    "Line"
+
  
 bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	
@@ -88,20 +92,51 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 			error = r;
 		} 	else {
 			
+			// open the mixer
 			snd_mixer_open(&_mixer , SND_MIXER_ELEM_SIMPLE);
 			snd_mixer_attach(_mixer, _MIXER_);
 			snd_mixer_selem_register(_mixer, NULL, NULL);
 			snd_mixer_load(_mixer);
 			snd_mixer_handle_events(_mixer);
 
-			snd_mixer_selem_id_t *sid;
-			snd_mixer_selem_id_alloca(&sid);
-			snd_mixer_selem_id_set_index(sid, 0);
+			// set the capture source to line
+			{
+				snd_mixer_selem_id_t *sid;
+				snd_mixer_selem_id_alloca(&sid);
+				snd_mixer_selem_id_set_index(sid, 0);
+				
+				snd_mixer_selem_id_set_name(sid, _PCM_CAPTURE_SOURCE_);
+				snd_mixer_elem_t *elem = snd_mixer_find_selem(_mixer, sid);
+				
+				if(elem){
+					int items = snd_mixer_selem_get_enum_items(elem);
+					
+					for (int i = 0; i < items; i++) {
+						char itemname[40];
+						snd_mixer_selem_get_enum_item_name(elem, i, sizeof(itemname) - 1, itemname);
+						
+						if(strcmp(itemname, _PCM_CAPTURE_LINE_) == 0){
+							snd_mixer_selem_set_enum_item(elem,0,i);
+							break;
+						}
+					}
+				}
+				snd_mixer_selem_id_free(sid);
+			}
 			
-			snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
-			_elem = snd_mixer_find_selem(_mixer, sid);
+			// find the volume control
+			{
+				snd_mixer_selem_id_t *sid;
+				snd_mixer_selem_id_alloca(&sid);
+				snd_mixer_selem_id_set_index(sid, 0);
+				
+				snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
+				_volume = snd_mixer_find_selem(_mixer, sid);
+				
+				snd_mixer_selem_id_free(sid);
+			}
 			
-			_isSetup = _elem != NULL;
+			_isSetup = _volume != NULL;
 			success = true;
 		}
 		
@@ -695,10 +730,10 @@ bool 	AudioOutput::setVolume(double volIn){
 //			 (right + front) / 2. , (left + front) / 2. , (right + back) / 2. , (left + back) / 2. );
 //	
 			 
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
-	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
+	set_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
+	set_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
+	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
+	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
  
 	if(volIn == 0.0 ){
 		 _isMuted = true;
@@ -715,11 +750,11 @@ double AudioOutput::volume() {
 	if(!_isSetup)
 		return 0;
 	
-	double left_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
-	double right_front = get_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
+	double left_front = get_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_LEFT, PLAYBACK);
+	double right_front = get_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_RIGHT,PLAYBACK);
 	
-	double left_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, PLAYBACK);
-	double right_rear = get_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT,PLAYBACK);
+	double left_rear = get_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_LEFT, PLAYBACK);
+	double right_rear = get_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_RIGHT,PLAYBACK);
 	
 	double front =  fmax(left_front, right_front);
 	double rear =  fmax(left_rear, right_rear);

@@ -67,7 +67,7 @@ private:
 	struct _snd_pcm *   	_pcm;
 	
 	snd_mixer_t* 			_mixer;
-	snd_mixer_elem_t* 	_elem;
+	snd_mixer_elem_t* 	_volume;
 	
 	double					_balance;
 	double					_fader;

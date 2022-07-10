@@ -50,14 +50,14 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
- 	_ledEvent = 0;
+	_ledEvent = 0;
 	_isSetup = false;
 	_isRunning = true;
 	_dimLevel = 1.0;
 	
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
-
+	
 }
 
 DisplayMgr::~DisplayMgr(){
@@ -65,7 +65,7 @@ DisplayMgr::~DisplayMgr(){
 	_isRunning = false;
 	pthread_cond_signal(&_cond);
 	pthread_join(_updateTID, NULL);
-
+	
 }
 
 
@@ -108,10 +108,10 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		_rightKnob.setDoubleClickTime(doubleClickTime);
 		_leftKnob.setDoubleClickTime(doubleClickTime);
-	
+		
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
-
+		
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
 		_leftRing.setConfig(0x01);
@@ -147,15 +147,15 @@ void DisplayMgr::stop(){
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
-
-
+		
+		
 		// shut down the display loop
 		_isSetup = false;
 		pthread_cond_signal(&_cond);
-
+		
 		usleep(200000);
 		drawShutdownScreen();
-
+		
 		_rightKnob.stop();
 		_leftKnob.stop();
 		_rightRing.stop();
@@ -163,7 +163,7 @@ void DisplayMgr::stop(){
 		
 		_vfd.setPowerOn(false);
 		_vfd.stop();
-		}
+	}
 	
 }
 
@@ -186,29 +186,29 @@ void DisplayMgr::LEDeventStop(){
 	ledEventSet(LED_EVENT_STOP,LED_EVENT_ALL);
 }
 
- 
+
 void DisplayMgr::ledEventUpdate(){
 	
 	if( _ledEvent & (LED_EVENT_STOP)){
 		ledEventSet(0, LED_EVENT_STOP);
 		
 		// dim it then restore
-//		uint8_t sav =  _leftRing.GlobalCurrent();
+		//		uint8_t sav =  _leftRing.GlobalCurrent();
 		_leftRing.clearAll();
-//		_leftRing.SetGlobalCurrent(sav);
+		//		_leftRing.SetGlobalCurrent(sav);
 	}
 	
 	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 		runLEDEventStartup();
 	
-
+	
 	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
 	
 	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
 		runLEDEventMute();
 }
- 
+
 
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	pthread_mutex_lock (&_mutex);
@@ -216,17 +216,17 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	_ledEvent |= set;
 	pthread_mutex_unlock (&_mutex);
 	pthread_cond_signal(&_cond);
-	}
+}
 
 void DisplayMgr::runLEDEventStartup(){
 	
- 	static uint8_t 	ledStep = 0;
+	static uint8_t 	ledStep = 0;
 	
 	if( _ledEvent & LED_EVENT_STARTUP ){
- 	ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_ALL );
+		ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_ALL );
 		
 		ledStep = 0;
-//		printf("\nLED STARTUP\n");
+		//		printf("\nLED STARTUP\n");
 		_leftRing.clearAll();
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
@@ -249,11 +249,11 @@ void DisplayMgr::runLEDEventStartup(){
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
 			
-//			printf("\nLED RUN DONE\n");
- 
+			//			printf("\nLED RUN DONE\n");
+			
 		}
-  	}
- }
+	}
+}
 
 
 
@@ -262,7 +262,7 @@ void DisplayMgr::runLEDEventMute(){
 	static timeval		lastEvent = {0,0};
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
-
+	
 	
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
@@ -285,13 +285,13 @@ void DisplayMgr::runLEDEventMute(){
 			blinkOn = !blinkOn;
 			
 			if(blinkOn){
-
-			float volume =  audio->mutedVolume();
-			// muted LED scales between 1 and 24
-			int ledvol = volume*23;
-			for (int i = 0 ; i < 24; i++)
-				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-			 
+				
+				float volume =  audio->mutedVolume();
+				// muted LED scales between 1 and 24
+				int ledvol = volume*23;
+				for (int i = 0 ; i < 24; i++)
+					_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+				
 			}
 			else {
 				_leftRing.clearAll();
@@ -306,19 +306,19 @@ void DisplayMgr::runLEDEventVol(){
 	
 	static timeval		startedEvent = {0,0};
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
-
+	
 	if( _ledEvent & LED_EVENT_VOL ){
 		gettimeofday(&startedEvent, NULL);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
 		
-//	 	printf("\nVOL STARTUP\n");
+		//	 	printf("\nVOL STARTUP\n");
 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
 		timeval now, diff;
 		gettimeofday(&now, NULL);
 		timersub(&now, &startedEvent, &diff);
-
+		
 		if(diff.tv_sec <  1){
 			
 			float volume =  audio->volume();
@@ -327,7 +327,7 @@ void DisplayMgr::runLEDEventVol(){
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
- 			//			printf("\nVOL RUN\n");
+			//			printf("\nVOL RUN\n");
 			
 		}
 		else {
@@ -338,12 +338,12 @@ void DisplayMgr::runLEDEventVol(){
 				_leftRing.setColor( i, 0, 0, 0);
 				usleep(10 * 1000);
 			}
-
- 	//		printf("\nVOL RUN DONE\n");
-
+			
+			//		printf("\nVOL RUN DONE\n");
+			
 		}
 	}
-	 
+	
 }
 
 
@@ -351,12 +351,12 @@ void DisplayMgr::runLEDEventVol(){
 // MARK: -  display tools
 
 bool DisplayMgr::setBrightness(double level) {
-
+	
 	bool success = false;
-
- 	if(_isSetup){
+	
+	if(_isSetup){
 		_dimLevel = level;
- 
+		
 		// vfd 0 -7
 		uint8_t vfdLevel =  level * 7.0 ;
 		
@@ -386,12 +386,12 @@ bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 			case KNOB_RIGHT:
 				success = _rightKnob.setColor(effectiveColor);
 				break;
-
+				
 			case KNOB_LEFT:
 				success =  _leftKnob.setColor(effectiveColor);
- 				break;
-
-	 		}
+				break;
+				
+		}
 	}
 	
 	return success;
@@ -408,7 +408,7 @@ DisplayMgr::mode_state_t DisplayMgr::active_mode(){
 		mode = _current_mode;
 	else
 		mode = _saved_mode;
- 
+	
 	return mode;
 }
 
@@ -427,19 +427,19 @@ void DisplayMgr::showInfo(){
 	setEvent(EVT_PUSH, MODE_INFO);
 }
 
- 
+
 void DisplayMgr::showSettings(){
 	setEvent(EVT_PUSH, MODE_SETTINGS);
 }
 
- 
+
 void DisplayMgr::showDevStatus(){
 	setEvent(EVT_PUSH, MODE_DEV_STATUS );
 }
 
 
 void DisplayMgr::showDimmerChange(){
- 	setEvent(EVT_PUSH, MODE_DIMMER );
+	setEvent(EVT_PUSH, MODE_DIMMER );
 }
 
 void DisplayMgr::showBalanceChange(){
@@ -447,9 +447,9 @@ void DisplayMgr::showBalanceChange(){
 }
 
 void DisplayMgr::showFaderChange(){
- 	setEvent(EVT_PUSH, MODE_FADER );
+	setEvent(EVT_PUSH, MODE_FADER );
 }
- 
+
 void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 }
@@ -490,15 +490,15 @@ void DisplayMgr::setEvent(event_t evt,
 	
 	if(shouldPush)
 		_eventQueue.push({evt,mod, arg});
- 
+	
 	pthread_mutex_unlock (&_mutex);
 	
 	if(shouldPush)
- 		pthread_cond_signal(&_cond);
+		pthread_cond_signal(&_cond);
 }
 
 // MARK: -  Knob Management
- 
+
 bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
@@ -509,7 +509,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_DTC_INFO:
 		case MODE_MENU:
 			return true;
-	 
+			
 		default:
 			return false;
 	}
@@ -565,12 +565,12 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  d.quot + (d.rem ? 1 : 0);
 		}
-		break;
+			break;
 			
 		default :
 			count = 1;
 	}
- 
+	
 	return count;
 }
 
@@ -607,19 +607,19 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_DIMMER:
 			wasHandled = processSelectorKnobActionForDimmer(action);
 			break;
- 
+			
 		case MODE_DTC:
 			wasHandled = processSelectorKnobActionForDTC(action);
 			break;
-
+			
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
- 
+			
 		default:
 			break;
 	}
- 	return wasHandled;
+	return wasHandled;
 }
 
 
@@ -640,8 +640,8 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 										  time_t timeout,
 										  menuSelectedCallBack_t cb){
 	
-//	pthread_mutex_lock (&_mutex);
-
+	//	pthread_mutex_lock (&_mutex);
+	
 	resetMenu();
 	_menuItems = items;
 	_menuTitle = title;
@@ -651,23 +651,23 @@ void DisplayMgr::showMenuScreen(vector<menuItem_t> items,
 	_menuTimeout = timeout;
 	_menuCB = cb;
 	
-//	pthread_mutex_unlock (&_mutex);
+	//	pthread_mutex_unlock (&_mutex);
 	setEvent(EVT_PUSH,MODE_MENU);
 }
 
 void  DisplayMgr::updateMenuItems(vector<menuItem_t> items){
 	if(_current_mode == MODE_MENU) {
 		_menuItems = items;
-
+		
 	}
- }
+}
 
 bool DisplayMgr::menuSelectAction(knob_action_t action){
 	bool wasHandled = false;
 	
 	if(_current_mode == MODE_MENU) {
 		wasHandled = true;
- 
+		
 		switch(action){
 				
 			case KNOB_EXIT:
@@ -694,7 +694,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 				// save the vars that get reset
 				auto cb = _menuCB;
 				auto item = _currentMenuItem;
-	 
+				
 				if(cb) {
 					cb(true,  item, KNOB_DOUBLE_CLICK);
 				}
@@ -730,9 +730,9 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 					cb(true,  item, action);
 				}
 			}
-			break;
-		 
-			}
+				break;
+				
+		}
 		
 	}
 	
@@ -760,7 +760,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
- 		_vfd.clearScreen();
+		_vfd.clearScreen();
 		TRY(_vfd.setFont(VFD::FONT_5x7));
 		TRY(_vfd.setCursor(20,10));
 		
@@ -841,12 +841,12 @@ void  DisplayMgr::popMode(){
 	_saved_mode = MODE_UNKNOWN;
 	
 }
- 
+
 // MARK: -  DisplayUpdate thread
 
 void DisplayMgr::DisplayUpdate(){
 	
-  	//	printf("start DisplayUpdate\n");
+	//	printf("start DisplayUpdate\n");
 	PRINT_CLASS_TID;
 	
 	while(_isRunning){
@@ -856,7 +856,7 @@ void DisplayMgr::DisplayUpdate(){
 			usleep(10000);
 			continue;
 		}
-
+		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_REALTIME, &ts);
@@ -874,12 +874,12 @@ void DisplayMgr::DisplayUpdate(){
 		}
 		bool shouldWait = ((_eventQueue.size() == 0)
 								 && ((_ledEvent & 0x0000ffff) == 0));
-	
-	//
+		
+		//
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
-	 
-//		pthread_mutex_lock (&_mutex);
+		
+		//		pthread_mutex_lock (&_mutex);
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
@@ -890,8 +890,8 @@ void DisplayMgr::DisplayUpdate(){
 		pthread_mutex_unlock (&_mutex);
 		
 		if(!_isRunning || !_isSetup)
-			  continue;
-
+			continue;
+		
 		// run the LED effects
 		if(_ledEvent)
 			ledEventUpdate();
@@ -901,8 +901,8 @@ void DisplayMgr::DisplayUpdate(){
 		string eventArg = "";
 		
 		switch(item.evt){
-			
-		 	// timeout - nothing happened
+				
+				// timeout - nothing happened
 			case EVT_NONE:
 				timeval now, diff;
 				gettimeofday(&now, NULL);
@@ -930,7 +930,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
- 				else if(_current_mode == MODE_BALANCE) {
+				else if(_current_mode == MODE_BALANCE) {
 					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
 					if(item.mode == MODE_BALANCE) {
@@ -975,7 +975,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
-
+				
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
@@ -984,7 +984,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
-				// check for menu timeout delay
+					// check for menu timeout delay
 					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						if(!isStickyMode(_current_mode)){
 							popMode();
@@ -1015,7 +1015,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
-
+				
 				// check for ay other timeout delay 1.3 secs
 				
 				else if(diff.tv_sec >=  1){
@@ -1031,9 +1031,9 @@ void DisplayMgr::DisplayUpdate(){
 			case EVT_PUSH:
 				//			printf("\nEVT_PUSH %d \n", item.mode);
 				
-			 if(pushMode(item.mode)){
+				if(pushMode(item.mode)){
 					shouldRedraw = true;
-					 eventArg = item.arg;
+					eventArg = item.arg;
 				}
 				gettimeofday(&_lastEventTime, NULL);
 				shouldUpdate = true;
@@ -1046,11 +1046,11 @@ void DisplayMgr::DisplayUpdate(){
 					shouldUpdate = true;
 				}
 				break;
-			
+				
 			case EVT_REDRAW:
 				gettimeofday(&_lastEventTime, NULL);
 				shouldRedraw = true;
-//				shouldUpdate = true;
+				//				shouldUpdate = true;
 				break;
 		}
 		
@@ -1110,16 +1110,16 @@ void DisplayMgr::DisplayUpdateThreadCleanup(void *context){
 
 
 void DisplayMgr::drawMode(modeTransition_t transition,
-								  	mode_state_t mode,
+								  mode_state_t mode,
 								  string eventArg  ){
 	
 	if(!_isSetup)
 		return;
-//	
-//	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
-//	if(transition != TRANS_IDLE)
-//		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
- 
+	//
+	//	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+	//	if(transition != TRANS_IDLE)
+	//		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
+	
 	try {
 		switch (mode) {
 				
@@ -1154,7 +1154,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_SETTINGS:
 				drawSettingsScreen(transition);
 				break;
-		
+				
 			case MODE_MENU:
 				drawMenuScreen(transition);
 				break;
@@ -1166,11 +1166,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
- 
+				
 			case MODE_DTC_INFO:
 				drawDTCInfoScreen(transition, eventArg);
 				break;
-
+				
 			case MODE_CANBUS:
 				if(_currentPage == 0)
 					drawCANBusScreen(transition);
@@ -1181,7 +1181,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_INFO:
 				drawInfoScreen(transition);
 				break;
-	 
+				
 			case MODE_UNKNOWN:
 				// we will always leave the UNKNOWN state at start
 				if(transition == TRANS_LEAVING)
@@ -1206,7 +1206,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
- 	if(transition == TRANS_ENTERING){
+	if(transition == TRANS_ENTERING){
 		
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
@@ -1215,11 +1215,11 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor(7, 10);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Starting Up...");
- 
+		
 		drawDeviceStatus();
 		LEDeventStartup();
 	}
- 
+	
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
@@ -1227,48 +1227,48 @@ void DisplayMgr::drawDeviceStatusScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		
-	 	_vfd.clearScreen();
+		_vfd.clearScreen();
 		
 		_vfd.setCursor(7, 10);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Device Status");
- 
+		
 		drawDeviceStatus();
 	}
- 
+	
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
 
 void DisplayMgr::drawDeviceStatus(){
- 
+	
 	char buffer[30];
 	uint8_t col = 10;
 	uint8_t row = 10;
-
+	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	GPSmgr*	gps 		= PiCarMgr::shared()->gps();
- 
+	
 	row+=2;
 	
 	memset(buffer, ' ', sizeof(buffer));
 	row+=8; _vfd.setCursor(col, row);
 	_vfd.setFont(VFD::FONT_MINI);
-
+	
 	RtlSdr::device_info_t info;
-
+	
 	if(radio->isConnected() && radio->getDeviceInfo(info) ){
- 		sprintf( buffer ,"\xBA RADIO OK");
+		sprintf( buffer ,"\xBA RADIO OK");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 		row += 6;  _vfd.setCursor(col+10, row );
- 		std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
-	 	_vfd.write(info.product);
+		std::transform(info.product.begin(), info.product.end(),info.product.begin(), ::toupper);
+		_vfd.write(info.product);
 	}
 	else {
 		sprintf( buffer ,"X RADIO FAIL");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
-
+	
 	memset(buffer, ' ', sizeof(buffer));
 	row += 8; _vfd.setCursor(col, row);
 	if(gps->isConnected()){
@@ -1279,7 +1279,7 @@ void DisplayMgr::drawDeviceStatus(){
 		sprintf( buffer ,"X GPS FAIL");
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
-
+	
 }
 
 
@@ -1287,8 +1287,8 @@ void DisplayMgr::drawDeviceStatus(){
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	PiCarDB*		db 	= PiCarMgr::shared()->db();
-
- 
+	
+	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
@@ -1299,7 +1299,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
-//		_leftRing.clearAll();
+		//		_leftRing.clearAll();
 	}
 	
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
@@ -1325,14 +1325,14 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	drawEngineCheck();
 	
-//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-//		char buffer[64] = {0};
-//
-//		TRY(_vfd.setCursor(64, 55));
-//		TRY(_vfd.setFont(VFD::FONT_5x7));
-//		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
-//		TRY(_vfd.write(buffer));
-//	}
+	//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+	//		char buffer[64] = {0};
+	//
+	//		TRY(_vfd.setCursor(64, 55));
+	//		TRY(_vfd.setFont(VFD::FONT_5x7));
+	//		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
+	//		TRY(_vfd.write(buffer));
+	//	}
 	
 }
 
@@ -1340,30 +1340,30 @@ void DisplayMgr::drawEngineCheck(){
 	FrameDB*		fDB 	= PiCarMgr::shared()->can()->frameDB();
 	uint8_t width = _vfd.width();
 	uint8_t midX = width/2;
-
+	
 	
 	bool engineCheck = false;
 	bitset<8>  bits = {0};
-		
+	
 	_vfd.setCursor(midX, 60);
-
+	
 	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
 		&& engineCheck) {
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHECK ENGINE");
 	}
 	else if(fDB->boolForKey("GM_OIL_LOW", engineCheck)
-		&& engineCheck) {
+			  && engineCheck) {
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("OIL LOW");
 	}
 	else if(fDB->boolForKey("GM_CHANGE_OIL", engineCheck)
-		&& engineCheck) {
+			  && engineCheck) {
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHANGE OIL");
 	}
 	else if(fDB->boolForKey("GM_CHECK_FUELCAP", engineCheck)
-		&& engineCheck) {
+			  && engineCheck) {
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHECK FUEL CAP");
 	}
@@ -1374,7 +1374,7 @@ void DisplayMgr::drawEngineCheck(){
 	else {
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("%10s", " ");
-
+		
 	}
 }
 
@@ -1415,22 +1415,22 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
 	
 	// clear rest of inside of box
-		if(dim < 1)
-		{
+	if(dim < 1)
+	{
 		// there is some kind of bug in the Noritake VFD where id you send
-			// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
-			uint8_t start = itemX+1;
-			if(start == 96) start = 95;
-
-			uint8_t buff2[] = {
+		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+		uint8_t start = itemX+1;
+		if(start == 96) start = 95;
+		
+		uint8_t buff2[] = {
 			VFD_CLEAR_AREA,
-				// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-				static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
-				static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-			
-			_vfd.writePacket(buff2, sizeof(buff2), 1000);
-		}
-
+			// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 1000);
+	}
+	
 	// fill  area box
 	uint8_t buff3[] = {VFD_SET_AREA,
 		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
@@ -1472,7 +1472,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		_rightRing.clearAll();
 		didSetRing = false;
 	}
-
+	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
@@ -1497,14 +1497,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			
 			
 			if(mode == RadioMgr::AUX){
-	
+				
 				string str = "AUX";
 				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
-		
+				
 				TRY(_vfd.setFont(VFD::FONT_10x14));
 				TRY(_vfd.setCursor( freqCenter ,centerY+5));
 				TRY(_vfd.write(str));
-	
+				
 			}
 			else {
 				
@@ -1604,22 +1604,22 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_MINI));
 	TRY(_vfd.setCursor(8, centerY+5));
 	TRY(_vfd.write(muxstring));
- 
+	
 	drawEngineCheck();
- 
+	
 	drawTimeBox();
 }
 
 void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
- //printf("drawSettingsScreen %d\n",transition);
+	//printf("drawSettingsScreen %d\n",transition);
 	
- 
+	
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Orange);
 		_vfd.clearScreen();
 	}
-
+	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
@@ -1629,7 +1629,7 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,10));
 	TRY(_vfd.write("Settings"));
-
+	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width()-5,60));
 	TRY(_vfd.write(">"));
@@ -1638,13 +1638,13 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 
 void DisplayMgr::drawInternalError(modeTransition_t transition){
 	
-//	printf("displayInternalError  %d\n",transition);
+	//	printf("displayInternalError  %d\n",transition);
 	
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 	}
-
+	
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
@@ -1652,23 +1652,23 @@ void DisplayMgr::drawInternalError(modeTransition_t transition){
 }
 
 void DisplayMgr::drawGPSScreen(modeTransition_t transition){
- 
+	
 	uint8_t col = 0;
 	uint8_t row = 7;
 	string str;
-
+	
 	uint8_t width = _vfd.width();
- 	uint8_t midX = width/2;
- 
+	uint8_t midX = width/2;
+	
 	uint8_t utmRow = row;
 	uint8_t altRow = utmRow+30;
-
+	
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
- 
+	
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
-
+		
 		gps->setShouldRead(true);
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
@@ -1677,21 +1677,21 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setCursor(2,altRow);
 		_vfd.printPacket("ALTITUDE");
-	
+		
 		_vfd.setCursor(midX +20 ,utmRow+10);
 		_vfd.printPacket("HEADING");
-
+		
 		_vfd.setCursor(midX +20 ,altRow);
 		_vfd.printPacket("SPEED");
-
- 	}
-
+		
+	}
+	
 	if(transition == TRANS_LEAVING) {
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		gps->setShouldRead(false);
 		return;
 	}
-   	GPSLocation_t location;
+	GPSLocation_t location;
 	if(gps->GetLocation(location)){
 		string utm = GPSmgr::UTMString(location);
 		vector<string> v = split<string>(utm, " ");
@@ -1714,28 +1714,28 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
 		}
 		
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(0,60)	;
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(0,60)	;
 		
-				_vfd.printPacket( "%s:%2d DOP:%.1f",
-					GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
+		_vfd.printPacket( "%s:%2d DOP:%.1f",
+							  GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
 	}
 	
-
+	
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(midX +20 ,utmRow+20);
 		_vfd.printPacket("%3d\xa0",int(velocity.heading));
-	 
+		
 		_vfd.setCursor(midX +20 ,altRow+10);
 		double mph = velocity.speed * 0.6213711922;
 		_vfd.printPacket("%3d",int(mph));
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket(" M/H");
 	}
-
+	
 	drawTimeBox();
 }
 
@@ -1743,12 +1743,12 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 void DisplayMgr::drawShutdownScreen(){
 	
 	
-//	printf("shutdown display");
+	//	printf("shutdown display");
 	_vfd.clearScreen();
 	_vfd.clearScreen();
- 	_rightRing.clearAll();
+	_rightRing.clearAll();
 	_leftRing.clearAll();
-
+	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));
@@ -1758,7 +1758,7 @@ void DisplayMgr::drawShutdownScreen(){
 
 
 void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
- 
+	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	time_t now = time(NULL);
 	
@@ -1769,7 +1769,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Red);
 		_vfd.clearScreen();
 	}
-
+	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
@@ -1779,7 +1779,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(0,18));
 	TRY(_vfd.write("CANbus Activity"));
-	 
+	
 	char buffer[64] = {0};
 	char* p = buffer;
 	
@@ -1788,32 +1788,32 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	size_t count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
- 
+		
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_GM, count)){
 				
 			}
 		}
 		else count = 0;
- 	}
-	 
+	}
+	
 	p = buffer;
 	p  += sprintf(p, "%4s: ", "GM");
 	if(count > 0)
 		p  += sprintf(p, "%4zu/sec", count);
 	else
 		p  += sprintf(p, "%-10s","---");
-
+	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,33));
 	TRY(_vfd.write(buffer));
- 
+	
 	// JEEP BUS
 	lastTime = 0;
-	 count = 0;
+	count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
 		time_t diff = now - lastTime;
- 
+		
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_JEEP, count)){
 				
@@ -1828,19 +1828,19 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 		p  += sprintf(p, "%4zu/sec  ", count);
 	else
 		p  += sprintf(p, "%-10s","---");
-
+	
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,43));
 	TRY(_vfd.write(buffer));
-
+	
 	drawTimeBox();
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width()-5,60));
 	TRY(_vfd.write(">"));
-
- }
+	
+}
 
 
 void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
@@ -1856,7 +1856,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	uint8_t col2 = midX + 5;
 	uint8_t row1 = 16;
 	uint8_t rowsize = 19;
- 
+	
 	int start_item = ((_currentPage -1) *6) +1;			// 1-6 for each page
 	int end_item	= start_item + 6;
 	
@@ -1880,7 +1880,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 				auto item = cachedProps[i];
 				
 				int line = ((i - 1) % 6);
-					
+				
 				if(i <  end_item - 3){
 					can->request_OBDpolling(item.key);
 					_vfd.setCursor(col1, row1 + (line)  * rowsize );
@@ -1902,7 +1902,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 			can->cancel_OBDpolling(e.second.key);
 		}
 		cachedProps.clear();
-
+		
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
@@ -1914,7 +1914,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	for(uint8_t	 i = start_item; i < end_item; i++){
 		
 		int line = ((i - 1) % 6);
-
+		
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));
 		
@@ -1932,7 +1932,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
- 
+	
 	drawTimeBox();
 }
 
@@ -1946,8 +1946,8 @@ void DisplayMgr::drawTimeBox(){
 	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
 	_vfd.setFont(VFD::FONT_5x7);
 	_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7);
-  _vfd.write(timebuffer);
-
+	_vfd.write(timebuffer);
+	
 }
 
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
@@ -1957,12 +1957,13 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	string str;
 	static uint8_t lastrow = row;
 	
-	RadioMgr*			radio 	= PiCarMgr::shared()->radio();
-	GPSmgr*				gps 		= PiCarMgr::shared()->gps();
-	PiCarDB*				db 		= PiCarMgr::shared()->db();
-	PiCarCAN*			can 		= PiCarMgr::shared()->can();
+	PiCarMgr*			mgr 	= PiCarMgr::shared();
+	RadioMgr*			radio 	= mgr->radio();
+	GPSmgr*				gps 		= mgr->gps();
+	PiCarDB*				db 		= mgr->db();
+	PiCarCAN*			can 		= mgr->can();
 #if USE_COMPASS
-	CompassSensor* 	compass	= PiCarMgr::shared()->compass();
+	CompassSensor* 	compass	= mgr->compass();
 #endif
 	
 	if(transition == TRANS_LEAVING) {
@@ -2026,58 +2027,81 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		lastrow = row;
 	}
 	
-	row = lastrow+ 7;
-	_vfd.setCursor(col+10, row );
-	_vfd.setFont(VFD::FONT_MINI);
-	
-	vector<CANBusMgr::can_status_t> canStats;
-	if(can->getStatus(canStats)){
-		str =  string("CAN:");
-		for(auto e :canStats){
-			str  += " " + e.ifName;
-		}
-	}
-	else
-		str =  string("CAN: ") + string("NOT CONNECTED");
-	
-	std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-	_vfd.printPacket("%s", str.c_str());
-	
-	float cTemp = 0;
-	int  fanspeed = 0;
-	
-	
-	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-		
-		_vfd.setCursor(col+10, 64 );
-		
+	{
+		row = lastrow+ 7;
+		_vfd.setCursor(col+10, row );
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("CPU TEMP: ");
 		
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
+		vector<CANBusMgr::can_status_t> canStats;
+		if(can->getStatus(canStats)){
+			str =  string("CAN:");
+			for(auto e :canStats){
+				str  += " " + e.ifName;
+			}
+		}
+		else
+			str =  string("CAN: ") + string("NOT CONNECTED");
 		
-		if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+		
+	}
+	
+	{
+		row = lastrow+ 7;
+		_vfd.setCursor(col+10, row );
+		_vfd.setFont(VFD::FONT_MINI);
+		stringvector wifiPorts;
+		mgr->hasWifi(&wifiPorts);
+		str =  string("WIFI: ");
+		
+		if(wifiPorts.size() == 0){
+			str  +=  "OFF";
+		}
+		else {
+			for(auto s :wifiPorts){
+				str  += " " + s;
+			}
+		}
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.printPacket("%s", str.c_str());
+	}
+	
+	{
+		float cTemp = 0;
+		int  fanspeed = 0;
+	 
+		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+			
+			_vfd.setCursor(col+10, 64 );
 			
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.printPacket("FAN: ");
-			_vfd.setFont(VFD::FONT_5x7);
-
-			char buffer[10];
-
-			if(fanspeed == 0){
-				sprintf(buffer, "%-4s", "OFF");
-			}
-			else
-			{
-				sprintf(buffer, "%d%%", fanspeed);
-	 		}
+			_vfd.printPacket("CPU TEMP: ");
 			
-			_vfd.printPacket("%-4s ", buffer);
- 		}
+			_vfd.setFont(VFD::FONT_5x7);
+			_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
+			
+			if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
+				
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.printPacket("FAN: ");
+				_vfd.setFont(VFD::FONT_5x7);
+				
+				char buffer[10];
+				
+				if(fanspeed == 0){
+					sprintf(buffer, "%-4s", "OFF");
+				}
+				else
+				{
+					sprintf(buffer, "%d%%", fanspeed);
+				}
+				
+				_vfd.printPacket("%-4s ", buffer);
+			}
+		}
+		
 	}
-	
-	
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
@@ -2222,7 +2246,7 @@ bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
 	double balance = audio->balance();
 	// limit the precision
 	balance = std::floor((balance * 100) + .5) / 100;
-
+	
 	if(action == KNOB_UP){
 		
 		if(balance < 1.0){
@@ -2255,7 +2279,7 @@ bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
 	double fade = audio->fader();
 	// limit the precision
 	fade = std::floor((fade * 100) + .5) / 100;
-
+	
 	if(action == KNOB_UP){
 		
 		if(fade < 1.0){
@@ -2302,20 +2326,20 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			}
 			wasHandled = true;
 		}
- 		else if(action == KNOB_DOWN){
+		else if(action == KNOB_DOWN){
 			
 			if(brightness > 0){
 				brightness -= increment;
 				brightness = max(brightness, 0.0);
-	
+				
 				mgr->setDimLevel(brightness);
 				setBrightness(brightness);
 				setEvent(EVT_NONE,MODE_DIMMER);
 			}
 			wasHandled = true;
 		}
- 	}
-
+	}
+	
 	if(action == KNOB_CLICK){
 		popMode();
 	}
@@ -2329,7 +2353,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 // MARK: -  DTC codes screen
 
 
- void DisplayMgr::drawDTCScreen(modeTransition_t transition){
+void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
 	FrameDB*		frameDB 	= can->frameDB();
@@ -2370,7 +2394,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	auto totalPending = vPending.size();
 	auto totalCodes = totalStored + totalPending;
 	vCodes.insert(vCodes.end(), vPending.begin(), vPending.end());
-	 
+	
 	// if anything changed, redraw
 	
 	if(hash != lastHash){
@@ -2454,7 +2478,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 			if(_lineOffset < totalCodes){
 				lines.push_back("  ERASE ALL CODES?  ");
 				lines.push_back("  EXIT  ");
-
+				
 			}
 			else if(_lineOffset == totalCodes){
 				lines.push_back("[ ERASE ALL CODES? ]");
@@ -2466,8 +2490,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 				lines.push_back(" [EXIT]  ");
 				firstLine = lines.size()-1;
 				_lineOffset = totalCodes + 1;
-		}
- 
+			}
+			
 			_vfd.setFont(VFD::FONT_MINI) ;
 			
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
@@ -2502,7 +2526,7 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 		// sigh this code has to calculate the offset the same as drawDTCScreen
 		PiCarCAN*	can 	= PiCarMgr::shared()->can();
 		FrameDB*		frameDB 	= can->frameDB();
-
+		
 		string stored = "";
 		string pending = "";
 		frameDB->valueWithKey("OBD_DTC_STORED", &stored);
@@ -2513,25 +2537,25 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 		auto totalPending = vPending.size();
 		auto totalCodes = totalStored + totalPending;
 		vCodes.insert(vCodes.end(), vPending.begin(), vPending.end());
-  
+		
 		if(!totalCodes ){
 			popMode();
 		}
 		else if(_lineOffset < totalCodes){
 			// select a code
 			showDTCInfo(vCodes[_lineOffset].c_str());
-	//		printf("code %s\n", vCodes[_lineOffset].c_str());
+			//		printf("code %s\n", vCodes[_lineOffset].c_str());
 			wasHandled = true;
 		}
 		else if(_lineOffset == totalCodes){
 			// erase codes.
-	  		can->sendDTCEraseRequest();
+			can->sendDTCEraseRequest();
 			wasHandled = true;
- 		}
+		}
 		else {
 			popMode();
 		}
-	
+		
 	}
 	
 	return wasHandled;
@@ -2543,9 +2567,9 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 	
 	
 	if(transition == TRANS_ENTERING){
- 
+		
 		PiCarCAN*	can 	= PiCarMgr::shared()->can();
-
+		
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.setCursor(0,10);
@@ -2554,20 +2578,20 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		_vfd.setCursor(0,22);
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printPacket("%s", code.c_str());
-
+		
 		string description = "No Description Available";
 		
 		can->descriptionForDTCCode(code, description);
 		std::transform(description.begin(), description.end(),description.begin(), ::toupper);
- 
+		
 		stringvector lines = Utils::split(description, 30);
-	 
-	 	_vfd.setFont(VFD::FONT_MINI) ;
+		
+		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.printLines(32, 7, lines, 1, 4);
 	}
-
+	
 	drawTimeBox();
-
+	
 }
 
 bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
@@ -2603,7 +2627,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	
 	char buffer[256];
 	char *p = buffer;
-
+	
 	if(fDB->valueWithKey(key, &rawValue)) {
 		
 		switch(fDB->unitsForKey(key)){
@@ -2623,7 +2647,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				double psi =  kPas * 0.1450377377;
 				sprintf(p, "%2d psi",   (int) round(psi));
 				value = string(buffer);
-				}
+			}
 				break;
 				
 			case	FrameDB::VOLTS:
@@ -2633,15 +2657,15 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				value = string(buffer);
 			}
 				break;
-	 
+				
 			case	FrameDB::KM:
 			{
 				float miles = (stof(rawValue) / 10) *  0.6213712;
-	 			sprintf(p, "%2.1f",  miles);
+				sprintf(p, "%2.1f",  miles);
 				value = string(buffer);
 			}
 				break;
-
+				
 			case FrameDB::FUEL_TRIM:{
 				double trim = fDB->normalizedDoubleForValue(key,rawValue);
 				sprintf(p, "%1.1f%%",  trim);
@@ -2663,10 +2687,10 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				double gph =  lph * 0.2642;
 				sprintf(p, "%1.1f gph",  gph);
 				value = string(buffer);
-		}
+			}
 				break;
 				
-
+				
 				
 				
 				
@@ -2680,24 +2704,24 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	if(value.empty()){
 		value = "---";
 	}
- 
+	
 	valueOut = value;
-
-//
-//	if(key == "GM_COOLANT_TEMP")
-//			value = "210\xA0";
-//	else 	if(key == "GM_TRANS_TEMP")
-//		value = "188\xA0";
-//	else 	if(key == "GM_OIL_PRESSURE")
-//		value = "48";
-//	else 	if(key == "LONG_FUEL_TRIM_1")
-//		value = "10.0";
-//	else 	if(key == "LONG_FUEL_TRIM_2")
-//		value = "7.2";
-//	else 	if(key == "RUN_TIME")
-//		value = "7:43";
-// else
-//	 value = "---";
+	
+	//
+	//	if(key == "GM_COOLANT_TEMP")
+	//			value = "210\xA0";
+	//	else 	if(key == "GM_TRANS_TEMP")
+	//		value = "188\xA0";
+	//	else 	if(key == "GM_OIL_PRESSURE")
+	//		value = "48";
+	//	else 	if(key == "LONG_FUEL_TRIM_1")
+	//		value = "10.0";
+	//	else 	if(key == "LONG_FUEL_TRIM_2")
+	//		value = "7.2";
+	//	else 	if(key == "RUN_TIME")
+	//		value = "7:43";
+	// else
+	//	 value = "---";
 	
 	return true;
 	

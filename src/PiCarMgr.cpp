@@ -17,6 +17,11 @@
 #include <unistd.h>
 #include <regex>
 
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <ifaddrs.h>
+
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -1736,3 +1741,46 @@ PiCarMgrDevice::device_state_t PiCarMgr::compassState(){
 
 #endif
 
+// MARK: -   Network and system interface
+
+
+bool  PiCarMgr::hasWifi(stringvector *ifnames){
+	bool  has_wifi = false;
+	
+	struct ifaddrs *ifaddr, *ifa;
+	int family, n;
+	
+	if(getifaddrs(&ifaddr) == 0){
+		
+		stringvector names;
+		for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+			if (ifa->ifa_addr == NULL)
+				continue;
+			
+			if(strncmp( ifa->ifa_name, "wlan", 4) == 0){
+				
+				string name = string(ifa->ifa_name);
+				
+				family = ifa->ifa_addr->sa_family;
+				
+				if (family == AF_INET || family == AF_INET6) {
+					
+					
+					if (std::find(names.begin(), names.end(),name) == names.end()){
+						names.push_back(string(ifa->ifa_name));
+					}
+				}
+			}
+		}
+		
+		freeifaddrs(ifaddr);
+		
+		if( names.size() > 0){
+			
+			*ifnames = names;
+			has_wifi = true;
+		}
+	}
+ 
+	return has_wifi;
+}

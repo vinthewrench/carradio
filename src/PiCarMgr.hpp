@@ -132,6 +132,7 @@ class PiCarMgr {
 									bool up,
 									station_info_t &info);
 
+	bool  hasWifi(stringvector *ifnames = NULL);
 	
 private:
 	

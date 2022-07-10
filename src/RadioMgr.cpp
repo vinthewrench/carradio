@@ -788,7 +788,7 @@ void RadioMgr::OutputProcessor(){
 		// Get samples from buffer and write to output.
 		SampleVector samples =_output_buffer.pull();
 		
-		printf("%4d samples pulled ", samples.size());
+		printf("%4d samples pulled\n ", samples.size());
 		
 		AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 		audio->write(samples);

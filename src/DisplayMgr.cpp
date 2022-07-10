@@ -1974,8 +1974,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING){
 		
 		_vfd.clearScreen();
-		
-		// top line
+			// top line
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("Car Radio ");
@@ -2067,7 +2066,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		}
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		_vfd.printPacket("%s", str.c_str());
-		lastrow = row;
 	}
 	
 	{

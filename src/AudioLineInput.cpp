@@ -143,7 +143,7 @@ bool AudioLineInput::getSamples(){
 		if (avail > _blockLength)
 			avail = _blockLength;
 		
-		printf("%d bytes avail\n" avail);
+		printf("%d bytes avail\n", avail);
 	}
 	
 #endif

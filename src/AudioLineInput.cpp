@@ -116,7 +116,7 @@ bool AudioLineInput::getSamples(){
 	if(!_isSetup || !_pcm)
 		return  false;
 	
-	vector<uint8_t> buf(2 * _blockLength);
+	vector<uint16_t> buf(2 * _blockLength);
 	
 #if defined(__APPLE__)
 #else

@@ -2028,7 +2028,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	}
 	
 	{
-		row = lastrow+ 7;
+		row = row + 7;
 		_vfd.setCursor(col+10, row );
 		_vfd.setFont(VFD::FONT_MINI);
 		
@@ -2048,7 +2048,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	}
 	
 	{
-		row = lastrow+ 7;
+		row = row + 7;
 		_vfd.setCursor(col+10, row );
 		_vfd.setFont(VFD::FONT_MINI);
 		stringvector wifiPorts;

@@ -121,6 +121,8 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 						}
 					}
 				}
+				
+				printf("free capture source\n ");
 				if(sid)
 					snd_mixer_selem_id_free(sid);
 			}
@@ -134,6 +136,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 				snd_mixer_selem_id_set_name(sid, _MIXER_NAME_);
 				_volume = snd_mixer_find_selem(_mixer, sid);
 				
+				printf("free volume\n ");
 				if(sid)
 					snd_mixer_selem_id_free(sid);
 			}

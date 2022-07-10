@@ -115,9 +115,7 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	
 	if(!_isSetup || !_pcm)
 		return  false;
-	
-//	vector<uint16_t> buf(2 * _blockLength);
-	
+ 
 #if defined(__APPLE__)
 #else
 	
@@ -126,7 +124,6 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	
 	r =  snd_pcm_wait(_pcm, 1000);
 	if( r < 0){
-	//	fprintf(stderr,  "snd_pcm_wait - %s \n",  snd_strerror(r));
 		return false;
 	}
 	
@@ -139,8 +136,7 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 
 		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
 		if(cnt > 0){
-			//			printf("%d frames read \n", cnt);
-			return true;
+	 		return true;
 		}
 		
 	}

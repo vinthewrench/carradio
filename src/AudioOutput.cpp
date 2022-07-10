@@ -116,7 +116,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 						snd_mixer_selem_get_enum_item_name(elem, i, sizeof(itemname) - 1, itemname);
 						
 						if(strcmp(itemname, _PCM_CAPTURE_LINE_) == 0){
-							snd_mixer_selem_set_enum_item(elem,0,i);
+							snd_mixer_selem_set_enum_item(elem, (snd_mixer_selem_channel_id_t) 0,i);
 							break;
 						}
 					}

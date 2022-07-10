@@ -30,39 +30,38 @@ typedef struct _snd_mixer_elem snd_mixer_elem_t;
  
 
 class AudioOutput {
-	 
+	
 public:
- 
+	
 	AudioOutput();
 	~AudioOutput();
 	
 	bool begin(unsigned int samplerate = 48000,  bool stereo = true);
 	bool begin(unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
- 
+	
 	bool writeAudio(const SampleVector& samples);
 	bool writeIQ(const SampleVector& samples);
-
+	
 	bool 	setVolume(double );		// 0.0 - 1.0  % of max
 	double volume();
-
+	
 	bool setMute(bool shouldMute);
 	bool isMuted() {return (_isMuted && (_savedVolume > 0));};
 	double mutedVolume() { return _savedVolume; };
-
+	
 	
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
-
+	
 	bool 	setFader(double );		// -1.0  - 1.0
 	double fader();
-
 	
-//	bool playSound(string filePath, boolCallback_t cb);
 	
- 
-	private:
- 
+	//	bool playSound(string filePath, boolCallback_t cb);
+	
+private:
+	
 	bool						_isSetup;
 	unsigned int         _nchannels;
 	struct _snd_pcm *   	_pcm;
@@ -70,14 +69,14 @@ public:
 	snd_mixer_t* 			_mixer;
 	snd_mixer_elem_t* 	_elem;
 	
- 	double					_balance;
+	double					_balance;
 	double					_fader;
 	
- 	double					_savedVolume;
+	double					_savedVolume;
 	bool						_isMuted = false;
 	
 	vector<uint8_t>  		_bytebuf;
- 
-	 	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);
+	
+	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);
 };
 

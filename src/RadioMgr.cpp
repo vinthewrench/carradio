@@ -499,14 +499,9 @@ void RadioMgr::AuxReader(){
 	PRINT_CLASS_TID;
 		
 	constexpr int  pcmrate = 48000;
-
 	static bool aux_setup = false;
-	
-	printf("AuxReader started\n");
-	
-	
+	 
 	SampleVector samples;
-
 	while(!_shouldQuit){
 		
 			// aux is off sleep for awhile.
@@ -534,8 +529,6 @@ void RadioMgr::AuxReader(){
 //				printf("aux read %d samples\n", samples.size());
 			}
 		}
-		
-//		usleep(200000);
 	}
 		
 }

@@ -510,9 +510,6 @@ void RadioMgr::AuxReader(){
 		if(!_isSetup || !_shouldReadAux){
 			
 			if(aux_setup){
-				
-				printf("_lineInput.stop\n");
-
 				_lineInput.stop();
 				aux_setup = false;
 			}
@@ -521,9 +518,6 @@ void RadioMgr::AuxReader(){
 		}
 	
 		if(!aux_setup){
-			
-			printf("_lineInput.begin\n");
-
 			_lineInput.begin(pcmrate, true) ;
 			aux_setup = true;
 		}
@@ -531,6 +525,10 @@ void RadioMgr::AuxReader(){
 		if(_lineInput.iConnected()){
 			
 			// get input
+			
+			if( _lineInput.getSamples() ){
+				
+			}
 		}
 		
 		usleep(200000);

@@ -32,6 +32,8 @@ class AudioLineInput {
 	 
 public:
  
+	static constexpr int 	default_blockLength = 4096;
+	
 	AudioLineInput();
 	~AudioLineInput();
 	
@@ -39,7 +41,8 @@ public:
 	bool begin(unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
 	bool iConnected() { return _isSetup; }
-
+ 
+	bool getSamples();
  
 	private:
  
@@ -47,6 +50,7 @@ public:
 	unsigned int         _nchannels;
 	struct _snd_pcm *   	_pcm;
 	 
-	vector<uint8_t>  		_bytebuf;
+	int       				_blockLength;
+
   };
 

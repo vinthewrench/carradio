@@ -16,6 +16,8 @@
 AudioLineInput::AudioLineInput(){
   _isSetup = false;
    _pcm = NULL;
+	_blockLength = default_blockLength;
+
  }
 
 AudioLineInput::~AudioLineInput(){
@@ -63,6 +65,20 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 		return false;
 	}
 	
+	r =  snd_pcm_prepare(_pcm);
+	if( r < 0){
+		fprintf(stderr,  "cannot prepare audio interface for use - %s \n",  snd_strerror(r));
+		error = r;
+		return false;
+	}
+
+	r =  snd_pcm_start(_pcm);
+	if( r < 0){
+		fprintf(stderr,  "cannot start audio interface - %s \n",  snd_strerror(r));
+		error = r;
+		return false;
+	 
+	
 	printf("AudioLineInput connected\n");
 	
 #endif
@@ -93,3 +109,46 @@ void AudioLineInput::stop(){
 	
 	_isSetup = false;
 }
+
+
+	bool AudioLineInput::getSamples(){
+		
+		if(_isSetup || !_pcm)
+			return  false;
+		
+		vector<uint8_t> buf(2 * _blockLength);
+		
+#if defined(__APPLE__)
+#else
+		
+		int avail;
+		int r;
+		
+		r =  snd_pcm_wait(_pcm, 1000);
+		if( r < 0){
+			fprintf(stderr,  "snd_pcm_wait - %s \n",  snd_strerror(r));
+			return false;
+		}
+		
+		avail = snd_pcm_avail_update(_pcm);
+		if (avail > 0) {
+			if (avail > BUFSIZE)
+				avail = BUFSIZE;
+			
+			snd_pcm_readi(_pcm,  buf.data(), avail);
+		}
+		
+		avail = snd_pcm_avail_update(_pcm);
+		if (avail > 0) {
+			if (avail > BUFSIZE)
+				avail = BUFSIZE;
+			
+			printf("%d bytes avail\n" avail);
+		}
+		
+#endif
+		
+		
+		return true;
+	}
+

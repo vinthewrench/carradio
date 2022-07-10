@@ -41,7 +41,7 @@ public:
 	void stop();
  
 	bool writeAudio(const SampleVector& samples);
-	bool writeIQ(const SampleVector& samples)
+	bool writeIQ(const SampleVector& samples);
 
 	bool 	setVolume(double );		// 0.0 - 1.0  % of max
 	double volume();

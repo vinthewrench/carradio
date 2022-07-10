@@ -113,7 +113,7 @@ void AudioLineInput::stop(){
 
 bool AudioLineInput::getSamples(){
 	
-	if(_isSetup || !_pcm)
+	if(!_isSetup || !_pcm)
 		return  false;
 	
 	vector<uint8_t> buf(2 * _blockLength);

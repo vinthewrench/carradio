@@ -350,6 +350,21 @@ void DisplayMgr::runLEDEventVol(){
 
 // MARK: -  display tools
 
+
+static uint8_t calculateRingCurrent(uint8_t level) {
+	uint8_t current = DuppaLEDRing::maxGlobalCurrent();
+	
+	level = min(static_cast<int>(level), 7);
+	
+	uint8_t table[] = {1, 1, 2, 4, 5,  6, 8, DuppaLEDRing::maxGlobalCurrent()};
+	
+	current = table[level];
+	
+	return current;
+	
+}
+
+
 bool DisplayMgr::setBrightness(double level) {
 	
 	bool success = false;
@@ -363,8 +378,10 @@ bool DisplayMgr::setBrightness(double level) {
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
 		
-		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
-		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
+		uint8_t ledCurrent = calculateRingCurrent(level);
+//		
+//		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
+//		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
 		_rightRing.SetGlobalCurrent(ledCurrent);
 		_leftRing.SetGlobalCurrent(ledCurrent);
 	}
@@ -1967,14 +1984,14 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 #endif
 	
 	if(transition == TRANS_LEAVING) {
-			lastrow = 0;
+		lastrow = 0;
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING){
 		
 		_vfd.clearScreen();
-			// top line
+		// top line
 		_vfd.setCursor(col, row);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("Car Radio ");
@@ -2028,8 +2045,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		lastrow = row;
 	}
 	
-		row = lastrow;
-		{
+	row = lastrow;
+	{
 		row = row + 7;
 		_vfd.setCursor(col+10, row );
 		_vfd.setFont(VFD::FONT_MINI);

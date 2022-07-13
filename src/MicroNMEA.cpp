@@ -342,7 +342,7 @@ static inline int days_from_civil(int y, int m, int d) noexcept
 
 // Converts a broken-down time structure with UTC time to a simple time representation.
 // It does not modify broken-down time structure as BSD timegm() does.
-static time_t mktimegm(std::tm const* t)
+static time_t mktimegm(struct tm const* t)
 {
 	 int year = t->tm_year + 1900;
 	 int month = t->tm_mon;          // 0-11

@@ -11,6 +11,7 @@ using namespace std;
 
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 
 static long exp10(uint8_t b)
 {

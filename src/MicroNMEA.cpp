@@ -329,7 +329,7 @@ const char* MicroNMEA::parseDate(const char* s)
 
 void MicroNMEA::createTimeSpec(struct timespec &ts){
 	
-	tm tm;
+	struct tm tm;
  
 	tm.tm_year 	= _year;
 	tm.tm_mon 	= _month;

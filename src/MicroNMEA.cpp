@@ -334,12 +334,12 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	struct tm t;
  
 	t.tm_year 	=  _year - 1900;
-	t.tm_mon 	= _month;
+	t.tm_mon 	= _month -1;
 	t.tm_mday 	= _day;
 
 	t.tm_hour 	= _hour;
 	t.tm_min 	= _minute;
-	t.tm_sec	= 	_second;
+	t.tm_sec		= _second;
 	t.tm_gmtoff	= 0;
 	
 	ts.tv_sec =  mktime(&t);

@@ -344,7 +344,7 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	ts.tv_sec =  mktime(&t);
 	ts.tv_nsec = _hundredths * 1e+7;
 	
-	print("createTimeSpec = %ld\n", ts.tv_sec);
+	printf("createTimeSpec = %ld\n", ts.tv_sec);
  }
 
 bool MicroNMEA::processGGA(const char *s)

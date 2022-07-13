@@ -339,13 +339,13 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 
 	t.tm_hour 	= _hour;
 	t.tm_min 	= _minute;
-	t.tm_sec	= _second;
+	t.tm_sec	= 	_second;
 	t.tm_gmtoff	= 0;
 	
 	ts.tv_sec =  mktime(&t);
 	ts.tv_nsec = _hundredths * 1e+7;
 	
-	printf("createTimeSpec = %ld\n", ts.tv_sec);
+	printf("createTimeSpec = %ld %d \n", ts.tv_sec, _year);
  }
 
 bool MicroNMEA::processGGA(const char *s)

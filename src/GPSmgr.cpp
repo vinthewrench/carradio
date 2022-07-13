@@ -14,6 +14,8 @@
 #include <errno.h> // Error integer and strerror() function
 #include "ErrorMgr.hpp"
 #include "utm.hpp"
+#include "timespec_util.h"
+
 
 #ifndef PI
 #define PI           3.14159265358979323e0    /* PI                        */
@@ -395,6 +397,11 @@ void GPSmgr::processNMEA(){
 //	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	string msgID =  string(_nmea.getMessageID());
 	
+	struct timespec now;
+	clock_getres(CLOCK_MONOTONIC, &now );
+ 
+	struct timespec utc;
+	clock_getres(CLOCK_REALTIME, &utc );
  
 	//  GGA	Global Positioning System Fix Data
 	if( msgID ==  "GGA") {
@@ -402,8 +409,7 @@ void GPSmgr::processNMEA(){
 		
 		{
 			long  tmp;
-			time_t now = time(NULL);
-
+ 
 			pthread_mutex_lock (&_mutex);
 			memset((void*)&_lastLocation, 0, sizeof(_lastLocation));
 			_lastLocation.isValid = _nmea.isValid();
@@ -425,16 +431,24 @@ void GPSmgr::processNMEA(){
 	else 	if( msgID ==  "RMC") {
 		//Recommended Minimum
 		
-		time_t now = time(NULL);
-
 		pthread_mutex_lock (&_mutex);
 		memset((void*)&_lastVelocity, 0, sizeof(_lastVelocity));
 		_lastVelocity.isValid = _nmea.isValid();
 		_lastVelocity.heading = _nmea.getCourse();
 		_lastVelocity.speed = _nmea.getSpeed()/1000.;
 		_lastVelocity.timestamp = now;
+		
+		_nmea.getGPStime(_lastGPSTime.gpsTime);
+		_lastGPSTime.timestamp = now;
+		_lastGPSTime.isValid = true;
+		
+		// check against clock */
+		struct timespec diff;
+		timespec_sub(&diff, &utc, &_lastGPSTime.gpsTime);
 		pthread_mutex_unlock (&_mutex);
 
+		printf("Clock diff %ld \n", diff.tv_sec);
+ 
 	}
 }
 
@@ -452,8 +466,6 @@ static void  UnknownSentenceHandler(MicroNMEA & nmea, void *context){
 
 void GPSmgr::GPSReader(){
 	 
-	PRINT_CLASS_TID;
-	
 	_nmea.setUnknownSentenceHandler(UnknownSentenceHandler);
 		
 	while(_isRunning){

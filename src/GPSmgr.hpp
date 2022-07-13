@@ -46,7 +46,8 @@ typedef struct {
 	GPSLocationDegrees 		latitude;
 	GPSLocationDegrees 		longitude;
 	GPSLocationDistance	 	altitude;
-	time_t						timestamp;	//local timestamp of reading
+	
+	struct timespec			timestamp;			//local CLOCK_MONOTONIC timestamp of reading
 	
 	uint8_t						HDOP;   // dilution of precision (HDOP), in tenths
 
@@ -94,9 +95,15 @@ typedef struct {
 typedef struct {
 	double 					speed;
  	double					heading;
-	time_t					timestamp;	//local timestamp of reading
+	struct timespec		timestamp;	//local timestamp of reading
  	bool						 isValid;
 } GPSVelocity_t;
+
+typedef struct {
+	struct timespec			gpsTime;				// GPS time
+	struct timespec			timestamp;	//local timestamp of reading
+	bool						 	isValid;
+} GPSTime_t;
 
 class GPSmgr {
 	
@@ -136,6 +143,7 @@ private:
 	bool 				_isSetup = false;
 	GPSLocation_t	_lastLocation;
 	GPSVelocity_t	_lastVelocity;
+	GPSTime_t		_lastGPSTime;
 	
 	MicroNMEA		_nmea;
 	uint8_t			_nmeaBuffer[128];

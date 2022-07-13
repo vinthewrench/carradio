@@ -255,6 +255,14 @@ public:
 		return _course;
 	}
 	
+	
+	bool  getGPStime(struct timespec &);
+	/**
+	 * @brief create a timespec from current  Time values
+	 * @return struct timespec
+	 */
+
+	
 	/**
 	 * @brief Instruct MicroNMEA to process a character
 	 *
@@ -309,6 +317,7 @@ protected:
 	
 	const char* parseTime(const char* s);
 	const char* parseDate(const char* s);
+	void createTimeSpec(struct timespec &);
 	
 	bool processGGA(const char *s);
 	bool processRMC(const char* s);
@@ -341,6 +350,8 @@ private:
 	long _speed, _course;
 	uint16_t _year;
 	uint8_t _month, _day, _hour, _minute, _second, _hundredths;
+	
+	struct timespec _gpsTime; //  (synthesized from time RMC UTC )
 	uint8_t _numSat;
 	uint8_t _hdop;
 	

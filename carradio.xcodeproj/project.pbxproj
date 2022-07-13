@@ -149,6 +149,7 @@
 		2E8D371A2874BB2B000182E5 /* ArgononeFan.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ArgononeFan.hpp; sourceTree = "<group>"; };
 		2E8D3720287A3CD0000182E5 /* AudioLineInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioLineInput.cpp; sourceTree = "<group>"; };
 		2E8D3721287A3CD0000182E5 /* AudioLineInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioLineInput.hpp; sourceTree = "<group>"; };
+		2E8D3728287F7A6E000182E5 /* timespec_util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timespec_util.h; sourceTree = "<group>"; };
 		2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBuffer.hpp; sourceTree = "<group>"; };
 		2E9F9E9A282727D200E12F5D /* FmDecode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FmDecode.hpp; sourceTree = "<group>"; };
 		2E9F9E9B282727D200E12F5D /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
@@ -312,6 +313,7 @@
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,
 				2E8210B22835A53B003D074C /* json.hpp */,
 				2E8210B32835A53B003D074C /* Utils.hpp */,
+				2E8D3728287F7A6E000182E5 /* timespec_util.h */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";

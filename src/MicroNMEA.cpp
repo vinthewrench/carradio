@@ -302,6 +302,8 @@ bool MicroNMEA::process(char c)
 }
 
 
+ 
+
 const char* MicroNMEA::parseTime(const char* s)
 {
   if (*s == ',')
@@ -324,6 +326,23 @@ const char* MicroNMEA::parseDate(const char* s)
   return skipField(s + 6);
 }
 
+
+void MicroNMEA::createTimeSpec(struct timespec &ts){
+	
+	tm tm;
+ 
+	tm.tm_year 	= _year;
+	tm.tm_mon 	= _month;
+	tm.tm_mday 	= _day;
+
+	tm.tm_hour 	= _hour;
+	tm.tm_min 	= _minute;
+	tm.tm_sec	= _second;
+	tm.tm_gmtoff	= 0;
+	
+	ts.tv_sec =  mktime(&tm);
+	ts.tv_nsec = _hundredths * 1e+7;
+ }
 
 bool MicroNMEA::processGGA(const char *s)
 {
@@ -420,6 +439,10 @@ bool MicroNMEA::processRMC(const char* s)
   if (s == nullptr)
 	 return false;
   s = parseDate(s);
+	
+	// create a timespec from GPS data
+	createTimeSpec(_gpsTime);
+
   // That's all we care about
   return true;
 }

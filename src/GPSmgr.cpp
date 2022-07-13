@@ -398,10 +398,10 @@ void GPSmgr::processNMEA(){
 	string msgID =  string(_nmea.getMessageID());
 	
 	struct timespec now;
-	clock_getres(CLOCK_MONOTONIC, &now );
+	clock_gettime(CLOCK_MONOTONIC, &now );
  
 	struct timespec utc;
-	clock_getres(CLOCK_REALTIME, &utc );
+	clock_gettime(CLOCK_REALTIME, &utc );
  
 	//  GGA	Global Positioning System Fix Data
 	if( msgID ==  "GGA") {

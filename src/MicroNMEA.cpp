@@ -387,7 +387,8 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	/* call mktime: timeinfo->tm_wday will be set */
 	 mktime ( timeinfo );
 
-	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
+	printf(" %2d %2d %2d %2d:%02d:%02d - %ld\n", _year, _month,_day , _hour, _minute, _second, ts.tv_sec );
+//	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
 	
  }
 

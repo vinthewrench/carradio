@@ -328,36 +328,40 @@ const char* MicroNMEA::parseDate(const char* s)
   return skipField(s + 6);
 }
 
-time_t mktimegm( struct tm * t)
-/* struct tm to seconds since Unix epoch */
+// Algorithm: http://howardhinnant.github.io/date_algorithms.html
+static inline int days_from_civil(int y, int m, int d) noexcept
 {
-	  long year;
-	  time_t result;
-#define MONTHSPERYEAR   12      /* months per calendar year */
-	 static const int cumdays[MONTHSPERYEAR] =
-		  { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+	 y -= m <= 2;
+	 int era = y / 400;
+	 int yoe = y - era * 400;                                   // [0, 399]
+	 int doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;  // [0, 365]
+	 int doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;           // [0, 146096]
 
-	 /*@ +matchanyintegral @*/
-	 year = 1900 + t->tm_year + t->tm_mon / MONTHSPERYEAR;
-	 result = (year - 1970) * 365 + cumdays[t->tm_mon % MONTHSPERYEAR];
-	 result += (year - 1968) / 4;
-	 result -= (year - 1900) / 100;
-	 result += (year - 1600) / 400;
-	 if ((year % 4) == 0 && ((year % 100) != 0 || (year % 400) == 0) &&
-		  (t->tm_mon % MONTHSPERYEAR) < 2)
-		  result--;
-	 result += t->tm_mday - 1;
-	 result *= 24;
-	 result += t->tm_hour;
-	 result *= 60;
-	 result += t->tm_min;
-	 result *= 60;
-	 result += t->tm_sec;
-	 if (t->tm_isdst == 1)
-		  result -= 3600;
-	 /*@ -matchanyintegral @*/
-	 return (result);
+	 return era * 146097 + doe - 719468;
 }
+
+// Converts a broken-down time structure with UTC time to a simple time representation.
+// It does not modify broken-down time structure as BSD timegm() does.
+static time_t mktimegm(std::tm const* t)
+{
+	 int year = t->tm_year + 1900;
+	 int month = t->tm_mon;          // 0-11
+	 if (month > 11)
+	 {
+		  year += month / 12;
+		  month %= 12;
+	 }
+	 else if (month < 0)
+	 {
+		  int years_diff = (11 - month) / 12;
+		  year -= years_diff;
+		  month += 12 * years_diff;
+	 }
+	 int days_since_epoch = days_from_civil(year, month + 1, t->tm_mday);
+
+	 return 60 * (60 * (24L * days_since_epoch + t->tm_hour) + t->tm_min) + t->tm_sec;
+}
+
 void MicroNMEA::createTimeSpec(struct timespec &ts){
 	
 	struct tm t;

@@ -329,18 +329,18 @@ const char* MicroNMEA::parseDate(const char* s)
 
 void MicroNMEA::createTimeSpec(struct timespec &ts){
 	
-	struct tm tm;
+	struct tm t;
  
-	tm.tm_year 	= _year;
-	tm.tm_mon 	= _month;
-	tm.tm_mday 	= _day;
+	t.tm_year 	= _year;
+	t.tm_mon 	= _month;
+	t.tm_mday 	= _day;
 
-	tm.tm_hour 	= _hour;
-	tm.tm_min 	= _minute;
-	tm.tm_sec	= _second;
-	tm.tm_gmtoff	= 0;
+	t.tm_hour 	= _hour;
+	t.tm_min 	= _minute;
+	t.tm_sec	= _second;
+	t.tm_gmtoff	= 0;
 	
-	ts.tv_sec =  mktime(&tm);
+	ts.tv_sec =  mktime(&t);
 	ts.tv_nsec = _hundredths * 1e+7;
  }
 

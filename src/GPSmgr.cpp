@@ -447,7 +447,7 @@ void GPSmgr::processNMEA(){
 		timespec_sub(&diff, &utc, &_lastGPSTime.gpsTime);
 		pthread_mutex_unlock (&_mutex);
 
-		printf("Clock diff %ld \n", diff.tv_sec);
+		printf("Clock diff %ld = %ld %ld  \n", diff.tv_sec , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
  
 	}
 }

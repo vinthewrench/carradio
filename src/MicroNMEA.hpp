@@ -255,12 +255,14 @@ public:
 		return _course;
 	}
 	
-	
-	bool  getGPStime(struct timespec &);
+		
 	/**
 	 * @brief create a timespec from current  Time values
 	 * @return struct timespec
 	 */
+	timespec  getGPStime(){
+		return _gpsTime;
+	}
 
 	
 	/**

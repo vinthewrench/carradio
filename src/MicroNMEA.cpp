@@ -350,7 +350,7 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	 struct tm * timeinfo;
 	
 	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
+	timeinfo = gmtime ( &rawtime );
 	/* call mktime: timeinfo->tm_wday will be set */
 	 mktime ( timeinfo );
 

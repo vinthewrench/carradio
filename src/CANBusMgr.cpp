@@ -351,6 +351,7 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 	
 	time_t lastTime = 0;
 	
+	printf("lastFrameTime %s\n", ifName.c_str());
 	
 	// close all?
 	if(ifName.empty()){
@@ -497,7 +498,7 @@ void CANBusMgr::CANReader(){
 				}
 				else if(nbytes > 0){					
 					_frameDB.saveFrame(ifName, frame, timestamp_secs);
-					_lastFrameTime[ifName] =  now.tv_sec;
+					_lastFrameTime[ifName] =  timestamp_secs;
 					_totalPacketCount[ifName]++;
 					_runningPacketCount[ifName]++;
 				}

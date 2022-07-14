@@ -931,10 +931,10 @@ void DisplayMgr::DisplayUpdate(){
 				
 				// timeout - nothing happened
 			case EVT_NONE:
-				timeval now, diff;
-				gettimeofday(&now, NULL);
-				timersub(&now, &_lastEventTime, &diff);
-				
+				struct timespec now, diff;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				timespec_sub( &diff, &now, &_lastEventTime);
+			
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
 					if(diff.tv_sec >=  1) {
@@ -961,7 +961,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
 					if(item.mode == MODE_BALANCE) {
-						gettimeofday(&_lastEventTime, NULL);
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -976,7 +976,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_FADER}  which is a fader change
 					if(item.mode == MODE_FADER) {
-						gettimeofday(&_lastEventTime, NULL);
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -991,7 +991,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_DIMMER}  which is a dimmer change
 					if(item.mode == MODE_DIMMER) {
-						gettimeofday(&_lastEventTime, NULL);
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -1007,7 +1007,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
-						gettimeofday(&_lastEventTime, NULL);
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -1030,7 +1030,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_DTC_INFO}  which is a click
 					if(item.mode == MODE_DTC_INFO) {
-						gettimeofday(&_lastEventTime, NULL);
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -1062,7 +1062,7 @@ void DisplayMgr::DisplayUpdate(){
 					shouldRedraw = true;
 					eventArg = item.arg;
 				}
-				gettimeofday(&_lastEventTime, NULL);
+				clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 				shouldUpdate = true;
 				break;
 				
@@ -1075,7 +1075,7 @@ void DisplayMgr::DisplayUpdate(){
 				break;
 				
 			case EVT_REDRAW:
-				gettimeofday(&_lastEventTime, NULL);
+				clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 				shouldRedraw = true;
 				//				shouldUpdate = true;
 				break;

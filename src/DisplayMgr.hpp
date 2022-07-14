@@ -205,7 +205,7 @@ private:
 	uint8_t		 _currentPage  = 0;			// used for multipage
 	mode_state_t _saved_mode   = MODE_UNKNOWN;
 	
-	timeval		_lastEventTime = {0,0};
+	struct timespec	_lastEventTime = {0,0};
  
 	mode_state_t handleRadioEvent();
 	bool isStickyMode(mode_state_t);

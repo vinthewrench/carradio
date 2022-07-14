@@ -363,6 +363,8 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 		return true;
 	}
 	else for (auto& [key, time]  : _lastFrameTime){
+		printf("-  %s \n", key.c_str());
+
 		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
 			
 			printf("lastFrameTime %s %d\n", ifName.c_str(), (int) time);

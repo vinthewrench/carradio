@@ -507,6 +507,8 @@ void CANBusMgr::CANReader(){
 			for (auto& [ifName, fd]  : _interfaces) {
 				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
 				_runningPacketCount[ifName]  = 0;
+				
+				printf("avg %s = %ld\n", ifName, _avgPacketsPerSecond[ifName]);
 			}
  		}
  

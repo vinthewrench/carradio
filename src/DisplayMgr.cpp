@@ -19,6 +19,7 @@
 
 #include "Utils.hpp"
 #include "XXHash32.h"
+#include "timespec_util.h"
 
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
@@ -876,7 +877,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
-		clock_gettime(CLOCK_REALTIME, &ts);
+		clock_gettime(CLOCK_MONOTONIC, &ts);
 		
 		pthread_mutex_lock (&_mutex);
 		// if there are LED events, run the update every half second

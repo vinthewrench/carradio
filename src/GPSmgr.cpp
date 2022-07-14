@@ -447,8 +447,14 @@ void GPSmgr::processNMEA(){
 		timespec_sub(&diff, &utc, &_lastGPSTime.gpsTime);
 		pthread_mutex_unlock (&_mutex);
 
-		printf("Clock diff %ld = %ld %ld  \n", diff.tv_sec , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
- 
+		
+#warning FIX THIS  Add code to resync clock here
+		
+		if(diff.tv_sec  > 5){
+			// force resync of clock to
+			printf("Clock diff %ld = %ld %ld  \n", diff.tv_sec , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
+		}
+	
 	}
 }
 

@@ -1809,13 +1809,15 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	char buffer[64] = {0};
 	char* p = buffer;
 	
+	printf("drawCANBusScreen \n");
+	
 	// GM BUS
 	time_t lastTime = 0;
 	size_t count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
 		
-		printf("GM %ld\n", lastTime); 
+		printf("GM %ld\n", lastTime);
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_GM, count)){
 				

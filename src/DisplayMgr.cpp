@@ -16,7 +16,6 @@
 #include <cmath>
 #include <algorithm>
 #include <sys/utsname.h>
-#include "timespec_util.h"
 
 #include "Utils.hpp"
 #include "XXHash32.h"
@@ -877,7 +876,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
-		clock_gettime(CLOCK_MONOTONIC, &ts);
+		clock_gettime(CLOCK_REALTIME, &ts);
 		
 		pthread_mutex_lock (&_mutex);
 		// if there are LED events, run the update every half second
@@ -922,9 +921,9 @@ void DisplayMgr::DisplayUpdate(){
 				
 				// timeout - nothing happened
 			case EVT_NONE:
-				struct timespec now, diff;
-				clock_gettime(CLOCK_MONOTONIC, &now);
-				timespec_sub( &diff, &now, &_lastEventTime);
+				timeval now, diff;
+				gettimeofday(&now, NULL);
+				timersub(&now, &_lastEventTime, &diff);
 				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
@@ -952,7 +951,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
 					if(item.mode == MODE_BALANCE) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -967,7 +966,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_FADER}  which is a fader change
 					if(item.mode == MODE_FADER) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -982,7 +981,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_DIMMER}  which is a dimmer change
 					if(item.mode == MODE_DIMMER) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -998,7 +997,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -1021,7 +1020,7 @@ void DisplayMgr::DisplayUpdate(){
 					
 					// check for {EVT_NONE,MODE_DTC_INFO}  which is a click
 					if(item.mode == MODE_DTC_INFO) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						gettimeofday(&_lastEventTime, NULL);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
@@ -1053,7 +1052,7 @@ void DisplayMgr::DisplayUpdate(){
 					shouldRedraw = true;
 					eventArg = item.arg;
 				}
-				clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+				gettimeofday(&_lastEventTime, NULL);
 				shouldUpdate = true;
 				break;
 				
@@ -1066,7 +1065,7 @@ void DisplayMgr::DisplayUpdate(){
 				break;
 				
 			case EVT_REDRAW:
-				clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+				gettimeofday(&_lastEventTime, NULL);
 				shouldRedraw = true;
 				//				shouldUpdate = true;
 				break;

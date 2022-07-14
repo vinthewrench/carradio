@@ -378,23 +378,23 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	ts.tv_sec =  mktimegm(&t);
 	ts.tv_nsec = _hundredths * 1e+7;
 	
-	
-	time_t rawtime;
-	 struct tm * timeinfo;
-	
-	time ( &rawtime );
-	timeinfo = gmtime( &rawtime );
-	/* call mktime: timeinfo->tm_wday will be set */
-	 mktime ( timeinfo );
-
-	printf("SYS  %2d %2d %2d %2d:%02d:%02d - %ld\n", timeinfo->tm_year,
-			 timeinfo->tm_mon, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
-	
-	 	 
-	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", t.tm_year, t.tm_mon ,t.tm_mday , t.tm_hour, t.tm_min, t.tm_sec	, ts.tv_sec );
-	
-//	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
-	
+//
+//	time_t rawtime;
+//	 struct tm * timeinfo;
+//
+//	time ( &rawtime );
+//	timeinfo = gmtime( &rawtime );
+//	/* call mktime: timeinfo->tm_wday will be set */
+//	 mktime ( timeinfo );
+//
+//	printf("SYS  %2d %2d %2d %2d:%02d:%02d - %ld\n", timeinfo->tm_year,
+//			 timeinfo->tm_mon, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
+//
+//
+//	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", t.tm_year, t.tm_mon ,t.tm_mday , t.tm_hour, t.tm_min, t.tm_sec	, ts.tv_sec );
+//
+////	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
+//
 	
  }
 

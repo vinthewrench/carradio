@@ -924,7 +924,7 @@ void DisplayMgr::DisplayUpdate(){
 			case EVT_NONE:
 				struct timespec now, diff;
 				clock_gettime(CLOCK_MONOTONIC, &now);
-				timespec_sub( &_lastEventTime, &now, &diff);
+				timespec_sub( &diff, &now, &_lastEventTime);
 				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {

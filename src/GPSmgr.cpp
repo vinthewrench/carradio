@@ -459,7 +459,7 @@ void GPSmgr::processNMEA(){
 			if(r == 0){
 				printf("Set Clock suceess\n");
 			}
-			else 	printf("Set Clock failed %d\n", r);
+			else 	printf("Set Clock failed %s\n", strerror(errno));
 			
 		}
 	

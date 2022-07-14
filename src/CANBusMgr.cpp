@@ -491,6 +491,8 @@ void CANBusMgr::CANReader(){
 					_interfaces[ifName] = -1;
 				}
 				else if(nbytes > 0){
+					printf("saveFrame %s  %d\n", ifName.c_str(), (int)timestamp_secs);
+					
 					_frameDB.saveFrame(ifName, frame, timestamp_secs);
 					_lastFrameTime[ifName] =  now.tv_sec;
 					_totalPacketCount[ifName]++;
@@ -507,8 +509,6 @@ void CANBusMgr::CANReader(){
 			for (auto& [ifName, fd]  : _interfaces) {
 				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
 				_runningPacketCount[ifName]  = 0;
-				
-				printf("avg %s = %ld\n", ifName.c_str(), _avgPacketsPerSecond[ifName]);
 			}
  		}
  

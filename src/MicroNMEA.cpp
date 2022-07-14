@@ -368,9 +368,9 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
  
 	t.tm_year 	=  _year - 1900;
 	t.tm_mon 	= _month -1;
-	t.tm_mday 	= _day -1 ;
+	t.tm_mday 	= _day ;
 
-	t.tm_hour 	= _hour -2 ;
+	t.tm_hour 	= _hour -1 ;
 	t.tm_min 	= _minute  ;
 	t.tm_sec		= _second;
 //	t.tm_gmtoff	= 8;
@@ -388,7 +388,7 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	 mktime ( timeinfo );
 
 	printf("SYS  %2d %2d %2d %2d:%02d:%02d - %ld\n", timeinfo->tm_year,
-			 timeinfo->tm_mon,timeinfo->tm_mday,timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
+			 timeinfo->tm_mon, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
 	
 	 	 
 	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", _year, _month,_day , _hour, _minute, _second, ts.tv_sec );

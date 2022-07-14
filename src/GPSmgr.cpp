@@ -443,18 +443,16 @@ void GPSmgr::processNMEA(){
 		_lastGPSTime.isValid = true;
 		
 		// check against clock */
-		struct timespec diff;
-		timespec_sub(&diff, &utc, &_lastGPSTime.gpsTime);
+		
+		time_t diffSecs = abs( _lastGPSTime.gpsTime.tv_sec - utc.tv_sec);
 		pthread_mutex_unlock (&_mutex);
+ 
+		if(diffSecs  > 5){
+			
+		#warning FIX THIS  Add code to resync clock here
 
-		
-#warning FIX THIS  Add code to resync clock here
-		
-		printf("utc: %ld, gps, %ld\n", utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
-		
-		if(diff.tv_sec  > 5){
 			// force resync of clock to
-			printf("Clock diff %ld = %ld %ld  \n", diff.tv_sec , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
+			printf("Clock diff %ld = %ld %ld  \n", diffSecs , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
 		}
 	
 	}

@@ -263,8 +263,7 @@ void DisplayMgr::runLEDEventMute(){
 	static timespec		lastEvent = {0,0};
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
-	
-	
+ 
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
 		blinkOn = false;
@@ -274,15 +273,15 @@ void DisplayMgr::runLEDEventMute(){
 	// do the first cycle right away
 	if( _ledEvent & LED_EVENT_MUTE_RUNNING ){
 		
-	struct timespec now, diff;
+		struct timespec now, diff;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespec_sub( &diff, &now, &lastEvent);
-
+		
 		uint64_t diff_millis = timespec_to_msec(&diff);
-	
+		
 		if(diff_millis >= 500 ){ // 2Hz
 			clock_gettime(CLOCK_MONOTONIC, &lastEvent);
- 
+			
 			blinkOn = !blinkOn;
 			
 			if(blinkOn){
@@ -305,21 +304,21 @@ void DisplayMgr::runLEDEventMute(){
 
 void DisplayMgr::runLEDEventVol(){
 	
-	static timeval		startedEvent = {0,0};
+	static timespec		startedEvent = {0,0};
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
 	if( _ledEvent & LED_EVENT_VOL ){
-		gettimeofday(&startedEvent, NULL);
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
 		
 		//	 	printf("\nVOL STARTUP\n");
 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
-		timeval now, diff;
-		gettimeofday(&now, NULL);
-		timersub(&now, &startedEvent, &diff);
-		
+		struct timespec now, diff;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		timespec_sub( &diff, &now, &startedEvent);
+	
 		if(diff.tv_sec <  1){
 			
 			float volume =  audio->volume();

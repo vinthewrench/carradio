@@ -506,9 +506,10 @@ void CANBusMgr::CANReader(){
 			// calulate avareage
 			for (auto& [ifName, fd]  : _interfaces) {
 				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
+				printf("avg %s = %ld,  %ld\n", ifName.c_str(), _runningPacketCount[ifName] , _avgPacketsPerSecond[ifName]);
+
 				_runningPacketCount[ifName]  = 0;
 				
-				printf("avg %s = %ld\n", ifName.c_str(), _avgPacketsPerSecond[ifName]);
 			}
  		}
  

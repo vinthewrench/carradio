@@ -49,11 +49,11 @@ private:
 	 
 	}in_state_t;
 	
-	in_state_t 			_state;
+	in_state_t 			 _state;
 	map<string,string> _resultMap;
  
-	timeval			_lastQueryTime;
-	uint64_t     	_queryDelay;			// how long to wait before next query
+	struct timespec 	_lastQueryTime;
+	uint64_t     		_queryDelay;			// how long to wait before next query
 
 	
 	bool getCPUTemp(double* tempOut);

@@ -7,6 +7,7 @@
 
 #include "TempSensor.hpp"
 #include "ErrorMgr.hpp"
+#include "timespec_util.h"
 
 TempSensor::TempSensor(){
 	_state = INS_UNKNOWN;
@@ -123,13 +124,13 @@ void TempSensor::idle(){
 		
 		bool shouldQuery = false;
 		
-		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_usec == 0 ){
+		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_nsec == 0 ){
 			shouldQuery = true;
 		} else {
 			
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &_lastQueryTime, &diff);
+			struct timespec now, diff;
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			timespec_sub( &diff, &now, &_lastQueryTime);
 			
 			if(diff.tv_sec >=  _queryDelay  ) {
 				shouldQuery = true;
@@ -143,12 +144,11 @@ void TempSensor::idle(){
 			if( _sensor.readTempC(tempC)){
 				_resultMap[_resultKey] =  to_string(tempC);
 				_state = INS_RESPONSE;
-				gettimeofday(&_lastQueryTime, NULL);
-				
+				clock_gettime(CLOCK_MONOTONIC, &_lastQueryTime);
 			}
 			else
 			{
-//				_state = INS_INVALID;
+				//				_state = INS_INVALID;
 			}
 			
 		}

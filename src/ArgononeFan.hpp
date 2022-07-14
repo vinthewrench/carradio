@@ -53,8 +53,8 @@ private:
 	in_state_t 			_state;
 	map<string,string> _resultMap;
  
-	timeval			_lastQueryTime;
-	uint64_t     	_queryDelay;			// how long to wait before next query
+	struct timespec 	_lastQueryTime;
+	uint64_t     		_queryDelay;			// how long to wait before next query
 
 	struct SHM_Data* _shm_ptr;
 	int				 _shm_fd;

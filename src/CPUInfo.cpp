@@ -11,7 +11,8 @@
 #include <filesystem> // C++17
 #include <fstream>
 #include "PropValKeys.hpp"
- 
+#include "timespec_util.h"
+
 CPUInfo::CPUInfo(){
 	_state = INS_UNKNOWN;
 	_lastQueryTime = {0,0};
@@ -103,14 +104,14 @@ void CPUInfo::idle(){
 		
 		bool shouldQuery = false;
 		
-		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_usec == 0 ){
+		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_nsec == 0 ){
 			shouldQuery = true;
 		} else {
 			
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &_lastQueryTime, &diff);
-			
+			struct timespec now, diff;
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			timespec_sub( &diff, &now, &_lastQueryTime);
+
 			if(diff.tv_sec >=  _queryDelay  ) {
 				shouldQuery = true;
 			}
@@ -123,8 +124,8 @@ void CPUInfo::idle(){
 			if(getCPUTemp(&tempC)){
 				_resultMap[VAL_CPU_INFO_TEMP] =  to_string(tempC);
 				_state = INS_RESPONSE;
-				gettimeofday(&_lastQueryTime, NULL);
-				
+				clock_gettime(CLOCK_MONOTONIC, &_lastQueryTime);
+	
 			}
 		}
 	}

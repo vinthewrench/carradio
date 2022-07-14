@@ -100,9 +100,9 @@ private:
 	map<string, obd_polling_t> 	_obd_polling = {};
 	vector<obd_polling_t> 			_obd_requests = {};
 
-	timeval			_lastPollTime;
-	timeval     	_pollDelay;			// how long to wait before next OBD poll
-	vector<string> _keysToPoll = {};
+	struct timespec		_lastPollTime;
+	int64_t     			_pollDelay;			// how long to wait before next OBD poll in milliseconds
+	vector<string> 		_keysToPoll = {};
 
 	fd_set					_master_fds;		// Can sockets that are ready for read
 	int						_max_fds;

@@ -15,8 +15,8 @@
 #include <stdint.h>
 #include <array>
 #include <climits>
+#include "timespec_util.h"
 
- 
 
 using namespace std;
 
@@ -57,9 +57,8 @@ CANBusMgr::CANBusMgr(){
 	_avgPacketsPerSecond = {};
 
 	_lastPollTime = {0,0};
-	_pollDelay = {0, 200 * 1000 }; //  200 ms
-	_pollDelay = {1, 200 * 1000 }; //  200 ms
-	
+	_pollDelay = 500 ; //  500 milliseconds
+ 
 	_obd_requests = {};
 	_obd_polling = {};
 	
@@ -525,21 +524,21 @@ void CANBusMgr::processOBDrequests() {
 	
 	bool shouldQuery = false;
 	
-	if(_lastPollTime.tv_sec == 0 &&  _lastPollTime.tv_usec == 0 ){
+	if(_lastPollTime.tv_sec == 0 &&  _lastPollTime.tv_nsec == 0 ){
 		shouldQuery = true;
 	} else {
 		
-		timeval now, diff;
-		gettimeofday(&now, NULL);
-		timersub(&now, &_lastPollTime, &diff);
+		struct timespec now, diff;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		timespec_sub( &diff, &now, &_lastPollTime);
 		
-		if(timercmp(&diff, &_pollDelay, >=)){
+		if(timespec_to_msec(&diff) >= _pollDelay){
 			shouldQuery = true;
 		}
 	}
 	
 	if(shouldQuery){
-			
+		
 		// walk any open interfaces and find the onse that are pollable
 		for (auto& [key, fd]  : _interfaces){
 			if(fd != -1){
@@ -557,15 +556,15 @@ void CANBusMgr::processOBDrequests() {
 							
 							// send out a frame
 							sendFrame(key, 0x7DF, pInfo.request);
- 
+							
 #if 0
-		string keyname = pInfo.repeat?string(obdKey):"ONE-TIME";
-		printf("send(%s) OBD %10s ", key.c_str(), keyname.c_str());
-		for(auto i = 0; i < pInfo.request.size() ; i++)
-			printf("%02x ",pInfo.request[i]);
-		printf("\n");
+							string keyname = pInfo.repeat?string(obdKey):"ONE-TIME";
+							printf("send(%s) OBD %10s ", key.c_str(), keyname.c_str());
+							for(auto i = 0; i < pInfo.request.size() ; i++)
+								printf("%02x ",pInfo.request[i]);
+							printf("\n");
 #endif
- 
+							
 							// remove any non repeaters
 							if(pInfo.repeat == false){
 								cancel_OBDpolling(obdKey);
@@ -576,7 +575,7 @@ void CANBusMgr::processOBDrequests() {
 				};
 			}
 		}
-		gettimeofday(&_lastPollTime, NULL);
+		clock_gettime(CLOCK_MONOTONIC, &_lastPollTime);
 	}
 }
 

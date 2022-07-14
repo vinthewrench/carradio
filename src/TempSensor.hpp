@@ -59,8 +59,8 @@ private:
 	TMP117			_sensor;
 	string			_resultKey;
 	
-	timeval			_lastQueryTime;
-	uint64_t     	_queryDelay;			// how long to wait before next query
+	struct timespec	_lastQueryTime;
+	uint64_t     		_queryDelay;			// how long to wait before next query
 
 };
  

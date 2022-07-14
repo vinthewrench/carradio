@@ -12,6 +12,7 @@
 #include <fstream>
 #include "PropValKeys.hpp"
 #include "ErrorMgr.hpp"
+#include "timespec_util.h"
 
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
@@ -138,13 +139,13 @@ void ArgononeFan::idle(){
 		
 		bool shouldQuery = false;
 		
-		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_usec == 0 ){
+		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_nsec == 0 ){
 			shouldQuery = true;
 		} else {
 			
-			timeval now, diff;
-			gettimeofday(&now, NULL);
-			timersub(&now, &_lastQueryTime, &diff);
+			struct timespec now, diff;
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			timespec_sub( &diff, &now, &_lastQueryTime);
 			
 			if(diff.tv_sec >=  _queryDelay  ) {
 				shouldQuery = true;
@@ -158,7 +159,7 @@ void ArgononeFan::idle(){
 			if(getFanSpeed(&fanSpeed)){
 				_resultMap[VAL_FAN_SPEED] = to_string(fanSpeed);
 				_state = INS_RESPONSE;
-				gettimeofday(&_lastQueryTime, NULL);
+				clock_gettime(CLOCK_MONOTONIC, &_lastQueryTime);
 				
 			}
 		}

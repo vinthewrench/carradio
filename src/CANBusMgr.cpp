@@ -477,7 +477,7 @@ void CANBusMgr::CANReader(){
 		struct timespec now, diff;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespec_sub( &diff, &now, &lastTime);
-		int64_t timestamp_secs = timespec_to_msec(&now) * 1000;
+		int64_t timestamp_secs = timespec_to_msec(&now) /1000;
 		
 		/* check which fd is avail for read */
 		for (auto& [ifName, fd]  : _interfaces) {

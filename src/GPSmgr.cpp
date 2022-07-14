@@ -450,7 +450,7 @@ void GPSmgr::processNMEA(){
 		
 #warning FIX THIS  Add code to resync clock here
 		
-		printf("utc: %ld, gps, %ld", utc, _lastGPSTime.gpsTime);
+		printf("utc: %ld, gps, %ld\n", utc, _lastGPSTime.gpsTime);
 		
 		if(diff.tv_sec  > 5){
 			// force resync of clock to

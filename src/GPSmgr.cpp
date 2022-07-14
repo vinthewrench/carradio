@@ -6,6 +6,8 @@
 //
 
 #include "GPSmgr.hpp"
+#include "PiCarMgr.hpp"
+
 #include <fcntl.h>
 #include <cassert>
 #include <string.h>
@@ -394,22 +396,21 @@ string GPSmgr::NavString(char navSystem ){
 // call then when _nmea.process  is true
 void GPSmgr::processNMEA(){
 	
-//	PiCarDB*			db 		= PiCarMgr::shared()->db();
 	string msgID =  string(_nmea.getMessageID());
 	
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now );
- 
+	
 	struct timespec utc;
 	clock_gettime(CLOCK_REALTIME, &utc );
- 
+	
 	//  GGA	Global Positioning System Fix Data
 	if( msgID ==  "GGA") {
 		//Global Positioning System Fix Data
 		
 		{
 			long  tmp;
- 
+			
 			pthread_mutex_lock (&_mutex);
 			memset((void*)&_lastLocation, 0, sizeof(_lastLocation));
 			_lastLocation.isValid = _nmea.isValid();
@@ -443,27 +444,15 @@ void GPSmgr::processNMEA(){
 		_lastGPSTime.isValid = true;
 		
 		// check against clock */
-		
 		time_t diffSecs = abs( _lastGPSTime.gpsTime.tv_sec - utc.tv_sec);
 		pthread_mutex_unlock (&_mutex);
- 
-		if(diffSecs  > 5){
-			
-		#warning FIX THIS  Add code to resync clock here
-
-			// force resync of clock to
-			printf("Clock diff %ld = %ld %ld  \n", diffSecs , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
-			
-			int r = clock_settime(CLOCK_REALTIME, &_lastGPSTime.gpsTime);
-			
-			if(r == 0){
-				printf("Set Clock suceess\n");
-			}
-			else 	printf("Set Clock failed %s\n", strerror(errno));
-			
-		}
-	
-	}
+		
+		// detect clock difference - -tell piCarMgr
+		if(diffSecs  > 0){
+			PiCarMgr* mgr 		= PiCarMgr::shared();
+				mgr->clockNeedsSync(diffSecs, _lastGPSTime.gpsTime);
+ 		}
+ 	}
 }
 
 

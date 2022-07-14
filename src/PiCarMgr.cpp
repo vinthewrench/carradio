@@ -379,6 +379,8 @@ void PiCarMgr::saveRadioSettings(){
 	
 	updateRadioPrefs();
 	
+	_db.setProperty(PROP_SYNC_CLOCK_TO_GPS, _clocksync_gps?_clocksync_gps_secs: 0);
+
 	if(_autoDimmerMode)
 		_db.removeProperty(PROP_DIMMER_LEVEL);
 	else
@@ -396,12 +398,25 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
 	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
+		 
 }
 
 void PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
  
+	// SET GPS CLOCK SYNC PREFS
+	{
+		_clocksync_gps = false;
+		_clocksync_gps_secs = 0;
+
+		uint16_t syncVal = 0;
+ 		if(_db.getUint16Property(PROP_SYNC_CLOCK_TO_GPS,&syncVal) && syncVal > 0){
+			_clocksync_gps = true;
+			_clocksync_gps_secs = syncVal;
+ 		}
+ 	}
+	
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
 		setDimLevel(1.0);
@@ -1784,3 +1799,35 @@ bool  PiCarMgr::hasWifi(stringvector *ifnames){
  
 	return has_wifi;
 }
+
+// MARK: - realtime clock sync
+
+
+bool 	PiCarMgr::shouldSyncClockToGPS(uint16_t &deviation){
+	if( _clocksync_gps ){
+		deviation = _clocksync_gps_secs;
+		return true;
+	}
+	deviation = 0;
+	return false;
+}
+ 
+bool PiCarMgr::clockNeedsSync(uint16_t deviation,  struct timespec gpsTime ){
+	
+	bool success = false;
+	
+	if(_clocksync_gps  &&  _clocksync_gps_secs >= deviation){
+		
+		int r = clock_settime(CLOCK_REALTIME, &gpsTime);
+		if(r == 0){
+			ELOG_MESSAGE("Clock synced to GPS\n");
+			success = true;
+		}
+		else {
+			ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "clock sync failed");
+		}
+	}
+ 
+	return success;
+}
+ 

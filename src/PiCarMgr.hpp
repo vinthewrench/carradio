@@ -134,6 +134,10 @@ class PiCarMgr {
 
 	bool  hasWifi(stringvector *ifnames = NULL);
 	
+	bool 	shouldSyncClockToGPS(uint16_t &deviation);
+	
+	bool clockNeedsSync(uint16_t deviation,  struct timespec gpsTime );
+ 
 private:
 	
 	typedef enum :int {
@@ -213,7 +217,10 @@ private:
 	
 	bool					_autoDimmerMode;		 // controlled by canbus
 	double				_dimLevel;		  //   0.0 - 1.0 fraction of bright
-
+		
+	bool 					_clocksync_gps;  		//  should sync clock with GPS
+	uint16_t 			_clocksync_gps_secs;  // how many seconds of error allowed before sync
+	
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;
 	struct gpiod_line*  		_gpio_line_int = NULL;

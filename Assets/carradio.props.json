@@ -72,6 +72,7 @@
 			 "title": "ODOMETER"
 		 }
 	 ],
+	 "clocksync_gps_secs": 5,
 	 "cputemp-query-delay": 4,
 	 "last_menu": "0",
 	 "last_radio_mode": "FM",

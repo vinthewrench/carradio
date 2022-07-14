@@ -500,7 +500,7 @@ void CANBusMgr::CANReader(){
 		}
 		
 		// did more than a second go by
-		if(timespec_to_msec(&now) > 1000){
+		if(timespec_to_msec(&diff) > 1000){
 			lastTime = now;
 	 
 			// calulate avareage

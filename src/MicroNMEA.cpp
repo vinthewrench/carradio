@@ -367,7 +367,7 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	struct tm t;
  
 	t.tm_year 	=  _year - 1900;
-	t.tm_mon 	= _month;
+	t.tm_mon 	= _month -1;
 	t.tm_mday 	= _day ;
 
 	t.tm_hour 	= _hour ;

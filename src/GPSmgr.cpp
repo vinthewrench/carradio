@@ -15,7 +15,7 @@
 #include "ErrorMgr.hpp"
 #include "utm.hpp"
 #include "timespec_util.h"
-
+#include <time.h>
 
 #ifndef PI
 #define PI           3.14159265358979323e0    /* PI                        */
@@ -453,6 +453,13 @@ void GPSmgr::processNMEA(){
 
 			// force resync of clock to
 			printf("Clock diff %ld = %ld %ld  \n", diffSecs , utc.tv_sec, _lastGPSTime.gpsTime.tv_sec);
+			
+			int r = clock_settime(CLOCK_REALTIME, &_lastGPSTime.gpsTime);
+			
+			if(r == 0){
+				printf("Set Clock suceess\n");
+			}else perror("clock_settime");
+			
 		}
 	
 	}

@@ -1786,7 +1786,11 @@ void DisplayMgr::drawShutdownScreen(){
 void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	time_t now = time(NULL);
+ 
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	int64_t nowSecs = timespec_to_msec(&now) / 1000;
+	
 	
 	constexpr int busTimeout = 5;
 	
@@ -1809,15 +1813,14 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	char buffer[64] = {0};
 	char* p = buffer;
 	
-	printf("drawCANBusScreen \n");
-	
 	// GM BUS
 	time_t lastTime = 0;
 	size_t count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
-		time_t diff = now - lastTime;
 		
-		printf("GM %ld\n", lastTime);
+		time_t diff = nowSecs - lastTime;
+		
+		printf("GM %ld v %ld \n", lastTime,  diff);
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_GM, count)){
 				
@@ -1841,8 +1844,8 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	lastTime = 0;
 	count = 0;
 	if(can->lastFrameTime(PiCarCAN::CAN_JEEP, lastTime)){
-		time_t diff = now - lastTime;
-		
+		time_t diff = nowSecs - lastTime;
+	
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_JEEP, count)){
 				

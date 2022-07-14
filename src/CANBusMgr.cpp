@@ -351,8 +351,6 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 	
 	time_t lastTime = 0;
 	
-	printf("lastFrameTime %s\n", ifName.c_str());
-	
 	// close all?
 	if(ifName.empty()){
 		for (auto& [key, time]  : _lastFrameTime){
@@ -365,11 +363,8 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 	}
 	else for (auto& [key, time]  : _lastFrameTime){
 		printf("-  %s \n", key.c_str());
-
+		
 		if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
-			
-			printf("lastFrameTime %s %d\n", ifName.c_str(), (int) time);
-
 			timeOut = time;
 			return true;
 		}

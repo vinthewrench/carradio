@@ -391,7 +391,7 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 			 timeinfo->tm_mon, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
 	
 	 	 
-	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", _year, _month,_day , _hour, _minute, _second, ts.tv_sec );
+	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", t.tm_year, t.tm_mon ,t.tm_mday , t.tm_hour, t.tm_min, t.tm_sec	, ts.tv_sec );
 	
 //	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
 	

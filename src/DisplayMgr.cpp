@@ -866,14 +866,16 @@ void DisplayMgr::DisplayUpdate(){
 	
 	//	printf("start DisplayUpdate\n");
 	PRINT_CLASS_TID;
-		
-	
+ 
 	pthread_condattr_t attr;
 	pthread_condattr_init( &attr);
+
+#if !defined(__APPLE__)
+	//pthread_condattr_setclock is not supported on macOS
 	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
+#endif
 	pthread_cond_init( &_cond, &attr);
-
-
+ 
 	while(_isRunning){
 		
 		// if not setup // check back later

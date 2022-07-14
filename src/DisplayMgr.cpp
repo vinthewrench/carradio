@@ -1815,6 +1815,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	if(can->lastFrameTime(PiCarCAN::CAN_GM, lastTime)){
 		time_t diff = now - lastTime;
 		
+		printf("GM %ld\n", lastTime); 
 		if(diff < busTimeout ){
 			if(can->packetsPerSecond(PiCarCAN::CAN_GM, count)){
 				

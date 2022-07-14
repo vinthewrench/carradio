@@ -383,12 +383,18 @@ void MicroNMEA::createTimeSpec(struct timespec &ts){
 	 struct tm * timeinfo;
 	
 	time ( &rawtime );
-	timeinfo = localtime( &rawtime );
+	timeinfo = gmtime( &rawtime );
 	/* call mktime: timeinfo->tm_wday will be set */
 	 mktime ( timeinfo );
 
-	printf(" %2d %2d %2d %2d:%02d:%02d - %ld\n", _year, _month,_day , _hour, _minute, _second, ts.tv_sec );
+	printf("SYS  %2d %2d %2d %2d:%02d:%02d - %ld\n", timeinfo->tm_year,
+			 timeinfo->tm_mon,timeinfo->tm_mday,timeinfo->tm_hour, timeinfo->tm_min,timeinfo->tm_sec, rawtime);
+	
+	 	 
+	printf("GPS  %2d %2d %2d %2d:%02d:%02d - %ld\n", _year, _month,_day , _hour, _minute, _second, ts.tv_sec );
+	
 //	printf("createTimeSpec = %ld %d %d \n", ts.tv_sec, t.tm_year, timeinfo->tm_year);
+	
 	
  }
 

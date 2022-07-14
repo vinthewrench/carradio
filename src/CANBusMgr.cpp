@@ -449,12 +449,10 @@ void CANBusMgr::CANReader(){
 	 
 	PRINT_CLASS_TID;
 	
-	struct timeval one_second_tv = { 1, 0 };
+	struct timespec lastTime;
+	clock_gettime(CLOCK_MONOTONIC, &lastTime);
 
-	struct timeval lastTime;
-	gettimeofday(&lastTime, NULL);
-
-	while(_isRunning){
+ 	while(_isRunning){
 		
 		// if not setup // check back later
 		if(!_isSetup){
@@ -476,11 +474,11 @@ void CANBusMgr::CANReader(){
 	//		_running = false;
 		}
 		
-		struct timeval now,  diff;
-		gettimeofday(&now, NULL);
-		unsigned long timestamp_secs = (now.tv_sec * 100 ) + (now.tv_usec / 10000);
-		timersub(&now, &lastTime,  &diff);
-
+		struct timespec now, diff;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		timespec_sub( &diff, &now, &lastTime);
+		int64_t timestamp_secs = timespec_to_msec(&now) * 1000;
+		
 		/* check which fd is avail for read */
 		for (auto& [ifName, fd]  : _interfaces) {
 			if ((fd != -1)  && FD_ISSET(fd, &dup)) {
@@ -502,7 +500,7 @@ void CANBusMgr::CANReader(){
 		}
 		
 		// did more than a second go by
-		if(timercmp(&diff, &one_second_tv, >)){
+		if(timespec_to_msec(&now) > 1000){
 			lastTime = now;
 	 
 			// calulate avareage

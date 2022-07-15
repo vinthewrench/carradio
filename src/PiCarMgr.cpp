@@ -221,8 +221,9 @@ bool PiCarMgr::begin(){
 		}
 		
 		if(firstRunToday){
-			printf("say hello\n");
 			
+			LOGT_INFO("Hello Moto\n");
+	 
 			//	//		_audio.playSound("BTL.wav", [=](bool success){
 			//
 			//				printf("playSound() = %d\n", success);

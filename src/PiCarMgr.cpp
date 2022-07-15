@@ -1817,9 +1817,7 @@ bool PiCarMgr::clockNeedsSync(uint16_t deviation,  struct timespec gpsTime ){
 	bool success = false;
 	
 	printf("clockNeedsSync %d %ld\n", deviation, gpsTime.tv_sec);
-	
-	
-	
+
 	if(_clocksync_gps  &&  _clocksync_gps_secs >= deviation){
 		
 		int r = clock_settime(CLOCK_REALTIME, &gpsTime);

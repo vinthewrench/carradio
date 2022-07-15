@@ -449,9 +449,6 @@ void GPSmgr::processNMEA(){
 		
 		// detect clock difference - -tell piCarMgr
 		if(diffSecs  > 0){
-			
-			printf("detect clock difference\n");
-			
 			PiCarMgr* mgr 		= PiCarMgr::shared();
 			mgr->clockNeedsSync(diffSecs, _lastGPSTime.gpsTime);
  		}

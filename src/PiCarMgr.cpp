@@ -138,9 +138,7 @@ bool PiCarMgr::begin(){
 	
 	try {
 		int error = 0;
-		
-		LOGT_INFO("Startup\n");
-
+	 
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;

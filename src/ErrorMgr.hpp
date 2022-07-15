@@ -25,6 +25,8 @@
 
 #define LOGT_DEBUG( _msg_, ...)  ErrorMgr::shared()->logMessage(ErrorMgr::LEV_DEBUG, true,_msg_, ##__VA_ARGS__)
 
+#define LOGT_INFO( _msg_, ...)  ErrorMgr::shared()->logMessage(ErrorMgr::LEV_INFO, true,_msg_, ##__VA_ARGS__)
+
 
  
 using namespace std;
@@ -72,7 +74,7 @@ public:
 					  int  			errnum,
 					  const char *format, ... );
 	
-	void logMessage(level_t level, bool logTime, string str);
+	void logMessage_str(level_t level, bool logTime, string str);
 	void logMessage(level_t level, bool logTime, const char *fmt, ...);
 	void logTimedStampString(const string  str);
 

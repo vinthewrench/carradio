@@ -139,6 +139,8 @@ bool PiCarMgr::begin(){
 	try {
 		int error = 0;
 		
+		LOGT_INFO("Startup\n");
+
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
@@ -1820,7 +1822,7 @@ bool PiCarMgr::clockNeedsSync(uint16_t deviation,  struct timespec gpsTime ){
 		
 		int r = clock_settime(CLOCK_REALTIME, &gpsTime);
 		if(r == 0){
-			ELOG_MESSAGE("Clock synced to GPS\n");
+			LOGT_INFO("Clock synced to GPS\n");
 			success = true;
 		}
 		else {

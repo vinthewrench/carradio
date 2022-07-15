@@ -50,7 +50,22 @@ void ErrorMgr::logError( level_t 	level,
 }
 
 
-void ErrorMgr::logMessage(level_t level, bool logTime, string str){
+void ErrorMgr::logMessage(level_t level, bool logTime, const char *format, ...){
+
+	char *s;
+	va_list args;
+	va_start(args, format);
+	vasprintf(&s, format, args);
+
+ 	basic_string <char> str(s, strlen(s));
+
+	logMessage_str(level,logTime, s);
+	free(s);
+	va_end(args);
+}
+
+
+void ErrorMgr::logMessage_str(level_t level, bool logTime, string str){
  
 	//if((_logFlags & level) == 0) return;
 	if(logTime)
@@ -59,9 +74,13 @@ void ErrorMgr::logMessage(level_t level, bool logTime, string str){
 		writeToLog(str);
 
 }
+
+
 void ErrorMgr::logTimedStampString(const string  str){
 	writeToLog( TimeStamp(false).logFileString() + "\t" + str + "\n");
 }
+
+
 
 void ErrorMgr::writeToLog(const std::string str){
 	

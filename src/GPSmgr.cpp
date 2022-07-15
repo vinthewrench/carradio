@@ -450,7 +450,7 @@ void GPSmgr::processNMEA(){
 		// detect clock difference - -tell piCarMgr
 		if(diffSecs  > 0){
 			PiCarMgr* mgr 		= PiCarMgr::shared();
-				mgr->clockNeedsSync(diffSecs, _lastGPSTime.gpsTime);
+			mgr->clockNeedsSync(diffSecs, _lastGPSTime.gpsTime);
  		}
  	}
 }

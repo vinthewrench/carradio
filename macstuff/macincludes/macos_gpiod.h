@@ -1326,7 +1326,7 @@ int gpiod_line_get_value_bulk(struct gpiod_line_bulk *bulk,
  * @return 0 is the operation succeeds. In case of an error this routine
  *         returns -1 and sets the last error number.
  */
-int gpiod_line_set_value(struct gpiod_line *line, int value) GPIOD_API;
+
 
 /**
  * @brief Set the values of a set of GPIO lines.
@@ -1341,6 +1341,16 @@ int gpiod_line_set_value(struct gpiod_line *line, int value) GPIOD_API;
  */
 int gpiod_line_set_value_bulk(struct gpiod_line_bulk *bulk,
 					const int *values) GPIOD_API;
+
+/**
+ * @brief Set the value of a single GPIO line.
+ * @param line GPIO line object.
+ * @param value New value.
+ * @return 0 is the operation succeeds. In case of an error this routine
+ *         returns -1 and sets the last error number.
+ */
+int gpiod_line_set_value(struct gpiod_line *line, int value) GPIOD_API;
+
 
 /**
  * @}

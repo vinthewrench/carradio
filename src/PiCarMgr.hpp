@@ -138,6 +138,9 @@ class PiCarMgr {
 	
 	bool clockNeedsSync(uint16_t deviation,  struct timespec gpsTime );
  
+	bool setRelay1(bool state);
+	
+	
 private:
 	
 	typedef enum :int {
@@ -224,6 +227,7 @@ private:
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;
 	struct gpiod_line*  		_gpio_line_int = NULL;
+	struct gpiod_line*		_gpio_relay1;
 #endif
 };
 

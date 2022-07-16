@@ -45,12 +45,13 @@ const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 10";
 
 const char* path_display  = "/dev/ttyUSB0";
 
-#if USE_GPIO_INTERRUPT
 const char* 		gpioPath 				= "/dev/gpiochip0";
+constexpr uint 	gpio_relay1_line_number	= 26;
+#if USE_GPIO_INTERRUPT
 constexpr uint 	gpio_int_line_number	= 27;
 const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
-
+ 
 constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);
@@ -879,6 +880,7 @@ void PiCarMgr::PiCanLoop(){
 					if(isOn){
 						// just turn it off
 						_radio.setON(false);
+						setRelay1(false);
 						
 						// always unmute after
 						_audio.setMute(false);
@@ -898,6 +900,8 @@ void PiCarMgr::PiCanLoop(){
 						getSavedFrequencyandMode(mode,freq);
 						_radio.setFrequencyandMode(mode, freq);
 						_radio.setON(true);
+						setRelay1(true);
+
 						_display.LEDeventVol();
 						_display.showRadioChange();
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
@@ -1367,6 +1371,8 @@ void PiCarMgr::displayRadioMenu(){
 				}
 				_radio.setFrequencyandMode(radioMode, freq, true);
 				_radio.setON(true);
+				setRelay1(true);
+
 				saveRadioSettings();
 				_db.savePropertiesToFile();
 				return;
@@ -1557,14 +1563,26 @@ void PiCarMgr::startControls( std::function<void(bool didSucceed, std::string er
 	int  errnum = 0;
 	bool didSucceed = false;
 	
-#if USE_GPIO_INTERRUPT
 	// setup GPIO lines
 	_gpio_chip = gpiod_chip_open(gpioPath);
 	if(!_gpio_chip) {
 		ELOG_MESSAGE("Error open GPIO chip(\"%s\") : %s \n",gpioPath,strerror(errno));
 		goto done;
 	}
+
+	_gpio_relay1 = gpiod_chip_get_line(_gpio_chip, gpio_relay1_line_number);
+	if(!_gpio_relay1) {
+		ELOG_MESSAGE("Error open GPIO line(%d) : %s \n",gpio_relay1_line_number,strerror(errno));
+		goto done;
+	}
+
+	if( gpiod_line_request_output(_gpio_relay1, "gpio_relay_1", 0) != 0){
+		ELOG_MESSAGE("Error gpiod_line_request_output line(%d) : %s \n",gpio_relay1_line_number,strerror(errno));
+		goto done;
+	}
+
 	
+#if USE_GPIO_INTERRUPT
 	// get refs to the lines
 	_gpio_line_int =  gpiod_chip_get_line(_gpio_chip, gpio_int_line_number);
 	if(!_gpio_line_int){
@@ -1595,11 +1613,16 @@ void PiCarMgr::stopControls(){
 #if USE_GPIO_INTERRUPT
 	if(_gpio_line_int)
 		gpiod_line_release (_gpio_line_int);
-	
-	if(_gpio_chip)
-		gpiod_chip_close(_gpio_chip);
+	_gpio_line_int = NULL;
 #endif
 	
+	if(_gpio_relay1)
+		gpiod_line_release(_gpio_relay1);
+	_gpio_relay1 = NULL;
+ 
+	if(_gpio_chip)
+		gpiod_chip_close(_gpio_chip);
+	_gpio_chip = NULL;
 }
 
 void PiCarMgr::setDimLevel(double dimLevel){
@@ -1611,6 +1634,17 @@ void PiCarMgr::setDimLevel(double dimLevel){
 double PiCarMgr::dimLevel(){
 	return _dimLevel;
 }
+
+bool PiCarMgr::setRelay1(bool state){
+	bool didSucceed = false;
+	
+	if(_gpio_relay1) {
+		gpiod_line_set_value(_gpio_relay1, state);
+	}
+	
+	return didSucceed;
+}
+
 
 
 

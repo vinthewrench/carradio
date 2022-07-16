@@ -166,4 +166,22 @@ int gpiod_line_event_wait(struct gpiod_line *line,
 	return 0;
 }
 
+int gpiod_line_request_output(struct gpiod_line *line,
+					const char *consumer, int default_val) {
+	
+	printf("gpiod_line_request_output()\n");
+	return 0;
+}
+
+int gpiod_line_set_value(struct gpiod_line *line, int value){
+ 
+	printf("gpiod_line_set_value()\n");
+	return 0;
+
+}
+
+
+
+
+
 #endif

@@ -419,8 +419,7 @@ bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 		
 		// calculate color vs brightness
 		RGB effectiveColor = color;
-		
-		
+ 
 		switch (knob) {
 			case KNOB_RIGHT:
 				success = _rightKnob.setColor(effectiveColor);
@@ -1356,6 +1355,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
 		 
+		printf("enter drawTimeScreen\n");
+		
 		if(_backlightKnobs){
 			setKnobColor(KNOB_RIGHT, RGB::Lime);
 			setKnobColor(KNOB_LEFT, RGB::Lime);

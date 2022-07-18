@@ -1163,9 +1163,9 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	if(!_isSetup)
 		return;
 	//
-	//	vector<string> l1 = { "ENT","RFR","IDL","XIT"};
-	//	if(transition != TRANS_IDLE)
-	//		printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
+		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+		if(transition != TRANS_IDLE)
+			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
 	
 	try {
 		switch (mode) {

@@ -95,6 +95,7 @@ typedef  enum  {
 		RPM,
 		VIN,
 		DIMMER_SW,
+		HEADLIGHT_SW,
 } value_keys_t;
 
 typedef FrameDB::valueSchema_t valueSchema_t;
@@ -109,7 +110,8 @@ static map<value_keys_t,  valueSchema_t> _schemaMap = {
 	{CLOCK,					{"JK_CLOCK",						"Clock Time",								FrameDB::STRING}},
 	{RPM,						{"JK_ENGINE_RPM",					"Engine RPM",								FrameDB::RPM}},
 	{VIN,						{"JK_VIN",							"Vehicle Identification Number",		FrameDB::STRING}},
-	{DIMMER_SW,				{"JK_DIMMER_SW",					"Dimmer Switch",							FrameDB::PERCENT}}
+	{DIMMER_SW,				{"JK_DIMMER_SW",					"Dimmer Switch",							FrameDB::PERCENT}},
+	{HEADLIGHT_SW,			{"HEADLIGHT_SW",					"Headlight Switch",						FrameDB::BINARY}}
 	};
 
 
@@ -155,6 +157,30 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
  	 		}
 			break;
 #endif
+	
+		case 0x208:		//"Lights control (TIPM)"
+		{
+			
+			int lights = 	 frame.data[0];
+			bitset<8> lightBits  = bitset<8>(lights);
+			
+	/* HEADLIGHT_SW
+				  x | Fog | High | Low | Park | x | RT | LT
+				  
+				  01  left turn
+				  02  Right turn
+				  03  Blink
+				  08  park
+				  28  Headlight High / park
+				  18  Headlight Low / park
+				  48  Fog
+	 */
+			
+			db->updateValue(schemaKeyForValueKey(HEADLIGHT_SW), lightBits.to_string(), when);
+ 
+		}
+			break;
+			
 			
 		case 0x20B:		//"Key Position"
 		{

@@ -110,8 +110,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightKnob.setDoubleClickTime(doubleClickTime);
 		_leftKnob.setDoubleClickTime(doubleClickTime);
 		
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		setKnobColor(KNOB_LEFT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_LEFT, RGB::Lime);
 		
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
@@ -389,6 +389,28 @@ bool DisplayMgr::setBrightness(double level) {
 	return success;
 }
 
+bool DisplayMgr::setKnobBackLight(bool isOn){
+	_backlightKnobs = isOn;
+	
+	switch (_current_mode) {
+		case MODE_TIME:
+		case MODE_RADIO:
+		
+			if(_backlightKnobs){
+				setKnobColor(KNOB_RIGHT, RGB::Lime);
+				setKnobColor(KNOB_LEFT, RGB::Lime);
+			}
+			else {
+				setKnobColor(KNOB_RIGHT, RGB::Black);
+				setKnobColor(KNOB_LEFT, RGB::Black);
+			}
+
+			
+		default: ;
+			 
+	}
+	return true;
+}
 
 
 bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
@@ -769,7 +791,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
 		return;
 	}
@@ -1238,6 +1260,9 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		_vfd.clearScreen();
 		
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		setKnobColor(KNOB_LEFT, RGB::Lime);
+
 		_vfd.setCursor(7, 10);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Starting Up...");
@@ -1246,6 +1271,11 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		LEDeventStartup();
 	}
 	
+	if(transition == TRANS_LEAVING){
+		setKnobColor(KNOB_RIGHT, RGB::Black);
+		setKnobColor(KNOB_LEFT, RGB::Black);
+
+	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
@@ -1325,6 +1355,15 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
+		 
+		if(_backlightKnobs){
+			setKnobColor(KNOB_RIGHT, RGB::Lime);
+			setKnobColor(KNOB_LEFT, RGB::Lime);
+		}
+		else {
+			setKnobColor(KNOB_RIGHT, RGB::Black);
+			setKnobColor(KNOB_LEFT, RGB::Black);
+		}
 		//		_leftRing.clearAll();
 	}
 	
@@ -1491,6 +1530,16 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		_rightRing.clearAll();
+		
+		if(_backlightKnobs){
+			setKnobColor(KNOB_RIGHT, RGB::Lime);
+			setKnobColor(KNOB_LEFT, RGB::Lime);
+		}
+		else {
+			setKnobColor(KNOB_RIGHT, RGB::Black);
+			setKnobColor(KNOB_LEFT, RGB::Black);
+		}
+
 		didSetRing = false;
 	}
 	
@@ -1648,7 +1697,7 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -1713,7 +1762,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	}
 	
 	if(transition == TRANS_LEAVING) {
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		gps->setShouldRead(false);
 		return;
 	}
@@ -1802,7 +1851,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -1934,7 +1983,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		cachedProps.clear();
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
-		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	

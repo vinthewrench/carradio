@@ -1074,32 +1074,65 @@ void PiCarMgr::idle(){
 		});
 	}
 	
-	// check for change in dimmer
-	if( _autoDimmerMode ){
-   
-		FrameDB*	fDB 	= can()->frameDB();
-		string key = "JK_DIMMER_SW";
-		string rawValue;
-		if(fDB->valueWithKey(key, &rawValue)) {
+	// check for change in dimmer or headlight
+	
+	FrameDB*	fDB 	= can()->frameDB();
+	string JK_DIMMER_SW = "JK_DIMMER_SW";
+	string HEADLIGHT_SW = "HEADLIGHT_SW";
+	
+	bitset<8> headlightBits;
+	
+	if(fDB->bitsForKey(HEADLIGHT_SW, headlightBits) ) {
+		/* HEADLIGHT_SW
+		 x | Fog | High | Low | Park | x | RT | LT
+		 
+		 01  left turn
+		 02  Right turn
+		 03  Blink
+		 08  park
+		 28  Headlight High / park
+		 18  Headlight Low / park
+		 48  Fog
+		 */
+		
+		// are the lights on,  then we can dim
+		
+		if(headlightBits.test(3) || headlightBits.test(4)
+			||  headlightBits.test(5)  ||   headlightBits.test(6) ){
 			
-			double dimSW = fDB->normalizedDoubleForValue(key,rawValue) / 100. ;
+			_display.setKnobBackLight(true);
+			
+			
+			if( _autoDimmerMode ){
 				
-			if(dimSW != _dimLevel){
-					setDimLevel(dimSW);
- 				// update the brightness
-				_display.setBrightness(_dimLevel);
-
- 			}
- 		}
- 	}
- 
+				string rawValue;
+				if(fDB->valueWithKey(JK_DIMMER_SW, &rawValue) ) {
+					
+					double dimSW = fDB->normalizedDoubleForValue(JK_DIMMER_SW,rawValue) / 100. ;
+					
+					if(dimSW != _dimLevel){
+						setDimLevel(dimSW);
+						// update the brightness
+						_display.setBrightness(_dimLevel);
+						
+					}
+					
+				}
+			}}
+		else {
+			_display.setKnobBackLight(false);
+			_display.setBrightness(1);
+		}
+	}
+	
+	
 	// ocassionally save properties
 	saveRadioSettings();
 	if(_db.propertiesChanged()){
 		_db.savePropertiesToFile();
 	}
 	
-
+	
 }
 
 void* PiCarMgr::PiCanLoopThread(void *context){

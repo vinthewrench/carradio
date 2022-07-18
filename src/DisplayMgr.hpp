@@ -91,6 +91,8 @@ public:
 
 	// display related
 	bool setBrightness(double level);   // 0.0 -  1.0
+	bool setKnobBackLight(bool isOn);    
+
 	bool setKnobColor(knob_id_t, RGB);
 	
 	// multi page display
@@ -259,7 +261,9 @@ private:
 	RGB 					_rightKnobColor;
 	RGB 					_leftKnobColor;
 	double				_dimLevel;		// 0.0 = off ,  1.0  = full on.
-
+	bool 					_backlightKnobs;
+	
+	
 	// devices
 	VFD 					_vfd;
 	DuppaLEDRing		_rightRing;

@@ -1824,6 +1824,9 @@ void DisplayMgr::drawShutdownScreen(){
 	_rightRing.clearAll();
 	_leftRing.clearAll();
 	
+	setKnobColor(KNOB_RIGHT, RGB::Black);
+	setKnobColor(KNOB_LEFT, RGB::Black);
+
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));

@@ -1162,11 +1162,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	
 	if(!_isSetup)
 		return;
-	//
-		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
-		if(transition != TRANS_IDLE)
-			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
-	
+//	//
+//		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+//		if(transition != TRANS_IDLE)
+//			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
+//	
 	try {
 		switch (mode) {
 				
@@ -1354,20 +1354,17 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
-		 
-		printf("enter drawTimeScreen\n");
-		
-		if(_backlightKnobs){
-			setKnobColor(KNOB_RIGHT, RGB::Lime);
-			setKnobColor(KNOB_LEFT, RGB::Lime);
-		}
-		else {
-			setKnobColor(KNOB_RIGHT, RGB::Black);
-			setKnobColor(KNOB_LEFT, RGB::Black);
-		}
-		//		_leftRing.clearAll();
+ 	}
+	 
+	if(_backlightKnobs){
+		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		setKnobColor(KNOB_LEFT, RGB::Lime);
 	}
-	
+	else {
+		setKnobColor(KNOB_RIGHT, RGB::Black);
+		setKnobColor(KNOB_LEFT, RGB::Black);
+	}
+		  //		_leftRing.clearAll();
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
 	_vfd.setCursor(10,35) ;

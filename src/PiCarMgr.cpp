@@ -1074,34 +1074,23 @@ void PiCarMgr::idle(){
 		});
 	}
 	
-	// check for change in dimmer or headlight
+	// check for change in dimmer
 	
 	FrameDB*	fDB 	= can()->frameDB();
 	string JK_DIMMER_SW = "JK_DIMMER_SW";
-	string HEADLIGHT_SW = "HEADLIGHT_SW";
+	string DAYTIME = "DAYTIME";
 	
-	bitset<8> headlightBits;
-	
-	if(fDB->bitsForKey(HEADLIGHT_SW, headlightBits) ) {
-		/* HEADLIGHT_SW
-		 x | Fog | High | Low | Park | x | RT | LT
-		 
-		 01  left turn
-		 02  Right turn
-		 03  Blink
-		 08  park
-		 28  Headlight High / park
-		 18  Headlight Low / park
-		 48  Fog
-		 */
-		
+	bool isDayTime = false;
+ 
+	if(fDB->boolForKey(DAYTIME, isDayTime) ) {
 		// are the lights on,  then we can dim
 		
-		if(headlightBits.test(3) || headlightBits.test(4)
-			||  headlightBits.test(5)  ||   headlightBits.test(6) ){
-			
-			_display.setKnobBackLight(true);
-			
+		if(isDayTime){
+			_display.setKnobBackLight(false);
+			_display.setBrightness(1);
+		}
+		else {
+
 			
 			if( _autoDimmerMode ){
 				
@@ -1114,14 +1103,9 @@ void PiCarMgr::idle(){
 						setDimLevel(dimSW);
 						// update the brightness
 						_display.setBrightness(_dimLevel);
-						
 					}
-					
 				}
-			}}
-		else {
-			_display.setKnobBackLight(false);
-			_display.setBrightness(1);
+			}
 		}
 	}
 	

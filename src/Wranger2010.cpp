@@ -96,6 +96,7 @@ typedef  enum  {
 		VIN,
 		DIMMER_SW,
 		HEADLIGHT_SW,
+		DAYTIME,
 } value_keys_t;
 
 typedef FrameDB::valueSchema_t valueSchema_t;
@@ -111,7 +112,8 @@ static map<value_keys_t,  valueSchema_t> _schemaMap = {
 	{RPM,						{"JK_ENGINE_RPM",					"Engine RPM",								FrameDB::RPM}},
 	{VIN,						{"JK_VIN",							"Vehicle Identification Number",		FrameDB::STRING}},
 	{DIMMER_SW,				{"JK_DIMMER_SW",					"Dimmer Switch",							FrameDB::PERCENT}},
-	{HEADLIGHT_SW,			{"HEADLIGHT_SW",					"Headlight Switch",						FrameDB::BINARY}}
+	{HEADLIGHT_SW,			{"HEADLIGHT_SW",					"Headlight Switch",						FrameDB::BINARY}},
+	{DAYTIME,				{"DAYTIME",							"Daytime Mode",							FrameDB::BOOL}}
 	};
 
 
@@ -274,11 +276,18 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			
 		case 0x308: // Dimmer switch
 		{
+			bool daytime = false;
+			
 			uint8_t dimValue = 0;
 			if(frame.data[0] == 00) dimValue = 0;
+			else if (frame.data[0] == 0x11) {
+				dimValue = 255;
+				daytime = true;
+			}
 			else if (frame.data[0] == 0x13) dimValue = 255;
-			else if (frame.data[0] == 0x11) dimValue = 255;
 			else  if (frame.data[0] == 0x12) dimValue = frame.data[1];
+			
+			db->updateValue(schemaKeyForValueKey(DAYTIME), to_string(daytime), when);
 			
 			double level = (dimValue * 100.) / 255. ;
 			db->updateValue(schemaKeyForValueKey(DIMMER_SW), to_string(level), when);

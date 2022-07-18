@@ -16,6 +16,9 @@
 #include <string>
 #include <bitset>
 
+
+#define DONT_FILTER_UNUSED_PACKETS  0
+
 static map<uint, string> knownPid = {
 
 	{ 0x142,	""},
@@ -138,7 +141,9 @@ string_view Wranger2010::schemaKeyForValueKey(int valueKey) {
 void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, time_t when){
 	switch(frame.can_id) {
 			
-		case 0x1E1:
+#if DONT_FILTER_UNUSED_PACKETS
+//cant really find a use for this
+		case 0x1E1:	// STEERING_ANGLE
 		{
 			uint16_t xx = (frame.data[2] <<8 | frame.data[3]);
 			if (xx != 0xFFFF){
@@ -149,7 +154,8 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			
  	 		}
 			break;
-
+#endif
+			
 		case 0x20B:		//"Key Position"
 		{
 			string value;
@@ -216,7 +222,9 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 		}
 			break;
 
-		case 0x2CE: // RPM
+#if DONT_FILTER_UNUSED_PACKETS
+			// we use the GM RPM for accurate value
+	case 0x2CE: // RPM
 		{
 			uint16_t xx = (frame.data[0] <<8 | frame.data[1]);
 			if (xx != 0xFFFF){
@@ -225,7 +233,10 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			};
 		}
 			break;
+#endif
 			
+#if DONT_FILTER_UNUSED_PACKETS
+//cant really find a use for this
 		case 0x3E6: //Clock Time Display
 		{
 			char str[10];
@@ -233,7 +244,7 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 			db->updateValue(schemaKeyForValueKey(CLOCK), string(str), when);
 		}
 			break;
-
+#endif
 			
 		case 0x308: // Dimmer switch
 		{

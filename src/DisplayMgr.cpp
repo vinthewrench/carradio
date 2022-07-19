@@ -1276,8 +1276,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		int centerX = width /2;
 		int centerY = _vfd.height() /2;
 	 
-		uint8_t leftbox 	= 20;
-		uint8_t rightbox 	= width - 20;
+		uint8_t leftbox 	= 10;
+		uint8_t rightbox 	= width - 10;
 		uint8_t topbox 	= 10 ;
 		uint8_t bottombox = height - 10  ;
 		
@@ -1286,12 +1286,18 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		//draw box outline
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
-		
+			
 		string str = "PiCar";
-		auto logoCenter  =  centerX  -( (str.size() /2)  * 11) - 7 ;
+		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
-		_vfd.setCursor( logoCenter ,centerY+5);
+		_vfd.setCursor( start ,centerY+5);
+		_vfd.write(str);
+ 
+		str = string(PiCarMgr::PiCarMgr_Version);
+		start  =  centerX  -( (str.size() /2)  * 7) - 3 ;
+		
+		_vfd.setCursor( start ,centerY+20);
+		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write(str);
  
 		LEDeventStartup();

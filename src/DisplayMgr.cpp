@@ -1278,8 +1278,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	 
 		uint8_t leftbox 	= 20;
 		uint8_t rightbox 	= width - 20;
-		uint8_t topbox 	= 20 ;
-		uint8_t bottombox = height - 20  ;
+		uint8_t topbox 	= 10 ;
+		uint8_t bottombox = height - 10  ;
 		
 		_vfd.clearScreen();
 		

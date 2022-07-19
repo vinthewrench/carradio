@@ -1106,8 +1106,6 @@ void PiCarMgr::idle(){
 				
 				if( _autoDimmerMode ){
 					
-					setDimLevel(dimSW);
-					
 					printf( "dimlevel = %1.2f -> %1.2f\n",_dimLevel, dimSW);
 					
 					if(dimSW != _dimLevel){

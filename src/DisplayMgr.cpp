@@ -127,7 +127,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		// clear all values
 		_rightRing.clearAll();
-		_rightRing.clearAll();
+		_leftRing.clearAll();
 		
 		_eventQueue = {};
 		_ledEvent = 0;
@@ -229,6 +229,7 @@ void DisplayMgr::runLEDEventStartup(){
 		ledStep = 0;
 		//		printf("\nLED STARTUP\n");
 		_leftRing.clearAll();
+		_rightRing.clearAll();
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
@@ -238,7 +239,8 @@ void DisplayMgr::runLEDEventStartup(){
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};
 			_leftRing.setLEDs(data);
-			
+			_rightRing.setLEDs(data);
+
 #else
 			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
 			ledStep++;
@@ -249,7 +251,7 @@ void DisplayMgr::runLEDEventStartup(){
 		else {
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
-			
+			_rightRing.clearAll();
 			//			printf("\nLED RUN DONE\n");
 			
 		}

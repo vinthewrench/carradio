@@ -1414,36 +1414,40 @@ void DisplayMgr::drawEngineCheck(){
 	bitset<8>  bits = {0};
 	
 	_vfd.setCursor(midX, 60);
+
+	char buffer[20] = {0};
+	
 	
 	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
 		&& engineCheck) {
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("CHECK ENGINE");
+		sprintf(buffer, "CHECK ENGINE");
 	}
 	else if(fDB->boolForKey("GM_OIL_LOW", engineCheck)
 			  && engineCheck) {
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("OIL LOW");
+		sprintf(buffer, "OIL LOW");
 	}
 	else if(fDB->boolForKey("GM_CHANGE_OIL", engineCheck)
 			  && engineCheck) {
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("CHANGE OIL");
+		sprintf(buffer, "CHANGE OIL");
 	}
 	else if(fDB->boolForKey("GM_CHECK_FUELCAP", engineCheck)
 			  && engineCheck) {
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("CHECK FUEL CAP");
-	}
+		sprintf(buffer, "CHECK FUEL CAP");
+ 	}
 	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("%12s", bits.count()>1?"DOORS OPEN":"DOOR OPEN");
-	}
-	else {
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("%10s", " ");
 		
+		if(bits.count() == 1) {
+			if( bits.test(4) )sprintf(buffer, "GATE OPEN");
+			else sprintf(buffer, "DOOR OPEN");
+		}
+		else sprintf(buffer, "DOORS OPEN");
 	}
+ 
+	_vfd.setFont(VFD::FONT_5x7);
+	_vfd.printPacket("%12s", buffer);
+
+
 }
 
 void DisplayMgr::drawDimmerScreen(modeTransition_t transition){

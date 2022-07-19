@@ -1093,7 +1093,7 @@ void PiCarMgr::idle(){
 		// did anything change
 		if(_isDayTime	!= isDayTime || dimSW != _dimLevel) {
 			
-			if(_isDayTime	!= isDayTime){
+			if(isDayTime){
 				setDimLevel(1.0);
 				_display.setKnobBackLight(false);
 				_display.setBrightness(1);

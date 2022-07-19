@@ -97,8 +97,6 @@ bool DuppaKnob::wasMoved( bool &cw){
 
 bool DuppaKnob::setBrightness(double level){
 	
-	printf("setBrightness %0.1f\n", level);
-	
 	if(_isSetup){
 		_brightness = level > 1.0?1.0:level;
 		if(_currentColor != RGB::Black){

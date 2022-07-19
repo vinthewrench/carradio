@@ -1081,7 +1081,7 @@ void PiCarMgr::idle(){
 	string DAYTIME = "DAYTIME";
 	
 	bool isDayTime = false;
- 
+	
 	if(fDB->boolForKey(DAYTIME, isDayTime) ) {
 		// are the lights on,  then we can dim
 		
@@ -1090,10 +1090,9 @@ void PiCarMgr::idle(){
 			_display.setBrightness(1);
 		}
 		else {
-
+			_display.setKnobBackLight(true);
 			
 			if( _autoDimmerMode ){
-				
 				string rawValue;
 				if(fDB->valueWithKey(JK_DIMMER_SW, &rawValue) ) {
 					

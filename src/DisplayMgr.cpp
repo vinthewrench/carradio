@@ -1310,14 +1310,14 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		GPSmgr*	gps 		= PiCarMgr::shared()->gps();
 		
 	 	if(radio->isConnected()){
-	 		_vfd.setCursor( 20, 50);
+	 		_vfd.setCursor( 40, 50);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket( "RADIO OK");
 		}
 		
 		if(gps->isConnected()){
  			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 60, 50);
+			_vfd.setCursor( 80, 50);
 			_vfd.printPacket( "GPS OK");
 		}
 	}

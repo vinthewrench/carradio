@@ -1273,9 +1273,12 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
  
+	
 
 	if(transition == TRANS_ENTERING){
-		
+	
+		printf("drawStartupScreen TRANS_ENTERING\n");
+
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
 		_vfd.clearScreen();
@@ -1312,8 +1315,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 			
 			printf("drawStartupScreen radio->isConnected\n");
 
+			_vfd.setCursor( 10, 30);
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 20, 0);
 			_vfd.printPacket( "\xBA RADIO OK");
 		}
 		
@@ -1322,7 +1325,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 			printf("drawStartupScreen gps->isConnected\n");
 
  			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 60, 0);
+			_vfd.setCursor( 60, 30);
 			_vfd.printPacket( "\xBA GPS OK");
 			
 		}

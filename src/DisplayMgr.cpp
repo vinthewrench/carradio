@@ -1435,8 +1435,6 @@ void DisplayMgr::drawEngineCheck(){
 		sprintf(buffer, "CHECK FUEL CAP");
  	}
 	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
-		_vfd.setFont(VFD::FONT_MINI);
-		
 		if(bits.count() == 1) {
 			if( bits.test(4) )sprintf(buffer, "GATE OPEN");
 			else sprintf(buffer, "DOOR OPEN");
@@ -1444,7 +1442,7 @@ void DisplayMgr::drawEngineCheck(){
 		else sprintf(buffer, "DOORS OPEN");
 	}
  
-	_vfd.setFont(VFD::FONT_5x7);
+	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.printPacket("%12s", buffer);
 
 

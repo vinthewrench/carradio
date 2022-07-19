@@ -1090,6 +1090,8 @@ void PiCarMgr::idle(){
 		if(_isDayTime	!= isDayTime){
 			_isDayTime = isDayTime;
 			
+			printf( "isDayTime =  %s\n",isDayTime?"TRUE":"FALSE");
+
 			if(_isDayTime){
 				setDimLevel(1.0);
 				_display.setKnobBackLight(false);

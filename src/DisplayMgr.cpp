@@ -1310,12 +1310,18 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		printf("drawStartupScreen refresh\n");
 		if(radio->isConnected()){
+			
+			printf("drawStartupScreen radio->isConnected\n");
+
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 20, 80);
 			_vfd.printPacket( "\xBA RADIO OK");
 		}
 		
 		if(gps->isConnected()){
+			
+			printf("drawStartupScreen gps->isConnected\n");
+
  			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 60, 80);
 			_vfd.printPacket( "\xBA GPS OK");

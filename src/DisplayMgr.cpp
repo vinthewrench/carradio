@@ -1293,13 +1293,13 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		string str = "PiCar";
 		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
-		_vfd.setCursor( start ,centerY+5);
+		_vfd.setCursor( start ,centerY-5);
 		_vfd.write(str);
  
 		str = string(PiCarMgr::PiCarMgr_Version);
 		start  =  centerX  -( (str.size() /2) * 6) - 3 ;
 		
-		_vfd.setCursor( start ,centerY+18);
+		_vfd.setCursor( start ,centerY+8);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write(str);
  

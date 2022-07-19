@@ -1305,20 +1305,27 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	}
  
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		
-		RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-		GPSmgr*	gps 		= PiCarMgr::shared()->gps();
-		
+		PiCarMgr*			mgr 	= PiCarMgr::shared();
+		RadioMgr*			radio 	= mgr->radio();
+		GPSmgr*				gps 		= mgr->gps();
+		PiCarCAN*			can 		= mgr->can();
+	
 	 	if(radio->isConnected()){
-	 		_vfd.setCursor( 30, 50);
+	 		_vfd.setCursor( 10, 50);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket( "RADIO OK");
 		}
 		
 		if(gps->isConnected()){
  			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 70, 50);
+			_vfd.setCursor( 50, 50);
 			_vfd.printPacket( "GPS OK");
+		}
+ 
+		if(can->isConnected()){
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setCursor( 80, 50);
+			_vfd.printPacket( "CANBUS OK");
 		}
 	}
 

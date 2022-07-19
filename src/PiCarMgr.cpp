@@ -174,6 +174,13 @@ bool PiCarMgr::begin(){
 		// SETUP CANBUS
 		_can.begin();
  
+		// find first RTS device
+		auto devices = RtlSdr::get_devices();
+		if(devices.size() > 0) {
+			if(!_radio.begin(devices[0].index))
+				throw Exception("failed to setup Radio ");
+		}
+
 	 #if USE_SERIAL_GPS
 			 
 	 #if defined(__APPLE__)
@@ -190,13 +197,7 @@ bool PiCarMgr::begin(){
 				 printf("failed to setup GPS %d ", error);
 	 #endif
 
-		// find first RTS device
-		auto devices = RtlSdr::get_devices();
-		if(devices.size() > 0) {
-			if(!_radio.begin(devices[0].index))
-				throw Exception("failed to setup Radio ");
-		}
-
+	
 		_display.showStartup();  // show startup
 
 		// setup audio out

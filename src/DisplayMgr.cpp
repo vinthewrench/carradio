@@ -1271,13 +1271,16 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write("Starting Up...");
 		
-		drawDeviceStatus();
 		LEDeventStartup();
 	}
 	
 	if(transition == TRANS_LEAVING){
 		setKnobColor(KNOB_RIGHT, RGB::Black);
 		setKnobColor(KNOB_LEFT, RGB::Black);
+	}
+	
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		drawDeviceStatus();
 
 	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");

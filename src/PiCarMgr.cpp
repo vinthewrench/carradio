@@ -144,6 +144,7 @@ bool PiCarMgr::begin(){
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
 		_dimLevel =  1.0; // full
+		_isDayTime = true;
 		_autoDimmerMode = false;
 		
 		// clear DB
@@ -202,8 +203,9 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
+		_display.setKnobBackLight(false);
 		_display.setBrightness(_dimLevel);
- 
+	
 		// SETUP CANBUS
 		_can.begin();
 		
@@ -1085,23 +1087,27 @@ void PiCarMgr::idle(){
 	if(fDB->boolForKey(DAYTIME, isDayTime) ) {
 		// are the lights on,  then we can dim
 		
-		if(isDayTime){
-			_display.setKnobBackLight(false);
-			_display.setBrightness(1);
-		}
-		else {
-			_display.setKnobBackLight(true);
+		if(_isDayTime	!= isDayTime){
+			_isDayTime = isDayTime;
 			
-			if( _autoDimmerMode ){
-				string rawValue;
-				if(fDB->valueWithKey(JK_DIMMER_SW, &rawValue) ) {
-					
-					double dimSW = fDB->normalizedDoubleForValue(JK_DIMMER_SW,rawValue) / 100. ;
-					
-					if(dimSW != _dimLevel){
-						setDimLevel(dimSW);
-						// update the brightness
-						_display.setBrightness(_dimLevel);
+			if(_isDayTime){
+				_display.setKnobBackLight(false);
+				_display.setBrightness(1);
+			}
+			else {
+				_display.setKnobBackLight(true);
+				
+				if( _autoDimmerMode ){
+					string rawValue;
+					if(fDB->valueWithKey(JK_DIMMER_SW, &rawValue) ) {
+						
+						double dimSW = fDB->normalizedDoubleForValue(JK_DIMMER_SW,rawValue) / 100. ;
+						
+						if(dimSW != _dimLevel){
+							setDimLevel(dimSW);
+							// update the brightness
+							_display.setBrightness(_dimLevel);
+						}
 					}
 				}
 			}

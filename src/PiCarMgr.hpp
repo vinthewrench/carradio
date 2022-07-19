@@ -220,6 +220,7 @@ private:
 	
 	bool					_autoDimmerMode;		 // controlled by canbus
 	double				_dimLevel;		  //   0.0 - 1.0 fraction of bright
+	bool					_isDayTime;			// for backlights
 		
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
 	uint16_t 			_clocksync_gps_secs;  // how many seconds of error allowed before sync

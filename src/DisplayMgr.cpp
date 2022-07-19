@@ -133,7 +133,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_ledEvent = 0;
 		
 		resetMenu();
-		showStartup();
+//		showStartup();
 	}
 	
 	return _isSetup;

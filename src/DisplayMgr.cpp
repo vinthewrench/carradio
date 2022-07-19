@@ -133,7 +133,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_ledEvent = 0;
 		
 		resetMenu();
-//		showStartup();
+		showStartup();
 	}
 	
 	return _isSetup;
@@ -1255,9 +1255,15 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	}
 }
 
+ 
+
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
+	int centerX = _vfd.width() /2;
+	int centerY = _vfd.height() /2;
+	
+ 
 	if(transition == TRANS_ENTERING){
 		
 		_vfd.setPowerOn(true);
@@ -1267,10 +1273,13 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
 
-		_vfd.setCursor(7, 10);
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.write("Starting Up...");
-		
+		string str = "PiCar";
+		auto logoCenter  =  centerX  -( (str.size() /2)  * 11) - 7 ;
+		_vfd.setFont(VFD::FONT_10x14);
+		_vfd.setCursor( logoCenter ,centerY+5);
+		_vfd.write(str);
+
+ 
 		LEDeventStartup();
 	}
 	
@@ -1279,10 +1288,10 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		setKnobColor(KNOB_LEFT, RGB::Black);
 	}
 	
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		drawDeviceStatus();
-
-	}
+//	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+//		drawDeviceStatus();
+//
+//	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 

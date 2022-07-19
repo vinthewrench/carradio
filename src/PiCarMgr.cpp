@@ -198,7 +198,7 @@ bool PiCarMgr::begin(){
 	 #endif
 
 	
-		_display.showStartup();  // show startup
+//		_display.showStartup();  // show startup
 
 		// setup audio out
 		if(!_audio.begin(pcmrate, true ))

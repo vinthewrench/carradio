@@ -1263,7 +1263,13 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+
+	int centerX = width /2;
+	int centerY = _vfd.height() /2;
  
+
 	if(transition == TRANS_ENTERING){
 		
 		_vfd.setPowerOn(true);
@@ -1273,13 +1279,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
 		
-		uint8_t width = _vfd.width();
-		uint8_t height = _vfd.height();
-
-		int centerX = width /2;
-		int centerY = _vfd.height() /2;
-	 
-		uint8_t leftbox 	= 5;
+			uint8_t leftbox 	= 5;
 		uint8_t rightbox 	= width - 5;
 		uint8_t topbox 	= 5 ;
 		uint8_t bottombox = height - 5  ;
@@ -1293,19 +1293,32 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		string str = "PiCar";
 		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
-		_vfd.setCursor( start ,centerY-5);
+		_vfd.setCursor( start ,centerY+5);
 		_vfd.write(str);
  
-		str = string(PiCarMgr::PiCarMgr_Version);
-		start  =  centerX  -( (str.size() /2) * 6) - 3 ;
-		
-		_vfd.setCursor( start ,centerY+8);
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.write(str);
- 
-		LEDeventStartup();
+ 		LEDeventStartup();
 	}
 	
+
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		
+		RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+		GPSmgr*	gps 		= PiCarMgr::shared()->gps();
+		
+		if(radio->isConnected()){
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setCursor( 20, 80);
+			_vfd.printPacket( "\xBA RADIO OK");
+		}
+		
+		if(gps->isConnected()){
+ 			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setCursor( 60, 80);
+			_vfd.printPacket( "\xBA GPS OK");
+			
+		}
+	}
+
 	if(transition == TRANS_LEAVING){
 		setKnobColor(KNOB_RIGHT, RGB::Black);
 		setKnobColor(KNOB_LEFT, RGB::Black);

@@ -1260,9 +1260,6 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
-	int centerX = _vfd.width() /2;
-	int centerY = _vfd.height() /2;
-	
  
 	if(transition == TRANS_ENTERING){
 		
@@ -1272,13 +1269,30 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
+		
+		uint8_t width = _vfd.width();
+		uint8_t height = _vfd.height();
 
+		int centerX = width /2;
+		int centerY = _vfd.height() /2;
+	 
+		uint8_t leftbox 	= 20;
+		uint8_t rightbox 	= width - 20;
+		uint8_t topbox 	= 20 ;
+		uint8_t bottombox = height - 20  ;
+		
+		_vfd.clearScreen();
+		
+		//draw box outline
+		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+		
+		
 		string str = "PiCar";
 		auto logoCenter  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
 		_vfd.setCursor( logoCenter ,centerY+5);
 		_vfd.write(str);
-
  
 		LEDeventStartup();
 	}

@@ -968,7 +968,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
-				if(_current_mode == MODE_DEV_STATUS) {
+				else if(_current_mode == MODE_DEV_STATUS) {
 					if(diff.tv_sec >=  2) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;

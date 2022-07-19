@@ -964,6 +964,10 @@ void DisplayMgr::DisplayUpdate(){
 			
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
+				
+					shouldRedraw = false;
+					shouldUpdate = true;
+
 					if(diff.tv_sec >=  5) {
 #warning remove this
 //						pushMode(MODE_TIME);
@@ -1298,8 +1302,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
  
  		LEDeventStartup();
 	}
-	
-
+ 
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		RadioMgr*	radio 	= PiCarMgr::shared()->radio();

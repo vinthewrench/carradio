@@ -106,7 +106,7 @@ public:
 	void showDTC();
 	void showDTCInfo(string code);
  
-	void showDimmerChange();	// Deprecated
+	void showDimmerChange();	
 	void showBalanceChange();
 	void showFaderChange();
 	void showRadioChange();

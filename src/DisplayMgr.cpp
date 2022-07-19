@@ -376,6 +376,9 @@ bool DisplayMgr::setBrightness(double level) {
 		uint8_t vfdLevel =  level * 7.0 ;
 		
 		if(vfdLevel == 0) vfdLevel  = 1;
+		
+		printf("setBrightness %1.2f -> %d\n", level, vfdLevel);
+		
 		success = _vfd.setBrightness(vfdLevel);
 		
 		uint8_t ledCurrent = calculateRingCurrent(level);
@@ -1166,7 +1169,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 //		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
 //		if(transition != TRANS_IDLE)
 //			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
-//	
+//
 	try {
 		switch (mode) {
 				

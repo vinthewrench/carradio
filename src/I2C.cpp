@@ -228,7 +228,7 @@ bool I2C::readByte(uint8_t regAddr,  uint8_t& byte){
 	
 	if(i2c_smbus_access (_fd, I2C_SMBUS_READ, regAddr, I2C_SMBUS_BYTE_DATA, &data) < 0){
 		
-		ELOG_ERROR(ErrorMgr::FAC_I2C, _devAddr, errno,  "I2C_SMBUS_READ BYTE (%02x) ", regAddr);
+		ELOG_ERROR(ErrorMgr::FAC_I2C, _devAddr, errno,  "I2C_SMBUS_READ BYTE (%02x, %02x) ",_devAddr, regAddr);
  
 		return false;
 	}
@@ -256,7 +256,7 @@ bool I2C::readWord(uint8_t regAddr,  int16_t& word, bool swap){
 	
 	if(i2c_smbus_access (_fd, I2C_SMBUS_READ, regAddr, I2C_SMBUS_WORD_DATA, &data) < 0){
 		
-		ELOG_ERROR(ErrorMgr::FAC_I2C, _devAddr, errno,  "I2C_SMBUS_READ WORD (%02x) ", regAddr);
+		ELOG_ERROR(ErrorMgr::FAC_I2C, _devAddr, errno,  "I2C_SMBUS_READ WORD (%02x, %02x) ", _devAddr, regAddr);
 
 		return false;
 	}

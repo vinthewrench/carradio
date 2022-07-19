@@ -1308,13 +1308,12 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 		GPSmgr*	gps 		= PiCarMgr::shared()->gps();
 		
-		printf("drawStartupScreen refresh\n");
-		if(radio->isConnected()){
+	 	if(radio->isConnected()){
 			
 			printf("drawStartupScreen radio->isConnected\n");
 
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 20, 80);
+			_vfd.setCursor( 20, 0);
 			_vfd.printPacket( "\xBA RADIO OK");
 		}
 		
@@ -1323,7 +1322,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 			printf("drawStartupScreen gps->isConnected\n");
 
  			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 60, 80);
+			_vfd.setCursor( 60, 0);
 			_vfd.printPacket( "\xBA GPS OK");
 			
 		}

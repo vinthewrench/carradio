@@ -83,9 +83,7 @@ bool PiCarCAN::begin( int &error){
  
 	return _isSetup;
 }
-
-
-
+ 
 void PiCarCAN::stop(){
 	
 	if(_isSetup) {
@@ -93,6 +91,10 @@ void PiCarCAN::stop(){
 		}
 }
 
+
+bool PiCarCAN:: isConnected(){
+	return _isSetup;
+}
 
 
 bool PiCarCAN::reset(){

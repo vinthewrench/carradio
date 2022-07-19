@@ -45,6 +45,7 @@ public:
 	bool start(string ifName, int &error);
 	bool stop(string ifName, int &error);
 	
+	
 	bool lastFrameTime(string ifName, time_t &time);
 	bool totalPacketCount(string ifName, size_t &count);
 	bool packetsPerSecond(string ifName, size_t &count);

@@ -37,6 +37,7 @@ public:
 		
 	bool begin();
 	bool begin(int &error);
+	bool isConnected();
 	void stop();
 	bool reset();
 

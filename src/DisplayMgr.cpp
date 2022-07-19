@@ -375,10 +375,7 @@ bool DisplayMgr::setBrightness(double level) {
 		// vfd 0 -7
 		uint8_t vfdLevel =  level * 7.0 ;
 		
-		if(vfdLevel == 0) vfdLevel  = 1;
-		
-		printf("setBrightness %1.2f -> %d\n", level, vfdLevel);
-		
+		if(vfdLevel == 0) vfdLevel  = 1;		
 		success = _vfd.setBrightness(vfdLevel);
 		
 		uint8_t ledCurrent = calculateRingCurrent(level);

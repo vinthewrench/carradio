@@ -1097,17 +1097,11 @@ void PiCarMgr::idle(){
 				setDimLevel(1.0);
 				_display.setKnobBackLight(false);
 				_display.setBrightness(1);
-				
-				printf( "dimlevel = %1.2f \n",_dimLevel);
-
 			}
 			else {
 				_display.setKnobBackLight(true);
 				
 				if( _autoDimmerMode ){
-					
-					printf( "dimlevel = %1.2f -> %1.2f\n",_dimLevel, dimSW);
-					
 					if(dimSW != _dimLevel){
 						setDimLevel(dimSW);
 						// update the brightness

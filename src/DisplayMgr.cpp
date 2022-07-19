@@ -1443,7 +1443,7 @@ void DisplayMgr::drawEngineCheck(){
 	}
  
 	_vfd.setFont(VFD::FONT_MINI);
-	_vfd.printPacket("%20s", buffer);
+	_vfd.printPacket("%-20s", buffer);
 
 
 }

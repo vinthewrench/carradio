@@ -285,7 +285,18 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 				daytime = true;
 			}
 			else if (frame.data[0] == 0x13) dimValue = 255;
-			else  if (frame.data[0] == 0x12) dimValue = frame.data[1];
+			else  if (frame.data[0] == 0x12){
+				
+				// rescale the dimmer to what we like
+				switch( frame.data[1]){
+					case 0x20: dimValue = 255*.20; break;
+					case 0x4C: dimValue = 255*.40; break;
+					case 0x76: dimValue = 255*.60; break;
+					case 0xA0: dimValue = 255*.80; break;
+					case 0xc8: dimValue = 255; break;
+					default: 	dimValue = frame.data[1];
+				}
+			}
 			
 			db->updateValue(schemaKeyForValueKey(DAYTIME), to_string(daytime), when);
 			

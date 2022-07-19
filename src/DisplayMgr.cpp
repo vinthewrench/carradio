@@ -1308,6 +1308,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 		GPSmgr*	gps 		= PiCarMgr::shared()->gps();
 		
+		printf("drawStartupScreen refresh\n");
 		if(radio->isConnected()){
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 20, 80);

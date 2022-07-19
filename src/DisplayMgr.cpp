@@ -1276,10 +1276,10 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		int centerX = width /2;
 		int centerY = _vfd.height() /2;
 	 
-		uint8_t leftbox 	= 10;
-		uint8_t rightbox 	= width - 10;
-		uint8_t topbox 	= 10 ;
-		uint8_t bottombox = height - 10  ;
+		uint8_t leftbox 	= 5;
+		uint8_t rightbox 	= width - 5;
+		uint8_t topbox 	= 5 ;
+		uint8_t bottombox = height - 5  ;
 		
 		_vfd.clearScreen();
 		
@@ -1294,9 +1294,9 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.write(str);
  
 		str = string(PiCarMgr::PiCarMgr_Version);
-		start  =  centerX  -( (str.size() /2)  * 7) - 3 ;
+		start  =  centerX  -( (str.size() /2) * 6) - 3 ;
 		
-		_vfd.setCursor( start ,centerY+15);
+		_vfd.setCursor( start ,centerY+18);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.write(str);
  

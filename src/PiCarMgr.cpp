@@ -872,7 +872,6 @@ void PiCarMgr::PiCanLoop(){
 					else
 						_display.LEDeventVol();
 				}
-				
 			}
 			
 			if(volWasClicked){

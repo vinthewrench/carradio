@@ -1313,19 +1313,19 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	 	if(radio->isConnected()){
 	 		_vfd.setCursor( 15, 50);
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.printPacket( "RADIO OK");
+			_vfd.printPacket( "RADIO");
 		}
 		
 		if(gps->isConnected()){
  			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 50, 50);
-			_vfd.printPacket( "GPS OK");
+			_vfd.printPacket( "GPS");
 		}
  
 		if(can->isConnected()){
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 80, 50);
-			_vfd.printPacket( "CANBUS OK");
+			_vfd.printPacket( "CANBUS");
 		}
 	}
 

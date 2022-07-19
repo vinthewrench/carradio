@@ -107,7 +107,7 @@ bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf, 
 
 void DuppaEncoder::stop(){
 	reset();
-//	setColor(0, 0, 0);
+   setColor(0, 0, 0);
 	_isSetup = false;
 	_i2cPort.stop();
  }

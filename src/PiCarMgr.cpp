@@ -225,7 +225,6 @@ bool PiCarMgr::begin(){
 		}
 		
 		if(firstRunToday){
-			
 			LOGT_INFO("Hello Moto\n");
 	 
 			//	//		_audio.playSound("BTL.wav", [=](bool success){

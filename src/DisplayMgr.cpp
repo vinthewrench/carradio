@@ -968,11 +968,10 @@ void DisplayMgr::DisplayUpdate(){
 					shouldRedraw = false;
 					shouldUpdate = true;
 
-					if(diff.tv_sec >=  5) {
-#warning remove this
-//						pushMode(MODE_TIME);
-//						shouldRedraw = true;
-//						shouldUpdate = true;
+					if(diff.tv_sec >=  3) {
+						pushMode(MODE_TIME);
+						shouldRedraw = true;
+						shouldUpdate = true;
 					}
 				}
 				else if(_current_mode == MODE_DEV_STATUS) {

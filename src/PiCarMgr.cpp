@@ -162,7 +162,43 @@ bool PiCarMgr::begin(){
 		startCompass();
 #endif
 		startControls();
+
+		// setup display device
+		if(!_display.begin(path_display,B9600))
+			throw Exception("failed to setup Display ");
 		
+		// set initial brightness?
+		_display.setKnobBackLight(false);
+		_display.setBrightness(_dimLevel);
+
+		// SETUP CANBUS
+		_can.begin();
+ 
+	 #if USE_SERIAL_GPS
+			 
+	 #if defined(__APPLE__)
+			 const char* path_gps  = "/dev/cu.usbmodem14101";
+	 #else
+			 const char* path_gps  = "/dev/ttyACM0";
+	 #endif
+			 
+			 if(!_gps.begin(path_gps,B9600, error))
+				 throw Exception("failed to setup GPS.  error: %d", error);
+	 #else
+			 constexpr uint8_t  GPSAddress = 0x42;
+			 if(!_gps.begin(GPSAddress, error))
+				 printf("failed to setup GPS %d ", error);
+	 #endif
+
+		// find first RTS device
+		auto devices = RtlSdr::get_devices();
+		if(devices.size() > 0) {
+			if(!_radio.begin(devices[0].index))
+				throw Exception("failed to setup Radio ");
+		}
+
+		_display.showStartup();  // show startup
+
 		// setup audio out
 		if(!_audio.begin(pcmrate, true ))
 			throw Exception("failed to setup Audio ");
@@ -171,46 +207,10 @@ bool PiCarMgr::begin(){
 		if(!_audio.setVolume(0)
 			|| ! _audio.setBalance(0))
 			throw Exception("failed to setup Audio levels ");
-		
-		// find first RTS device
-		auto devices = RtlSdr::get_devices();
-		if(devices.size() > 0) {
-			if(!_radio.begin(devices[0].index))
-				throw Exception("failed to setup Radio ");
-		}
-		
+ 
 		restoreStationsFromFile();
 		restoreRadioSettings();
-		
-#if USE_SERIAL_GPS
-		
-#if defined(__APPLE__)
-		const char* path_gps  = "/dev/cu.usbmodem14101";
-#else
-		const char* path_gps  = "/dev/ttyACM0";
-#endif
-		
-		if(!_gps.begin(path_gps,B9600, error))
-			throw Exception("failed to setup GPS.  error: %d", error);
-#else
-		constexpr uint8_t  GPSAddress = 0x42;
-		if(!_gps.begin(GPSAddress, error))
-			printf("failed to setup GPS %d ", error);
-		
-#endif
-		// setup display device
-		if(!_display.begin(path_display,B9600))
-			throw Exception("failed to setup Display ");
-		
-		// set initial brightness?
-		_display.setKnobBackLight(false);
-		_display.setBrightness(_dimLevel);
-	
-		// SETUP CANBUS
-		_can.begin();
-		
-		_display.showStartup();  // show startup
-		
+ 
 		_isSetup = true;
 		
 		bool firstRunToday = true;

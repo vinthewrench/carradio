@@ -384,6 +384,10 @@ bool DisplayMgr::setBrightness(double level) {
 //		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
 		_rightRing.SetGlobalCurrent(ledCurrent);
 		_leftRing.SetGlobalCurrent(ledCurrent);
+		
+		_rightKnob.setBrightness(level);
+		_leftKnob.setBrightness(level);
+
 	}
 	
 	return success;
@@ -411,6 +415,7 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 	}
 	return true;
 }
+
 
 
 bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){

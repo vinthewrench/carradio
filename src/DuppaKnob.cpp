@@ -14,6 +14,8 @@
 DuppaKnob::DuppaKnob(){
 	
 	_isSetup = false;
+	_currentColor = RGB::Black;
+	_brightness = 1.0;
  }
 
 DuppaKnob::~DuppaKnob(){
@@ -92,14 +94,32 @@ bool DuppaKnob::wasMoved( bool &cw){
 
 
 
+
+bool DuppaKnob::setBrightness(double level){
+	if(_isSetup){
+		_brightness = level > 1.0?1.0:level;
+		if(_currentColor != RGB::Black){
+			return setColor(_currentColor);
+		}
+		return true;
+	}
+ 
+	return false;
+}
+
+
 bool DuppaKnob::setColor(RGB color){
-	return _isSetup && _duppa.setColor(color);
+	return setColor(color.r, color.g, color.b);
 }
 
 bool DuppaKnob::setColor(uint8_t red, uint8_t green, uint8_t blue ){
-	return _isSetup && _duppa.setColor(red,green,blue);
-
+	
+	red = red 		* _brightness;
+	green = green 	* _brightness;
+	blue = blue 	* _brightness;
+ 	return _duppa.setColor(red, green, blue);
 }
+
 
 bool DuppaKnob::setAntiBounce(uint8_t period){
 	return _isSetup && _duppa.setAntiBounce(period);

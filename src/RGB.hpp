@@ -84,7 +84,16 @@ struct RGB {
 		b = (colorcode >>  0) & 0xFF;
 		return *this;
 	}
+	 
+	inline bool operator==(const RGB& right) const {
+		return ( right.r == r &&  right.g ==  g &&  right.b ==  b);
+		}
 	
+
+	inline bool operator!=(const RGB& right) const {
+		return ( !(right == *this));
+		}
+
 	/// Predefined RGB colors
 	typedef enum {
 		AliceBlue=0xF0F8FF,

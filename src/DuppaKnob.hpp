@@ -36,6 +36,7 @@ public:
 
 	bool setColor(RGB color);
 
+	bool setBrightness(double level);
 	
 	bool setAntiBounce(uint8_t period); // period * 0.192ms
 	bool setDoubleClickTime(uint8_t period);  // period * 10ms
@@ -45,4 +46,7 @@ private:
 	
 	bool					_isSetup;
 	DuppaEncoder		_duppa;
+	
+	RGB 					_currentColor;
+	double				_brightness;
 };

@@ -1084,15 +1084,16 @@ void PiCarMgr::idle(){
 	
 	bool isDayTime = false;
 	
-	if(fDB->boolForKey(DAYTIME, isDayTime) ) {
-		// are the lights on,  then we can dim
+	string rawValue;
+	if( fDB->valueWithKey(JK_DIMMER_SW, &rawValue)
+		&& fDB->boolForKey(DAYTIME, isDayTime) ) {
 		
-		if(_isDayTime	!= isDayTime){
-			_isDayTime = isDayTime;
+		double dimSW = fDB->normalizedDoubleForValue(JK_DIMMER_SW,rawValue) / 100. ;
+		
+		// did anything change
+		if(_isDayTime	!= isDayTime || dimSW != _dimLevel) {
 			
-			printf( "isDayTime =  %s\n",isDayTime?"TRUE":"FALSE");
-
-			if(_isDayTime){
+			if(_isDayTime	!= isDayTime){
 				setDimLevel(1.0);
 				_display.setKnobBackLight(false);
 				_display.setBrightness(1);
@@ -1101,33 +1102,32 @@ void PiCarMgr::idle(){
 				_display.setKnobBackLight(true);
 				
 				if( _autoDimmerMode ){
-					string rawValue;
-					if(fDB->valueWithKey(JK_DIMMER_SW, &rawValue) ) {
-						
-						double dimSW = fDB->normalizedDoubleForValue(JK_DIMMER_SW,rawValue) / 100. ;
-						
-						printf( "dimlevel = %1.2f -> %1.2f\n",_dimLevel, dimSW);
-						
-						if(dimSW != _dimLevel){
-							setDimLevel(dimSW);
-							// update the brightness
-							_display.setBrightness(_dimLevel);
-						}
+					
+					setDimLevel(dimSW);
+					
+					printf( "dimlevel = %1.2f -> %1.2f\n",_dimLevel, dimSW);
+					
+					if(dimSW != _dimLevel){
+						setDimLevel(dimSW);
+						// update the brightness
+						_display.setBrightness(_dimLevel);
 					}
 				}
 			}
+			
+			_isDayTime = isDayTime;
+			
 		}
 	}
 	
+ 
 	
 	// ocassionally save properties
 	saveRadioSettings();
 	if(_db.propertiesChanged()){
 		_db.savePropertiesToFile();
 	}
-	
-	
-}
+ }
 
 void* PiCarMgr::PiCanLoopThread(void *context){
 	PiCarMgr* d = (PiCarMgr*)context;

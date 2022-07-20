@@ -234,8 +234,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-		
-			
+	 
 			
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
@@ -636,7 +635,7 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
  
-		if(_mode == VHF ){
+		if(_mode == VHF ||  _mode == GMRS){
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);
 			
@@ -655,7 +654,7 @@ void RadioMgr::SDRProcessor(){
 			adjust_gain(audiosamples, 0.5);
 		}
 #warning fix this
-		else if((_mode == BROADCAST_FM  || _mode == VHF ||  _mode == GMRS)
+		else if((_mode == BROADCAST_FM)
 			&& _sdrDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.

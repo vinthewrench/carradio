@@ -17,6 +17,8 @@
 #include "DisplayMgr.hpp"
 #include "AudioOutput.hpp"
 #include "PropValKeys.hpp"
+#include "FmDecode.hpp"
+#include "VhfDecode.hpp"
 
 #define DEBUG_DEMOD 1
 typedef void * (*THREADFUNCPTR)(void *);
@@ -233,34 +235,18 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			_sdr.resetBuffer();
 			_output_buffer.flush();
 		
+			
+			
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
 			if(! _sdr.setFrequency(tuner_freq))
 				return false;
 
-			// changing FM frequencies means recreating the decoder
+#warning fill these in later
 			
-			// The baseband signal is empty above 100 kHz, so we can
-			// downsample to ~ 200 kS/s without loss of information.
-			// This will speed up later processing stages.
-			unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
-			fprintf(stderr, "baseband downsampling factor %u\n", downsample);
-			
-			// Prevent aliasing at very low output sample rates.
-			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
-												0.45 * _pcmrate);
-			
-			_sdrDecoder = new FmDecoder(RtlSdr::default_sampleRate,
-												newFreq - tuner_freq,
-												_pcmrate,
-												false,  // stereo
-												FmDecoder::default_deemphasis,     // deemphasis,
-												FmDecoder::default_bandwidth_if,   // bandwidth_if
-												FmDecoder::default_freq_dev,       // freq_dev
-												bandwidth_pcm,
-												downsample
-												);
+			_sdrDecoder = new VhfDecode();
+		
 			_shouldReadAux = false;
 			_shouldReadSDR = true;
 		}
@@ -650,7 +636,26 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
  
-		if((_mode == BROADCAST_FM  || _mode == VHF ||  _mode == GMRS)
+		if(_mode == VHF ){
+			/// this block is critical.  dont change frequencies in the middle of a process.
+			std::lock_guard<std::mutex> lock(_mutex);
+			
+			if(!_shouldReadSDR)
+				continue;
+			
+			// Decode FM signal.
+			_sdrDecoder->process(iqsamples, audiosamples);
+
+			// Measure audio level.
+			double audio_mean, audio_rms;
+			samples_mean_rms(audiosamples, audio_mean, audio_rms);
+			audio_level = 0.95 * audio_level + 0.05 * audio_rms;
+			
+			// Set nominal audio volume.
+			adjust_gain(audiosamples, 0.5);
+		}
+#warning fix this
+		else if((_mode == BROADCAST_FM  || _mode == VHF ||  _mode == GMRS)
 			&& _sdrDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.

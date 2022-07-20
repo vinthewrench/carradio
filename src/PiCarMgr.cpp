@@ -115,6 +115,7 @@ PiCarMgr::PiCarMgr(){
 		{MENU_TIME,		"Time"},
 		{MENU_INFO,		"Info"},
 		{MENU_SETTINGS, "Settings"},
+		{MENU_EXIT, 	 "Exit"}
 	};
 	
 	_isRunning = true;
@@ -1294,6 +1295,13 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 		case MENU_DTC:
 			_display.showDTC();
 			break;
+			
+		case MENU_EXIT:
+			if(_radio.isOn())
+				_display.showRadioChange();
+				else _display.showTime();
+			break;
+			
 			
 		case 	MENU_UNKNOWN:
 		default:

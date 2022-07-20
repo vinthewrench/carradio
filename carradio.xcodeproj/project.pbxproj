@@ -71,6 +71,7 @@
 		2E0EA4892843174F0012E406 /* bno055.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bno055.h; sourceTree = "<group>"; };
 		2E0EA48C2843D2C10012E406 /* BNO055_Compass.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BNO055_Compass.cpp; sourceTree = "<group>"; };
 		2E0EA48D2843D2C10012E406 /* BNO055_Compass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BNO055_Compass.hpp; sourceTree = "<group>"; };
+		2E5F7F4428878103008E5C89 /* SDRDecoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SDRDecoder.hpp; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -372,6 +373,7 @@
 				2E62A8F828244E5F00F5066B /* RtlSdr.hpp */,
 				2E9F9E9B282727D200E12F5D /* Filter.cpp */,
 				2E9F9E9C282727D200E12F5D /* Filter.hpp */,
+				2E5F7F4428878103008E5C89 /* SDRDecoder.hpp */,
 				2E9F9E9D282727D200E12F5D /* FmDecode.cpp */,
 				2E9F9E9A282727D200E12F5D /* FmDecode.hpp */,
 				2E9F9E99282716CF00E12F5D /* DataBuffer.hpp */,

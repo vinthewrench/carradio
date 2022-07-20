@@ -25,7 +25,7 @@ typedef void * (*THREADFUNCPTR)(void *);
 RadioMgr::RadioMgr(){
 	_mode = MODE_UNKNOWN;
 	_mux = MUX_MONO;
-	_fmDecoder = NULL;
+	_sdrDecoder = NULL;
 	_frequency = 0;
 	_isOn = false;
 	_isSetup = false;
@@ -142,9 +142,9 @@ bool RadioMgr::setON(bool isOn) {
 		_output_buffer.flush();
 		
 		// delete decoders
-		if(_fmDecoder) {
-			delete _fmDecoder;
-			_fmDecoder = NULL;
+		if(_sdrDecoder) {
+			delete _sdrDecoder;
+			_sdrDecoder = NULL;
 		}
 		display->showTime();
 	}
@@ -215,9 +215,9 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		_mux =  MUX_MONO;
 	 
 		// create proper decoder
-		if(_fmDecoder) {
-			delete _fmDecoder;
-			_fmDecoder = NULL;
+		if(_sdrDecoder) {
+			delete _sdrDecoder;
+			_sdrDecoder = NULL;
 		}
 		
 		if(_mode == AUX) {
@@ -251,7 +251,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
 												0.45 * _pcmrate);
 			
-			_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
+			_sdrDecoder = new FmDecoder(RtlSdr::default_sampleRate,
 												newFreq - tuner_freq,
 												_pcmrate,
 												false,  // stereo
@@ -287,7 +287,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
 												0.45 * _pcmrate);
 			
-			_fmDecoder = new FmDecoder(RtlSdr::default_sampleRate,
+			_sdrDecoder = new FmDecoder(RtlSdr::default_sampleRate,
 												newFreq - tuner_freq,
 												_pcmrate,
 												true,  // stereo
@@ -651,7 +651,7 @@ void RadioMgr::SDRProcessor(){
 			continue;
  
 		if((_mode == BROADCAST_FM  || _mode == VHF ||  _mode == GMRS)
-			&& _fmDecoder != NULL){
+			&& _sdrDecoder != NULL){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -660,7 +660,7 @@ void RadioMgr::SDRProcessor(){
 				continue;
 			
 			// Decode FM signal.
-			_fmDecoder->process(iqsamples, audiosamples);
+			_sdrDecoder->process(iqsamples, audiosamples);
 			
 			// Measure audio level.
 			double audio_mean, audio_rms;
@@ -671,14 +671,14 @@ void RadioMgr::SDRProcessor(){
 			adjust_gain(audiosamples, 0.5);
 			
 			// Stereo indicator change
-			bool detect = _fmDecoder->stereo_detected();
+			bool detect = dynamic_cast<FmDecoder *>(_sdrDecoder)->stereo_detected();
 	 		if (detect != got_stereo) {
 				got_stereo = detect;
  				_mux = detect? MUX_STEREO:MUX_MONO;
 				
 //				if (detect)
 //					printf( "got stereo signal (pilot level = %f)\n",
-//							 _fmDecoder->get_pilot_level());
+//							 _sdrDecoder->get_pilot_level());
 //				else
 //					printf( "lost stereo signal\n");
 				
@@ -691,19 +691,19 @@ void RadioMgr::SDRProcessor(){
 //			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
 //					  block,
 //					  _frequency *  1.0e-6,
-//					  //					  (tuner_freq + _fmDecoder->get_tuning_offset()) * 1.0e-6,
-//					  20*log10(_fmDecoder->get_if_level()),
-//					  20*log10(_fmDecoder->get_baseband_level()) + 3.01,
+//					  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
+//					  20*log10(_sdrDecoder->get_if_level()),
+//					  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
 //					  20*log10(audio_level) + 3.01);
 			
 			
 //			// Show stereo status.
-//	 			if (_fmDecoder->stereo_detected() != got_stereo) {
+//	 			if (_sdrDecoder->stereo_detected() != got_stereo) {
 //
-//		 		got_stereo = _fmDecoder->stereo_detected();
+//		 		got_stereo = _sdrDecoder->stereo_detected();
 //				if (got_stereo)
 //					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
-//							  _fmDecoder->get_pilot_level());
+//							  _sdrDecoder->get_pilot_level());
 //				else
 //					fprintf(stderr, "\nlost stereo signal\n");
 //			}

@@ -18,6 +18,7 @@
 
 #include <sys/time.h>
 #include "RtlSdr.hpp"
+#include "SDRDecoder.hpp"
 
 #include "DataBuffer.hpp"
 #include "ErrorMgr.hpp"
@@ -100,7 +101,7 @@ private:
 	DataBuffer<Sample>   _output_buffer;
 
 	mutable std::mutex _mutex;		// when changing frequencies and modes.
-	FmDecoder*			_fmDecoder;
+	SDRDecoder*			_sdrDecoder;
 	AudioLineInput		_lineInput;
 	
 	//  Reader threads

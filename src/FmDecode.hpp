@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <vector>
 #include "Filter.hpp"
-
+#include "SDRDecoder.hpp"
 
 /* Detect frequency by phase discrimination between successive samples. */
 class PhaseDiscriminator
@@ -119,7 +119,7 @@ private:
 
 
 /** Complete decoder for FM broadcast signal. */
-class FmDecoder
+class FmDecoder : public SDRDecoder
 {
 public:
 	

@@ -18,10 +18,9 @@ class VhfDecode : public SDRDecoder
 {
 public:
 	
-	~VhfDecode();
-
 	VhfDecode();
-	
+	~VhfDecode();
+ 
 	
 	/**
 	 * Process IQ samples and return audio samples.

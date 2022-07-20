@@ -63,6 +63,7 @@ set(SOURCES
 	src/DisplayMgr.cpp
 	src/RadioMgr.cpp
 	src/FmDecode.cpp
+	src/VhfDecode.cpp
 	src/Filter.cpp
 	src/AudioOutput.cpp
 	src/AudioLineInput.cpp

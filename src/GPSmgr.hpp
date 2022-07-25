@@ -114,7 +114,7 @@ public:
 	
 	
 #if USE_SERIAL_GPS
-	bool begin(const char* path = "/dev/ttyAMA0", speed_t speed =  B9600);
+	bool begin(const char* path = "/dev/ttyACM0", speed_t speed =  B9600);
 	bool begin(const char* path, speed_t speed, int &error);
 #else
 	bool begin(uint8_t deviceAddress = 0x42);

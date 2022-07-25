@@ -1806,7 +1806,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
 		
+#if !USE_SERIAL_GPS
 		gps->setShouldRead(true);
+#endif
+		
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);
@@ -1825,7 +1828,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 //		setKnobColor(KNOB_RIGHT, RGB::Lime);
+#if !USE_SERIAL_GPS
 		gps->setShouldRead(false);
+#endif
 		return;
 	}
 	GPSLocation_t location;

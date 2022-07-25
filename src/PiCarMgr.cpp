@@ -187,10 +187,10 @@ bool PiCarMgr::begin(){
 	 #if defined(__APPLE__)
 			 const char* path_gps  = "/dev/cu.usbmodem14101";
 	 #else
-			 const char* path_gps  = "/dev/ttyACM0";
+			 const char* path_gps  = "/dev/ttyAMA1";
 	 #endif
 			 
-			 if(!_gps.begin(path_gps,B9600, error))
+			 if(!_gps.begin(path_gps, B38400, error))
 				 throw Exception("failed to setup GPS.  error: %d", error);
 	 #else
 			 constexpr uint8_t  GPSAddress = 0x42;

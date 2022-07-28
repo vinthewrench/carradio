@@ -44,6 +44,7 @@
 #include "RadioMgr.hpp"
 #include "GPSmgr.hpp"
 #include "PiCarCAN.hpp"
+#include "W1Mgr.hpp"
 #include "PropValKeys.hpp"
 
 #include "PiCarDB.hpp"
@@ -73,13 +74,14 @@ class PiCarMgr {
 	bool begin();
 	void stop();
 
-	DisplayMgr* display() {return &_display;};
-	AudioOutput* audio() {return &_audio;};
-	RadioMgr* 	radio() 	{return &_radio;};
-	PiCarDB * 	db() 		{return &_db;};
-	GPSmgr * 	gps() 		{return &_gps;};
+	DisplayMgr* display() 	{return &_display;};
+	AudioOutput* audio() {	return &_audio;};
+	RadioMgr* 	radio() 		{return &_radio;};
+	PiCarDB * 	db() 			{return &_db;};
+	GPSmgr * 	gps()			{return &_gps;};
 	PiCarCAN * 	can() 		{return &_can;};
 	ArgononeFan* fan() 		{return &_fan;};
+	W1Mgr*		 w1()			{return &_w1;};
 
 	void startCPUInfo( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopCPUInfo();
@@ -213,6 +215,7 @@ private:
 	PiCarDB 				_db;
 	GPSmgr				_gps;
 	PiCarCAN				_can;
+	W1Mgr					_w1;
 	
 	CPUInfo				_cpuInfo;
 	TempSensor			_tempSensor1;

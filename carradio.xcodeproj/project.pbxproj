@@ -11,6 +11,7 @@
 		2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EF283EAEB2003D074C /* OBD2.cpp */; };
 		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
 		2E5F7F47288783C5008E5C89 /* VhfDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F7F46288783C5008E5C89 /* VhfDecode.cpp */; };
+		2E5F7F8628933B9F008E5C89 /* W1Mgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F7F8428933B9F008E5C89 /* W1Mgr.cpp */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
@@ -75,6 +76,8 @@
 		2E5F7F4428878103008E5C89 /* SDRDecoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SDRDecoder.hpp; sourceTree = "<group>"; };
 		2E5F7F45288783C5008E5C89 /* VhfDecode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VhfDecode.hpp; sourceTree = "<group>"; };
 		2E5F7F46288783C5008E5C89 /* VhfDecode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VhfDecode.cpp; sourceTree = "<group>"; };
+		2E5F7F8428933B9F008E5C89 /* W1Mgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = W1Mgr.cpp; sourceTree = "<group>"; };
+		2E5F7F8528933B9F008E5C89 /* W1Mgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = W1Mgr.hpp; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -200,6 +203,15 @@
 			path = Unused;
 			sourceTree = "<group>";
 		};
+		2E5F7F8328933B49008E5C89 /* 1 Wire */ = {
+			isa = PBXGroup;
+			children = (
+				2E5F7F8528933B9F008E5C89 /* W1Mgr.hpp */,
+				2E5F7F8428933B9F008E5C89 /* W1Mgr.cpp */,
+			);
+			name = "1 Wire";
+			sourceTree = "<group>";
+		};
 		2E62A845280735DA00F5066B = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +245,7 @@
 				2E82109D2835A336003D074C /* GPS */,
 				2E8210AC2835A465003D074C /* Audio */,
 				2E8210E7283EAE32003D074C /* CanBus */,
+				2E5F7F8328933B49008E5C89 /* 1 Wire */,
 				2E8210AB2835A3F3003D074C /* Devices */,
 				2E8210A92835A3B9003D074C /* Utilities */,
 			);
@@ -498,6 +511,7 @@
 				2E8210A22835A36D003D074C /* utm.cpp in Sources */,
 				2E8210F5283EAEB2003D074C /* CANBusMgr.cpp in Sources */,
 				2E8D371B2874BFFF000182E5 /* ArgononeFan.cpp in Sources */,
+				2E5F7F8628933B9F008E5C89 /* W1Mgr.cpp in Sources */,
 				2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */,
 				2E8210CA2835A593003D074C /* CPUInfo.cpp in Sources */,
 				2E62A852280735DA00F5066B /* main.cpp in Sources */,

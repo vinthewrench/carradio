@@ -85,6 +85,7 @@ set(SOURCES
 	src/PiCarCAN.cpp
 	src/DTCcodes.cpp
 	src/ArgononeFan.cpp
+	src/W1Mgr.cpp
 #	src/MMC5983MA.cpp
 	
 #Bosch compass

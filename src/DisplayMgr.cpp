@@ -1266,13 +1266,23 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	
+	
+#if defined(__APPLE__)
+	if(transition == TRANS_ENTERING){
+		printf("Enter drawStartupScreen\n");
+	}
+	
+ 	if(transition == TRANS_LEAVING){
+		printf("Leaving drawStartupScreen\n");
+
+	}
+#else
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 
 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
  
-	
 
 	if(transition == TRANS_ENTERING){
  
@@ -1338,6 +1348,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 //
 //	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+	
+#endif
 }
 
 void DisplayMgr::drawDeviceStatusScreen(modeTransition_t transition){

@@ -154,6 +154,9 @@ bool PiCarMgr::begin(){
 		// read in any properties
 		_db.restorePropertiesFromFile();
 		
+		// start 1Wire devices
+		_w1.begin();
+		
 		startCPUInfo();
 		startFan();
 		
@@ -163,6 +166,7 @@ bool PiCarMgr::begin(){
 		startCompass();
 #endif
 		startControls();
+		
 
 		// setup display device
 		if(!_display.begin(path_display,B9600))
@@ -259,6 +263,8 @@ void PiCarMgr::stop(){
 		_isSetup = false;
 		
 		_gps.stop();
+		_can.stop();
+		_w1.stop();
 		_display.stop();
 		
 		stopControls();

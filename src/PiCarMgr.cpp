@@ -415,18 +415,18 @@ void PiCarMgr::saveRadioSettings(){
 void PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
- 
+	
 	// SET GPS CLOCK SYNC PREFS
 	{
 		_clocksync_gps = false;
 		_clocksync_gps_secs = 0;
-
+		
 		uint16_t syncVal = 0;
- 		if(_db.getUint16Property(PROP_SYNC_CLOCK_TO_GPS,&syncVal) && syncVal > 0){
+		if(_db.getUint16Property(PROP_SYNC_CLOCK_TO_GPS,&syncVal) && syncVal > 0){
 			_clocksync_gps = true;
 			_clocksync_gps_secs = syncVal;
- 		}
- 	}
+		}
+	}
 	
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
@@ -438,7 +438,7 @@ void PiCarMgr::restoreRadioSettings(){
 			setDimLevel(dimLevel);
 		}
 	}
-		
+	
 	// SET Audio
 	if(!( _db.getJSONProperty(PROP_LAST_AUDIO_SETTING,&j)
 		  && SetAudio(j))){
@@ -467,7 +467,6 @@ void PiCarMgr::restoreRadioSettings(){
 			}
 		}
 	}
-	
 	
 	// SET Preset stations
 	
@@ -513,12 +512,41 @@ void PiCarMgr::restoreRadioSettings(){
 		auto mode = RadioMgr::stringToMode(str);
 		_lastRadioMode = mode;
 	}
+	
+	// read the 1-wire device map
+	_w1Map.clear();
+	if(_db.getJSONProperty(PROP_W1_MAP,&j)
+		&&  j.is_array()){
+		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_ID)
+				&&  item[PROP_ID].is_string()
+				&&  item.contains(PROP_KEY)
+				&&  item[PROP_KEY].is_string()){
+				
+				auto deviceid  =   item[PROP_ID];
+				auto dbKey 		  =   item[PROP_KEY];
+				string title = dbKey;
+				
+				if(item.contains(PROP_TITLE)
+					&&  item[PROP_TITLE].is_string()){
+					title = item[PROP_TITLE];
+				}
+				
+				w1_map_entry entry = {
+					.deviceID = deviceid,
+					.dbKey = dbKey,
+					.title = title
+				};
+				
+				_w1Map[deviceid] = entry;
+			}
+		}
+	}
 }
 
 nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 	json j;
-	
-	
 	
 	for (auto& entry : _preset_stations) {
 		json j1;
@@ -1061,12 +1089,28 @@ void PiCarMgr::idle(){
 	}
 #endif
 	
-	if(_tempSensor1.isConnected()){
-		// handle input
-		_tempSensor1.rcvResponse([=]( map<string,string> results){
-			_db.updateValues(results);
-		});
+	// grab temp data from 1 wire
+	{
+		map<string,float> temps = {};
+		
+		if(_w1.getTemperatures(temps)){
+			for( auto &[devID, temp]: temps){
+				// find it's db entry name
+				if(_w1Map.count(devID)){
+					w1_map_entry map = _w1Map[devID];
+					_db.updateValue(map.dbKey,temp);
+				}
+			}
+			
+		}
 	}
+			
+//	if(_tempSensor1.isConnected()){
+//		// handle input
+//		_tempSensor1.rcvResponse([=]( map<string,string> results){
+//			_db.updateValues(results);
+//		});
+//	}
 	
 	if(_cpuInfo.isConnected()){
 		// handle input

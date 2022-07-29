@@ -128,5 +128,18 @@
 				"freq": 462600000,
 				"mode": "GMRS"
 		  }
-	 ]
+	 ],
+	 "w1Map": [
+		 {
+			 "id": "28-3c89f6494824",
+			 "key": "OUTSIDE_TEMP",
+			 "title": "Outside"
+		 },
+		 {
+			 "id": "28-3c49f64979eb",
+			 "key": "INSIDE_TEMP",
+			 "title" : "Inside"
+		 }
+	]
+	  
 }

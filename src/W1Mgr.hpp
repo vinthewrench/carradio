@@ -42,6 +42,8 @@ public:
 	void stop();
 	bool isConnected() ;
  
+	bool 	getTemperatures(map<string,float>& );
+	
 	
 private:
 	bool 				_isSetup = false;
@@ -50,6 +52,8 @@ private:
 	struct timespec	_lastQueryTime;
 	uint64_t     		_queryDelay;			// how long to wait before next query
  
+	map<string,float>	_temperatureData;
+	
 	
 	stringvector	getDeviceIDs();
 	stringvector	getW1_slaveInfo(string deviceName);

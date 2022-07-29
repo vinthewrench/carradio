@@ -193,7 +193,15 @@ private:
 	static void* PiCanLoopThread(void *context);
 	static void PiCanLoopThreadCleanup(void *context);
 	void idle();  // occasionally called durrig idle time
-		
+
+	// used for mapping 1-wire values to DB
+	typedef struct {
+		string 	deviceID;
+		string 	dbKey;
+		string	title;
+	} w1_map_entry;
+	map< string, w1_map_entry> _w1Map;
+ 
 	RadioMgr::radio_mode_t					  _lastRadioMode;
 	map <RadioMgr::radio_mode_t,uint32_t> _lastFreqForMode;
 	menu_mode_t										_lastMenuMode;		// used for unwinding

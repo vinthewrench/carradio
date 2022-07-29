@@ -29,7 +29,7 @@ W1Mgr::W1Mgr() {
 	_isSetup = false;
 	_queryDelay 		= 5;	// seconds
 	_lastQueryTime 	= {0,0};
-
+	_temperatureData.clear();
 	_isRunning = true;
 
 	pthread_create(&_TID, NULL,
@@ -44,6 +44,8 @@ W1Mgr::~W1Mgr(){
 	
 	pthread_mutex_lock (&_mutex);
 	_isRunning = false;
+	_temperatureData.clear();
+
 	pthread_cond_signal(&_cond);
 	pthread_mutex_unlock (&_mutex);
 
@@ -66,6 +68,7 @@ bool W1Mgr::begin(uint64_t queryDelay,  int &error){
  
 	_queryDelay = queryDelay;
 	_lastQueryTime 	= {0,0};
+	_temperatureData.clear();
 	_shouldRead = true;
  	_isSetup = true;
 	
@@ -76,8 +79,11 @@ bool W1Mgr::begin(uint64_t queryDelay,  int &error){
 void W1Mgr::stop(){
 	
 	if(_isSetup) {
- 		_isSetup = false;
-		}
+		_shouldRead = false;
+		_isSetup = false;
+		_temperatureData.clear();
+		
+	}
 }
 
 bool  W1Mgr::isConnected() {
@@ -98,6 +104,20 @@ bool W1Mgr::setShouldRead(bool shouldRead){
 	return false;
 }
 
+bool 	W1Mgr::getTemperatures( map<string,float> & temps){
+	bool success = false;
+	
+	if(_isSetup) {
+		pthread_mutex_lock (&_mutex);
+		temps = _temperatureData;
+		success = true;
+		
+		pthread_mutex_unlock (&_mutex);
+		
+	}
+	return success;
+
+}
 
 stringvector	W1Mgr::getW1_slaveInfo(string deviceID){
 	stringvector lines ={};
@@ -177,8 +197,9 @@ bool W1Mgr::processDS18B20(string deviceName){
 			if(!line.empty()){
 				float tempC = stof(line);
 				tempC = tempC / 1000.;	// scale temp
-				
-				printf("device %s = %.2f\n", deviceName.c_str(), tempC);
+				pthread_mutex_lock (&_mutex);
+				_temperatureData[deviceName] = tempC;
+				pthread_mutex_unlock (&_mutex);
 				success = true;
 				
 				}

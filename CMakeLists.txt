@@ -54,7 +54,6 @@ set(SOURCES
 	src/main.cpp
 	src/ErrorMgr.cpp
 	src/I2C.cpp
-	src/TMP117.cpp
 	src/DuppaKnob.cpp
 	src/DuppaEncoder.cpp
 	src/DuppaLEDRing.cpp
@@ -71,7 +70,6 @@ set(SOURCES
 	src/CPUInfo.cpp
 	src/PiCarDB.cpp
 	src/PiCarMgr.cpp
-	src/TempSensor.cpp
 	src/TimeStamp.cpp
 	src/GPSmgr.cpp
 	src/tranmerc.cpp
@@ -87,7 +85,11 @@ set(SOURCES
 	src/ArgononeFan.cpp
 	src/W1Mgr.cpp
 #	src/MMC5983MA.cpp
-	
+
+# TMP117 Temp sensor
+#	src/TempSensor.cpp
+#	src/TMP117.cpp
+
 #Bosch compass
 #	src/bno055.c
 #	src/BNO055_Compass.cpp

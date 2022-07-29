@@ -31,7 +31,6 @@
 		2E8210C62835A593003D074C /* DuppaEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210B72835A592003D074C /* DuppaEncoder.cpp */; };
 		2E8210C72835A593003D074C /* DuppaLEDRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210B92835A593003D074C /* DuppaLEDRing.cpp */; };
 		2E8210C82835A593003D074C /* I2C.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210BA2835A593003D074C /* I2C.cpp */; };
-		2E8210C92835A593003D074C /* TempSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210BB2835A593003D074C /* TempSensor.cpp */; };
 		2E8210CA2835A593003D074C /* CPUInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210BF2835A593003D074C /* CPUInfo.cpp */; };
 		2E8210CB2835A593003D074C /* TMP117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C22835A593003D074C /* TMP117.cpp */; };
 		2E8210CC2835A593003D074C /* DuppaKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210C52835A593003D074C /* DuppaKnob.cpp */; };
@@ -527,7 +526,6 @@
 				2E8210C72835A593003D074C /* DuppaLEDRing.cpp in Sources */,
 				2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */,
 				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,
-				2E8210C92835A593003D074C /* TempSensor.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
 				2E8210A32835A36D003D074C /* tranmerc.cpp in Sources */,
 				2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */,

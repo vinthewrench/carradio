@@ -51,7 +51,10 @@
 #include "CPUInfo.hpp"
 #include "ArgononeFan.hpp"
 
+#if USE_TMP_117
 #include "TempSensor.hpp"
+#endif
+
 #if USE_COMPASS
 #include "CompassSensor.hpp"
 #endif
@@ -89,10 +92,11 @@ class PiCarMgr {
 	void startFan( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopFan();
 
+#if USE_TMP_117
 	void startTempSensors( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
 	void stopTempSensors();
 	PiCarMgrDevice::device_state_t tempSensor1State();
-
+#endif
 	
 #if USE_COMPASS
 	void startCompass( std::function<void(bool didSucceed, std::string error_text)> callback = NULL);
@@ -226,8 +230,14 @@ private:
 	W1Mgr					_w1;
 	
 	CPUInfo				_cpuInfo;
+#if USE_TMP_117
 	TempSensor			_tempSensor1;
-//	CompassSensor		_compass;
+#endif
+	
+#if USE_COMPASS
+	CompassSensor		_compass;
+#endif
+	
 	ArgononeFan			_fan;
 	
 	bool					_autoDimmerMode;		 // controlled by canbus

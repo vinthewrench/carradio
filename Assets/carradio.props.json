@@ -1,145 +1,145 @@
 {
-	 "audio_setting": {
-		  "bal": 0.0,
-		  "fade": 0.0,
-		  "vol": 0.049239939777512357
-	 },
-	 "dimmer_level" :  0.345,
-	 "auto_dimmer_mode" : true,
-	 "canbus-display": [
-		 {
-			 "key": "GM_COOLANT_TEMP",
-			 "line": 1,
-			 "title": "COOLANT"
-		 },
-		 {
-			 "key": "GM_TRANS_TEMP",
-			 "line": 2,
-			 "title": "TRANS TEMP"
-		 },
-		 {
-			 "key": "GM_OIL_PRESSURE",
-			 "line": 3,
-			 "title": "OIL PRESSURE"
-		 },
-		 {
-			 "key": "OBD_LONG_FUEL_TRIM_1",
-			 "line": 4,
-			 "title": "FUEL TRIM B1"
-		 },
-		 {
-			 "key": "OBD_LONG_FUEL_TRIM_2",
-			 "line": 5,
-			 "title": "FUEL TRIM B2"
-		 },
-		 {
-			 "key": "OBD_CONTROL_MODULE_VOLTAGE",
-			 "line": 6,
-			 "title": "VOLTS"
-		 },
-		 {
-			 "key": "JK_FUEL_LEVEL",
-			 "line": 7,
-			 "title": "FUEL"
-		 },
-		 {
-			 "key": "GM_FUEL_CONSUMPTION",
-			 "line": 8,
-			 "title": "CONSUME"
-		 },
-		 {
-			 "key": "GM_VEHICLE_SPEED",
-			 "line": 9,
-			 "title": "SPEED"
-		 },
-		 {
-			 "key": "GM_OLF",
-			 "line": 10,
-			 "title": "OIL LIFE"
-		 },
-		 {
-			 "key": "OBD_VIN",
-			 "line": 13,
-			 "title": "GM VIN"
-		 },
-		 {
-			 "key": "JK_VIN",
-			 "line": 14,
-			 "title": "JK VIN"
-		 },
-		 {
-			 "key": "JK_VEHICLE_DISTANCE",
-			 "line": 15,
-			 "title": "ODOMETER"
-		 }
-	 ],
-	 "clocksync_gps_secs": 5,
-	 "cputemp-query-delay": 4,
-	 "last_menu": "0",
-	 "last_radio_mode": "FM",
-	 "last_radio_modes": [
-		  {
-				"freq": 1440000,
-				"mode": "AM"
-		  },
-		  {
-				"freq": 106700000,
-				"mode": "FM"
-		  },
-		  {
-				"freq": 155610000,
-				"mode": "VHF"
-		  },
-		  {
-				"freq": 462600000,
-				"mode": "GMRS"
-		  }
-	 ],
-	 "last_write": 1654807694,
-	 "temp-query-delay": 4,
-	 "fan-query-delay": 4,
-	 "tuner_knob_mode": 2,
-	 "tuner_presets": [
-		 {
-				"freq": 0,
-				"mode": "AUX"
-		  },
-		  {
-				"freq": 103500000,
-				"mode": "FM"
-		  },
-		  {
-				"freq": 106700000,
-				"mode": "FM"
-		  },
-		  {
-				"freq": 155610000,
-				"mode": "VHF"
-		  },
-		  {
-				"freq": 155805000,
-				"mode": "VHF"
-		  },
-		  {
-				"freq": 162400000,
-				"mode": "VHF"
-		  },
-		  {
-				"freq": 462600000,
-				"mode": "GMRS"
-		  }
-	 ],
-	 "w1Map": [
-		 {
-			 "id": "28-3c89f6494824",
-			 "key": "OUTSIDE_TEMP",
-			 "title": "Outside"
-		 },
-		 {
-			 "id": "28-3c49f64979eb",
-			 "key": "INSIDE_TEMP",
-			 "title" : "Inside"
-		 }
+	"audio_setting": {
+		"bal": 0.0,
+		"fade": 0.0,
+		"vol": 0.049239939777512357
+	},
+	"dimmer_level" :  0.345,
+	"auto_dimmer_mode" : true,
+	"canbus-display": [
+		{
+			"key": "GM_COOLANT_TEMP",
+			"line": 1,
+			"title": "COOLANT"
+		},
+		{
+			"key": "GM_TRANS_TEMP",
+			"line": 2,
+			"title": "TRANS TEMP"
+		},
+		{
+			"key": "GM_OIL_PRESSURE",
+			"line": 3,
+			"title": "OIL PRESSURE"
+		},
+		{
+			"key": "OBD_LONG_FUEL_TRIM_1",
+			"line": 4,
+			"title": "FUEL TRIM B1"
+		},
+		{
+			"key": "OBD_LONG_FUEL_TRIM_2",
+			"line": 5,
+			"title": "FUEL TRIM B2"
+		},
+		{
+			"key": "OBD_CONTROL_MODULE_VOLTAGE",
+			"line": 6,
+			"title": "VOLTS"
+		},
+		{
+			"key": "JK_FUEL_LEVEL",
+			"line": 7,
+			"title": "FUEL"
+		},
+		{
+			"key": "GM_FUEL_CONSUMPTION",
+			"line": 8,
+			"title": "CONSUME"
+		},
+		{
+			"key": "GM_VEHICLE_SPEED",
+			"line": 9,
+			"title": "SPEED"
+		},
+		{
+			"key": "GM_OLF",
+			"line": 10,
+			"title": "OIL LIFE"
+		},
+		{
+			"key": "OBD_VIN",
+			"line": 13,
+			"title": "GM VIN"
+		},
+		{
+			"key": "JK_VIN",
+			"line": 14,
+			"title": "JK VIN"
+		},
+		{
+			"key": "JK_VEHICLE_DISTANCE",
+			"line": 15,
+			"title": "ODOMETER"
+		}
+	],
+	"clocksync_gps_secs": 5,
+	"cputemp-query-delay": 4,
+	"last_menu": "0",
+	"last_radio_mode": "FM",
+	"last_radio_modes": [
+		{
+			"freq": 1440000,
+			"mode": "AM"
+		},
+		{
+			"freq": 106700000,
+			"mode": "FM"
+		},
+		{
+			"freq": 155610000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 462600000,
+			"mode": "GMRS"
+		}
+	],
+	"last_write": 1654807694,
+	"temp-query-delay": 4,
+	"fan-query-delay": 4,
+	"tuner_knob_mode": 2,
+	"tuner_presets": [
+		{
+			"freq": 0,
+			"mode": "AUX"
+		},
+		{
+			"freq": 103500000,
+			"mode": "FM"
+		},
+		{
+			"freq": 106700000,
+			"mode": "FM"
+		},
+		{
+			"freq": 155610000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 155805000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 162400000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 462600000,
+			"mode": "GMRS"
+		}
+	],
+	"w1Map": [
+		{
+			"id": "28-3c49f64979eb",
+			"key": "OUTSIDE_TEMP",
+			"title": "Outside"
+		},
+		{
+			"id": "28-3c89f6494824",
+			"key": "INSIDE_TEMP",
+			"title" : "Inside"
+		}
 	]
-	  
+	
 }

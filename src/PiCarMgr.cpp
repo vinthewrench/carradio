@@ -160,8 +160,10 @@ bool PiCarMgr::begin(){
 		startCPUInfo();
 		startFan();
 		
-		// if we fail, no big deal..
+#if USE_TMP_117
 		startTempSensors();
+#endif
+		
 #if USE_COMPASS
 		startCompass();
 #endif
@@ -271,7 +273,10 @@ void PiCarMgr::stop(){
 #if USE_COMPASS
 		stopCompass();
 #endif
+#if USE_TMP_117
 		stopTempSensors();
+#endif
+		
 		stopCPUInfo();
 		stopFan();
 		
@@ -1070,7 +1075,10 @@ void PiCarMgr::PiCanLoop(){
 
 void PiCarMgr::idle(){
 	
+#if USE_TMP_117
 	_tempSensor1.idle();
+#endif
+	
 	_cpuInfo.idle();
 	_fan.idle();
 	
@@ -1104,13 +1112,14 @@ void PiCarMgr::idle(){
 			
 		}
 	}
-			
-//	if(_tempSensor1.isConnected()){
-//		// handle input
-//		_tempSensor1.rcvResponse([=]( map<string,string> results){
-//			_db.updateValues(results);
-//		});
-//	}
+#if USE_TMP_117
+	if(_tempSensor1.isConnected()){
+		// handle input
+		_tempSensor1.rcvResponse([=]( map<string,string> results){
+			_db.updateValues(results);
+		});
+	}
+#endif
 	
 	if(_cpuInfo.isConnected()){
 		// handle input
@@ -1789,6 +1798,7 @@ void PiCarMgr::stopFan(){
 }
 
 
+#if USE_TMP_117
 
 
 void PiCarMgr::startTempSensors( std::function<void(bool didSucceed, std::string error_text)> cb){
@@ -1831,6 +1841,7 @@ void PiCarMgr::stopTempSensors(){
 PiCarMgrDevice::device_state_t PiCarMgr::tempSensor1State(){
 	return _tempSensor1.getDeviceState();
 }
+#endif
 
 // MARK: -   I2C Compass
 #if USE_COMPASS

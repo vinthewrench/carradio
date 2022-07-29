@@ -23,7 +23,6 @@ inline static const string VAL_FAN_SPEED			= "FAN_SPEED";
 
 inline static const string VAL_OUTSIDE_TEMP 		= "OUTSIDE_TEMP";
 inline static const string VAL_INSIDE_TEMP 		= "INSIDE_TEMP";
-inline
 inline static const string VAL_COMPASS_BEARING 		= "COMPASS_BEARING";
 inline static const string VAL_COMPASS_TEMP 		= "COMPASS_TEMP";
 

@@ -1469,7 +1469,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		char* p = &buffer[0];
 
 		if(hasInside){
-			p+=  sprintf(p, "%d\xa0" "F", (int) round(fInside) );
+			p+=  sprintf(p, "%d\xa0%s", (int) round(fInside) ,  (hasOutside?"F":"") );
  		}
 
 		if(hasOutside){
@@ -1477,7 +1477,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		}
  
 		if(hasInside || hasOutside){
-			_vfd.setCursor( (hasInside && hasOutside?0:10) , 60)	;
+			_vfd.setCursor( (hasInside && hasOutside?5:10) , 60)	;
 			_vfd.setFont(VFD::FONT_5x7);
 			_vfd.printPacket("%-12s", buffer);
 		}

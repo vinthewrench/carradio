@@ -1448,18 +1448,42 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	_vfd.setFont(VFD::FONT_5x7) ;
 	_vfd.write( (t->tm_hour > 12)?"PM":"AM");
 	
-	float cTemp = 0;
-	if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
+	{
+		bool hasInside = false;
+		bool hasOutside = false;
 		
-		float fTemp = cTemp *9.0/5.0 + 32.0;
-		char buffer[64] = {0};
+		float fOutside = 0;
+		float fInside = 0;
 		
-		_vfd.setCursor(10, 60)	;
-		_vfd.setFont(VFD::FONT_5x7);
-		sprintf(buffer, "%3d\xa0" "F", (int) round(fTemp) );
-		_vfd.write(buffer) ;
+		float cTemp = 0;
+		if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
+			fOutside = cTemp *9.0/5.0 + 32.0;
+			hasOutside = true;
+		}
+		if(db->getFloatValue(VAL_INSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
+			fInside = cTemp *9.0/5.0 + 32.0;
+			hasInside = true;
+		}
+		
+		buffer[0] = 0;
+		char* p = &buffer[0];
+
+		if(hasInside){
+			p+=  sprintf(p, "%3d\xa0" "F", (int) round(fInside) );
+ 		}
+
+		if(hasOutside){
+	 		p+=  sprintf(p, "%s%3d\xa0" "F",  (hasInside?"/":""), (int) round(fOutside) );
+		}
+ 
+		if(hasInside || hasOutside){
+			_vfd.setCursor( (hasInside && hasOutside?0:10) , 60)	;
+			_vfd.setFont(VFD::FONT_5x7);
+			_vfd.write(buffer) ;
+		}
 	}
 	
+ 
 	drawEngineCheck();
 	
 	//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){

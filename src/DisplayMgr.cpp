@@ -1659,7 +1659,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			auto textCenter =  centerX - (str.size() * 11);
 			
 			TRY(_vfd.setFont(VFD::FONT_10x14));
-			TRY(_vfd.setCursor( textCenter ,centerY+5));
+			TRY(_vfd.setCursor( textCenter ,centerY+10));
 			TRY(_vfd.write(str));
 		}
 		else {
@@ -1680,7 +1680,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
 				
 				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+5));
+				TRY(_vfd.setCursor( freqCenter ,centerY+10));
 				TRY(_vfd.write(str));
 				
 			}
@@ -1737,11 +1737,11 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 					modeStart += 5;
 				
 				TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
-				TRY(_vfd.setCursor(modeStart, centerY-3));
+				TRY(_vfd.setCursor(modeStart, centerY+2));
 				TRY(_vfd.write(modStr));
 				
 				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+5));
+				TRY(_vfd.setCursor( freqCenter ,centerY+10));
 				TRY(_vfd.write(str));
 				
 				TRY(_vfd.setFont(VFD::FONT_5x7));
@@ -1780,7 +1780,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	string muxstring = RadioMgr::muxstring(mux);
 	
 	TRY(_vfd.setFont(VFD::FONT_MINI));
-	TRY(_vfd.setCursor(8, centerY+5));
+	TRY(_vfd.setCursor(8, centerY+10));
 	TRY(_vfd.write(muxstring));
 	
 	drawEngineCheck();

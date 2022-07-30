@@ -1784,7 +1784,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	TRY(_vfd.write(muxstring));
 	
 	drawEngineCheck();
-	
+	drawTemperature();
 	drawTimeBox();
 }
 

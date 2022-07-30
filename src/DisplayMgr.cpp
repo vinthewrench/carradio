@@ -1753,7 +1753,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				memset(titlebuff,' ', titleMaxSize);
 				titlebuff[titleMaxSize] = '\0';
 				int titleStart =  centerX - ((titleMaxSize * 6)/2);
-				int titleBottom = centerY -14;
+				int titleBottom = centerY -9;
 				PiCarMgr::station_info_t info;
 				if(mgr->getStationInfo(mode, freq, info)){
 					string title = truncate(info.title, titleMaxSize);

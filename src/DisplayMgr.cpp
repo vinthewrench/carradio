@@ -1409,15 +1409,15 @@ void DisplayMgr::drawDeviceStatus(){
 		_vfd.writePacket( (const uint8_t*) buffer,21);
 	}
 	
+	drawTemperature();
+	
 }
 
 
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
-	PiCarDB*		db 	= PiCarMgr::shared()->db();
-	
-	
+		
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
@@ -1448,42 +1448,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	_vfd.setFont(VFD::FONT_5x7) ;
 	_vfd.write( (t->tm_hour > 12)?"PM":"AM");
 	
-	{
-		bool hasInside = false;
-		bool hasOutside = false;
-		
-		float fOutside = 0;
-		float fInside = 0;
-		
-		float cTemp = 0;
-		if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
-			fOutside = cTemp *9.0/5.0 + 32.0;
-			hasOutside = true;
-		}
-		if(db->getFloatValue(VAL_INSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
-			fInside = cTemp *9.0/5.0 + 32.0;
-			hasInside = true;
-		}
-		
-		buffer[0] = 0;
-		char* p = &buffer[0];
-
-		if(hasInside){
-			p+=  sprintf(p, "%d\xa0%s", (int) round(fInside) ,  (hasOutside?"":"F") );
- 		}
-
-		if(hasOutside){
-	 		p+=  sprintf(p, "%s%d\xa0" "F",  (hasInside?"/":""), (int) round(fOutside) );
-		}
- 
-		if(hasInside || hasOutside){
-			_vfd.setCursor( 10, 60)	;
-			_vfd.setFont(VFD::FONT_5x7);
-			_vfd.printPacket("%-10s", buffer);
-		}
-	}
+	drawTemperature();
 	
- 
 	drawEngineCheck();
 	
 	//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
@@ -1496,6 +1462,45 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	//	}
 	
 }
+
+void  DisplayMgr::drawTemperature(){
+
+	PiCarDB*		db 	= PiCarMgr::shared()->db();
+	char buffer[128] = {0};
+	char* p = &buffer[0];
+
+
+	bool hasInside = false;
+	bool hasOutside = false;
+	
+	float fOutside = 0;
+	float fInside = 0;
+	
+	float cTemp = 0;
+	if(db->getFloatValue(VAL_OUTSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
+		fOutside = cTemp *9.0/5.0 + 32.0;
+		hasOutside = true;
+	}
+	if(db->getFloatValue(VAL_INSIDE_TEMP, cTemp)){				// GET THIS FROM SOMEWHERE!!!
+		fInside = cTemp *9.0/5.0 + 32.0;
+		hasInside = true;
+	}
+ 
+	if(hasInside){
+		p+=  sprintf(p, "%d\xa0%s", (int) round(fInside) ,  (hasOutside?"":"F") );
+	}
+
+	if(hasOutside){
+		p+=  sprintf(p, "%s%d\xa0" "F",  (hasInside?"/":""), (int) round(fOutside) );
+	}
+
+	if(hasInside || hasOutside){
+		_vfd.setCursor( 0, 7)	;
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("%-10s", buffer);
+	}
+}
+
 
 void DisplayMgr::drawEngineCheck(){
 	FrameDB*		fDB 	= PiCarMgr::shared()->can()->frameDB();

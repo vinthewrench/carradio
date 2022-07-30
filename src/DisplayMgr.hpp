@@ -182,6 +182,7 @@ private:
 	void drawDeviceStatus();
 	
 	void drawEngineCheck();
+	void drawTemperature();
 	void drawTimeBox();
 	
 // display value formatting

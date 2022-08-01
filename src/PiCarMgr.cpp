@@ -120,8 +120,8 @@ PiCarMgr::PiCarMgr(){
 	
 	_isRunning = true;
 	
-	pthread_create(&_piCanLoopTID, NULL,
-						(THREADFUNCPTR) &PiCarMgr::PiCanLoopThread, (void*)this);
+	pthread_create(&_piCarLoopTID, NULL,
+						(THREADFUNCPTR) &PiCarMgr::PiCarLoopThread, (void*)this);
 		
 	_stations.clear();
 	_preset_stations.clear();
@@ -131,7 +131,7 @@ PiCarMgr::PiCarMgr(){
 PiCarMgr::~PiCarMgr(){
 	stop();
 	_isRunning = false;
-	pthread_join(_piCanLoopTID, NULL);
+	pthread_join(_piCarLoopTID, NULL);
 }
 
 
@@ -798,7 +798,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 
 // MARK: -  PiCarMgr main loop  thread
 
-void PiCarMgr::PiCanLoop(){
+void PiCarMgr::PiCarLoop(){
 	
 	PRINT_CLASS_TID;
 	
@@ -1185,13 +1185,13 @@ void PiCarMgr::idle(){
 	}
  }
 
-void* PiCarMgr::PiCanLoopThread(void *context){
+void* PiCarMgr::PiCarLoopThread(void *context){
 	PiCarMgr* d = (PiCarMgr*)context;
 	
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
-	pthread_cleanup_push(   &PiCarMgr::PiCanLoopThreadCleanup ,context);
+	pthread_cleanup_push(   &PiCarMgr::PiCarLoopThreadCleanup ,context);
 	
-	d->PiCanLoop();
+	d->PiCarLoop();
 	
 	pthread_exit(NULL);
 	
@@ -1200,7 +1200,7 @@ void* PiCarMgr::PiCanLoopThread(void *context){
 }
 
 
-void PiCarMgr::PiCanLoopThreadCleanup(void *context){
+void PiCarMgr::PiCarLoopThreadCleanup(void *context){
 	//PiCarMgr* d = (PiCarMgr*)context;
 	
 	//	printf("cleanup sdr\n");

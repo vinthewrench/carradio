@@ -191,11 +191,10 @@ private:
 	nlohmann::json GetAudioJSON();
 	bool SetAudio(nlohmann::json j);
   
-	pthread_t			_piCanLoopTID;
-	void PiCanLoop();		// C++ version of thread
-	// C wrappers for SDRReader;
-	static void* PiCanLoopThread(void *context);
-	static void PiCanLoopThreadCleanup(void *context);
+	pthread_t			_piCarLoopTID;
+	void PiCarLoop();	 
+	static void* PiCarLoopThread(void *context);
+	static void PiCarLoopThreadCleanup(void *context);
 	void idle();  // occasionally called durrig idle time
 
 	// used for mapping 1-wire values to DB

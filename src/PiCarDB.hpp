@@ -31,7 +31,7 @@ class PiCarDB  {
 	PiCarDB ();
 	~PiCarDB ();
 
-	// MARK: - properties // persisant
+	// MARK: - properties // persistent
 	bool savePropertiesToFile(string filePath = "") ;
 	bool restorePropertiesFromFile(string filePath = "");
  

@@ -82,7 +82,6 @@ void W1Mgr::stop(){
 		_shouldRead = false;
 		_isSetup = false;
 		_temperatureData.clear();
-		
 	}
 }
 
@@ -111,7 +110,6 @@ bool 	W1Mgr::getTemperatures( map<string,float> & temps){
 		pthread_mutex_lock (&_mutex);
 		temps = _temperatureData;
 		success = true;
-		
 		pthread_mutex_unlock (&_mutex);
 		
 	}
@@ -213,86 +211,3 @@ bool W1Mgr::processDS18B20(string deviceName){
 	return success;
 }
 
-void W1Mgr::W1Reader(){
-	
-	while(_isRunning){
-		// if not setup // check back later
-		if(!_isSetup){
-			sleep(2);
-			continue;
-		}
-		
-		if(!_shouldRead ){
-			usleep(500000);
-			continue;
-		}
-		
-		bool shouldQuery = false;
-		
-		if(_lastQueryTime.tv_sec == 0 &&  _lastQueryTime.tv_nsec == 0 ){
-			shouldQuery = true;
-		} else {
-			
-			struct timespec now, diff;
-			clock_gettime(CLOCK_MONOTONIC, &now);
-			timespec_sub( &diff, &now, &_lastQueryTime);
-			
-			if(diff.tv_sec >=  _queryDelay  ) {
-				shouldQuery = true;
-			}
-		}
-		
-		if(shouldQuery){
- 
-			// create an updated list of deviceIDs
-			stringvector deviceIds = getDeviceIDs();
-			
-			for(string deviceName: deviceIds){
-				
-				vector<string> v = split<string>(deviceName, "-");
-				if(v.size() != 2) break;
-				
-				//	The modules create a subdirectory for each sensor found just below /sys/bus/w1/devices.
-				// The directory name is composed of the Family Code of the sensor and its unique identification number.
-				//Sensors of the type DS1820 and DS18S20 have the Family Code 10,
-				// DS18B20 has Code 28 and DS1822 the 22.
-				// In each subdirectory there is the file w1_slave containing the sensor status and
-				// measured temperature value:
-				
-				// process the sensors
-				if(v[0] == "28") {
-					processDS18B20(deviceName);
-				}
-				
-			}
-			
-			clock_gettime(CLOCK_MONOTONIC, &_lastQueryTime);
-		}
-		else
-		{
-			usleep(500000);
-		}
-	}
-}
-
-
-void* W1Mgr::W1ReaderThread(void *context){
-	W1Mgr* d = (W1Mgr*)context;
-
-	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
-	pthread_cleanup_push(   &W1Mgr::W1ReaderThreadCleanup ,context);
- 
-	d->W1Reader();
-	
-	pthread_exit(NULL);
-	
-	pthread_cleanup_pop(0);
-	return((void *)1);
-}
-
- 
-void W1Mgr::W1ReaderThreadCleanup(void *context){
- 
-	printf("cleanup W1Mgr\n");
-}
- 

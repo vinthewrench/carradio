@@ -54,7 +54,6 @@ private:
  
 	map<string,float>	_temperatureData;
 	
-	
 	stringvector	getDeviceIDs();
 	stringvector	getW1_slaveInfo(string deviceName);
 	bool				processDS18B20(string deviceName);

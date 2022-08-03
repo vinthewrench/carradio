@@ -329,6 +329,11 @@ bool	GPSmgr::GetLocation(GPSLocation_t & location){
 		success = true;
 	}
 	
+	// hack
+	_lastLocation.altitude = 5.;
+	_lastLocation.latitude = 38.719219;
+	_lastLocation.longitude	=  -75.076476;
+	
 	pthread_mutex_unlock (&_mutex);
 	return success;
 }

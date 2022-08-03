@@ -328,12 +328,6 @@ bool	GPSmgr::GetLocation(GPSLocation_t & location){
 		location = _lastLocation;
 		success = true;
 	}
-	
-	// hack
-	_lastLocation.altitude = 5.;
-	_lastLocation.latitude = 38.719219;
-	_lastLocation.longitude	=  -75.076476;
-	
 	pthread_mutex_unlock (&_mutex);
 	return success;
 }
@@ -429,6 +423,13 @@ void GPSmgr::processNMEA(){
 			_lastLocation.geoidHeightValid  = _nmea.getGeoidHeight(tmp);
 			_lastLocation.geoidHeight 		= tmp * 0.001;
 			_lastLocation.timestamp = now;
+			
+			// hack
+			_lastLocation.altitude = 5.;
+			_lastLocation.latitude = 38.719219;
+			_lastLocation.longitude	=  -75.076476;
+			
+
 			pthread_mutex_unlock (&_mutex);
 			
 		}

@@ -650,7 +650,7 @@ void RadioMgr::SDRProcessor(){
 			usleep(200000);
 			continue;
 		}
-
+		
 		// Check for overflow of source buffer.
 		if (!inbuf_length_warning &&
 			 _source_buffer.queued_samples() > 10 * RtlSdr::default_sampleRate) {
@@ -663,27 +663,9 @@ void RadioMgr::SDRProcessor(){
 		IQSampleVector iqsamples = _source_buffer.pull();
 		if (iqsamples.empty())
 			continue;
- 
-		if(_mode == VHF ||  _mode == GMRS){
-			/// this block is critical.  dont change frequencies in the middle of a process.
-			std::lock_guard<std::mutex> lock(_mutex);
-			
-			if(!_shouldReadSDR)
-				continue;
-			
-			// Decode FM signal.
-			_sdrDecoder->process(iqsamples, audiosamples);
-
-			// Measure audio level.
-			double audio_mean, audio_rms;
-			samples_mean_rms(audiosamples, audio_mean, audio_rms);
-			audio_level = 0.95 * audio_level + 0.05 * audio_rms;
-			
-			// Set nominal audio volume.
-			adjust_gain(audiosamples, 0.5);
-		}
-		else if((_mode == BROADCAST_FM)
-			&& _sdrDecoder != NULL){
+		
+		
+		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -702,45 +684,43 @@ void RadioMgr::SDRProcessor(){
 			// Set nominal audio volume.
 			adjust_gain(audiosamples, 0.5);
 			
-			// Stereo indicator change
-			bool detect = dynamic_cast<FmDecoder *>(_sdrDecoder)->stereo_detected();
-	 		if (detect != got_stereo) {
-				got_stereo = detect;
- 				_mux = detect? MUX_STEREO:MUX_MONO;
+			if(_mode == BROADCAST_FM) {
+				// Stereo indicator change
+				bool detect = dynamic_cast<FmDecoder *>(_sdrDecoder)->stereo_detected();
+				if (detect != got_stereo) {
+					got_stereo = detect;
+					_mux = detect? MUX_STEREO:MUX_MONO;
+					//				display->showRadioChange();
+					
+				}
 				
-//				if (detect)
-//					printf( "got stereo signal (pilot level = %f)\n",
-//							 _sdrDecoder->get_pilot_level());
-//				else
-//					printf( "lost stereo signal\n");
+#if DEBUG_DEMOD
 				
- //				display->showRadioChange();
+				// Show statistics.
+				//			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
+				//					  block,
+				//					  _frequency *  1.0e-6,
+				//					  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
+				//					  20*log10(_sdrDecoder->get_if_level()),
+				//					  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
+				//					  20*log10(audio_level) + 3.01);
+				
+				
+				//			// Show stereo status.
+				//	 			if (_sdrDecoder->stereo_detected() != got_stereo) {
+				//
+				//		 		got_stereo = _sdrDecoder->stereo_detected();
+				//				if (got_stereo)
+				//					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
+				//							  _sdrDecoder->get_pilot_level());
+				//				else
+				//					fprintf(stderr, "\nlost stereo signal\n");
+				//			}
+				
+#endif
+				
 			}
 			
-#if DEBUG_DEMOD
-			
-			// Show statistics.
-//			fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
-//					  block,
-//					  _frequency *  1.0e-6,
-//					  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
-//					  20*log10(_sdrDecoder->get_if_level()),
-//					  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
-//					  20*log10(audio_level) + 3.01);
-			
-			
-//			// Show stereo status.
-//	 			if (_sdrDecoder->stereo_detected() != got_stereo) {
-//
-//		 		got_stereo = _sdrDecoder->stereo_detected();
-//				if (got_stereo)
-//					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
-//							  _sdrDecoder->get_pilot_level());
-//				else
-//					fprintf(stderr, "\nlost stereo signal\n");
-//			}
-	
-#endif
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.
 			if (block > 0) {

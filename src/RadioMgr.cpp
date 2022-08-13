@@ -682,7 +682,6 @@ void RadioMgr::SDRProcessor(){
 			// Set nominal audio volume.
 			adjust_gain(audiosamples, 0.5);
 		}
-#warning fix this
 		else if((_mode == BROADCAST_FM)
 			&& _sdrDecoder != NULL){
 			

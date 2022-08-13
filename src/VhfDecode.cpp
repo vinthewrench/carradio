@@ -103,8 +103,6 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 		  (deemphasis == 0) ? 1.0 : (deemphasis * sample_rate_pcm * 1.0e-6))
 {
 	 // nothing more to do
-	
-	printf("VhfDecoder init\n");
 }
 
 

@@ -134,6 +134,22 @@ bool RtlSdr::setTunerGain(int tuner_gain){
 	return success;
 }
 
+
+//	Enable or disable offset tuning for zero-IF tuners, which allows to avoid
+// problems caused by the DC offset of the ADCs and 1/f noise.
+bool RtlSdr::setOffsetTuning(bool on){
+	 
+	int r;
+	r = rtlsdr_set_offset_tuning(_dev, on?1:0);
+	if (r < 0) {
+		throw Exception("rtlsdr_set_offset_tuning failed");
+		return false;
+	}
+
+	return true;
+}
+
+
 // set RTL AGC mode
 bool RtlSdr::setACGMode(bool agcmode) {
 	

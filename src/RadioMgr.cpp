@@ -232,20 +232,43 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
-			_sdr.resetBuffer();
+	 		_sdr.resetBuffer();
 			_output_buffer.flush();
-	 
 			
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
+			if(! _sdr.setOffsetTuning(false))
+				return false;
+	
+			if(! _sdr.setACGMode(false))
+				return false;
+ 
 			if(! _sdr.setFrequency(tuner_freq))
 				return false;
-
-#warning fill these in later
 			
-			_sdrDecoder = new VhfDecode();
-		
+			// changing FM frequencies means recreating the decoder
+			
+			// The baseband signal is empty above 100 kHz, so we can
+			// downsample to ~ 200 kS/s without loss of information.
+			// This will speed up later processing stages.
+			unsigned int downsample = max(1, int(RtlSdr::default_sampleRate / 215.0e3));
+			fprintf(stderr, "baseband downsampling factor %u\n", downsample);
+			
+			// Prevent aliasing at very low output sample rates.
+			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
+												0.45 * _pcmrate);
+			
+			_sdrDecoder = new VhfDecoder(RtlSdr::default_sampleRate,
+												newFreq - tuner_freq,
+												_pcmrate,
+												  VhfDecoder::default_deemphasis,     // deemphasis,
+												  VhfDecoder::default_bandwidth_if,   // bandwidth_if
+												  VhfDecoder::default_freq_dev,       // freq_dev
+												bandwidth_pcm,
+												downsample
+												);
+			
 			_shouldReadAux = false;
 			_shouldReadSDR = true;
 		}
@@ -254,6 +277,12 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			_sdr.resetBuffer();
 			_output_buffer.flush();
 			
+			if(! _sdr.setOffsetTuning(false))
+				return false;
+	 
+			if(! _sdr.setACGMode(false))
+						return false;
+	
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			

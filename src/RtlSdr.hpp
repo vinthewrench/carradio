@@ -69,6 +69,10 @@ public:
 	// set tuner gain in units of 0.1 dB. 
 	bool setTunerGain(int);
 
+	//	Enable or disable offset tuning for zero-IF tuners, which allows to avoid
+	// problems caused by the DC offset of the ADCs and 1/f noise.
+		bool setOffsetTuning(bool);
+
 	// set RTL AGC mode
 	bool setACGMode(bool);
 

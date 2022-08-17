@@ -438,7 +438,7 @@ void GPSmgr::processNMEA(){
 //		_lastVelocity.speed = _nmea.getSpeed();
 		
 		_lastVelocity.heading = 90.0;
-		_lastVelocity.speed =  160.93;
+		_lastVelocity.speed =  160.93 / 2.;
 
 		_lastVelocity.timestamp = now;
 		

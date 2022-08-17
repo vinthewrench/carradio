@@ -1887,7 +1887,6 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		_vfd.setCursor(col+30, utmRow+10 );
 		_vfd.printPacket("%-8s", v[1].c_str());
 		
-		
 		_vfd.setCursor(col+30 - 6, utmRow+20 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 		
@@ -1908,15 +1907,19 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
 		
+		char buffer[8];
 		_vfd.setFont(VFD::FONT_5x7);
+
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "%3d\xa0", int(velocity.heading));
 		_vfd.setCursor(midX +20 ,utmRow+20);
-		_vfd.printPacket("%3d\xa0",int(velocity.heading));
+		_vfd.printPacket("%-8s ", buffer);
 		
-		_vfd.setCursor(midX +20 ,altRow+10);
+		memset(buffer, ' ', sizeof(buffer));
 		double mph = velocity.speed * 0.6213711922;
-		_vfd.printPacket("%3d",int(mph));
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket(" M/H");
+		sprintf( buffer , "%3d mph", int(mph));
+		_vfd.setCursor(midX +20 ,altRow+10);
+		_vfd.printPacket("%-8s ", buffer);
 	}
 	
 	drawTimeBox();
@@ -2856,6 +2859,15 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				value = string(buffer);
 			}
 				break;
+	
+			case	FrameDB::KPH:
+			{
+				float mph = (stof(rawValue) / 10) *  0.6213712;
+				sprintf(p, "%2d mph",  (int) round(mph));
+				value = string(buffer);
+			}
+				break;
+				
 				
 			case FrameDB::FUEL_TRIM:{
 				double trim = fDB->normalizedDoubleForValue(key,rawValue);
@@ -2880,11 +2892,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				value = string(buffer);
 			}
 				break;
-				
-				
-				
-				
-				
+								
 				
 			default:
 				value = rawValue;

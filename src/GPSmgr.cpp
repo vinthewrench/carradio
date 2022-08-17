@@ -434,8 +434,12 @@ void GPSmgr::processNMEA(){
 		pthread_mutex_lock (&_mutex);
 		memset((void*)&_lastVelocity, 0, sizeof(_lastVelocity));
 		_lastVelocity.isValid = _nmea.isValid();
-		_lastVelocity.heading = _nmea.getCourse();
-		_lastVelocity.speed = _nmea.getSpeed()/1000.;
+//		_lastVelocity.heading = _nmea.getCourse()/1000.;
+//		_lastVelocity.speed = _nmea.getSpeed();
+		
+		_lastVelocity.heading = 180.0;
+		_lastVelocity.speed =  88.51;
+
 		_lastVelocity.timestamp = now;
 		
 		_lastGPSTime.gpsTime = _nmea.getGPStime();

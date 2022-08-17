@@ -1917,7 +1917,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		memset(buffer, ' ', sizeof(buffer));
 		double mph = velocity.speed * 0.6213711922;
-		sprintf( buffer , "%3d mph", int(mph));
+		sprintf( buffer , "%3d mph", (int) round(mph));
 		_vfd.setCursor(midX +20 ,altRow+10);
 		_vfd.printPacket("%-8s ", buffer);
 	}

@@ -436,10 +436,6 @@ void GPSmgr::processNMEA(){
 		_lastVelocity.isValid = _nmea.isValid();
  		_lastVelocity.heading = _nmea.getCourse()/1000.;
  		_lastVelocity.speed = _nmea.getSpeed();
-		
-		printf(" h1 = %3.2f  s1 = %3.2f\n",_lastVelocity.heading,  _lastVelocity.speed);
-		
- 
 		_lastVelocity.timestamp = now;
 		
 		_lastGPSTime.gpsTime = _nmea.getGPStime();

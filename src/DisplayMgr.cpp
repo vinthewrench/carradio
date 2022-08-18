@@ -1920,12 +1920,6 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		sprintf( buffer , "%3d mph", (int) round(mph));
 		_vfd.setCursor(midX +20 ,altRow+10);
 		_vfd.printPacket("%-8s ", buffer);
-		
-		
-		printf(" h = %3.2f  s = %3.2f\n", velocity.heading,  velocity.speed);
-		
- 
-
 	}
 	
 	drawTimeBox();

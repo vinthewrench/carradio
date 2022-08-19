@@ -74,7 +74,7 @@ set(SOURCES
 	src/GPSmgr.cpp
 	src/tranmerc.cpp
 	src/utm.cpp
-	src/MicroNMEA.cpp
+	src/minmea.cpp
 	src/CANBusMgr.cpp
 	src/FrameDB.cpp
  	src/GMLAN.cpp

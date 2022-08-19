@@ -12,10 +12,10 @@
 		2E0EA47C283EC58B0012E406 /* GMLAN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E8210EA283EAEB2003D074C /* GMLAN.cpp */; };
 		2E5F7F47288783C5008E5C89 /* VhfDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F7F46288783C5008E5C89 /* VhfDecode.cpp */; };
 		2E5F7F8628933B9F008E5C89 /* W1Mgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F7F8428933B9F008E5C89 /* W1Mgr.cpp */; };
+		2E5F7FCC28AF1081008E5C89 /* minmea.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F7FCB28AF1081008E5C89 /* minmea.c */; };
 		2E62A852280735DA00F5066B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A851280735DA00F5066B /* main.cpp */; };
 		2E62A8662807383700F5066B /* ErrorMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8642807383700F5066B /* ErrorMgr.cpp */; };
 		2E62A86A280738BA00F5066B /* VFD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A868280738BA00F5066B /* VFD.cpp */; };
-		2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */; };
 		2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8E92817008500F5066B /* DisplayMgr.cpp */; };
 		2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F02822E16900F5066B /* RadioMgr.cpp */; };
 		2E62A8FA28244E5F00F5066B /* RtlSdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E62A8F928244E5F00F5066B /* RtlSdr.cpp */; };
@@ -77,6 +77,8 @@
 		2E5F7F46288783C5008E5C89 /* VhfDecode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VhfDecode.cpp; sourceTree = "<group>"; };
 		2E5F7F8428933B9F008E5C89 /* W1Mgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = W1Mgr.cpp; sourceTree = "<group>"; };
 		2E5F7F8528933B9F008E5C89 /* W1Mgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = W1Mgr.hpp; sourceTree = "<group>"; };
+		2E5F7FCA28AF1081008E5C89 /* minmea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = minmea.h; sourceTree = "<group>"; };
+		2E5F7FCB28AF1081008E5C89 /* minmea.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minmea.c; sourceTree = "<group>"; };
 		2E62A84E280735DA00F5066B /* carradio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = carradio; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E62A851280735DA00F5066B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2E62A8592807364F00F5066B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -84,8 +86,6 @@
 		2E62A8652807383700F5066B /* ErrorMgr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ErrorMgr.hpp; sourceTree = "<group>"; };
 		2E62A868280738BA00F5066B /* VFD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VFD.cpp; sourceTree = "<group>"; };
 		2E62A869280738BA00F5066B /* VFD.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VFD.hpp; sourceTree = "<group>"; };
-		2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MicroNMEA.cpp; sourceTree = "<group>"; };
-		2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MicroNMEA.hpp; sourceTree = "<group>"; };
 		2E62A8E92817008500F5066B /* DisplayMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayMgr.cpp; sourceTree = "<group>"; };
 		2E62A8EA2817008500F5066B /* DisplayMgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DisplayMgr.hpp; sourceTree = "<group>"; };
 		2E62A8F02822E16900F5066B /* RadioMgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RadioMgr.cpp; sourceTree = "<group>"; };
@@ -309,8 +309,8 @@
 				2E8210A02835A36D003D074C /* tranmerc.hpp */,
 				2E82109E2835A36D003D074C /* utm.cpp */,
 				2E8210A12835A36D003D074C /* utm.hpp */,
-				2E62A872280A4E9D00F5066B /* MicroNMEA.cpp */,
-				2E62A873280A4E9D00F5066B /* MicroNMEA.hpp */,
+				2E5F7FCB28AF1081008E5C89 /* minmea.c */,
+				2E5F7FCA28AF1081008E5C89 /* minmea.h */,
 			);
 			name = GPS;
 			sourceTree = "<group>";
@@ -499,7 +499,6 @@
 				2E8210B62835A551003D074C /* TimeStamp.cpp in Sources */,
 				2E8210CB2835A593003D074C /* TMP117.cpp in Sources */,
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
-				2E62A874280A4ED200F5066B /* MicroNMEA.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
 				2E8210F3283EAEB2003D074C /* FrameDB.cpp in Sources */,
 				2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */,
@@ -527,6 +526,7 @@
 				2E8210E2283831B2003D074C /* macos_gpiod.c in Sources */,
 				2E9F9E9F282727D200E12F5D /* FmDecode.cpp in Sources */,
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
+				2E5F7FCC28AF1081008E5C89 /* minmea.c in Sources */,
 				2E8210A32835A36D003D074C /* tranmerc.cpp in Sources */,
 				2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */,
 			);

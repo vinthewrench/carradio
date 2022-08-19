@@ -332,8 +332,6 @@ void GPSmgr::processNMEA(const char *sentence){
 						_lastVelocity.speed 		= speed / 10000;
 						_lastVelocity.isValid 	= 	true;
 						_lastVelocity.timestamp = now;
-						
-						printf("%f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , speed);
 					}
 					
 					struct timespec gpsTime;				// GPS time
@@ -356,7 +354,8 @@ void GPSmgr::processNMEA(const char *sentence){
 					}
 				}
 				
-			} break;
+			}
+			break;
 			
 		case MINMEA_SENTENCE_GGA: {
 			struct minmea_sentence_gga frame;
@@ -402,8 +401,8 @@ void GPSmgr::processNMEA(const char *sentence){
 					pthread_mutex_unlock (&_mutex);
 				}
 			}
-			
-		} break;
+		}
+			break;
 			
 		default:
 			break;

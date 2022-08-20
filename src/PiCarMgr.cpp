@@ -40,7 +40,7 @@ using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 10";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 11";
 
 
 const char* path_display  = "/dev/ttyUSB0";
@@ -1514,7 +1514,6 @@ vector<string> PiCarMgr::settingsMenuItems(){
 void PiCarMgr::displaySettingsMenu(){
 	
 	constexpr time_t timeout_secs = 10;
-	
 		
 	_display.showMenuScreen(settingsMenuItems(),
 									2,
@@ -1576,23 +1575,35 @@ void PiCarMgr::displaySettingsMenu(){
 	
 }
 
+
 void PiCarMgr::displayShutdownMenu(){
 	
 	constexpr time_t timeout_secs = 10;
 	
-		
+
 	vector<string> menu_items = {
 		"Manual",
-		"10 Sec",
-		"20 Sec",
-		"30 Sec",
-		"60 Sec",
+		"10 Seconds",
+		"20 Seconds",
+		"30 Seconds",
+		"1 Minute",
 		"-",
 		"Exit"
 	};
+	
+	uint intitialItem = (uint) menu_items.size() -1;
+		
+	if(!_autoShutdownMode) {
+		intitialItem = 0;
+	}
+	else {
+		if(_shutdownDelay < 11) intitialItem = 1;
+		else if(_shutdownDelay < 21) intitialItem = 2;
+		else if(_shutdownDelay < 31) intitialItem = 3;
+	}
 
 	_display.showMenuScreen(menu_items,
-									1,
+									intitialItem,
 									"Shutdown Delay",
 									timeout_secs,
 									[=](bool didSucceed,
@@ -1602,10 +1613,39 @@ void PiCarMgr::displayShutdownMenu(){
 		if(didSucceed) {
 			
 			if(action){
+				
+				bool didupdate = true;
+				
 				switch (newSelectedItem) {
 						
-				 
+					case 0:
+						_autoShutdownMode = false;
+						break;
+
+					case 1:
+						_autoShutdownMode = true;
+						_shutdownDelay = 10;
+						break;
+
+						
+					case 2:
+						_autoShutdownMode = true;
+						_shutdownDelay = 20;
+						break;
+ 
+					case 3:
+						_autoShutdownMode = true;
+						_shutdownDelay = 30;
+						break;
+						
+					case 4:
+						_autoShutdownMode = true;
+						_shutdownDelay = 60;
+						break;
+
 					default:
+						
+						didupdate = false;
 						
 						if(_lastMenuMode != MENU_UNKNOWN){
 							// restore old mode thast was set in main menu
@@ -1618,6 +1658,10 @@ void PiCarMgr::displayShutdownMenu(){
 						break;
 				}
 				
+				if(didupdate) {
+					saveRadioSettings();
+					_db.savePropertiesToFile();
+				}
 			}
 			
 		}

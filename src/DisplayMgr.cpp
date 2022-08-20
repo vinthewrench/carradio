@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <algorithm>
+#include <limits.h>
 #include <sys/utsname.h>
 
 #include "Utils.hpp"

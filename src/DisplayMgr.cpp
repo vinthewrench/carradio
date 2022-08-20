@@ -1970,8 +1970,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	int64_t nowSecs = timespec_to_msec(&now) / 1000;
-	
-	
+ 
 	constexpr int busTimeout = 5;
 	
 	if(transition == TRANS_ENTERING) {

@@ -34,6 +34,7 @@
 
 #include "Utils.hpp"
 #include "TimeStamp.hpp"
+#include "timespec_util.h"
 
 using namespace std;
 using namespace timestamp;
@@ -1188,19 +1189,35 @@ void PiCarMgr::idle(){
 					}
 				}
 			}
-			
 			_isDayTime = isDayTime;
-			
 		}
 	}
-	
  
-	
 	// ocassionally save properties
 	saveRadioSettings();
 	if(_db.propertiesChanged()){
 		_db.savePropertiesToFile();
 	}
+	
+	// check if we need to shutdown
+	
+	if(!_autoShutdownMode && _shutdownDelay > 0) {
+		time_t lastTime = 0;
+
+		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime)){
+		
+			struct timespec now;
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			int64_t nowSecs = timespec_to_msec(&now) / 1000;
+
+			time_t diff = nowSecs - lastTime;
+			
+			if(diff > _shutdownDelay) {
+				// initiate shutdown
+				doShutdown();
+			}
+ 		}
+ 	}
  }
 
 void* PiCarMgr::PiCarLoopThread(void *context){

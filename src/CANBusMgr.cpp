@@ -351,7 +351,6 @@ bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
 	
 	time_t lastTime = 0;
 	
-	// close all?
 	if(ifName.empty()){
 		for (auto& [key, time]  : _lastFrameTime){
 			if(time > lastTime){

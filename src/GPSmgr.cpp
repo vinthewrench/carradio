@@ -325,6 +325,8 @@ void GPSmgr::processNMEA(const char *sentence){
 					
 					double heading =  minmea_tofloat(&frame.course);
 					double speed 	=  minmea_tofloat(&frame.speed);
+
+					printf("1  %f  %f  \n",  speed  , heading);
 					
 					if(heading != NAN && speed  != NAN){
 					_lastVelocity.heading 	= heading;
@@ -332,7 +334,7 @@ void GPSmgr::processNMEA(const char *sentence){
 					_lastVelocity.isValid 	= 	true;
 					_lastVelocity.timestamp = now;
 					
-					printf("%f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , heading);
+					printf("2  %f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , heading);
 					
 				}
 					

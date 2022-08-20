@@ -142,6 +142,9 @@ bool PiCarMgr::begin(){
 	try {
 		int error = 0;
 	 
+		clock_gettime(CLOCK_MONOTONIC, &_startTime);
+		_lastActivityTime = _startTime;
+
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
@@ -918,6 +921,12 @@ void PiCarMgr::PiCarLoop(){
 			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
 			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
 			
+			// mark the last time any user activity
+			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
+				|| tunerWasClicked  || tunerWasDoubleClicked || tunerWasMoved ){
+				clock_gettime(CLOCK_MONOTONIC, &_lastActivityTime);
+ 			}
+	 
 			// MARK:   Volume button Clicked
 			if(volWasDoubleClicked){
 				// toggle mute
@@ -1202,21 +1211,28 @@ void PiCarMgr::idle(){
 	// check if we need to shutdown
 	
 	if(!_autoShutdownMode && _shutdownDelay > 0) {
-		time_t lastTime = 0;
 
-		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime)){
+		struct timespec now;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		int64_t nowSecs = timespec_to_msec(&now) / 1000;
+
+		time_t diff = 0;
 		
-			struct timespec now;
-			clock_gettime(CLOCK_MONOTONIC, &now);
-			int64_t nowSecs = timespec_to_msec(&now) / 1000;
-
-			time_t diff = nowSecs - lastTime;
-			
-			if(diff > _shutdownDelay) {
-				// initiate shutdown
-				doShutdown();
-			}
- 		}
+		// if we saw can packets use the last time
+		time_t lastTime = 0;
+		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime)){
+ 				diff = nowSecs - lastTime;
+		}
+		else {
+			// we never saw CAN - so use startup time.
+			int64_t startSecs = timespec_to_msec(&_lastActivityTime) / 1000;
+			diff = nowSecs - startSecs;
+		}
+		
+		if(diff > _shutdownDelay) {
+			// initiate shutdown
+			doShutdown();
+		}
  	}
  }
 

@@ -251,6 +251,9 @@ private:
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
 	uint16_t 			_clocksync_gps_secs;  // how many seconds of error allowed before sync
 	
+	struct timespec 	_startTime;
+	struct timespec 	_lastActivityTime;
+
 #if USE_GPIO_INTERRUPT
 	struct gpiod_chip* 		_gpio_chip = NULL;
 	struct gpiod_line*  		_gpio_line_int = NULL;

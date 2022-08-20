@@ -1646,17 +1646,19 @@ void PiCarMgr::displayShutdownMenu(){
 					default:
 						
 						didupdate = false;
-						
-						if(_lastMenuMode != MENU_UNKNOWN){
-							// restore old mode thast was set in main menu
-							setDisplayMode(_lastMenuMode);
-						}
-						else	// fallback
-						{
-							_display.showTime();
-						}
-						break;
+					break;
 				}
+				
+				
+				if(_lastMenuMode != MENU_UNKNOWN){
+					// restore old mode thast was set in main menu
+					setDisplayMode(_lastMenuMode);
+				}
+				else	// fallback
+				{
+					_display.showTime();
+				}
+
 				
 				if(didupdate) {
 					saveRadioSettings();

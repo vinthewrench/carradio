@@ -326,15 +326,15 @@ void GPSmgr::processNMEA(const char *sentence){
 					double heading =  minmea_tofloat(&frame.course);
 					double speed 	=  minmea_tofloat(&frame.speed);
 					
-					if(heading != NAN && speed  != NAN)
-						_lastVelocity.heading 	= heading;
-						_lastVelocity.speed 		= speed;
-						_lastVelocity.isValid 	= 	true;
-						_lastVelocity.timestamp = now;
-						
-				printf("%f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , heading);
-
-					}
+					if(heading != NAN && speed  != NAN){
+					_lastVelocity.heading 	= heading;
+					_lastVelocity.speed 		= speed;
+					_lastVelocity.isValid 	= 	true;
+					_lastVelocity.timestamp = now;
+					
+					printf("%f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , heading);
+					
+				}
 					
 					struct timespec gpsTime;				// GPS time
 					if(minmea_gettime( &gpsTime, &frame.date, &frame.time) == 0){

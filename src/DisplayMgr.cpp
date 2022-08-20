@@ -1905,7 +1905,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	
 	
-	static double	last_heading = std::numeric_limits<double>::quiet_NaN();
+	static int	last_heading = INT_MAX;
 	_vfd.setFont(VFD::FONT_5x7);
 	
 	GPSVelocity_t velocity;
@@ -1915,7 +1915,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		printf("3  %f mph %f deg\n",  velocity.speed * 0.6213711922 , velocity.heading);
 
 		//save heading
-		last_heading  = velocity.heading;
+		last_heading  = int(velocity.heading);
 		
 		memset(buffer, ' ', sizeof(buffer));
 		double mph = velocity.speed * 0.6213711922;
@@ -1925,11 +1925,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	}
 	
 	
-	if( !std::isnan(last_heading)){
+	if( last_heading != INT_MAX){
 		char buffer[8];
 		
 		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%3d\xa0", int(velocity.heading));
+		sprintf( buffer , "%3d\xa0",last_heading);
 		_vfd.setCursor(midX +20 ,utmRow+20);
 		_vfd.printPacket("%-8s ", buffer);
 	}

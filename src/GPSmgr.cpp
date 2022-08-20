@@ -331,6 +331,9 @@ void GPSmgr::processNMEA(const char *sentence){
 						_lastVelocity.speed 		= speed;
 						_lastVelocity.isValid 	= 	true;
 						_lastVelocity.timestamp = now;
+						
+				printf("%f mph %f deg\n",  minmea_tofloat(&frame.speed) * 1.150779 , heading);
+
 					}
 					
 					struct timespec gpsTime;				// GPS time

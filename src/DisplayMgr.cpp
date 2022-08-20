@@ -2862,7 +2862,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	
 			case	FrameDB::KPH:
 			{
-				float mph = (stof(rawValue) / 10) *  0.6213712;
+				float mph = stof(rawValue) *  0.6213712;
 				sprintf(p, "%2d mph",  (int) round(mph));
 				value = string(buffer);
 			}

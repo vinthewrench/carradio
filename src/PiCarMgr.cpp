@@ -1220,10 +1220,9 @@ void PiCarMgr::idle(){
 		
 		// if we saw can packets use the last time
 		time_t lastTime = 0;
-		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime)){
+		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime) && (lastTime != 0)){
  				diff = nowSecs - lastTime ;
-	 
-			printf("now: %5lld  lastCAN: %5ld diff %5ld delay: %5d\n", nowSecs, lastTime, diff, _shutdownDelay);
+				printf("now: %5lld  lastCAN: %5ld diff %5ld delay: %5d\n", nowSecs, lastTime, diff, _shutdownDelay);
 
 		}
 		else {

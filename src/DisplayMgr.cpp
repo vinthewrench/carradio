@@ -1868,7 +1868,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	}
 	
 	if(transition == TRANS_LEAVING) {
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 #if !USE_SERIAL_GPS
 		gps->setShouldRead(false);
 #endif
@@ -1904,22 +1904,36 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	}
 	
 	
+	
+	static double	last_heading = NAN;
+	_vfd.setFont(VFD::FONT_5x7);
+	
 	GPSVelocity_t velocity;
 	if(gps->GetVelocity(velocity)){
-		
 		char buffer[8];
-		_vfd.setFont(VFD::FONT_5x7);
-
-		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%3d\xa0", int(velocity.heading));
-		_vfd.setCursor(midX +20 ,utmRow+20);
-		_vfd.printPacket("%-8s ", buffer);
+		
+		//save heading
+		last_heading  = velocity.heading;
 		
 		memset(buffer, ' ', sizeof(buffer));
 		double mph = velocity.speed * 0.6213711922;
 		sprintf( buffer , "%3d mph", (int) round(mph));
 		_vfd.setCursor(midX +20 ,altRow+10);
 		_vfd.printPacket("%-8s ", buffer);
+	}
+	
+	
+	if( !isnan(last_heading)){
+		char buffer[8];
+		
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "%3d\xa0", int(velocity.heading));
+		_vfd.setCursor(midX +20 ,utmRow+20);
+		_vfd.printPacket("%-8s ", buffer);
+	}
+	else {
+		_vfd.setCursor(midX +20 ,utmRow+20);
+		_vfd.printPacket("%-8s ", "---");
 	}
 	
 	drawTimeBox();

@@ -327,9 +327,8 @@ void GPSmgr::processNMEA(const char *sentence){
 					double speed =  minmea_tofloat(&frame.speed);
 					
 					if( !isnan(heading) && !isnan(speed)) {
-						
 						_lastVelocity.heading 	= heading;
-						_lastVelocity.speed 		= speed / 10000;
+						_lastVelocity.speed 		= speed;
 						_lastVelocity.isValid 	= 	true;
 						_lastVelocity.timestamp = now;
 					}

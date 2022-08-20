@@ -181,6 +181,7 @@ private:
 	void displayMenu();
 	void displayRadioMenu();
 	void displaySettingsMenu();
+	void displayShutdownMenu();
 	vector<string> settingsMenuItems();
 	void setDisplayMode(menu_mode_t menuMode);
 	
@@ -239,8 +240,12 @@ private:
 	
 	ArgononeFan			_fan;
 	
+	bool					_autoShutdownMode;		 // controlled by canbus
+	uint16_t				_shutdownDelay;		  //   seconds after no CAN activity
+
 	bool					_autoDimmerMode;		 // controlled by canbus
 	double				_dimLevel;		  //   0.0 - 1.0 fraction of bright
+
 	bool					_isDayTime;			// for backlights
 		
 	bool 					_clocksync_gps;  		//  should sync clock with GPS

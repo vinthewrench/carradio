@@ -147,6 +147,8 @@ bool PiCarMgr::begin(){
 		_dimLevel =  1.0; // full
 		_isDayTime = true;
 		_autoDimmerMode = false;
+		_autoShutdownMode = false;
+		_shutdownDelay = UINT16_MAX;
 		
 		// clear DB
 		_db.clearValues();
@@ -397,6 +399,7 @@ void PiCarMgr::saveRadioSettings(){
 	
 	_db.setProperty(PROP_SYNC_CLOCK_TO_GPS, _clocksync_gps?_clocksync_gps_secs: 0);
 
+	// dimmer mode
 	if(_autoDimmerMode)
 		_db.removeProperty(PROP_DIMMER_LEVEL);
 	else
@@ -406,9 +409,16 @@ void PiCarMgr::saveRadioSettings(){
 		sprintf(buffer, "%0.1f", _dimLevel );
  		_db.setProperty(PROP_DIMMER_LEVEL,atof(buffer));
 	}
-	
 	_db.setProperty(PROP_AUTO_DIMMER_MODE, _autoDimmerMode);
-
+ 
+	// shutdown mode
+	if(_autoShutdownMode)
+		_db.setProperty(PROP_SHUTDOWN_DELAY, _shutdownDelay);
+	else
+		_db.removeProperty(PROP_SHUTDOWN_DELAY);
+	
+	_db.setProperty(PROP_AUTO_SHUTDOWN_MODE, _autoShutdownMode);
+ 
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
@@ -433,6 +443,14 @@ void PiCarMgr::restoreRadioSettings(){
 		}
 	}
 	
+	// SET shutodwn mode
+ 	if(_db.getBoolProperty(PROP_AUTO_SHUTDOWN_MODE,&_autoShutdownMode) && _autoShutdownMode){
+		_db.getUint16Property(PROP_SHUTDOWN_DELAY, &_shutdownDelay);
+	}
+   else
+		_shutdownDelay = UINT16_MAX;
+	
+		
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
 		setDimLevel(1.0);
@@ -1481,14 +1499,13 @@ void PiCarMgr::displayRadioMenu(){
 
 vector<string> PiCarMgr::settingsMenuItems(){
 	string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
-	
+ 
 	vector<string> menu_items = {
 		"Audio Balance",
 		"Audio Fader",
 		dim_entry,
+		"Shutdown Delay",
 		"Exit",
-		"-",
-		"Shutdown"
 	};
 
 	return menu_items;
@@ -1531,14 +1548,63 @@ void PiCarMgr::displaySettingsMenu(){
  						}
 						break;
 
-					case 5:
-						doShutdown();
+					case 3:
+						displayShutdownMenu();
 						break;
 						
 						//				case 1:
 						// //					_display.showSettings(1);
 						//					break;
 						
+					default:
+						
+						if(_lastMenuMode != MENU_UNKNOWN){
+							// restore old mode thast was set in main menu
+							setDisplayMode(_lastMenuMode);
+						}
+						else	// fallback
+						{
+							_display.showTime();
+						}
+						break;
+				}
+				
+			}
+			
+		}
+	});
+	
+}
+
+void PiCarMgr::displayShutdownMenu(){
+	
+	constexpr time_t timeout_secs = 10;
+	
+		
+	vector<string> menu_items = {
+		"Manual",
+		"10 Sec",
+		"20 Sec",
+		"30 Sec",
+		"60 Sec",
+		"-",
+		"Exit"
+	};
+
+	_display.showMenuScreen(menu_items,
+									1,
+									"Shutdown Delay",
+									timeout_secs,
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed) {
+			
+			if(action){
+				switch (newSelectedItem) {
+						
+				 
 					default:
 						
 						if(_lastMenuMode != MENU_UNKNOWN){

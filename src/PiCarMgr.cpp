@@ -1210,7 +1210,7 @@ void PiCarMgr::idle(){
 	
 	// check if we need to shutdown
 	
-	if(!_autoShutdownMode && _shutdownDelay > 0) {
+	if(_autoShutdownMode && _shutdownDelay > 0) {
 
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);

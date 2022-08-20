@@ -325,18 +325,13 @@ void GPSmgr::processNMEA(const char *sentence){
 					
 					double heading =  minmea_tofloat(&frame.course);
 					double speed 	=  minmea_tofloat(&frame.speed);
-
-					printf("1  %f  %f  \n",  speed  , heading);
 					
 					if(frame.course.scale != 0 && frame.speed.scale != 0){
-					_lastVelocity.heading 	= heading;
-					_lastVelocity.speed 		= speed;
-					_lastVelocity.isValid 	= 	true;
-					_lastVelocity.timestamp = now;
-					
-					printf("2  %f mph %f deg\n",  minmea_tofloat(&frame.speed) *  0.6213711922 , heading);
-					
-				}
+						_lastVelocity.heading 	= heading;
+						_lastVelocity.speed 		= speed;
+						_lastVelocity.isValid 	= 	true;
+						_lastVelocity.timestamp = now;
+					}
 					
 					struct timespec gpsTime;				// GPS time
 					if(minmea_gettime( &gpsTime, &frame.date, &frame.time) == 0){
@@ -369,30 +364,29 @@ void GPSmgr::processNMEA(const char *sentence){
 					pthread_mutex_lock (&_mutex);
 					memset((void*)&_lastLocation, 0, sizeof(_lastLocation));
 					
-					
-					double latitude =  minmea_tocoord(&frame.latitude);
-					double longitude =  minmea_tocoord(&frame.longitude);
-					
-					if( !isnan(latitude) && !isnan(longitude)) {
+					if(frame.latitude.scale != 0 && frame.longitude.scale != 0){
+						double latitude =  minmea_tocoord(&frame.latitude);
+						double longitude =  minmea_tocoord(&frame.longitude);
+						
 						_lastLocation.latitude = latitude;
 						_lastLocation.longitude = longitude;
 						_lastLocation.isValid = true;
 					}
 					
-					double altitude =  minmea_tofloat(&frame.altitude);
-					if( !isnan(altitude) && frame.altitude_units == 'M'){
+					if(  frame.altitude.scale != 0 && frame.altitude_units == 'M'){
+						double altitude =  minmea_tofloat(&frame.altitude);
 						_lastLocation.altitude = altitude  ; // tenths of meter
 						_lastLocation.altitudeIsValid = true;
 						
-						double geoidHeight =  minmea_tofloat(&frame.height);
-						if( !isnan(geoidHeight) && frame.height_units == 'M'){
+						if(  frame.height.scale != 0 && frame.height_units == 'M'){
+							double geoidHeight =  minmea_tofloat(&frame.height);
 							_lastLocation.geoidHeight = geoidHeight * .1;
 							_lastLocation.geoidHeightValid = true;
 						}
 					}
 					
-					double hdop =  minmea_tofloat(&frame.hdop);
-					if( !isnan(hdop)) {
+					if(  frame.hdop.scale != 0 ){
+						double hdop =  minmea_tofloat(&frame.hdop);
 						_lastLocation.HDOP = int(hdop * 10);
 					}
 					

@@ -1222,15 +1222,11 @@ void PiCarMgr::idle(){
 		time_t lastTime = 0;
 		if(_can.lastFrameTime(PiCarCAN::CAN_ALL, lastTime) && (lastTime != 0)){
  				diff = nowSecs - lastTime ;
-				printf("now: %5lld  lastCAN: %5ld diff %5ld delay: %5d\n", nowSecs, lastTime, diff, _shutdownDelay);
-
 		}
 		else {
 			// we never saw CAN - so use startup time.
 			int64_t lastSecs = timespec_to_msec(&_lastActivityTime) / 1000;
 			diff = nowSecs - lastSecs;
-			
-			printf("now: %5lld  lastUser: %5lld diff %5ld delay: %5d\n", nowSecs, lastSecs, diff, _shutdownDelay);
 		}
 		
 		if(diff > _shutdownDelay) {

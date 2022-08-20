@@ -328,7 +328,7 @@ void GPSmgr::processNMEA(const char *sentence){
 
 					printf("1  %f  %f  \n",  speed  , heading);
 					
-					if(heading != NAN && speed  != NAN){
+					if(heading != NAN && frame.speed.scale != 0){
 					_lastVelocity.heading 	= heading;
 					_lastVelocity.speed 		= speed;
 					_lastVelocity.isValid 	= 	true;

@@ -2157,8 +2157,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	 
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(0,10);
-		TRY(_vfd.write("GPS Waypoints"));
+		_vfd.setCursor(0,7);
+		TRY(_vfd.write("Waypoints"));
 
 	}
 	

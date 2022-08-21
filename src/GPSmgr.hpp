@@ -86,7 +86,7 @@ typedef struct {
 
 
 typedef struct {
-  double 					speed;
+  double 					speed;		// knots
   double					heading;
   struct timespec		timestamp;	//local timestamp of reading
   bool						 isValid;

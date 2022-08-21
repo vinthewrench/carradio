@@ -20,8 +20,6 @@
 #include "Utils.hpp"
 
 #define DEBUG_THREADS 0
-
-#define USE_SERIAL_GPS 1
 #define USE_COMPASS 0
 
 typedef uint64_t eTag_t;

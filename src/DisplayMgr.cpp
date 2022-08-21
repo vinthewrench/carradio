@@ -1847,11 +1847,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
-		
-#if !USE_SERIAL_GPS
-		gps->setShouldRead(true);
-#endif
-		
+ 
 		// draw titles
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);
@@ -1870,11 +1866,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
-#if !USE_SERIAL_GPS
-		gps->setShouldRead(false);
-#endif
 		return;
 	}
+	
+	
 	GPSLocation_t location;
 	if(gps->GetLocation(location)){
 		string utm = GPSmgr::UTMString(location);
@@ -1899,9 +1894,11 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(0,60)	;
-		
-		_vfd.printPacket( "%s:%2d DOP:%.1f",
-							  GPSmgr::NavString(location.navSystem).c_str(), location.numSat, location.HDOP/10.);
+		_vfd.printPacket( "%s: %2d ", GPSmgr::NavString(location.navSystem).c_str(), location.numSat);
+
+		_vfd.setCursor(midX +20,60)	;
+		_vfd.printPacket( "HDOP: %-2.1f ",  location.HDOP/10.);
+
 	}
 	
 	
@@ -1913,7 +1910,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	if(gps->GetVelocity(velocity)){
 		char buffer[8];
 	
-		printf("3  %f mph %f deg\n",  velocity.speed * 0.6213711922 , velocity.heading);
+		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
 
 		//save heading
 		last_heading  = int(velocity.heading);

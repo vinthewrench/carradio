@@ -194,9 +194,7 @@ bool PiCarMgr::begin(){
 				throw Exception("failed to setup Radio ");
 		}
 
-	 #if USE_SERIAL_GPS
-			 
-	 #if defined(__APPLE__)
+ 	 #if defined(__APPLE__)
 			 const char* path_gps  = "/dev/cu.usbmodem14101";
 	 #else
 			 const char* path_gps  = "/dev/ttyAMA1";
@@ -204,12 +202,7 @@ bool PiCarMgr::begin(){
 			 
 			 if(!_gps.begin(path_gps, B38400, error))
 				 throw Exception("failed to setup GPS.  error: %d", error);
-	 #else
-			 constexpr uint8_t  GPSAddress = 0x42;
-			 if(!_gps.begin(GPSAddress, error))
-				 printf("failed to setup GPS %d ", error);
-	 #endif
-
+	
 	
 //		_display.showStartup();  // show startup
 
@@ -1620,6 +1613,7 @@ void PiCarMgr::displayShutdownMenu(){
 		"20 Seconds",
 		"30 Seconds",
 		"1 Minute",
+		"Now",
 		"-",
 		"Exit"
 	};
@@ -1676,6 +1670,11 @@ void PiCarMgr::displayShutdownMenu(){
 						_shutdownDelay = 60;
 						break;
 
+					case 5:
+						didupdate = false;
+						doShutdown();
+						break;
+						
 					default:
 						
 						didupdate = false;

@@ -446,7 +446,6 @@ bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 
 // MARK: -  change modes
 
-
 DisplayMgr::mode_state_t DisplayMgr::active_mode(){
 	mode_state_t mode = MODE_UNKNOWN;
 	
@@ -458,31 +457,25 @@ DisplayMgr::mode_state_t DisplayMgr::active_mode(){
 	return mode;
 }
 
-
 void DisplayMgr::showStartup(){
 	setEvent(EVT_PUSH, MODE_STARTUP );
 }
-
 
 void DisplayMgr::showTime(){
 	setEvent(EVT_PUSH, MODE_TIME);
 }
 
-
 void DisplayMgr::showInfo(){
 	setEvent(EVT_PUSH, MODE_INFO);
 }
-
 
 void DisplayMgr::showSettings(){
 	setEvent(EVT_PUSH, MODE_SETTINGS);
 }
 
-
 void DisplayMgr::showDevStatus(){
 	setEvent(EVT_PUSH, MODE_DEV_STATUS );
 }
-
 
 void DisplayMgr::showDimmerChange(){
 	setEvent(EVT_PUSH, MODE_DIMMER );
@@ -509,7 +502,8 @@ void DisplayMgr::showDTCInfo(string code){
 }
 
 
-void DisplayMgr::showGPS(){
+void DisplayMgr::showGPS(uint8_t page){
+	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
@@ -517,7 +511,6 @@ void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_CANBUS);
 }
-
 
 void DisplayMgr::setEvent(event_t evt,
 								  mode_state_t mod,
@@ -548,6 +541,7 @@ void DisplayMgr::setEvent(event_t evt,
 bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
+		case MODE_GPS:
 		case MODE_BALANCE:
 		case MODE_DIMMER:
 		case MODE_FADER:
@@ -590,7 +584,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 				
 			}
 			else if(action == KNOB_CLICK){
-				// no clue?
+				wasHandled = processSelectorKnobAction(action);
 			}
 		}
 		else {
@@ -613,6 +607,10 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 		}
 			break;
 			
+		case MODE_GPS:
+			count = 2;
+			break;
+
 		default :
 			count = 1;
 	}
@@ -628,6 +626,7 @@ bool DisplayMgr::isMultiPage(mode_state_t mode){
 	
 	switch (mode) {
 		case MODE_CANBUS:
+		case MODE_GPS:
 			result = true;
 			break;
 			
@@ -661,6 +660,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
+			
+		case MODE_GPS_WAYPOINTS:
+			wasHandled = processSelectorKnobActionForGPSWaypoint(action);
+			break;
+
 			
 		default:
 			break;
@@ -1219,9 +1223,12 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				break;
 				
 			case MODE_GPS:
-				drawGPSScreen(transition);
+				if(_currentPage == 0)
+					drawGPSScreen(transition);
+				else
+					drawGPSWaypointScreen(transition);
 				break;
-				
+ 
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
@@ -1830,115 +1837,6 @@ void DisplayMgr::drawInternalError(modeTransition_t transition){
 	
 }
 
-void DisplayMgr::drawGPSScreen(modeTransition_t transition){
-	
-	uint8_t col = 0;
-	uint8_t row = 7;
-	string str;
-	
-	uint8_t width = _vfd.width();
-	uint8_t midX = width/2;
-	
-	uint8_t utmRow = row;
-	uint8_t altRow = utmRow+30;
-	
-	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
-	
-	if(transition == TRANS_ENTERING) {
-		setKnobColor(KNOB_RIGHT, RGB::Yellow);
-		_vfd.clearScreen();
- 
-		// draw titles
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,utmRow);
-		_vfd.printPacket("UTM");
-		
-		_vfd.setCursor(2,altRow);
-		_vfd.printPacket("ALTITUDE");
-		
-		_vfd.setCursor(midX +20 ,utmRow+10);
-		_vfd.printPacket("HEADING");
-		
-		_vfd.setCursor(midX +20 ,altRow);
-		_vfd.printPacket("SPEED");
-		
-	}
-	
-	if(transition == TRANS_LEAVING) {
-		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		return;
-	}
-	
-	
-	GPSLocation_t location;
-	if(gps->GetLocation(location)){
-		string utm = GPSmgr::UTMString(location);
-		vector<string> v = split<string>(utm, " ");
-		
-		_vfd.setFont(VFD::FONT_5x7);
-		
-		_vfd.setCursor(col+7, utmRow+10 );
-		_vfd.printPacket("%-3s", v[0].c_str());
-		
-		_vfd.setCursor(col+30, utmRow+10 );
-		_vfd.printPacket("%-8s", v[1].c_str());
-		
-		_vfd.setCursor(col+30 - 6, utmRow+20 );
-		_vfd.printPacket("%-8s", v[2].c_str());
-		
-		if(location.altitudeIsValid)  {
-			_vfd.setCursor(col+30, altRow+10);
-			constexpr double  M2FT = 	3.2808399;
-			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
-		}
-		
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(0,60)	;
-		_vfd.printPacket( "%s: %2d ", GPSmgr::NavString(location.navSystem).c_str(), location.numSat);
-
-		_vfd.setCursor(midX +20,60)	;
-		_vfd.printPacket( "HDOP: %-2.1f ",  location.HDOP/10.);
-
-	}
-	
-	
-	
-	static int	last_heading = INT_MAX;
-	_vfd.setFont(VFD::FONT_5x7);
-	
-	GPSVelocity_t velocity;
-	if(gps->GetVelocity(velocity)){
-		char buffer[8];
-	
-		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
-
-		//save heading
-		last_heading  = int(velocity.heading);
-		
-		memset(buffer, ' ', sizeof(buffer));
-		double mph = velocity.speed * 0.6213711922;
-		sprintf( buffer , "%3d mph", (int)floor(mph));
-		_vfd.setCursor(midX +20 ,altRow+10);
-		_vfd.printPacket("%-8s ", buffer);
-	}
-	
-	
-	if( last_heading != INT_MAX){
-		char buffer[8];
-		
-		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%3d\xa0",last_heading);
-		_vfd.setCursor(midX +20 ,utmRow+20);
-		_vfd.printPacket("%-8s ", buffer);
-	}
-	else {
-		_vfd.setCursor(midX +20 ,utmRow+20);
-		_vfd.printPacket("%-8s ", "---");
-	}
-	
-	drawTimeBox();
-}
-
 
 void DisplayMgr::drawShutdownScreen(){
 	
@@ -1959,9 +1857,7 @@ void DisplayMgr::drawShutdownScreen(){
 	_vfd.clearScreen();
 
 }
-
-
-
+ 
 void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
@@ -2144,6 +2040,139 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 	drawTimeBox();
 }
 
+
+
+void DisplayMgr::drawGPSScreen(modeTransition_t transition){
+	
+	uint8_t col = 0;
+	uint8_t row = 7;
+	string str;
+	
+	uint8_t width = _vfd.width();
+	uint8_t midX = width/2;
+	
+	uint8_t utmRow = row;
+	uint8_t altRow = utmRow+30;
+	
+	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
+	
+	if(transition == TRANS_ENTERING) {
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
+		_vfd.clearScreen();
+		
+		// draw titles
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(2,utmRow);
+		_vfd.printPacket("UTM");
+		
+		_vfd.setCursor(2,altRow);
+		_vfd.printPacket("ALTITUDE");
+		
+		_vfd.setCursor(midX +20 ,utmRow+10);
+		_vfd.printPacket("HEADING");
+		
+		_vfd.setCursor(midX +20 ,altRow);
+		_vfd.printPacket("SPEED");
+		
+	}
+	
+	if(transition == TRANS_LEAVING) {
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		return;
+	}
+	
+	
+	GPSLocation_t location;
+	if(gps->GetLocation(location)){
+		string utm = GPSmgr::UTMString(location);
+		vector<string> v = split<string>(utm, " ");
+		
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		_vfd.setCursor(col+7, utmRow+10 );
+		_vfd.printPacket("%-3s", v[0].c_str());
+		
+		_vfd.setCursor(col+30, utmRow+10 );
+		_vfd.printPacket("%-8s", v[1].c_str());
+		
+		_vfd.setCursor(col+30 - 6, utmRow+20 );
+		_vfd.printPacket("%-8s", v[2].c_str());
+		
+		if(location.altitudeIsValid)  {
+			_vfd.setCursor(col+30, altRow+10);
+			constexpr double  M2FT = 	3.2808399;
+			_vfd.printPacket("%-5.1f",location.altitude * M2FT);
+		}
+		
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(0,60)	;
+		_vfd.printPacket( "%s: %2d ", GPSmgr::NavString(location.navSystem).c_str(), location.numSat);
+		
+		_vfd.setCursor(midX +20,60)	;
+		_vfd.printPacket( "HDOP: %-2.1f ",  location.HDOP/10.);
+		
+	}
+	
+	static int	last_heading = INT_MAX;
+	_vfd.setFont(VFD::FONT_5x7);
+	
+	GPSVelocity_t velocity;
+	if(gps->GetVelocity(velocity)){
+		char buffer[8];
+		
+		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
+		
+		//save heading
+		last_heading  = int(velocity.heading);
+		
+		memset(buffer, ' ', sizeof(buffer));
+		double mph = velocity.speed * 0.6213711922;
+		sprintf( buffer , "%3d mph", (int)floor(mph));
+		_vfd.setCursor(midX +20 ,altRow+10);
+		_vfd.printPacket("%-8s ", buffer);
+	}
+	
+	
+	if( last_heading != INT_MAX){
+		char buffer[8];
+		
+		memset(buffer, ' ', sizeof(buffer));
+		sprintf( buffer , "%3d\xa0",last_heading);
+		_vfd.setCursor(midX +20 ,utmRow+20);
+		_vfd.printPacket("%-8s ", buffer);
+	}
+	else {
+		_vfd.setCursor(midX +20 ,utmRow+20);
+		_vfd.printPacket("%-8s ", "---");
+	}
+	
+	drawTimeBox();
+}
+
+void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
+	 
+ 	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
+		_vfd.clearScreen();
+	}
+	
+	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		return;
+	}
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(0,18));
+	TRY(_vfd.write("GPS Waypoints"));
+ 
+	drawTimeBox();
+	
+	TRY(_vfd.setFont(VFD::FONT_5x7));
+	TRY(_vfd.setCursor(_vfd.width()-5,60));
+	TRY(_vfd.write(">"));
+}
 
 
 void DisplayMgr::drawTimeBox(){
@@ -2823,6 +2852,25 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	return wasHandled;
 	
 }
+
+// MARK: -  GPS waypoints
+
+bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
+	bool wasHandled = false;
+	
+	if(action == KNOB_UP){
+ 	}
+	else if(action == KNOB_DOWN){
+ 	}
+	else if(action == KNOB_CLICK){
+		setEvent(EVT_POP, MODE_UNKNOWN);
+		wasHandled = true;
+	}
+	
+	return wasHandled;
+	
+}
+ 
 
 
 // MARK: -  Display value formatting

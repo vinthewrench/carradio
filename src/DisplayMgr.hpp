@@ -59,6 +59,7 @@ public:
 		MODE_RADIO,
 		MODE_CANBUS,
 		MODE_GPS,
+		MODE_GPS_WAYPOINTS,
 		MODE_SETTINGS,
 		MODE_DTC,
 		MODE_DTC_INFO,
@@ -100,7 +101,7 @@ public:
 	bool selectorKnobAction(knob_action_t action);
 
 	void showTime();
-	void showGPS();
+	void showGPS(uint8_t page = 0);
 	void showStartup();
 	void showInfo();
 	void showDTC();
@@ -161,10 +162,13 @@ private:
 	bool processSelectorKnobActionForDimmer( knob_action_t action);
 
 	bool processSelectorKnobActionForDTC( knob_action_t action);
+	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
+ 
  
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
-	
+	void drawGPSWaypointScreen(modeTransition_t transition);
+ 	
 	void drawCANBusScreen(modeTransition_t transition);
 	void drawCANBusScreen1(modeTransition_t transition);
 

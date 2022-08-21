@@ -1956,6 +1956,8 @@ void DisplayMgr::drawShutdownScreen(){
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));
 	sleep(1);
+	_vfd.clearScreen();
+
 }
 
 

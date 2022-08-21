@@ -285,6 +285,7 @@ void PiCarMgr::stop(){
 		
 		_radio.stop();
 		_audio.stop();
+		sleep(1);
 	}
 }
 

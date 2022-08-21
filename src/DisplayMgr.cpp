@@ -2154,7 +2154,12 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
  	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
+	 
 		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,10);
+		TRY(_vfd.write("GPS Waypoints"));
+
 	}
 	
 	if(transition == TRANS_LEAVING) {
@@ -2162,16 +2167,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 //		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,18));
-	TRY(_vfd.write("GPS Waypoints"));
+
  
 	drawTimeBox();
 	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(_vfd.width()-5,60));
-	TRY(_vfd.write(">"));
 }
 
 

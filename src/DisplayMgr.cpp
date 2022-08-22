@@ -49,6 +49,8 @@ static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
+static constexpr uint waypoints_per_page = 4;
+
 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
@@ -611,12 +613,9 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			
 		case MODE_GPS:
 		{
-			int  wcount =  (int) mgr->getWaypoints().size();
-			div_t d = div(wcount, 4);
+	 		div_t d = div((int) mgr->getWaypoints().size(), waypoints_per_page);
 			count +=  d.quot + (d.rem ? 1 : 0);
-			
-			printf("waypoint count %d  count %d\n", wcount,count);
-		}
+ 		}
 			break;
 
 		default :
@@ -2159,6 +2158,14 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	 
+	
+	uint8_t col1 = 5;
+	uint8_t row1 = 16;
+	uint8_t rowsize = 19;
+	
+	int start_item = ((_currentPage -1) *waypoints_per_page) +1;			// 1-6 for each page
+	int end_item	= start_item + waypoints_per_page;
+	
  	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
@@ -2176,6 +2183,27 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		return;
 	}
 
+	
+	PiCarMgr*			mgr 	= PiCarMgr::shared();
+	auto wps = mgr->getWaypoints();
+	
+	// Draw values
+	_vfd.setFont(VFD::FONT_5x7);
+	for(uint8_t	 i = start_item; i < end_item; i++){
+		
+		int line = ((i - 1) % waypoints_per_page);
+		
+		char buffer[30];
+		memset(buffer, ' ', sizeof(buffer));
+	
+		auto wp = wps[line];
+		sprintf( buffer , "%-10s ", wp.name.c_str());
+	
+		
+		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
+		_vfd.writePacket( (const uint8_t*) buffer,21);
+
+	}
  
 	drawTimeBox();
 	

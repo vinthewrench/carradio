@@ -598,17 +598,23 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 	uint8_t count = 1;
 	
+	PiCarMgr*			mgr 	= PiCarMgr::shared();
+
 	switch (mode) {
 		case MODE_CANBUS:
 		{
-			PiCarDB*		db 	= PiCarMgr::shared()->db();
+			PiCarDB*		db 	= mgr->db();
 			div_t d = div(db->canbusDisplayPropsCount(), 6);
 			count +=  d.quot + (d.rem ? 1 : 0);
 		}
 			break;
 			
 		case MODE_GPS:
-			count = 2;
+		{
+			int  count =  (int) mgr->getWaypoints().size();
+			div_t d = div(count, 4);
+			count +=  d.quot + (d.rem ? 1 : 0);
+		}
 			break;
 
 		default :
@@ -2158,8 +2164,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,7);
-		TRY(_vfd.write("Waypoints"));
-
+		_vfd.printPacket("Waypoints %d",  _currentPage);
+ 
 	}
 	
 	if(transition == TRANS_LEAVING) {

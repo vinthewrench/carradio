@@ -571,3 +571,4 @@ bool PiCarDB::getCanbusDisplayProps( map <uint8_t, canbusdisplay_prop_t> &propsO
 	
 	return statusOk;
 }
+ 

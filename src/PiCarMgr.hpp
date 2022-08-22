@@ -146,6 +146,15 @@ class PiCarMgr {
  
 	bool setRelay1(bool state);
 	
+	// MARK: - waypoints
+
+	typedef struct  {
+	 string 			name;
+	 GPSLocation_t location;
+ } waypoint_prop_t;
+
+ 	map<uint8_t,waypoint_prop_t> getWaypoints() { return _waypoints;};
+	
 	
 private:
 	
@@ -175,7 +184,8 @@ private:
 	bool updateRadioPrefs();
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
-	
+	void getWaypointProps();
+
 	nlohmann::json GetRadioPresetsJSON();
  
 	void displayMenu();
@@ -212,6 +222,8 @@ private:
 	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
+  
+	map<uint8_t,waypoint_prop_t> _waypoints;
  
 	typedef enum  {
 	 TUNE_ALL = 0,

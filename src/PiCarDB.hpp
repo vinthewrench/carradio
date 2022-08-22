@@ -20,7 +20,8 @@
 #include "json.hpp"
 
 #include "CommonDefs.hpp"
- 
+#include "GPSmgr.hpp"
+
 using namespace std;
 
 
@@ -60,7 +61,7 @@ class PiCarDB  {
 	
 	bool getCanbusDisplayProps(map <uint8_t, canbusdisplay_prop_t> &);
 	uint8_t canbusDisplayPropsCount();
- 
+
 	// MARK: - values
 	void updateValues(map<string,string>  values, time_t when = 0);
 	void updateValue(string key, string value, time_t when = 0);

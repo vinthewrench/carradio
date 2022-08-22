@@ -140,6 +140,49 @@
 			"key": "INSIDE_TEMP",
 			"title" : "Inside"
 		}
-	]
-	
+	],
+	"waypoints" : [
+		{
+		"title" : "Dog Park",
+		"longitude" :-122.8161,
+		"latitude" :  42.26521,
+		"line": 1
+		 },
+		{
+		"title" : "Station 7",
+		"longitude" :-122.87728,
+		"latitude" :  42.42727,
+		"line": 2
+		 },
+		{
+		"title" : "285 Beach",
+		"longitude" : -122.70219,
+		"latitude" :  42.18968,
+		"line": 3
+		},
+		{
+		"title" : "MT Ashland",
+		"longitude" :-122.71926,
+		"latitude" :  42.08173,
+		"line": 4
+		},
+		{
+		"title" : "SNAP South",
+		"longitude" :	-122.67433,
+		"latitude" :  42.18602,
+		"line": 5
+		},
+		{
+		"title" : "Food 4 Less",
+		"longitude" :-122.87178,
+		"latitude" :  42.34901,
+		"line": 6
+		},
+		{
+		"title" : "Crater Lake",
+		"longitude" :-122.14401,
+		"latitude" :  42.93944,
+		"line": 7
+		 }
+		]
 }

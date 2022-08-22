@@ -23,6 +23,7 @@
 #include "CommonDefs.hpp"
 #include "DuppaLEDRing.hpp"
 #include "DuppaKnob.hpp"
+#include "GPSmgr.hpp"
 
 using namespace std;
 

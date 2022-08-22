@@ -156,7 +156,8 @@ bool PiCarMgr::begin(){
 		
 		// clear DB
 		_db.clearValues();
-		
+		_waypoints.clear();
+	 
 		// read in any properties
 		_db.restorePropertiesFromFile();
 		
@@ -564,6 +565,8 @@ void PiCarMgr::restoreRadioSettings(){
 			}
 		}
 	}
+	
+	getWaypointProps();
 }
 
 nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
@@ -575,7 +578,6 @@ nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 		j1[PROP_PRESET_FREQ] =  entry.second;
 		j.push_back(j1);
 	}
-	
 
 	return j;
 }
@@ -811,6 +813,42 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 	
 	return false;
 }
+
+// MARK: -  Waypoints
+
+void PiCarMgr::getWaypointProps(){
+	
+	_waypoints.clear();
+	
+	nlohmann::json j = {};
+	
+	if(_db.getJSONProperty(PROP_WAYPOINTS,&j)
+		&&  j.is_array()){
+		
+		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_LINE)  &&  item[PROP_LINE].is_number()
+				&&  item.contains(PROP_TITLE) &&  item[(PROP_TITLE)].is_string()
+				&&  item.contains(PROP_LONGITUDE)   &&  item[(PROP_LONGITUDE)].is_number_float()
+				&&  item.contains(PROP_LATITUDE)   &&  item[(PROP_LATITUDE)].is_number_float()
+				){
+				
+				uint8_t 		line = item[PROP_LINE];
+				double 		longitude  = item[PROP_LONGITUDE];
+				double 		latitude  = item[PROP_LATITUDE];
+				string 		name  = item[PROP_TITLE];
+				_waypoints[line] = {
+					.name = name,
+					.location.latitude = latitude,
+					.location.longitude = longitude,
+					.location.isValid = true
+				};
+			}
+		}
+	}
+	
+}
+
 
 // MARK: -  PiCarMgr main loop  thread
 

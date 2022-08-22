@@ -98,6 +98,7 @@ typedef struct {
   bool						 	isValid;
 } GPSTime_t;
 
+
 class GPSmgr {
 	
 public:

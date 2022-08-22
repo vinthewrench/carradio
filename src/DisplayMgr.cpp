@@ -611,9 +611,11 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			
 		case MODE_GPS:
 		{
-			int  count =  (int) mgr->getWaypoints().size();
-			div_t d = div(count, 4);
+			int  wcount =  (int) mgr->getWaypoints().size();
+			div_t d = div(wcount, 4);
 			count +=  d.quot + (d.rem ? 1 : 0);
+			
+			printf("waypoint count %d  count %d\n", wcount,count);
 		}
 			break;
 

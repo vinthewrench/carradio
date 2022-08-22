@@ -2160,8 +2160,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	 
 	
 	uint8_t col1 = 5;
-	uint8_t row1 = 16;
-	uint8_t rowsize = 19;
+	uint8_t row1 = 12;
+	uint8_t rowsize = 10;
 	
 	int start_item = ((_currentPage -1) *waypoints_per_page) +1;			// 1-6 for each page
 	int end_item	= start_item + waypoints_per_page;

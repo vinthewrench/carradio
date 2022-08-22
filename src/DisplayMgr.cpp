@@ -2196,7 +2196,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));
 	
-		auto wp = wps[line];
+		auto wp = wps[i - 1];
 		sprintf( buffer , "%-10s ", wp.name.c_str());
 	
 		

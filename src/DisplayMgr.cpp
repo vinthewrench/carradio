@@ -49,7 +49,7 @@ static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
-static constexpr uint waypoints_per_page = 4;
+static constexpr uint waypoints_per_page = 3;
 
 
 DisplayMgr::DisplayMgr(){
@@ -2159,10 +2159,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	 	
 	uint8_t col1 = 5;
-	uint8_t row1 = 12;
-	uint8_t rowsize = 10;
-	
-	
+	uint8_t row1 = 10;
+	uint8_t rowsize = 20;
+ 
  	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);

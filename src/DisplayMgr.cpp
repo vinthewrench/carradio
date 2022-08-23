@@ -3190,21 +3190,21 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.printPacket("UTM");
 
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(col+7, utmRow+10 );
+		_vfd.setCursor(col+30, utmRow );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		_vfd.setCursor(col+30, utmRow+10 );
+		_vfd.setCursor(col+60, utmRow );
 		_vfd.printPacket("%-8s", v[1].c_str());
 		
-		_vfd.setCursor(col+30 - 6, utmRow+20 );
+		_vfd.setCursor(col+60 - 6, utmRow+10 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
 		
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,utmRow + 30);
+		_vfd.setCursor(2,utmRow + 20);
 		_vfd.printPacket("DISTANCE");
   
-		_vfd.setCursor(midX +20 ,utmRow+30);
+		_vfd.setCursor(midX +20 ,utmRow+20);
 		_vfd.printPacket("HEADING");
 	
 		

@@ -3117,9 +3117,12 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	bool wasHandled = false;
  
 	if(action == KNOB_CLICK){
-	 	 
+		
+		printf("processSelectorKnobActionForGPSWaypoint\n");
+	 	 // exit from this back into waypoints and clear menus
 		popMode();
 		showWaypoints();
+		wasHandled = true;
 	}
 	else if(action == KNOB_DOUBLE_CLICK){
 	}

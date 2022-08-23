@@ -2869,18 +2869,16 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
 		auto wps 	= mgr->getWaypoints();
-	
-		printf("Waypoinyt click %d\n", _lineOffset);
+ 
 		if(_lineOffset > wps.size()) {
+ 			printf("Waypoinyt POP %d\n", _lineOffset);
 			popMode();
-
 		}
 		else {
 			
 		}
  
-		wasHandled = true;
-	}
+ 	}
 	return wasHandled;
 	
 }

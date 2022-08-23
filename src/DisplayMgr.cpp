@@ -2873,7 +2873,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 	
 		printf("Waypoinyt click %d\n", _lineOffset);
 		if(_lineOffset > wps.size()) {
-			setEvent(EVT_POP, MODE_MENU);
+			popMode();
 
 		}
 		else {

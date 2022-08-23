@@ -624,7 +624,7 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			
 		case MODE_GPS_WAYPOINTS:
 		{
-			count = mgr->getWaypoints().size();
+			count += mgr->getWaypoints().size();
  		}
 			break;
 
@@ -2175,75 +2175,135 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	 	
-	uint8_t col1 = 5;
-	uint8_t row1 = 16;
-	uint8_t rowsize = 19;
- 
 	
-	PiCarMgr*		mgr 	= PiCarMgr::shared();
-	GPSmgr*			gps 	= mgr->gps();
-
-	auto wps 				= mgr->getWaypoints();
-
-	int total_items =  (int) wps.size();
-	int start_item = ((_currentPage -1) *waypoints_per_page);			// 1-6 for each page
-	int end_item	= start_item + waypoints_per_page;
-	if(end_item > total_items) end_item  = total_items;
-
-	if(transition == TRANS_ENTERING) {
-		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::Yellow);
-		
-		_vfd.clearScreen();
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(0,7);
-		_vfd.printPacket("Waypoints: %d",  _currentPage);
-		
-		// Draw Waypoint names
-		_vfd.setFont(VFD::FONT_MINI);
-		for(uint8_t	 i = start_item; i < end_item; i++){
-			
-			int line = (i % waypoints_per_page);
-			auto wp = wps[i];
-			
-			string name = wp.name;
-			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
-			
-			_vfd.setCursor(col1, row1 + (line)  * rowsize );
-			_vfd.write( name);
-			}
-	}
+	uint8_t height = _vfd.height();
+	
+	uint8_t startV =  25;
+	uint8_t lineHeight = 9;
+	uint8_t maxLines =  (height - startV) / lineHeight ;
+ 
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 //		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
 		return;
 	}
 
-	
-	_vfd.setFont(VFD::FONT_5x7) ;
-	_vfd.setCursor(0,7);
-	_vfd.printPacket("Waypoints: %d",  _currentPage);
+	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Blue);
+		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,7);
+		_vfd.printPacket("Waypoints: %d",  _currentPage);
 
-	GPSLocation_t here;
-	if(gps->GetLocation(here) & here.isValid){
-		
-		// Draw values
-		_vfd.setFont(VFD::FONT_5x7);
-		for(uint8_t	 i = start_item; i < end_item; i++){
-			
-			int line = (i % waypoints_per_page);
-			auto wp = wps[i];
-			
-			auto r = GPSmgr::dist_bearing(here,wp.location);
-	
-			char buffer[30];
-			memset(buffer, ' ', sizeof(buffer));
- 			sprintf( buffer , "%6.2fmi %3d\xa0",  r.first * 0.6213711922 , int(r.second));
-			_vfd.setCursor(col1 + 30 ,(row1 + (line)  * rowsize) + 9);
-			_vfd.writePacket( (const uint8_t*) buffer,21);
+		_menuCursor	= 0;
+ 	}
+
+	PiCarMgr*		mgr 	= PiCarMgr::shared();
+	GPSmgr*			gps 	= mgr->gps();
+	auto wps 				= mgr->getWaypoints();
+
+	// did something change?
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		if( (_currentPage - maxLines) > _menuCursor) {
+			_menuCursor = max(_currentPage - maxLines, 0);
 		}
+		else if(_currentPage < _menuCursor) {
+			_menuCursor = max(_menuCursor - 1,  0);
+		}
+	
+		uint8_t cursorV = startV;
+		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < wps.size()) ; i ++){
+			char buffer[64] = {0};
+			char moreIndicator =  ' ';
+			
+			auto lastLine = _menuCursor + maxLines;
+			
+			if(i == _menuCursor && _menuCursor != 0) moreIndicator = '<';
+			else if( i == lastLine && lastLine != wps.size() -1)  moreIndicator = '>';
+			TRY(_vfd.setCursor(0,cursorV));
+			
+			auto wp = wps[i];
+			string name = wp.name;
+	//		std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+
+			sprintf(buffer, "%c%-18s %c",  i == _currentMenuItem?'\xb9':' ' , name.c_str(), moreIndicator);
+			_vfd.write(buffer);
+			cursorV += lineHeight;
+		}
+
+		
 	}
+	
+	
+//
+//	uint8_t col1 = 5;
+//	uint8_t row1 = 16;
+//	uint8_t rowsize = 19;
+//
+//
+//	PiCarMgr*		mgr 	= PiCarMgr::shared();
+//	GPSmgr*			gps 	= mgr->gps();
+//
+//	auto wps 				= mgr->getWaypoints();
+//
+//	int total_items =  (int) wps.size();
+//	int start_item = ((_currentPage -1) *waypoints_per_page);			// 1-6 for each page
+//	int end_item	= start_item + waypoints_per_page;
+//	if(end_item > total_items) end_item  = total_items;
+//
+//	if(transition == TRANS_ENTERING) {
+//		_rightKnob.setAntiBounce(antiBounceSlow);
+//		setKnobColor(KNOB_RIGHT, RGB::Yellow);
+//
+//		_vfd.clearScreen();
+//		_vfd.setFont(VFD::FONT_5x7) ;
+//		_vfd.setCursor(0,7);
+//		_vfd.printPacket("Waypoints: %d",  _currentPage);
+//
+//		// Draw Waypoint names
+//		_vfd.setFont(VFD::FONT_MINI);
+//		for(uint8_t	 i = start_item; i < end_item; i++){
+//
+//			int line = (i % waypoints_per_page);
+//			auto wp = wps[i];
+//
+//			string name = wp.name;
+//			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+//
+//			_vfd.setCursor(col1, row1 + (line)  * rowsize );
+//			_vfd.write( name);
+//			}
+//	}
+//
+//	if(transition == TRANS_LEAVING) {
+//		_rightKnob.setAntiBounce(antiBounceDefault);
+////		setKnobColor(KNOB_RIGHT, RGB::Lime);
+//		return;
+//	}
+//
+//
+//	GPSLocation_t here;
+//	if(gps->GetLocation(here) & here.isValid){
+//
+//		// Draw values
+//		_vfd.setFont(VFD::FONT_5x7);
+//		for(uint8_t	 i = start_item; i < end_item; i++){
+//
+//			int line = (i % waypoints_per_page);
+//			auto wp = wps[i];
+//
+//			auto r = GPSmgr::dist_bearing(here,wp.location);
+//
+//			char buffer[30];
+//			memset(buffer, ' ', sizeof(buffer));
+// 			sprintf( buffer , "%6.2fmi %3d\xa0",  r.first * 0.6213711922 , int(r.second));
+//			_vfd.setCursor(col1 + 30 ,(row1 + (line)  * rowsize) + 9);
+//			_vfd.writePacket( (const uint8_t*) buffer,21);
+//		}
+//	}
 
 	drawTimeBox();
 	

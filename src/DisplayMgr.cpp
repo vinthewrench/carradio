@@ -3209,14 +3209,27 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7) ;
 
 		GPSLocation_t here;
+		GPSVelocity_t velocity;
 		if(gps->GetLocation(here) & here.isValid){
  			auto r = GPSmgr::dist_bearing(here,wp.location);
 	 
 			_vfd.setCursor(col+10, utmRow+30 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 
-			_vfd.setCursor(midX+20 ,utmRow+30);
-			_vfd.printPacket("%3d\xa0", int(r.second));
+			_vfd.setCursor(midX+10 ,utmRow+30);
+			
+			if(gps->GetVelocity(velocity) && velocity.isValid){
+				//relative heading
+				_vfd.printPacket("  %3d\xa0", int( velocity.heading -r.second));
+	 		}
+			else
+			{
+				//relative heading
+				_vfd.printPacket("• %3d\xa0", int(r.second));
+			}
+									  
+									  
+
  		}
 		
 	}

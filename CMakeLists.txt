@@ -1,6 +1,6 @@
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_CXX_COMPILER            "clang++")
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O2 -ffast-math -ftree-vectorize ${EXTRA_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++17 -O2 -ffast-math -ftree-vectorize ${EXTRA_FLAGS}")
 
 
 cmake_minimum_required(VERSION 3.0)

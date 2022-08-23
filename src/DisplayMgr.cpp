@@ -2162,8 +2162,6 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	uint8_t row1 = 12;
 	uint8_t rowsize = 10;
 	
-	int start_item = ((_currentPage -1) *waypoints_per_page) +1;			// 1-6 for each page
-	int end_item	= start_item + waypoints_per_page;
 	
  	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
@@ -2185,7 +2183,12 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
 	auto wps = mgr->getWaypoints();
-	
+
+	int total_items =  (int) wps.size();
+	int start_item = ((_currentPage -1) *waypoints_per_page) +1;			// 1-6 for each page
+	int end_item	= start_item + waypoints_per_page;
+	if(end_item > total_items) end_item  = total_items;
+
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
 	for(uint8_t	 i = start_item; i < end_item; i++){
@@ -2197,7 +2200,6 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 		auto wp = wps[i - 1];
 		sprintf( buffer , "%-10s ", wp.name.c_str());
-	
 		
 		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
 		_vfd.writePacket( (const uint8_t*) buffer,21);

@@ -3128,7 +3128,9 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 		
 		printf("processSelectorKnobActionForGPSWaypoint\n");
 	 	 // exit from this back into waypoints and clear menus
+		_saved_mode = handleRadioEvent();
 		popMode();
+		
 		showWaypoints();
 		wasHandled = true;
 	}

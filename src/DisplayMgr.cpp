@@ -3225,7 +3225,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			else
 			{
 				//abs heading
-				_vfd.printPacket("%3d\xa0 A", int(r.second));
+				_vfd.printPacket("%3d\xa0 *", int(r.second));
 			}
 									  
 									  

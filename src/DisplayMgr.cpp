@@ -3079,11 +3079,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 //			_vfd.writePacket( (const uint8_t*) buffer,21);
 //		}
 //	}
-
-	drawTimeBox();
-	
-}
-
+ 
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	_vfd.clearScreen();

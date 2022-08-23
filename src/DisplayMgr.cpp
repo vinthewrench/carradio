@@ -2913,10 +2913,9 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
-		_lineOffset = 0;
+//		_lineOffset = 0;
 		lastOffset = 0;
 		firstLine = 0;
-		
 		return;
 	}
 	
@@ -2929,16 +2928,22 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_vfd.setCursor(0,10);
 		_vfd.write("Waypoints");
 		
-		_lineOffset = 0;
+//		_lineOffset = 0;
 		lastOffset = 0;
 		firstLine = 0;
 		needsRedraw = true;
 	}
 	
+	
+	auto wps 	= mgr->getWaypoints();
+	size_t totalLines = wps.size() + 1;
+
+	if(_lineOffset > totalLines)
+		_lineOffset = 0;
+	
+	
 	// chack for change in gps offsets ?
 	// if anything changed, needsRedraw = true
-	
-
 	
 	if( lastOffset != _lineOffset){
 		lastOffset = _lineOffset;
@@ -2948,20 +2953,20 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	if(needsRedraw){
 		needsRedraw = false;
 		
-		auto wps 	= mgr->getWaypoints();
 		vector<string> lines = {};
-		size_t totalLines = wps.size() + 1;
- 	 
+	 
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
-		
+	
+		// framer code
 		if( (_lineOffset - displayedLines + 1) > firstLine) {
 			firstLine = _lineOffset - displayedLines + 1;
 		}
 		else if(_lineOffset < firstLine) {
 			firstLine = max(firstLine - 1,  0);
 		}
-		
+	
+		// create lines
 		for(auto i = 0 ; i < totalLines; i++){
 			
 			string line = "";

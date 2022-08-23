@@ -2185,20 +2185,20 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	auto wps = mgr->getWaypoints();
 
 	int total_items =  (int) wps.size();
-	int start_item = ((_currentPage -1) *waypoints_per_page) +1;			// 1-6 for each page
+	int start_item = ((_currentPage -1) *waypoints_per_page);			// 1-6 for each page
 	int end_item	= start_item + waypoints_per_page;
 	if(end_item > total_items) end_item  = total_items;
 
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
-	for(uint8_t	 i = start_item; i <= end_item; i++){
+	for(uint8_t	 i = start_item; i < end_item; i++){
 		
 		int line = ((i - 1) % waypoints_per_page);
 		
 		char buffer[30];
 		memset(buffer, ' ', sizeof(buffer));
 	
-		auto wp = wps[i - 1];
+		auto wp = wps[i];
 		sprintf( buffer , "%-10s ", wp.name.c_str());
 		
 		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);

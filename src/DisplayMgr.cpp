@@ -2218,8 +2218,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 			char buffer[30];
 			memset(buffer, ' ', sizeof(buffer));
- 			sprintf( buffer , "%6.3f mi @ %3d",  r.first * 0.6213711922 , int(r.second));
-			_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
+ 			sprintf( buffer , "%6.2f mi %3d\xa0",  r.first * 0.6213711922 , int(r.second));
+			_vfd.setCursor(col1 + 10 ,(row1 + (line)  * rowsize) + 9);
 			_vfd.writePacket( (const uint8_t*) buffer,21);
 		}
 		

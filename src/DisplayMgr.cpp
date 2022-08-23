@@ -503,11 +503,20 @@ void DisplayMgr::showDTCInfo(string code){
 	setEvent(EVT_PUSH, MODE_DTC_INFO, code);
 }
 
-
-void DisplayMgr::showGPS(uint8_t page){
-	_currentPage = page;
+void DisplayMgr::showGPS(){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
+
+
+void DisplayMgr::showWaypoints(){
+	setEvent(EVT_PUSH, MODE_GPS_WAYPOINTS);
+}
+
+void DisplayMgr::showWaypoint(uint8_t page ){
+	_currentPage = page;
+	setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
+}
+
 
 void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
@@ -610,13 +619,6 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			count +=  d.quot + (d.rem ? 1 : 0);
 		}
 			break;
-			
-		case MODE_GPS:
-		{
-	 		div_t d = div((int) mgr->getWaypoints().size(), waypoints_per_page);
-			count +=  d.quot + (d.rem ? 1 : 0);
- 		}
-			break;
 
 		default :
 			count = 1;
@@ -633,8 +635,7 @@ bool DisplayMgr::isMultiPage(mode_state_t mode){
 	
 	switch (mode) {
 		case MODE_CANBUS:
-		case MODE_GPS:
-			result = true;
+				result = true;
 			break;
 			
 		default :
@@ -669,7 +670,7 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			break;
 			
 		case MODE_GPS_WAYPOINTS:
-			wasHandled = processSelectorKnobActionForGPSWaypoint(action);
+			wasHandled = processSelectorKnobActionForGPSWaypoints(action);
 			break;
 
 			
@@ -864,6 +865,8 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_RADIO:
 		case MODE_SETTINGS:
 		case MODE_GPS:
+		case MODE_GPS_WAYPOINT:
+		case MODE_GPS_WAYPOINTS:
 		case MODE_INFO:
 		case MODE_CANBUS:
 		case MODE_DTC:
@@ -1230,12 +1233,17 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				break;
 				
 			case MODE_GPS:
-				if(_currentPage == 0)
-					drawGPSScreen(transition);
-				else
-					drawGPSWaypointScreen(transition);
+	 				drawGPSScreen(transition);
 				break;
  
+			case MODE_GPS_WAYPOINTS:
+ 					drawGPSWaypointsScreen(transition);
+				break;
+
+			case MODE_GPS_WAYPOINT:
+					drawGPSWaypointScreen(transition);
+				break;
+
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
@@ -2156,7 +2164,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	drawTimeBox();
 }
 
-void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
+void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	 	
 	uint8_t col1 = 5;
 	uint8_t row1 = 16;
@@ -2222,14 +2230,22 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(col1 + 30 ,(row1 + (line)  * rowsize) + 9);
 			_vfd.writePacket( (const uint8_t*) buffer,21);
 		}
-		
 	}
 
- 
 	drawTimeBox();
 	
 }
 
+void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
+	
+	_vfd.clearScreen();
+	_vfd.setFont(VFD::FONT_5x7) ;
+	_vfd.setCursor(0,7);
+	_vfd.printPacket("Waypoints: %d",  _currentPage);
+
+	drawTimeBox();
+
+}
 
 void DisplayMgr::drawTimeBox(){
 	// Draw time
@@ -2911,7 +2927,7 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
 // MARK: -  GPS waypoints
 
-bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
+bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action){
 	bool wasHandled = false;
 	
 	if(action == KNOB_UP){

@@ -111,6 +111,7 @@ PiCarMgr::PiCarMgr(){
 	_main_menu_map = {
 		{MENU_SELECT_AUDIO_SOURCE,	"Audio Source"},
 		{MENU_GPS,		"GPS"},
+		{MENU_WAYPOINTS,	"Waypoints"},
 		{MENU_CANBUS,	"Engine"},
 		{MENU_DTC,		"Diagnostics"},
 		{MENU_TIME,		"Time"},
@@ -1312,7 +1313,11 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_GPS:
 			mode = MENU_GPS;
 			break;
-			
+
+		case DisplayMgr::MODE_GPS_WAYPOINTS:
+			mode = MENU_WAYPOINTS;
+			break;
+
 		case DisplayMgr::MODE_INFO:
 			mode = MENU_INFO;
 			break;
@@ -1423,6 +1428,10 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			_display.showGPS();
 			break;
 			
+		case MENU_WAYPOINTS:
+			_display.showWaypoints();
+			break;
+
 		case MENU_CANBUS:
 			_display.showCANbus(1);
 			break;

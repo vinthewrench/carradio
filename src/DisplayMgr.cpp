@@ -2933,18 +2933,21 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		
 		auto wps 	= mgr->getWaypoints();
-		vector<string> lines = {};
+			vector<string> lines = {};
 		int displayedLines = 5;
 		size_t totalLines = wps.size();
-
 		
-		if( (_lineOffset - displayedLines) > firstLine) {
+		if(_lineOffset > totalLines -1)
+			_lineOffset = totalLines -1;
+
+	 		if( (_lineOffset - displayedLines) > firstLine) {
 			firstLine = max(_lineOffset - displayedLines, 0);
 		}
 		else if(_lineOffset < firstLine) {
 			firstLine = max(firstLine - 1,  0);
 		}
 
+		
 
 		for(auto i = 0 ; i < totalLines; i++){
 			auto wp = wps[i];
@@ -2959,6 +2962,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		}
 		
 	
+		
 		int  maxFirstLine  = (int) (lines.size() - displayedLines);
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		

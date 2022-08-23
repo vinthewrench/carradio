@@ -553,6 +553,8 @@ bool  DisplayMgr::usesSelectorKnob(){
 	switch (_current_mode) {
 		case MODE_CANBUS:
 		case MODE_GPS:
+		case MODE_GPS_WAYPOINT:
+		case MODE_GPS_WAYPOINTS:
 		case MODE_BALANCE:
 		case MODE_DIMMER:
 		case MODE_FADER:

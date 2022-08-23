@@ -2923,7 +2923,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::YellowGreen);
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -3161,13 +3161,9 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::YellowGreen);
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		
 		_vfd.clearScreen();
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(0,10);
-		_vfd.printPacket("Waypoint",  _currentPage);
-
  	}
 
 	auto wps = mgr->getWaypoints();
@@ -3175,18 +3171,18 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		auto wp = wps[_lineOffset];
 
 		string name = wp.name;
+ 
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.setCursor(0,10);
+		_vfd.printPacket("%-20s", name.c_str());
+		
+		string utm = GPSmgr::UTMString(wp.location);
+		vector<string> v = split<string>(utm, " ");
 	
 		uint8_t col = 10;
 		uint8_t row = 20;
 		uint8_t utmRow = row+10;
 
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.setCursor(col, row );
-		_vfd.printPacket("%20s", name.c_str());
-		
-		string utm = GPSmgr::UTMString(wp.location);
-		vector<string> v = split<string>(utm, " ");
-	
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);
 		_vfd.printPacket("UTM");

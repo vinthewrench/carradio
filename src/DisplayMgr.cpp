@@ -3167,7 +3167,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
  		_vfd.clearScreen();
-		last_heading = INT_MAX
+		last_heading = INT_MAX;
  	}
 
 	auto wps = mgr->getWaypoints();

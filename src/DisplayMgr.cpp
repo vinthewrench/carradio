@@ -3180,7 +3180,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		vector<string> v = split<string>(utm, " ");
 	
 	 	uint8_t col = 10;
-		uint8_t utmRow = 10;
+		uint8_t utmRow = 20;
 
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);

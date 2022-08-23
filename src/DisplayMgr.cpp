@@ -2878,7 +2878,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
-	GPSmgr*			gps 	= mgr->gps();
+//	GPSmgr*			gps 	= mgr->gps();
 	constexpr int displayedLines = 5;
 //
 //	uint8_t width = _vfd.width();
@@ -2948,18 +2948,20 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		for(auto i = 0 ; i < totalLines; i++){
 			
-			string name = "";
+			string line = "";
+			
 			if(i < wps.size()) {
 				auto wp = wps[i];
-				name = wp.name;
+				string name = wp.name;
 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
-			}
+				bool isSelected = i == _lineOffset;
+				string line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
+		}
 			else {
-				name = " EXIT ";
+				bool isSelected = i == _lineOffset;
+				string line = string("\x1d") + (isSelected?"\xb9":" ") + "EXIT";
 			}
 			
-			bool isSelected = i == _lineOffset;
-			string line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			lines.push_back(line);
 		}
 	 

@@ -2875,7 +2875,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			popMode();
 		}
 		else {
-			
+			showWaypoint(_lineOffset);
 		}
  
  	}

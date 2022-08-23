@@ -676,11 +676,7 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
-			
-		case MODE_GPS_WAYPOINTS:
-			wasHandled = processSelectorKnobActionForGPSWaypoints(action);
-			break;
-
+	 
 			
 		default:
 			break;
@@ -1080,6 +1076,15 @@ void DisplayMgr::DisplayUpdate(){
 					}
 				}
 				
+				else if(_current_mode == MODE_GPS_WAYPOINTS) {
+					
+					// check for {EVT_NONE,MODE_GPS_WAYPOINTS}  which is a menu change
+					if(item.mode == MODE_GPS_WAYPOINTS) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+				}
 				else if(_current_mode == MODE_DTC_INFO) {
 					
 					// check for {EVT_NONE,MODE_DTC_INFO}  which is a click
@@ -3008,19 +3013,19 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action){
 	bool wasHandled = false;
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
-	uint8_t count = mgr->getWaypoints().size() + 1;
+	uint8_t 				count = mgr->getWaypoints().size() + 1;
 	
 	if(action == KNOB_UP){
 		if(_currentPage < (count -1 )) {
 			_currentPage++;
-			setEvent(EVT_REDRAW, MODE_GPS_WAYPOINTS );
+			setEvent(EVT_NONE, MODE_GPS_WAYPOINTS );
 			wasHandled = true;
 		}
  	}
  	else if(action == KNOB_DOWN){
 		if(_currentPage > 0) {
 			_currentPage--;
-			setEvent(EVT_REDRAW, _current_mode );
+			setEvent(EVT_NONE, MODE_GPS_WAYPOINTS );
 			wasHandled = true;
 		}
 	}

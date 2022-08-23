@@ -3150,6 +3150,9 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
 	GPSmgr*			gps 	= mgr->gps();
 	
+	uint8_t width = _vfd.width();
+	uint8_t midX = width/2;
+
 
 	if(transition == TRANS_LEAVING) {
 		
@@ -3179,7 +3182,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		string utm = GPSmgr::UTMString(wp.location);
 		vector<string> v = split<string>(utm, " ");
 	
-	 	uint8_t col = 10;
+	 	uint8_t col = 0;
 		uint8_t utmRow = 20;
 
 		_vfd.setFont(VFD::FONT_MINI);
@@ -3196,6 +3199,14 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setCursor(col+30 - 6, utmRow+20 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
+		
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(2,utmRow + 30);
+		_vfd.printPacket("DISTANCE");
+  
+		_vfd.setCursor(midX +20 ,utmRow+30);
+		_vfd.printPacket("HEADING");
+	
 		
 
 	}

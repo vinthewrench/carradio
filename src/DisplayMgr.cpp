@@ -2881,7 +2881,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
 		auto wps 	= mgr->getWaypoints();
  
-		if(_lineOffset > wps.size()) {
+		if(_lineOffset >= wps.size()) {
  			popMode();
 		}
 		else {
@@ -2931,9 +2931,9 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_vfd.write("Waypoints");
  
 		// safety check
-		if(_lineOffset >  wps.size())
-		 _lineOffset = 0;
- 
+		if(_lineOffset >=  wps.size())
+			_lineOffset = 0;
+		
 		lastOffset = 0;
 		firstLine = 0;
 		needsRedraw = true;

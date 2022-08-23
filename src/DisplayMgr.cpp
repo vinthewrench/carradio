@@ -1010,6 +1010,13 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
+					// give it 10 seconds
+					else if(diff.tv_sec >=  4){
+						// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
 				}
 				else if(_current_mode == MODE_BALANCE) {
 					

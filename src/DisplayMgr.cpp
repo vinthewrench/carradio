@@ -2867,7 +2867,19 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
-		setEvent(EVT_POP, MODE_UNKNOWN);
+		
+		PiCarMgr*		mgr 	= PiCarMgr::shared();
+		auto wps 	= mgr->getWaypoints();
+	
+		printf("Waypoinyt click %d\n", _lineOffset);
+		if(_lineOffset > wps.size()) {
+			setEvent(EVT_POP, MODE_UNKNOWN);
+
+		}
+		else {
+			
+		}
+ 
 		wasHandled = true;
 	}
 	return wasHandled;
@@ -2964,11 +2976,9 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			lines.push_back(line);
 		}
 	 
-		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines);
-		
-	}
+ }
 	
 	drawTimeBox();
 

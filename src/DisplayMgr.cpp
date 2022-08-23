@@ -48,10 +48,7 @@ static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
 static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
-
-static constexpr uint waypoints_per_page = 3;
-
-
+ 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -573,12 +570,14 @@ bool  DisplayMgr::usesSelectorKnob(){
 bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	bool wasHandled = false;
-	//
- 	printf("selectorKnobAction (%d)\n", action);
+	// printf("selectorKnobAction (%d)\n", action);
 	
 	if(usesSelectorKnob()){
 		if(_current_mode == MODE_MENU){
 			wasHandled =  menuSelectAction(action);
+		}
+		else if(_current_mode == MODE_GPS_WAYPOINTS){
+			wasHandled =  processSelectorKnobActionForGPSWaypoints(action);
 		}
 		else if(isMultiPage(_current_mode)){
 			if(action == KNOB_UP){
@@ -2184,6 +2183,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
  
 	
 	if(transition == TRANS_LEAVING) {
+		
+		printf("Waypoint  TRANS_LEAVING \n");
 		_rightKnob.setAntiBounce(antiBounceDefault);
 //		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
@@ -2191,15 +2192,20 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	}
 
 	if(transition == TRANS_ENTERING) {
+		printf("Waypoint  TRANS_ENTERING \n");
+
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,7);
 		_vfd.printPacket("Waypoints: %d",  _currentPage);
-
 		_menuCursor	= 0;
  	}
+
+	if(transition == TRANS_REFRESH) {
+ 		printf("Waypoint  TRANS_REFRESH \n");
+	}
 
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
 	GPSmgr*			gps 	= mgr->gps();
@@ -3001,16 +3007,27 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
 bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action){
 	bool wasHandled = false;
+	PiCarMgr*			mgr 	= PiCarMgr::shared();
+	uint8_t count = mgr->getWaypoints().size() + 1;
 	
 	if(action == KNOB_UP){
+		if(_currentPage < (count -1 )) {
+			_currentPage++;
+			setEvent(EVT_REDRAW, MODE_GPS_WAYPOINTS );
+			wasHandled = true;
+		}
  	}
-	else if(action == KNOB_DOWN){
- 	}
+ 	else if(action == KNOB_DOWN){
+		if(_currentPage > 0) {
+			_currentPage--;
+			setEvent(EVT_REDRAW, _current_mode );
+			wasHandled = true;
+		}
+	}
 	else if(action == KNOB_CLICK){
 		setEvent(EVT_POP, MODE_UNKNOWN);
 		wasHandled = true;
 	}
-	
 	return wasHandled;
 	
 }

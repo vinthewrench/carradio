@@ -3203,7 +3203,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setCursor(2,utmRow + 20);
 		_vfd.printPacket("DISTANCE");
   
-		_vfd.setCursor(midX ,utmRow+20);
+		_vfd.setCursor(midX+10 ,utmRow+20);
 		_vfd.printPacket("HEADING");
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -3213,9 +3213,9 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
  			auto r = GPSmgr::dist_bearing(here,wp.location);
 	 
 			_vfd.setCursor(col+10, utmRow+30 );
-			_vfd.printPacket("%-6.2fmi", r.first * 0.6213711922);
+			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 
-			_vfd.setCursor(midX+10 ,utmRow+30);
+			_vfd.setCursor(midX+20 ,utmRow+30);
 			_vfd.printPacket("%3d\xa0", int(r.second));
  		}
 		

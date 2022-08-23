@@ -3220,12 +3220,12 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			if(gps->GetVelocity(velocity) && velocity.isValid){
 				//relative heading
-				_vfd.printPacket("  %3d\xa0", int( velocity.heading -r.second));
+				_vfd.printPacket("%3d\xa0  ", int( velocity.heading -r.second));
 	 		}
 			else
 			{
-				//relative heading
-				_vfd.printPacket("• %3d\xa0", int(r.second));
+				//abs heading
+				_vfd.printPacket("%3d\xa0 A", int(r.second));
 			}
 									  
 									  

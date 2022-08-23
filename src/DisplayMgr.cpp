@@ -2931,43 +2931,40 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	if(needsRedraw){
 		needsRedraw = false;
 		
-		
 		auto wps 	= mgr->getWaypoints();
-			vector<string> lines = {};
+		vector<string> lines = {};
 		int displayedLines = 5;
 		size_t totalLines = wps.size();
 		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
-
-	 		if( (_lineOffset - displayedLines) > firstLine) {
+		
+		if( (_lineOffset - displayedLines) >= firstLine) {
 			firstLine = max(_lineOffset - displayedLines, 0);
 		}
-		else if(_lineOffset < firstLine) {
+		else if(_lineOffset <= firstLine) {
 			firstLine = max(firstLine - 1,  0);
 		}
-
 		
-
 		for(auto i = 0 ; i < totalLines; i++){
 			auto wp = wps[i];
 			string name = wp.name;
 			
 			bool isSelected = i == _lineOffset;
- 	//		if(isSelected) firstLine = lines.size();
+			//		if(isSelected) firstLine = lines.size();
 			string line = (isSelected?"\xb9":" ") + name;
 			lines.push_back(line);
 			
 			if(isSelected)	printf("> %s\n",name.c_str());
 		}
 		
-	
+		
 		
 		int  maxFirstLine  = (int) (lines.size() - displayedLines);
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		
 		printf("Waypoint(%d) %d  \n",_lineOffset, (int) firstLine );
-
+		
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines);
 		
 	}

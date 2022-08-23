@@ -2150,7 +2150,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	if(gps->GetVelocity(velocity)){
 		char buffer[8];
 		
-		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
+//		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
 		
 		//save heading
 		last_heading  = int(velocity.heading);

@@ -2180,7 +2180,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,7);
-		_vfd.printPacket("Waypoints %d",  _currentPage);
+		_vfd.printPacket("Waypoints: %d",  _currentPage);
 		
 		// Draw Waypoint names
 		_vfd.setFont(VFD::FONT_MINI);

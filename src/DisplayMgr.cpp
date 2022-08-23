@@ -2879,10 +2879,11 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
 	GPSmgr*			gps 	= mgr->gps();
-	
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-	
+	constexpr int displayedLines = 5;
+//
+//	uint8_t width = _vfd.width();
+//	uint8_t height = _vfd.height();
+//
 	static uint8_t lastOffset = 0;
  	static uint8_t firstLine = 0;
 
@@ -2933,13 +2934,12 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		auto wps 	= mgr->getWaypoints();
 		vector<string> lines = {};
-		int displayedLines = 5;
 		size_t totalLines = wps.size();
 		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
 		
-		if( (_lineOffset - displayedLines -1) >= firstLine) {
+		if( (_lineOffset - displayedLines + 1) > firstLine) {
 			firstLine = _lineOffset - displayedLines + 1;
 		}
 		else if(_lineOffset < firstLine) {

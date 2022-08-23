@@ -2163,8 +2163,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	uint8_t rowsize = 19;
  
 	
-	PiCarMgr*			mgr 	= PiCarMgr::shared();
-	auto wps = mgr->getWaypoints();
+	PiCarMgr*		mgr 	= PiCarMgr::shared();
+	GPSmgr*			gps 	= mgr->gps();
+
+	auto wps 				= mgr->getWaypoints();
 
 	int total_items =  (int) wps.size();
 	int start_item = ((_currentPage -1) *waypoints_per_page);			// 1-6 for each page
@@ -2181,20 +2183,18 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.printPacket("Waypoints %d",  _currentPage);
 		
 		// Draw Waypoint names
-		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.setFont(VFD::FONT_MINI);
 		for(uint8_t	 i = start_item; i < end_item; i++){
 			
 			int line = (i % waypoints_per_page);
 			auto wp = wps[i];
 			
-			_vfd.setFont(VFD::FONT_MINI);
 			string name = wp.name;
 			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 			
 			_vfd.setCursor(col1, row1 + (line)  * rowsize );
 			_vfd.write( name);
-			
-		}
+			}
 	}
 	
 	if(transition == TRANS_LEAVING) {
@@ -2204,6 +2204,27 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	}
 
 	
+	GPSLocation_t here;
+	if(gps->GetLocation(here) & here.isValid){
+		
+		// Draw values
+		_vfd.setFont(VFD::FONT_5x7);
+		for(uint8_t	 i = start_item; i < end_item; i++){
+			
+			int line = (i % waypoints_per_page);
+			auto wp = wps[i];
+			
+			auto r = GPSmgr::dist_bearing(here,wp.location);
+	
+			char buffer[30];
+			memset(buffer, ' ', sizeof(buffer));
+ 			sprintf( buffer , "%6.3f mi @ %3d",  r.first * 0.6213711922 , int(r.second));
+			_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
+			_vfd.writePacket( (const uint8_t*) buffer,21);
+		}
+		
+	}
+
  
 	drawTimeBox();
 	

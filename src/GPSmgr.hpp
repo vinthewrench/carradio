@@ -121,7 +121,8 @@ public:
 	
 	bool GetVelocity(GPSVelocity_t & velocity);
 	
-	
+	static pair<double,double> dist_bearing(GPSLocation_t p1, GPSLocation_t p2);
+ 
 	
 private:
 	bool 				_isSetup = false;

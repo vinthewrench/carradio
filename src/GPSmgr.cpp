@@ -299,6 +299,49 @@ string GPSmgr::NavString(char navSystem ){
 	return str;
 }
 
+
+/*
+* Great-circle distance computational forumlas
+*
+* https://en.wikipedia.org/wiki/Great-circle_distance
+https://www.movable-type.co.uk/scripts/latlong.html
+*/
+
+template<typename T, typename U>
+constexpr double dmod (T x, U mod)
+{
+	return !mod ? x : x - mod * static_cast<long long>(x / mod);
+}
+
+pair<double,double>  GPSmgr::dist_bearing(GPSLocation_t p1, GPSLocation_t p2){
+
+  constexpr double earth_radius_km = 6371; //6368.519;
+  constexpr double PI_360 =  PI / 360;
+  constexpr double PI_180 = PI_360 * 2.;
+
+  // spherical law of cosines
+	const double cLat =  cos((p1.latitude + p2.latitude) * PI_360);
+	const double dLat = (p2.latitude - p1.latitude) * PI_360;
+	const double dLon = (p2.longitude - p1.longitude) * PI_360;
+
+  const double f = dLat * dLat + cLat * cLat * dLon * dLon;
+  const double c = 2 * atan2(sqrt(f), sqrt(1 - f));
+  double dist = earth_radius_km * c;
+
+  // covert to radians
+  double lat1 =  p1.latitude * PI_180;
+  double lon1 =  p1.longitude * PI_180;
+  double lat2 =  p2.latitude * PI_180;
+  double lon2 =  p2.longitude * PI_180;
+  
+  double  b_rad = atan2(sin(lon2-lon1)*cos(lat2), cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon2-lon1));
+  double  b_deg=  b_rad * (180.0 / PI);
+  b_deg = dmod ((b_deg + 360.) ,360);
+
+  return std::make_pair(dist, b_deg);
+}
+
+
 // MARK: -  GPSReader thread
 
 

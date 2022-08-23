@@ -3174,14 +3174,13 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
  
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
-		_vfd.printPacket("%-20s", name.c_str());
+		_vfd.printPacket("%-15s", name.c_str());
 		
 		string utm = GPSmgr::UTMString(wp.location);
 		vector<string> v = split<string>(utm, " ");
 	
-		uint8_t col = 10;
-		uint8_t row = 20;
-		uint8_t utmRow = row+10;
+	 	uint8_t col = 10;
+		uint8_t utmRow = 10;
 
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);

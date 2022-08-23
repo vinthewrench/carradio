@@ -2918,7 +2918,9 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		firstLine = 0;
 		return;
 	}
-	
+
+	auto wps 	= mgr->getWaypoints();
+
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
@@ -2927,19 +2929,15 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
 		_vfd.write("Waypoints");
-		
-//		_lineOffset = 0;
+ 
+		// safety check
+		if(_lineOffset >  wps.size())
+		 _lineOffset = 0;
+ 
 		lastOffset = 0;
 		firstLine = 0;
 		needsRedraw = true;
 	}
-	
-	
-	auto wps 	= mgr->getWaypoints();
-	size_t totalLines = wps.size() + 1;
-
-	if(_lineOffset > totalLines)
-		_lineOffset = 0;
 	
 	
 	// chack for change in gps offsets ?
@@ -2954,7 +2952,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		needsRedraw = false;
 		
 		vector<string> lines = {};
-	 
+		size_t totalLines = wps.size() + 1;
+
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
 	
@@ -3131,7 +3130,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
  
 	if(action == KNOB_CLICK){
 		
-		printf("processSelectorKnobActionForGPSWaypoint\n");
+//		printf("processSelectorKnobActionForGPSWaypoint\n");
 	 	 // exit from this back into waypoints and clear menus
 		_saved_mode = handleRadioEvent();
 		popMode();

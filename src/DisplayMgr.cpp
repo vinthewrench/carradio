@@ -2954,8 +2954,11 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
  	//		if(isSelected) firstLine = lines.size();
 			string line = (isSelected?"\xb9":" ") + name;
 			lines.push_back(line);
+			
+			if(isSelected)	printf("> %s\n",name.c_str());
 		}
 		
+	
 		int  maxFirstLine  = (int) (lines.size() - displayedLines);
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		

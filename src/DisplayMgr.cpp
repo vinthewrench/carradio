@@ -572,7 +572,7 @@ bool DisplayMgr::selectorKnobAction(knob_action_t action){
 	
 	bool wasHandled = false;
 	//
-	////	printf("selectorKnobAction (%d)\n", action);
+ 	printf("selectorKnobAction (%d)\n", action);
 	
 	if(usesSelectorKnob()){
 		if(_current_mode == MODE_MENU){
@@ -2219,6 +2219,10 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	}
 
 	
+	_vfd.setFont(VFD::FONT_5x7) ;
+	_vfd.setCursor(0,7);
+	_vfd.printPacket("Waypoints: %d",  _currentPage);
+
 	GPSLocation_t here;
 	if(gps->GetLocation(here) & here.isValid){
 		

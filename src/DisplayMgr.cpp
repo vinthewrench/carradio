@@ -2871,13 +2871,12 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		auto wps 	= mgr->getWaypoints();
  
 		if(_lineOffset > wps.size()) {
- 			printf("Waypoinyt POP %d\n", _lineOffset);
-			popMode();
+ 			popMode();
 		}
 		else {
 			showWaypoint(_lineOffset);
+			wasHandled = true;
 		}
- 
  	}
 	return wasHandled;
 	
@@ -2900,7 +2899,6 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		
-		printf("Waypoint  TRANS_LEAVING \n");
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
@@ -2912,8 +2910,6 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	}
 	
 	if(transition == TRANS_ENTERING){
-		printf("Waypoint  TRANS_ENTERING \n");
-		
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
 		
@@ -3115,11 +3111,27 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
  
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
-	_vfd.clearScreen();
-	_vfd.setFont(VFD::FONT_5x7) ;
-	_vfd.setCursor(0,7);
-	_vfd.printPacket("Waypoints: %d",  _currentPage);
+	
+	if(transition == TRANS_LEAVING) {
+		
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
+ 		return;
+	}
+	
+	if(transition == TRANS_ENTERING){
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Blue);
+		
+		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,10);
+		_vfd.printPacket("Waypoint: %d",  _currentPage);
 
+	}
+
+ 
 	drawTimeBox();
 
 }

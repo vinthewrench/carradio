@@ -864,7 +864,6 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_SETTINGS:
 		case MODE_GPS:
 		case MODE_GPS_WAYPOINT:
-		case MODE_GPS_WAYPOINTS:
 		case MODE_INFO:
 		case MODE_CANBUS:
 		case MODE_DTC:

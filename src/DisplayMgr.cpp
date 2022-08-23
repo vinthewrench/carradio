@@ -666,7 +666,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_GPS_WAYPOINTS:
 			wasHandled = processSelectorKnobActionForGPSWaypoints(action);
 			break;
-			
+
+		case MODE_GPS_WAYPOINT:
+			wasHandled = processSelectorKnobActionForGPSWaypoint(action);
+			break;
+
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
@@ -896,7 +900,6 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 void  DisplayMgr::popMode(){
 	_current_mode = _saved_mode==MODE_UNKNOWN ? MODE_TIME:_saved_mode;
 	_saved_mode = MODE_UNKNOWN;
-	
 }
 
 // MARK: -  DisplayUpdate thread
@@ -3108,6 +3111,22 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 //			_vfd.writePacket( (const uint8_t*) buffer,21);
 //		}
 //	}
+
+ 
+bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
+	bool wasHandled = false;
+ 
+	if(action == KNOB_CLICK){
+	 	 
+		popMode();
+		showWaypoints();
+	}
+	else if(action == KNOB_DOUBLE_CLICK){
+	}
+		
+	return wasHandled;
+	
+}
  
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	

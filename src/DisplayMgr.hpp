@@ -167,7 +167,7 @@ private:
 
 	bool processSelectorKnobActionForDTC( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoints( knob_action_t action);
- 
+	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
  
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);

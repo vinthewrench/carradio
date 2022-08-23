@@ -2940,7 +2940,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			_lineOffset = totalLines -1;
 		
 		if( (_lineOffset - displayedLines -1) >= firstLine) {
-			firstLine = max(_lineOffset - displayedLines + 1, 0);
+			firstLine = _lineOffset - displayedLines + 1;
 		}
 		else if(_lineOffset < firstLine) {
 			firstLine = max(firstLine - 1,  0);

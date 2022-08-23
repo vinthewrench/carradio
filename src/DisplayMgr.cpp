@@ -3212,10 +3212,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		if(gps->GetLocation(here) & here.isValid){
  			auto r = GPSmgr::dist_bearing(here,wp.location);
 	 
-			_vfd.setCursor(col+20, utmRow+30 );
-			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
+			_vfd.setCursor(col+10, utmRow+30 );
+			_vfd.printPacket("%-6.2fmi", r.first * 0.6213711922);
 
-			_vfd.setCursor(midX ,utmRow+30);
+			_vfd.setCursor(midX+10 ,utmRow+30);
 			_vfd.printPacket("%3d\xa0", int(r.second));
  		}
 		

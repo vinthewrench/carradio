@@ -3177,7 +3177,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		string name = wp.name;
 	
 		uint8_t col = 10;
-		uint8_t row = 10;
+		uint8_t row = 20;
 		uint8_t utmRow = row+10;
 
 		_vfd.setFont(VFD::FONT_5x7);
@@ -3191,6 +3191,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setCursor(2,utmRow);
 		_vfd.printPacket("UTM");
 
+		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(col+7, utmRow+10 );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		

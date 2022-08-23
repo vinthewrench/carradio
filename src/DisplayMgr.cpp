@@ -2884,6 +2884,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	uint8_t height = _vfd.height();
 	
 	static uint8_t lastOffset = 0;
+ 	static uint8_t firstLine = 0;
+
 	bool needsRedraw = false;
 	
 	if(transition == TRANS_LEAVING) {
@@ -2893,6 +2895,9 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
 		_lineOffset = 0;
+		lastOffset = 0;
+		firstLine = 0;
+		
 		return;
 	}
 	
@@ -2902,12 +2907,14 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Blue);
 		
-		_lineOffset = 0;
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
 		_vfd.write("Waypoints");
 		
+		_lineOffset = 0;
+		lastOffset = 0;
+		firstLine = 0;
 		needsRedraw = true;
 	}
 	
@@ -2924,19 +2931,27 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	if(needsRedraw){
 		needsRedraw = false;
 		
+		
 		auto wps 	= mgr->getWaypoints();
 		vector<string> lines = {};
-		size_t displayedLines = 5;
+		int displayedLines = 5;
 		size_t totalLines = wps.size();
-		size_t firstLine = 0;
-	
+
+		
+		if( (_lineOffset - displayedLines) > firstLine) {
+			firstLine = max(_lineOffset - displayedLines, 0);
+		}
+		else if(_lineOffset < firstLine) {
+			firstLine = max(firstLine - 1,  0);
+		}
+
 
 		for(auto i = 0 ; i < totalLines; i++){
 			auto wp = wps[i];
 			string name = wp.name;
 			
 			bool isSelected = i == _lineOffset;
- 			if(isSelected) firstLine = lines.size();
+ 	//		if(isSelected) firstLine = lines.size();
 			string line = (isSelected?"\xb9":" ") + name;
 			lines.push_back(line);
 		}

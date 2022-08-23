@@ -1007,6 +1007,7 @@ void DisplayMgr::DisplayUpdate(){
 				else if(_current_mode == MODE_GPS_WAYPOINTS) {
 					// check for {EVT_NONE,MODE_GPS_WAYPOINTS}  which is a scroll change
 					if(item.mode == MODE_GPS_WAYPOINTS) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}

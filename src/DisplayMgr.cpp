@@ -2912,6 +2912,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	// chack for change in gps offsets ?
 	// if anything changed, needsRedraw = true
 	
+
 	
 	if( lastOffset != _lineOffset){
 		lastOffset = _lineOffset;
@@ -2921,19 +2922,22 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	if(needsRedraw){
 		needsRedraw = false;
 		
+		
 		auto wps 	= mgr->getWaypoints();
 		vector<string> lines = {};
 		size_t displayedLines = 5;
 		size_t totalLines = wps.size();
 		size_t firstLine = 0;
-		
+	
+		printf("Waypoint(%d)\n",_lineOffset  );
+
 		for(auto i = 0 ; i < totalLines; i++){
 			auto wp = wps[i];
 			string name = wp.name;
 			
 			bool isSelected = i == _lineOffset;
-			if(isSelected) firstLine = lines.size() -1;
-			string line = (isSelected?"\xb9":"  ") + name;
+ 			if(isSelected) firstLine = lines.size() -1;
+			string line = (isSelected?"\xb9":" ") + name;
 			lines.push_back(line);
 		}
 		

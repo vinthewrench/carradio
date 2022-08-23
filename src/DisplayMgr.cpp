@@ -2952,14 +2952,15 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			
 			bool isSelected = i == _lineOffset;
 			//		if(isSelected) firstLine = lines.size();
-			string line = (isSelected?"\xb9":" ") + name;
+			string line = (isSelected?"\x1c\xb9":" ") + string("\x1c") +  name;
 			lines.push_back(line);
 			
 			if(isSelected)	printf("> %s\n",name.c_str());
 		}
 		
 		
-		
+		_vfd.setFont(VFD::FONT_5x7) ;
+
 //		int  maxFirstLine  = (int) (lines.size() - displayedLines);
 //		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		

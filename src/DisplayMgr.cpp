@@ -2955,11 +2955,11 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				string name = wp.name;
 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 				bool isSelected = i == _lineOffset;
-				string line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 		}
 			else {
 				bool isSelected = i == _lineOffset;
-				string line = string("\x1d") + (isSelected?"\xb9":" ") + "EXIT";
+				line = string("\x1d") + (isSelected?"\xb9":" ") + "EXIT";
 			}
 			
 			lines.push_back(line);

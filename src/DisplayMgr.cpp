@@ -2191,7 +2191,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 
 	// Draw values
 	_vfd.setFont(VFD::FONT_5x7);
-	for(uint8_t	 i = start_item; i < end_item; i++){
+	for(uint8_t	 i = start_item; i <= end_item; i++){
 		
 		int line = ((i - 1) % waypoints_per_page);
 		

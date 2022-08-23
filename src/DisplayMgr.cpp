@@ -3152,6 +3152,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	uint8_t width = _vfd.width();
 	uint8_t midX = width/2;
+	static int	last_heading = INT_MAX;
 
 
 	if(transition == TRANS_LEAVING) {
@@ -3165,8 +3166,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
-		
-		_vfd.clearScreen();
+ 		_vfd.clearScreen();
+		last_heading = INT_MAX
  	}
 
 	auto wps = mgr->getWaypoints();
@@ -3219,18 +3220,22 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(midX+10 ,utmRow+30);
 			
 			if(gps->GetVelocity(velocity) && velocity.isValid){
+				//save heading
+				last_heading  = int(velocity.heading);
+ 
 				//relative heading
 				_vfd.printPacket("%3d\xa0  ", int( velocity.heading -r.second));
 	 		}
 			else
 			{
-				//abs heading
-				_vfd.printPacket("%3d\xa0 *", int(r.second));
+				if( last_heading != INT_MAX){
+					_vfd.printPacket("%3d\xa0  ", int( last_heading -r.second));
+ 				}
+				else {  // use abs heading
+					_vfd.printPacket("%3d\xa0 A", int(r.second));
+				}
 			}
-									  
-									  
-
- 		}
+  		}
 		
 	}
  

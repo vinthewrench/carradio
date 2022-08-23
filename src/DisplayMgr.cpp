@@ -3183,20 +3183,20 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		vector<string> v = split<string>(utm, " ");
 	
 	 	uint8_t col = 0;
-		uint8_t utmRow = 20;
+		uint8_t utmRow = 25;
 
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow);
-		_vfd.printPacket("UTM");
+		_vfd.printPacket("UTM:");
 
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(col+30, utmRow );
+		_vfd.setCursor(col+20, utmRow );
 		_vfd.printPacket("%-3s", v[0].c_str());
 		
-		_vfd.setCursor(col+60, utmRow );
+		_vfd.setCursor(col+40, utmRow );
 		_vfd.printPacket("%-8s", v[1].c_str());
 		
-		_vfd.setCursor(col+60 - 6, utmRow+10 );
+		_vfd.setCursor(col+40 - 6, utmRow+10 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
 		

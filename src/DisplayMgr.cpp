@@ -2907,6 +2907,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
 		_vfd.write("Waypoints");
+		
+		needsRedraw = true;
 	}
 	
 	// chack for change in gps offsets ?

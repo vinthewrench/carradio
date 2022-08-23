@@ -3199,16 +3199,26 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setCursor(col+40 - 6, utmRow+10 );
 		_vfd.printPacket("%-8s", v[2].c_str());
 
-		
-		_vfd.setFont(VFD::FONT_MINI);
+	 	_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,utmRow + 20);
 		_vfd.printPacket("DISTANCE");
   
-		_vfd.setCursor(midX +20 ,utmRow+20);
+		_vfd.setCursor(midX ,utmRow+20);
 		_vfd.printPacket("HEADING");
-	
 		
+		_vfd.setFont(VFD::FONT_5x7) ;
 
+		GPSLocation_t here;
+		if(gps->GetLocation(here) & here.isValid){
+ 			auto r = GPSmgr::dist_bearing(here,wp.location);
+	 
+			_vfd.setCursor(col+20, utmRow+30 );
+			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
+
+			_vfd.setCursor(midX ,utmRow+30);
+			_vfd.printPacket("%3d\xa0", int(r.second));
+ 		}
+		
 	}
  
 	drawTimeBox();

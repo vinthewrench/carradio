@@ -2953,7 +2953,6 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				auto wp = wps[i];
 				name = wp.name;
 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
-		
 			}
 			else {
 				name = " EXIT ";

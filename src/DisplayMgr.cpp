@@ -2939,7 +2939,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
 		
-		if( (_lineOffset - displayedLines) >= firstLine) {
+		if( (_lineOffset - displayedLines) > firstLine) {
 			firstLine = max(_lineOffset - displayedLines, 0);
 		}
 		else if(_lineOffset <= firstLine) {
@@ -2960,8 +2960,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		
 		
-		int  maxFirstLine  = (int) (lines.size() - displayedLines);
-		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
+//		int  maxFirstLine  = (int) (lines.size() - displayedLines);
+//		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		
 		printf("Waypoint(%d) %d  \n",_lineOffset, (int) firstLine );
 		

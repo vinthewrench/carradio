@@ -2157,8 +2157,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 }
 
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
-	 
-	
+	 	
 	uint8_t col1 = 5;
 	uint8_t row1 = 12;
 	uint8_t rowsize = 10;

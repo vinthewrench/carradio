@@ -833,16 +833,17 @@ void PiCarMgr::getWaypointProps(){
 				&&  item.contains(PROP_LATITUDE)   &&  item[(PROP_LATITUDE)].is_number_float()
 				){
 				
-				uint8_t 		line = item[PROP_LINE];
-				double 		longitude  = item[PROP_LONGITUDE];
+ 				double 		longitude  = item[PROP_LONGITUDE];
 				double 		latitude  = item[PROP_LATITUDE];
 				string 		name  = item[PROP_TITLE];
-				_waypoints[line] = {
+				
+				waypoint_prop_t wp = {
 					.name = name,
 					.location.latitude = latitude,
 					.location.longitude = longitude,
 					.location.isValid = true
 				};
+				_waypoints.push_back(wp);
 			}
 		}
 	}

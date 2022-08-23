@@ -153,7 +153,7 @@ class PiCarMgr {
 	 GPSLocation_t location;
  } waypoint_prop_t;
 
- 	map<uint8_t,waypoint_prop_t> getWaypoints() { return _waypoints;};
+ 	vector< waypoint_prop_t> getWaypoints() { return _waypoints;};
 	
 	
 private:
@@ -223,7 +223,7 @@ private:
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
   
-	map<uint8_t,waypoint_prop_t> _waypoints;
+	vector<waypoint_prop_t> _waypoints;
  
 	typedef enum  {
 	 TUNE_ALL = 0,

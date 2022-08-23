@@ -2934,8 +2934,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		auto wps 	= mgr->getWaypoints();
 		vector<string> lines = {};
-		size_t totalLines = wps.size();
-		
+		size_t totalLines = wps.size() + 1;
+ 	 
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
 		
@@ -2947,25 +2947,25 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		}
 		
 		for(auto i = 0 ; i < totalLines; i++){
-			auto wp = wps[i];
-			string name = wp.name;
-			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+			
+			string name = "";
+			if(i < wps.size()) {
+				auto wp = wps[i];
+				name = wp.name;
+				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+		
+			}
+			else {
+				name = " EXIT ";
+			}
 			
 			bool isSelected = i == _lineOffset;
-			string line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c") +  name;
+			string line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			lines.push_back(line);
-			
-			if(isSelected)	printf("> %s\n",name.c_str());
 		}
-		
+	 
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-
-//		int  maxFirstLine  = (int) (lines.size() - displayedLines);
-//		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
-		
-		printf("Waypoint(%d) %d  \n",_lineOffset, (int) firstLine );
-		
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines);
 		
 	}

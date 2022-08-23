@@ -2159,26 +2159,9 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	 	
 	uint8_t col1 = 5;
-	uint8_t row1 = 10;
-	uint8_t rowsize = 20;
+	uint8_t row1 = 16;
+	uint8_t rowsize = 19;
  
- 	if(transition == TRANS_ENTERING) {
-		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::Yellow);
-	 
-		_vfd.clearScreen();
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(0,7);
-		_vfd.printPacket("Waypoints %d",  _currentPage);
- 
-	}
-	
-	if(transition == TRANS_LEAVING) {
-		_rightKnob.setAntiBounce(antiBounceDefault);
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		return;
-	}
-
 	
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
 	auto wps = mgr->getWaypoints();
@@ -2188,22 +2171,39 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	int end_item	= start_item + waypoints_per_page;
 	if(end_item > total_items) end_item  = total_items;
 
-	// Draw values
-	_vfd.setFont(VFD::FONT_5x7);
-	for(uint8_t	 i = start_item; i < end_item; i++){
+	if(transition == TRANS_ENTERING) {
+		_rightKnob.setAntiBounce(antiBounceSlow);
+		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		
-		int line = (i % waypoints_per_page);
+		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,7);
+		_vfd.printPacket("Waypoints %d",  _currentPage);
 		
-		char buffer[30];
-		memset(buffer, ' ', sizeof(buffer));
-	
-		auto wp = wps[i];
-		sprintf( buffer , "%-10s ", wp.name.c_str());
-		
-		_vfd.setCursor(col1 ,(row1 + (line)  * rowsize) + 9);
-		_vfd.writePacket( (const uint8_t*) buffer,21);
-
+		// Draw Waypoint names
+		_vfd.setFont(VFD::FONT_5x7);
+		for(uint8_t	 i = start_item; i < end_item; i++){
+			
+			int line = (i % waypoints_per_page);
+			auto wp = wps[i];
+			
+			_vfd.setFont(VFD::FONT_MINI);
+			string name = wp.name;
+			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+			
+			_vfd.setCursor(col1, row1 + (line)  * rowsize );
+			_vfd.write( name);
+			
+		}
 	}
+	
+	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
+//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		return;
+	}
+
+	
  
 	drawTimeBox();
 	

@@ -619,6 +619,12 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 			count +=  d.quot + (d.rem ? 1 : 0);
 		}
 			break;
+			
+		case MODE_GPS_WAYPOINTS:
+		{
+			count = mgr->getWaypoints().size();
+ 		}
+			break;
 
 		default :
 			count = 1;
@@ -635,6 +641,7 @@ bool DisplayMgr::isMultiPage(mode_state_t mode){
 	
 	switch (mode) {
 		case MODE_CANBUS:
+		case MODE_GPS_WAYPOINTS:
 				result = true;
 			break;
 			
@@ -2909,7 +2916,6 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	
 	if(action == KNOB_UP){
 		setEvent(EVT_NONE,MODE_DTC_INFO);
-		
 		wasHandled = true;
 	}
 	else if(action == KNOB_DOWN){

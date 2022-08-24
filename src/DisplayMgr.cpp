@@ -3020,10 +3020,11 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	GPSmgr*			gps 	= mgr->gps();
 	
 	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	
 	uint8_t midX = width/2;
 	static int	last_heading = INT_MAX;
-
-
+ 
 	if(transition == TRANS_LEAVING) {
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
@@ -3047,33 +3048,19 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
  
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
-		_vfd.printPacket("%-15s", name.c_str());
+		_vfd.printPacket("%-12s", name.c_str());
 		
 		string utm = GPSmgr::UTMString(wp.location);
 		vector<string> v = split<string>(utm, " ");
 	
 	 	uint8_t col = 0;
-		uint8_t utmRow = 25;
-
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,utmRow);
-		_vfd.printPacket("UTM:");
-
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(col+20, utmRow );
-		_vfd.printPacket("%-3s", v[0].c_str());
-		
-		_vfd.setCursor(col+40, utmRow );
-		_vfd.printPacket("%-8s", v[1].c_str());
-		
-		_vfd.setCursor(col+40 - 6, utmRow+10 );
-		_vfd.printPacket("%-8s", v[2].c_str());
+		uint8_t topRow = 25;
 
 	 	_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,utmRow + 20);
+		_vfd.setCursor(2,topRow + 20);
 		_vfd.printPacket("DISTANCE");
   
-		_vfd.setCursor(midX+10 ,utmRow+20);
+		_vfd.setCursor(midX+10 ,topRow+20);
 		_vfd.printPacket("HEADING");
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -3083,10 +3070,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		if(gps->GetLocation(here) & here.isValid){
  			auto r = GPSmgr::dist_bearing(here,wp.location);
 	 
-			_vfd.setCursor(col+10, utmRow+30 );
+			_vfd.setCursor(col+10, topRow+30 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 
-			_vfd.setCursor(midX+10 ,utmRow+30);
+			_vfd.setCursor(midX+10 ,topRow+30);
 			
 			if(gps->GetVelocity(velocity) && velocity.isValid){
 				//save heading
@@ -3105,6 +3092,22 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 				}
 			}
   		}
+		
+		
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(2,height -10);
+		_vfd.printPacket("UTM:");
+
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(10, height );
+		_vfd.printPacket("%-3s", v[0].c_str());
+		
+		_vfd.setCursor(20, height );
+		_vfd.printPacket("%-8s", v[1].c_str());
+		
+		_vfd.setCursor(60, height);
+		_vfd.printPacket("%-8s", v[2].c_str());
+
 		
 	}
  

@@ -3057,7 +3057,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setCursor(2,topRow);
 		_vfd.printPacket("DISTANCE");
 		
-		_vfd.setCursor(midX+10 ,topRow);
+		_vfd.setCursor(midX+20 ,topRow);
 		_vfd.printPacket("BEARING");
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
@@ -3070,7 +3070,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(col+10, topRow+10 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
-			_vfd.setCursor(midX+10 ,topRow+10);
+			_vfd.setCursor(midX+30 ,topRow+10);
 			_vfd.printPacket("%3d\xa0", int(r.second));
 			
 			int heading = INT_MAX;

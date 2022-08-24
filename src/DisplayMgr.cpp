@@ -3079,6 +3079,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 				//save heading
 				last_heading  = int(velocity.heading);
 				heading =  int( r.second - velocity.heading );
+				
+				
+				printf("r: %5.1f vel: %5.1f = %d\n", r.second,  velocity.heading,  heading);
+	
 			}
 			else if( last_heading != INT_MAX){
 				heading =  int( r.second - last_heading );
@@ -3086,8 +3090,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			if( heading != INT_MAX){
 	 
-				printf("heading %d\n", heading);
-				
+					
 				heading = heading % 360;
 				
 				string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;

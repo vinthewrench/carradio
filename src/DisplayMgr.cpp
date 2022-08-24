@@ -2164,13 +2164,13 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	
 	if( last_heading != INT_MAX){
-		char buffer[8];
+		char buffer[12];
 
 		string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 		string dir = ordinal[int(floor((last_heading / 45) + 0.5)) % 8]  ;
 
 		memset(buffer, ' ', sizeof(buffer));
-		sprintf( buffer , "%3d\xa0%2s",last_heading, dir.c_str());
+		sprintf( buffer , "%3d\xa0\x1c%2s\x1d",last_heading, dir.c_str());
 		_vfd.setCursor(midX +20 ,utmRow+20);
 		_vfd.printPacket("%-8s ", buffer);
 	}

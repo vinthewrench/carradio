@@ -3049,18 +3049,20 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
 		_vfd.printPacket("%-12s", name.c_str());
-		
-		
+	 
 	 	uint8_t col = 0;
-		uint8_t topRow = 25;
+		uint8_t topRow = 20;
 
 	 	_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,topRow);
 		_vfd.printPacket("DISTANCE");
   
 		_vfd.setCursor(midX+10 ,topRow);
-		_vfd.printPacket("HEADING");
-		
+		_vfd.printPacket("BEARING");
+	
+ 		_vfd.setCursor(midX+10,topRow+20);
+		_vfd.printPacket("DIRECTION");
+
 		_vfd.setFont(VFD::FONT_5x7) ;
 
 		GPSLocation_t here;
@@ -3100,8 +3102,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.printPacket("UTM:");
 	 
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.setCursor(10, height );
-		_vfd.printPacket("%-18s", utm.c_str());
+		_vfd.setCursor(0, height );
+		_vfd.printPacket(" %-18s", utm.c_str());
 	 	}
  
 	drawTimeBox();

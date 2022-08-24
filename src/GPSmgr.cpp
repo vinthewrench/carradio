@@ -150,10 +150,9 @@ bool GPSmgr::openGPSPort( int &error){
 	options.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
 	options.c_cflag &= ~CSIZE; // Clear all bits that set the data size
 	options.c_cflag |= CS8; // 8 bits per byte (most common)
-	// options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control 	options.c_cflag |=  CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
-	options.c_cflag |=  CRTSCTS; // DCTS flow control of output
-	options.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
-	
+	options.c_cflag &= ~CRTSCTS;            // Disable hardware flow control
+	options.c_cflag |= (CREAD | CLOCAL); // Turn on READ & ignore ctrl lines (CLOCAL = 1)
+
 	options.c_lflag &= ~ICANON;
 	options.c_lflag &= ~ECHO; // Disable echo
 	options.c_lflag &= ~ECHOE; // Disable erasure
@@ -457,9 +456,8 @@ void GPSmgr::processNMEA(const char *sentence){
 void GPSmgr::GPSReader(){
 	
 	
-	char	 buffer[82];
-	size_t buf_used = 0;
-	bool	 wait_for_eol = false;
+	char	 buffer[82] = {0};
+	char	 *p = buffer;
 	
 	while(_isRunning){
 		
@@ -482,7 +480,7 @@ void GPSmgr::GPSReader(){
 		/* wait for something to happen on the socket */
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+		selTimeout.tv_usec = 100;            /* 100 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;
@@ -494,69 +492,56 @@ void GPSmgr::GPSReader(){
 		
 		if ((_fd != -1)  && FD_ISSET(_fd, &dup)) {
 			
-			bool readMore = false;
+			size_t avail = sizeof(buffer) - (p - buffer);
+			// overflow   do reset
+			if(avail == 0){
+				p = buffer;
+				*p = 0;
+				continue;
+			}
 			
-			do{
-				readMore = false;
+			u_int8_t c;
+			size_t nbytes =  (size_t)::read( _fd, &c, 1 );
+			
+			if(nbytes == 1){
 				
-				u_int8_t c;
-				size_t nbytes =  (size_t)::read( _fd, &c, 1 );
+				if(c == '\r') continue;
 				
-				if(nbytes == 1){
-					readMore = true;
+				if (c == 0 || c == '\n'){
+					*p = 0;
+//					printf("%s\n", buffer);
+					processNMEA(buffer);
+					p = buffer;
+					*p = 0;
+				}else {
+					*p++ = c;
 					
-					if(wait_for_eol){
-						if (c == 0 || c == '\n')
-						{
-							wait_for_eol = false;
-							buf_used = 0;
-							buffer[buf_used] = '\0';
-						}
-						continue;
-					}
-					else if(buf_used < sizeof(buffer)){
-						if (c == 0 || c == '\n') {
-							buffer[buf_used++] = '\0';
-							processNMEA(buffer);
-						}
-						else {
-							buffer[buf_used++] = c;
-						}
-					}
-					else {
-						// buffer overflow -- reset
-						wait_for_eol = true;
-						buf_used = 0;
-						buffer[buf_used] = '\0';
-						continue;
-					}
 				}
-				else if( nbytes == 0) {
+				
+			}
+			else if( nbytes == 0) {
+				continue;
+			}
+			else if( nbytes == -1) {
+				int lastError = errno;
+				
+				// no data try later
+				if(lastError == EAGAIN)
 					continue;
+				
+				if(lastError == ENXIO){  // device disconnected..
+					
+					ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS disconnectd", _ttyPath);
+					closeGPSPort();
 				}
-				else if( nbytes == -1) {
-					int lastError = errno;
-					
-					// no data try later
-					if(lastError == EAGAIN)
-						continue;
-					
-					if(lastError == ENXIO){  // device disconnected..
-						
-						ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "GPS disconnectd", _ttyPath);
-						
-						closeGPSPort();
-						continue;
-					}
-					
-					else {
-						perror("read");
-					}
+				
+				else {
+					perror("read");
 				}
-			} while (readMore);
-			
+			}
 		}
 	}
+	
 }
 
 

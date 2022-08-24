@@ -131,7 +131,7 @@ bool GPSmgr::openGPSPort( int &error){
 	int fd ;
 	
 	if((fd = ::open( _ttyPath, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY  )) <0) {
-		//	ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
+	//	ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
 		error = errno;
 		return false;
 	}
@@ -150,8 +150,8 @@ bool GPSmgr::openGPSPort( int &error){
 	options.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
 	options.c_cflag &= ~CSIZE; // Clear all bits that set the data size
 	options.c_cflag |= CS8; // 8 bits per byte (most common)
-	options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control 	options.c_cflag |=  CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
-	//options.c_cflag |=  CRTSCTS; // DCTS flow control of output
+	// options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control 	options.c_cflag |=  CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+	options.c_cflag |=  CRTSCTS; // DCTS flow control of output
 	options.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 	
 	options.c_lflag &= ~ICANON;
@@ -179,7 +179,7 @@ bool GPSmgr::openGPSPort( int &error){
 	// add to read set
 	safe_fd_set(_fd, &_master_fds, &_max_fds);
 	pthread_mutex_unlock (&_mutex);
-	
+
 	return true;
 }
 

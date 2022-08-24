@@ -3086,6 +3086,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			if( heading != INT_MAX){
 	 
+				printf("heading %d\n", heading);
+				
 				heading = heading % 360;
 				
 				string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;

@@ -150,8 +150,8 @@ bool GPSmgr::openGPSPort( int &error){
 	options.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
 	options.c_cflag &= ~CSIZE; // Clear all bits that set the data size
 	options.c_cflag |= CS8; // 8 bits per byte (most common)
-	options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control
-	//	options.c_cflag |=  CRTSCTS; // DCTS flow control of output
+	options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control 	options.c_cflag |=  CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+	//options.c_cflag |=  CRTSCTS; // DCTS flow control of output
 	options.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 	
 	options.c_lflag &= ~ICANON;

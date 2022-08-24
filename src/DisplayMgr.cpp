@@ -3024,44 +3024,44 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	uint8_t midX = width/2;
 	static int	last_heading = INT_MAX;
- 
+	
 	if(transition == TRANS_LEAVING) {
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
- 		return;
+		return;
 	}
 	
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
- 		_vfd.clearScreen();
+		_vfd.clearScreen();
 		last_heading = INT_MAX;
- 	}
-
+	}
+	
 	auto wps = mgr->getWaypoints();
 	if(_lineOffset < wps.size()){
 		auto wp = wps[_lineOffset];
-
+		
 		string name = wp.name;
- 
+		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
 		_vfd.printPacket("%-12s", name.c_str());
-	 
-	 	uint8_t col = 0;
+		
+		uint8_t col = 0;
 		uint8_t topRow = 20;
-
-	 	_vfd.setFont(VFD::FONT_MINI);
+		
+		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,topRow);
 		_vfd.printPacket("DISTANCE");
-  
+		
 		_vfd.setCursor(midX+10 ,topRow);
 		_vfd.printPacket("BEARING");
-	 
+		
 		_vfd.setFont(VFD::FONT_5x7) ;
-
+		
 		GPSLocation_t here;
 		GPSVelocity_t velocity;
 		if(gps->GetLocation(here) & here.isValid){
@@ -3073,38 +3073,41 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(midX+10 ,topRow+10);
 			_vfd.printPacket("%3d\xa0 A", int(r.second));
 			
-			_vfd.setCursor(2,topRow+20);
-		 
+			int heading = INT_MAX;
+			
 			if(gps->GetVelocity(velocity) && velocity.isValid){
 				//save heading
 				last_heading  = int(velocity.heading);
-				
-				//relative heading
-				_vfd.printPacket("%3d\xa0  ", int( r.second - velocity.heading ));
+				heading =  int( r.second - velocity.heading );
 			}
-			else
-			{
-				if( last_heading != INT_MAX){
-					_vfd.printPacket("%3d\xa0  ", int( r.second - last_heading));
-				}
+			else if( last_heading != INT_MAX){
+				heading =  int( r.second - last_heading );
 			}
-		}
-		
-		
+			
+			if( heading != INT_MAX){
+	 
+				string ordinal[] =  {"N","NE","E", "SE","S","SW","W","NW"} ;
+	 			string dir = ordinal[int(floor((heading / 45) + 0.5)) % 8]  ;
+ 
+				_vfd.setCursor(col+10,topRow+25);
+				_vfd.printPacket("%3d\xa0 %s ", int( r.second - velocity.heading ), dir.c_str());
+			}
+ 		}
+	 
 		string utm = GPSmgr::UTMString(wp.location);
 		vector<string> v = split<string>(utm, " ");
-	
+		
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,height -10);
 		_vfd.printPacket("UTM:");
-	 
+		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0, height );
 		_vfd.printPacket(" %-18s", utm.c_str());
-	 	}
- 
+	}
+	
 	drawTimeBox();
-
+	
 }
 
 // MARK: -  Display value formatting

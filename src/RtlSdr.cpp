@@ -171,6 +171,18 @@ bool RtlSdr::setACGMode(bool agcmode) {
 }
 
 
+
+// Enable or disable the bias tee
+bool RtlSdr::setBiasTee(bool mode){
+	 
+	if (!_isSetup ||  !_dev)
+		 return false;
+
+	// set RTL AGC mode
+	int r = rtlsdr_set_bias_tee(_dev, int(mode));
+ 	return (r == 0) ;
+};
+
  
 bool RtlSdr::setFrequency(uint32_t frequency) {
 	

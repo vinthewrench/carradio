@@ -73,7 +73,10 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 
 	if(! _sdr.begin(deviceIndex,error ) )
 		return false;
-
+	
+	if(! _sdr.setBiasTee(true))
+		return false;
+ 
 	// tSet Sample rate
 	if(! _sdr.setSampleRate(RtlSdr::default_sampleRate))
 		return false;

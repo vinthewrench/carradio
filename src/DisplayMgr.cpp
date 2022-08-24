@@ -3091,7 +3091,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 				string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 	 			string dir = ordinal[int(floor((heading / 45) + 0.5)) % 8]  ;
  				_vfd.setCursor(col+10,topRow+22);
-				_vfd.printPacket("%3d\xa0 %s ", int( r.second - velocity.heading ), dir.c_str());
+				_vfd.printPacket("%3d\xa0 %s ", heading, dir.c_str());
 			}
  		}
 	 

@@ -3086,6 +3086,8 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			if( heading != INT_MAX){
 	 
+				heading = heading % 360;
+				
 				string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 	 			string dir = ordinal[int(floor((heading / 45) + 0.5)) % 8]  ;
  				_vfd.setCursor(col+10,topRow+22);

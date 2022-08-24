@@ -3051,7 +3051,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.printPacket("%-12s", name.c_str());
 		
 		uint8_t col = 0;
-		uint8_t topRow = 20;
+		uint8_t topRow = 22;
 		
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(2,topRow);

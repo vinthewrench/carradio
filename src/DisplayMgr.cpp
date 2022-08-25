@@ -3070,7 +3070,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
  
 		drawGPSWaypointScreen(TRANS_LEAVING);
 		popMode();			// remove the menu
-		popMode();	// do it twice.. remove the old mode.
+//		popMode();	// do it twice.. remove the old mode.
 
 		
 	//	showWaypoints();

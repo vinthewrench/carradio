@@ -51,9 +51,7 @@ std::string TimeStamp::ISO8601String(){
 	return string(timeStr);
 }
 
-
-
-
+ 
 std::string TimeStamp::logFileString(){
 	enum { RFC1123_GMT_LEN = 29, RFC1123_GMT_SIZE };
 	char timeStr[RFC1123_GMT_SIZE] = {0};

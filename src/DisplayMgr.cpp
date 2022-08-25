@@ -505,15 +505,6 @@ void DisplayMgr::showGPS(){
 }
 
 
-void DisplayMgr::showWaypoints(){
-	setEvent(EVT_PUSH, MODE_GPS_WAYPOINTS);
-}
-
-void DisplayMgr::showWaypoint(uint8_t page ){
-	_currentPage = page;
-	setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
-}
-
 
 void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
@@ -2862,38 +2853,103 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
 // MARK: -  GPS waypoints
 
-bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action){
-	bool wasHandled = false;
- 
-	if(action == KNOB_UP){
-		if(_lineOffset < 255){
-			_lineOffset++;
-			setEvent(EVT_NONE,MODE_GPS_WAYPOINTS);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_DOWN){
-		if(_lineOffset != 0) {
-			_lineOffset--;
-			setEvent(EVT_NONE,MODE_GPS_WAYPOINTS);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		
+
+void DisplayMgr::showWaypoints(string intitialUUID,
+										 time_t timeout,
+										 showWaypointsCallBack_t cb ){
+	
+	
+	_lineOffset = 0;
+	
+	// set _lineOffset to proper entry
+	if(! intitialUUID.empty()){
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
 		auto wps 	= mgr->getWaypoints();
- 
-		if(_lineOffset >= wps.size()) {
- 			popMode();
+		
+		for( int i = 0; i< wps.size(); i++){
+			if(wps[i].uuid == _waypointUUID){
+				_lineOffset = i;
+				break;
+			}
 		}
-		else {
-			showWaypoint(_lineOffset);
-			wasHandled = true;
-		}
- 	}
-	return wasHandled;
+	}
+	_wayPointCB = cb;
+	_waypointUUID = "";
+	_menuTimeout = timeout;
 	
+	setEvent(EVT_PUSH, MODE_GPS_WAYPOINTS);
+}
+
+void DisplayMgr::showWaypoint(string uuid ){
+//	_currentPage = page;
+	_waypointUUID = uuid;
+	setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
+}
+
+//typedef std::function<void(bool didSucceed, string uuid, knob_action_t action)> showWaypointsCallBack_t;
+
+bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action){
+	bool wasHandled = false;
+	
+	switch(action){
+			
+		case KNOB_EXIT:
+			
+			
+			if(_wayPointCB) {
+				_wayPointCB(false, "", action);
+			}
+			setEvent(EVT_POP, MODE_UNKNOWN);
+			_wayPointCB = NULL;
+			_waypointUUID = "";
+			break;
+			
+			
+		case KNOB_UP:
+			if(_lineOffset < 255){
+				_lineOffset++;
+				setEvent(EVT_NONE,MODE_GPS_WAYPOINTS);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_DOWN:
+			if(_lineOffset != 0) {
+				_lineOffset--;
+				setEvent(EVT_NONE,MODE_GPS_WAYPOINTS);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_CLICK:
+		{
+			
+			PiCarMgr*		mgr 	= PiCarMgr::shared();
+			auto wps 	= mgr->getWaypoints();
+			if(_lineOffset >= wps.size()) {
+				popMode();
+			}
+			else {
+				
+				if(_wayPointCB) {
+					_wayPointCB(true, _waypointUUID, action);
+				}
+				_wayPointCB = NULL;
+				_waypointUUID = "";
+				setEvent(EVT_POP, MODE_UNKNOWN);
+				wasHandled = true;
+			}
+			
+		}
+			break;
+			
+		case KNOB_DOUBLE_CLICK:
+			
+			break;
+	}
+	
+	
+	return wasHandled;
 }
  
 
@@ -2906,8 +2962,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 //	uint8_t width = _vfd.width();
 //	uint8_t height = _vfd.height();
 //
-	static uint8_t lastOffset = 0;
- 	static uint8_t firstLine = 0;
+	static int lastOffset = 0;
+ 	static int firstLine = 0;
 
 	bool needsRedraw = false;
 	
@@ -2916,8 +2972,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
-//		_lineOffset = 0;
-		lastOffset = 0;
+		lastOffset = INT_MAX;
 		firstLine = 0;
 		return;
 	}
@@ -2937,11 +2992,10 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		if(_lineOffset >=  wps.size())
 			_lineOffset = 0;
 		
-		lastOffset = 0;
+		lastOffset = INT_MAX;
 		firstLine = 0;
 		needsRedraw = true;
 	}
-	
 	
 	// chack for change in gps offsets ?
 	// if anything changed, needsRedraw = true
@@ -3006,7 +3060,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 		_saved_mode = handleRadioEvent();
 		popMode();
 		
-		showWaypoints();
+	//	showWaypoints();
 		wasHandled = true;
 	}
 	else if(action == KNOB_DOUBLE_CLICK){
@@ -3043,11 +3097,20 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		last_heading = INT_MAX;
 	}
 	
+	
+	// find waypoint with uuid
+	PiCarMgr::waypoint_prop_t *wp  = NULL;
 	auto wps = mgr->getWaypoints();
-	if(_lineOffset < wps.size()){
-		auto wp = wps[_lineOffset];
-		
-		string name = wp.name;
+	
+	for( int i = 0; i< wps.size(); i++){
+		if(wps[i].uuid == _waypointUUID){
+			wp = &wps[i];
+			break;
+		}
+	}
+	
+	if(wp){
+ 		string name = wp->name;
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
@@ -3068,7 +3131,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		GPSLocation_t here;
 		GPSVelocity_t velocity;
 		if(gps->GetLocation(here) & here.isValid){
-			auto r = GPSmgr::dist_bearing(here,wp.location);
+			auto r = GPSmgr::dist_bearing(here,wp->location);
 			
 			_vfd.setCursor(col+10, topRow+10 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
@@ -3083,20 +3146,20 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 				last_heading  = int(velocity.heading);
 				heading =  int( r.second - velocity.heading );
 				
-	//				printf("r: %5.1f vel: %5.1f = %d\n", r.second,  velocity.heading,  heading);
-	
+				//				printf("r: %5.1f vel: %5.1f = %d\n", r.second,  velocity.heading,  heading);
+				
 			}
 			else if( last_heading != INT_MAX){
 				heading =  int( r.second - last_heading );
 			}
 			
 			if( heading != INT_MAX){
-  				_vfd.setCursor(col+10,topRow+22);
+				_vfd.setCursor(col+10,topRow+22);
 				_vfd.printPacket("%s %3d\xa0 %s",heading<0?"<-":"", abs(heading), heading>0?"->":"");
 			}
- 		}
-	 
-		string utm = GPSmgr::UTMString(wp.location);
+		}
+		
+		string utm = GPSmgr::UTMString(wp->location);
 		vector<string> v = split<string>(utm, " ");
 		
 		_vfd.setFont(VFD::FONT_MINI);

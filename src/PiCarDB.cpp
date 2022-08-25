@@ -28,6 +28,15 @@ PiCarDB::PiCarDB (){
 	_props.clear();
 	
 	_didChangeProperties  = false;
+	
+	// create RNG engine
+	constexpr std::size_t SEED_LENGTH = 8;
+  std::array<uint_fast32_t, SEED_LENGTH> random_data;
+  std::random_device random_source;
+  std::generate(random_data.begin(), random_data.end(), std::ref(random_source));
+  std::seed_seq seed_seq(random_data.begin(), random_data.end());
+	_rng =  std::mt19937{ seed_seq };
+
 }
 
 PiCarDB::~PiCarDB (){
@@ -572,3 +581,34 @@ bool PiCarDB::getCanbusDisplayProps( map <uint8_t, canbusdisplay_prop_t> &propsO
 	return statusOk;
 }
  
+
+string PiCarDB::generateUUID_v4(){
+	
+	static std::uniform_int_distribution<> dis(0, 15);
+	static std::uniform_int_distribution<> dis2(8, 11);
+	
+	std::stringstream ss;
+	int i;
+	ss << std::hex;
+	for (i = 0; i < 8; i++) {
+		ss << dis(_rng);
+	}
+	ss << "-";
+	for (i = 0; i < 4; i++) {
+		ss << dis(_rng);
+	}
+	ss << "-4";
+	for (i = 0; i < 3; i++) {
+		ss << dis(_rng);
+	}
+	ss << "-";
+	ss << dis2(_rng);
+	for (i = 0; i < 3; i++) {
+		ss << dis(_rng);
+	}
+	ss << "-";
+	for (i = 0; i < 12; i++) {
+		ss << dis(_rng);
+	};
+	return ss.str();
+}

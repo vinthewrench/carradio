@@ -139,7 +139,7 @@ PiCarMgr::~PiCarMgr(){
 
 bool PiCarMgr::begin(){
 	_isSetup = false;
-	
+ 
 	try {
 		int error = 0;
 	 
@@ -396,7 +396,8 @@ bool PiCarMgr::updateRadioPrefs() {
 void PiCarMgr::saveRadioSettings(){
 	
 	updateRadioPrefs();
-	
+	updateWaypointProps();
+ 
 	_db.setProperty(PROP_SYNC_CLOCK_TO_GPS, _clocksync_gps?_clocksync_gps_secs: 0);
 
 	// dimmer mode
@@ -424,7 +425,7 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
 	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
-		 
+	
 }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -443,7 +444,7 @@ void PiCarMgr::restoreRadioSettings(){
 		}
 	}
 	
-	// SET shutodwn mode
+	// SET shutdown mode
  	if(_db.getBoolProperty(PROP_AUTO_SHUTDOWN_MODE,&_autoShutdownMode) && _autoShutdownMode){
 		_db.getUint16Property(PROP_SHUTDOWN_DELAY, &_shutdownDelay);
 	}
@@ -828,7 +829,7 @@ void PiCarMgr::getWaypointProps(){
 		
 		for(auto item : j ){
 			if(item.is_object()
-				&&  item.contains(PROP_LINE)  &&  item[PROP_LINE].is_number()
+				&&  item.contains(PROP_UUID)  &&  item[PROP_UUID].is_string()
 				&&  item.contains(PROP_TITLE) &&  item[(PROP_TITLE)].is_string()
 				&&  item.contains(PROP_LONGITUDE)   &&  item[(PROP_LONGITUDE)].is_number_float()
 				&&  item.contains(PROP_LATITUDE)   &&  item[(PROP_LATITUDE)].is_number_float()
@@ -837,18 +838,70 @@ void PiCarMgr::getWaypointProps(){
  				double 		longitude  = item[PROP_LONGITUDE];
 				double 		latitude  = item[PROP_LATITUDE];
 				string 		name  = item[PROP_TITLE];
-				
+				string 		uuid  = item[PROP_UUID];
+		 
 				waypoint_prop_t wp = {
+					.uuid = uuid,
 					.name = name,
 					.location.latitude = latitude,
 					.location.longitude = longitude,
 					.location.isValid = true
 				};
+				
+				if(item.contains(PROP_ALTITUDE)   &&  item[(PROP_ALTITUDE)].is_number_float()){
+					wp.location.altitude  =  item[PROP_ALTITUDE];
+					wp.location.altitudeIsValid = true;
+				}
+	
 				_waypoints.push_back(wp);
 			}
 		}
 	}
+}
+
+void PiCarMgr::updateWaypointProps(){
+	nlohmann::json j = {};
+
+	for(waypoint_prop_t wp : _waypoints){
+		
+		json item;
+		item[PROP_UUID] = wp.uuid;
+		item[PROP_TITLE] = wp.name;
+		item[PROP_LONGITUDE] = wp.location.longitude;
+		item[PROP_LATITUDE] = wp.location.latitude;
+		
+		if(wp.location.altitudeIsValid ){
+			item[PROP_ALTITUDE] = wp.location.altitude;
+		}
+
+		j.push_back(item);
+	}
 	
+	_db.setProperty(PROP_WAYPOINTS, j);
+}
+
+bool PiCarMgr::createWaypoint(string name, waypoint_prop_t &wpout ) {
+	
+	bool success = false;
+	waypoint_prop_t wp = {};
+	GPSLocation_t location = {};
+	
+	// create default name
+	if (name.empty()) {
+		name = "WP_" + TimeStamp().ISO8601String();
+	}
+	wp.name = name;
+	wp.uuid = _db.generateUUID_v4();
+	
+	if(_gps.GetLocation(location) & location.isValid){
+		wp.location = location;
+		success = true;
+	}
+	
+	if(success)
+		wpout = wp;
+	
+	return success;
 }
 
 
@@ -1136,7 +1189,7 @@ void PiCarMgr::PiCarLoop(){
 // occasionally called durring idle time
 
 void PiCarMgr::idle(){
-	
+									 
 #if USE_TMP_117
 	_tempSensor1.idle();
 #endif
@@ -1429,7 +1482,16 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_WAYPOINTS:
-			_display.showWaypoints();
+			_display.showWaypoints("", 20,
+										  [=](bool didSucceed,
+												string uuid,
+												DisplayMgr::knob_action_t action ){
+				
+				if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+					_display.showWaypoint(uuid);
+				}
+			}
+		 );
 			break;
 
 		case MENU_CANBUS:

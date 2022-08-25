@@ -16,6 +16,7 @@
 #include <strings.h>
 #include <cstring>
 #include <time.h>
+#include <random>
 
 #include "json.hpp"
 
@@ -87,6 +88,8 @@ class PiCarDB  {
 	bool getUInt32Value(string key,  uint32_t &result);
 	bool getBoolValue(string key,  bool &result);
 
+	string generateUUID_v4();
+	
 private:
 	
 	string defaultPropertyFilePath();
@@ -109,4 +112,7 @@ private:
 		} value_t;
 
 	map<string, value_t> _values;
+	
+	mt19937						_rng;
+
 };

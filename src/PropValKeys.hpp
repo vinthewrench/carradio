@@ -65,8 +65,11 @@ inline static const string  PROP_LINE							= "line";
 inline static const string  PROP_TITLE							= "title";
 inline static const string  PROP_KEY							= "key";
 inline static const string  PROP_ID								= "id";
+inline static const string  PROP_UUID							= "uuid";
 inline static const string  PROP_LATITUDE						= "latitude";
 inline static const string  PROP_LONGITUDE					= "longitude";
+inline static const string  PROP_ALTITUDE						= "altitude";
+
 inline static const string  PROP_WAYPOINTS					= "waypoints";
 
 inline static const string  PROP_LAST_MENU_SELECTED		= "last_menu";

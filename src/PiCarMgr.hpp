@@ -149,6 +149,7 @@ class PiCarMgr {
 	// MARK: - waypoints
 
 	typedef struct  {
+	string 			uuid;
 	 string 			name;
 	 GPSLocation_t location;
  } waypoint_prop_t;
@@ -186,6 +187,8 @@ private:
 	void getSavedFrequencyandMode( RadioMgr::radio_mode_t &mode, uint32_t &freq);
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
 	void getWaypointProps();
+	void updateWaypointProps();
+	bool createWaypoint(string name, waypoint_prop_t &wp );
 
 	nlohmann::json GetRadioPresetsJSON();
  

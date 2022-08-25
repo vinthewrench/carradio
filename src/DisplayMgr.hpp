@@ -103,8 +103,14 @@ public:
 	void showTime();
 	void showGPS();
 	
-	void showWaypoints();
-	void showWaypoint(uint8_t page = 0);
+	
+	typedef std::function<void(bool didSucceed, string uuid, knob_action_t action)> showWaypointsCallBack_t;
+	void showWaypoints( string intitialUUID,
+ 							 time_t timeout = 0,
+							 showWaypointsCallBack_t cb = nullptr
+							 );
+	
+	void showWaypoint(string uuid) ;
 
 	void showStartup();
 	void showInfo();
@@ -171,8 +177,6 @@ private:
  
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
-	void drawGPSWaypointsScreen(modeTransition_t transition);
-	void drawGPSWaypointScreen(modeTransition_t transition);
  
 	void drawCANBusScreen(modeTransition_t transition);
 	void drawCANBusScreen1(modeTransition_t transition);
@@ -194,6 +198,13 @@ private:
 	void drawTemperature();
 	void drawTimeBox();
 	
+	// waypoint stuff
+	void drawGPSWaypointsScreen(modeTransition_t transition);
+	void drawGPSWaypointScreen(modeTransition_t transition);
+
+	showWaypointsCallBack_t _wayPointCB;
+	string					  	_waypointUUID;
+
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);
 	

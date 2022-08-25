@@ -203,7 +203,7 @@ private:
 	void drawGPSWaypointScreen(modeTransition_t transition);
 
 	showWaypointsCallBack_t _wayPointCB;
-	string					  	_waypointUUID;
+
 
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);

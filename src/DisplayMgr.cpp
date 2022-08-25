@@ -2940,7 +2940,8 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			}
 			else {
 				string uuid = wps[_lineOffset].uuid;
-				setEvent(EVT_POP, MODE_UNKNOWN);
+				popMode();
+	
 
 				if(_wayPointCB) {
 					_wayPointCB(true,uuid, action);
@@ -3066,7 +3067,8 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 //		printf("processSelectorKnobActionForGPSWaypoint\n");
 	 	 // exit from this back into waypoints and clear menus
 		_saved_mode = handleRadioEvent();
-		popMode();
+		setEvent(EVT_POP, _saved_mode);
+
 		
 	//	showWaypoints();
 		wasHandled = true;

@@ -3074,7 +3074,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 		//  you dont have to give it a TRANS_LEAVING
 		
 		drawGPSWaypointScreen(TRANS_LEAVING);
-		popMode();			// remove the menu
+//		popMode();			// remove the menu
 		popMode();	// do it twice.. remove the old mode.
 		pthread_mutex_unlock (&_mutex);
 

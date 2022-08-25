@@ -3108,18 +3108,9 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	// find waypoint with uuid
 	auto wps = mgr->getWaypoints();
 	
-	PiCarMgr::waypoint_prop_t *wp  = NULL;
-	for( int i = 0; i< wps.size(); i++){
-		if(wps[i].uuid == _waypointUUID){
-			wp = &wps[i];
-			
-			printf("drawGPSWaypointScreen %s %d %s",_waypointUUID.c_str(), i, wp->name.c_str());
-			break;
-		}
-	}
-	
-	if(wp){
- 		string name = wp->name;
+	if(_lineOffset < wps.size()){
+		auto wp = wps[_lineOffset];
+ 		string name = wp.name;
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
@@ -3140,7 +3131,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		GPSLocation_t here;
 		GPSVelocity_t velocity;
 		if(gps->GetLocation(here) & here.isValid){
-			auto r = GPSmgr::dist_bearing(here,wp->location);
+			auto r = GPSmgr::dist_bearing(here,wp.location);
 			
 			_vfd.setCursor(col+10, topRow+10 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
@@ -3168,7 +3159,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			}
 		}
 		
-		string utm = GPSmgr::UTMString(wp->location);
+		string utm = GPSmgr::UTMString(wp.location);
 		vector<string> v = split<string>(utm, " ");
 		
 		_vfd.setFont(VFD::FONT_MINI);

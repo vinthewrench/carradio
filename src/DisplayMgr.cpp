@@ -3066,17 +3066,18 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 		
  	printf("processSelectorKnobActionForGPSWaypoint\n");
 	 	 // exit from this back into waypoints and clear menus
-//		_saved_mode = handleRadioEvent();
-  
-		pthread_mutex_lock (&_mutex);
+ 
+	//	pthread_mutex_lock (&_mutex);
  
 		//  if you actually selected a menu, then just pop the mode..
 		//  you dont have to give it a TRANS_LEAVING
-		
-//		drawGPSWaypointScreen(TRANS_LEAVING);
- 		popMode();			// remove the menu
-		popMode();	// do it twice.. remove the old mode.
-		pthread_mutex_unlock (&_mutex);
+		_saved_mode = handleRadioEvent();
+  
+//		popMode();			// remove the menu
+ //		drawGPSWaypointScreen(TRANS_LEAVING);
+		setEvent(EVT_POP, MODE_UNKNOWN);
+
+	//	pthread_mutex_unlock (&_mutex);
 
  
 		

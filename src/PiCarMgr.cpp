@@ -1488,6 +1488,8 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 												DisplayMgr::knob_action_t action ){
 				
 				if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+					
+					printf("showWaypoints -> %s\n",uuid.c_str());
 					_display.showWaypoint(uuid);
 				}
 			}

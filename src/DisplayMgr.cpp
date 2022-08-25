@@ -3031,10 +3031,16 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			if(i < wps.size()) {
 				auto wp = wps[i];
 				string name = wp.name;
+				if(isSelected)
+					_waypointUUID = wp.uuid;
+				
 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 	 			line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 		}
 			else {
+				if(isSelected)
+					_waypointUUID = "";
+				
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  "  EXIT";
 			}
 			

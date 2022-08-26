@@ -52,7 +52,7 @@ static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
 static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
- 
+
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -114,8 +114,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightKnob.setDoubleClickTime(doubleClickTime);
 		_leftKnob.setDoubleClickTime(doubleClickTime);
 		
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
-//		setKnobColor(KNOB_LEFT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_LEFT, RGB::Lime);
 		
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
@@ -244,7 +244,7 @@ void DisplayMgr::runLEDEventStartup(){
 			data[mod(++ledStep, 24)] = {255,255,255};
 			_leftRing.setLEDs(data);
 			_rightRing.setLEDs(data);
-
+			
 #else
 			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
 			ledStep++;
@@ -269,7 +269,7 @@ void DisplayMgr::runLEDEventMute(){
 	static timespec		lastEvent = {0,0};
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
- 
+	
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
 		blinkOn = false;
@@ -324,7 +324,7 @@ void DisplayMgr::runLEDEventVol(){
 		struct timespec now, diff;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespec_sub( &diff, &now, &startedEvent);
-	
+		
 		if(diff.tv_sec <  1){
 			
 			float volume =  audio->volume();
@@ -381,19 +381,19 @@ bool DisplayMgr::setBrightness(double level) {
 		// vfd 0 -7
 		uint8_t vfdLevel =  level * 7.0 ;
 		
-		if(vfdLevel == 0) vfdLevel  = 1;		
+		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
 		
 		uint8_t ledCurrent = calculateRingCurrent(level);
-//
-//		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
-//		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
+		//
+		//		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
+		//		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
 		_rightRing.SetGlobalCurrent(ledCurrent);
 		_leftRing.SetGlobalCurrent(ledCurrent);
 		
 		_rightKnob.setBrightness(level);
 		_leftKnob.setBrightness(level);
-
+		
 	}
 	
 	return success;
@@ -405,7 +405,7 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 	switch (_current_mode) {
 		case MODE_TIME:
 		case MODE_RADIO:
-		
+			
 			if(_backlightKnobs){
 				setKnobColor(KNOB_RIGHT, RGB::Lime);
 				setKnobColor(KNOB_LEFT, RGB::Lime);
@@ -414,10 +414,10 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 				setKnobColor(KNOB_RIGHT, RGB::Black);
 				setKnobColor(KNOB_LEFT, RGB::Black);
 			}
-
+			
 			
 		default: ;
-			 
+			
 	}
 	return true;
 }
@@ -430,7 +430,7 @@ bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 		
 		// calculate color vs brightness
 		RGB effectiveColor = color;
- 
+		
 		switch (knob) {
 			case KNOB_RIGHT:
 				success = _rightKnob.setColor(effectiveColor);
@@ -603,7 +603,7 @@ uint8_t DisplayMgr::pageCountForMode(mode_state_t mode){
 	uint8_t count = 1;
 	
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
-
+	
 	switch (mode) {
 		case MODE_CANBUS:
 		{
@@ -657,19 +657,19 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_DTC:
 			wasHandled = processSelectorKnobActionForDTC(action);
 			break;
-
+			
 		case MODE_GPS_WAYPOINTS:
 			wasHandled = processSelectorKnobActionForGPSWaypoints(action);
 			break;
-
+			
 		case MODE_GPS_WAYPOINT:
 			wasHandled = processSelectorKnobActionForGPSWaypoint(action);
 			break;
-
+			
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
-	 
+			
 			
 		default:
 			break;
@@ -807,7 +807,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		_vfd.clearScreen();
 		return;
 	}
@@ -903,16 +903,16 @@ void DisplayMgr::DisplayUpdate(){
 	
 	//	printf("start DisplayUpdate\n");
 	PRINT_CLASS_TID;
- 
+	
 	pthread_condattr_t attr;
 	pthread_condattr_init( &attr);
-
+	
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
 	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
 #endif
 	pthread_cond_init( &_cond, &attr);
- 
+	
 	while(_isRunning){
 		
 		// if not setup // check back later
@@ -971,13 +971,13 @@ void DisplayMgr::DisplayUpdate(){
 				struct timespec now, diff;
 				clock_gettime(CLOCK_MONOTONIC, &now);
 				timespec_sub( &diff, &now, &_lastEventTime);
-			
+				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
-				
+					
 					shouldRedraw = false;
 					shouldUpdate = true;
-
+					
 					if(diff.tv_sec >=  3) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
@@ -1198,11 +1198,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	
 	if(!_isSetup)
 		return;
-//	//
-//		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
-//		if(transition != TRANS_IDLE)
-//			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
-//
+	//	//
+	//		vector<string> l1 = { "ENT","RFR","IDL","XIT"};
+	//		if(transition != TRANS_IDLE)
+	//			printf("drawMode %s %d\n", l1[transition].c_str(),  mode);
+	//
 	try {
 		switch (mode) {
 				
@@ -1243,17 +1243,17 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				break;
 				
 			case MODE_GPS:
-	 				drawGPSScreen(transition);
+				drawGPSScreen(transition);
 				break;
- 
+				
 			case MODE_GPS_WAYPOINTS:
- 					drawGPSWaypointsScreen(transition);
+				drawGPSWaypointsScreen(transition);
 				break;
-
+				
 			case MODE_GPS_WAYPOINT:
-					drawGPSWaypointScreen(transition);
+				drawGPSWaypointScreen(transition);
 				break;
-
+				
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
@@ -1294,7 +1294,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	}
 }
 
- 
+
 
 
 void DisplayMgr::drawStartupScreen(modeTransition_t transition){
@@ -1305,20 +1305,20 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		printf("Enter drawStartupScreen\n");
 	}
 	
- 	if(transition == TRANS_LEAVING){
+	if(transition == TRANS_LEAVING){
 		printf("Leaving drawStartupScreen\n");
-
+		
 	}
 #else
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
-
+	
 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
- 
-
+	
+	
 	if(transition == TRANS_ENTERING){
- 
+		
 		_vfd.setPowerOn(true);
 		_vfd.clearScreen();
 		_vfd.clearScreen();
@@ -1326,7 +1326,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
 		
-			uint8_t leftbox 	= 5;
+		uint8_t leftbox 	= 5;
 		uint8_t rightbox 	= width - 5;
 		uint8_t topbox 	= 5 ;
 		uint8_t bottombox = height - 5  ;
@@ -1336,50 +1336,50 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		//draw box outline
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
-			
+		
 		string str = "PiCar";
 		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
 		_vfd.setCursor( start ,centerY+5);
 		_vfd.write(str);
- 
- 		LEDeventStartup();
+		
+		LEDeventStartup();
 	}
- 
+	
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		PiCarMgr*			mgr 	= PiCarMgr::shared();
 		RadioMgr*			radio 	= mgr->radio();
 		GPSmgr*				gps 		= mgr->gps();
 		PiCarCAN*			can 		= mgr->can();
-	
-	 	if(radio->isConnected()){
-	 		_vfd.setCursor( 15, 50);
+		
+		if(radio->isConnected()){
+			_vfd.setCursor( 15, 50);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket( "RADIO");
 		}
 		
 		if(gps->isConnected()){
- 			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 50, 50);
 			_vfd.printPacket( "GPS");
 		}
- 
+		
 		if(can->isConnected()){
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor( 80, 50);
 			_vfd.printPacket( "CANBUS");
 		}
 	}
-
+	
 	if(transition == TRANS_LEAVING){
 		setKnobColor(KNOB_RIGHT, RGB::Black);
 		setKnobColor(KNOB_LEFT, RGB::Black);
 	}
 	
-//	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-//		drawDeviceStatus();
-//
-//	}
+	//	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+	//		drawDeviceStatus();
+	//
+	//	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 	
 #endif
@@ -1450,7 +1450,7 @@ void DisplayMgr::drawDeviceStatus(){
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
-		
+	
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char buffer[128] = {0};
@@ -1461,8 +1461,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
- 	}
-	 
+	}
+	
 	if(_backlightKnobs){
 		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		setKnobColor(KNOB_LEFT, RGB::Lime);
@@ -1471,7 +1471,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Black);
 		setKnobColor(KNOB_LEFT, RGB::Black);
 	}
-		  //		_leftRing.clearAll();
+	//		_leftRing.clearAll();
 	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
 	_vfd.setCursor(10,35) ;
@@ -1497,12 +1497,12 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 }
 
 void  DisplayMgr::drawTemperature(){
-
+	
 	PiCarDB*		db 	= PiCarMgr::shared()->db();
 	char buffer[128] = {0};
 	char* p = &buffer[0];
-
-
+	
+	
 	bool hasInside = false;
 	bool hasOutside = false;
 	
@@ -1518,15 +1518,15 @@ void  DisplayMgr::drawTemperature(){
 		fInside = cTemp *9.0/5.0 + 32.0;
 		hasInside = true;
 	}
- 
+	
 	if(hasInside){
 		p+=  sprintf(p, "%d\xa0%s", (int) round(fInside) ,  (hasOutside?"":"F") );
 	}
-
+	
 	if(hasOutside){
 		p+=  sprintf(p, "%s%d\xa0" "F",  (hasInside?"/":""), (int) round(fOutside) );
 	}
-
+	
 	if(hasInside || hasOutside){
 		_vfd.setCursor( 0, 7)	;
 		_vfd.setFont(VFD::FONT_5x7);
@@ -1545,7 +1545,7 @@ void DisplayMgr::drawEngineCheck(){
 	bitset<8>  bits = {0};
 	
 	_vfd.setCursor(midX, 60);
-
+	
 	char buffer[20] = {0};
 	
 	
@@ -1564,7 +1564,7 @@ void DisplayMgr::drawEngineCheck(){
 	else if(fDB->boolForKey("GM_CHECK_FUELCAP", engineCheck)
 			  && engineCheck) {
 		sprintf(buffer, "CHECK FUEL CAP");
- 	}
+	}
 	else if(fDB->bitsForKey("JK_DOORS", bits) && bits.count()){
 		if(bits.count() == 1) {
 			if( bits.test(4) )sprintf(buffer, "GATE OPEN");
@@ -1572,11 +1572,11 @@ void DisplayMgr::drawEngineCheck(){
 		}
 		else sprintf(buffer, "DOORS OPEN");
 	}
- 
+	
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.printPacket("%-20s", buffer);
-
-
+	
+	
 }
 
 void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
@@ -1675,7 +1675,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			setKnobColor(KNOB_RIGHT, RGB::Black);
 			setKnobColor(KNOB_LEFT, RGB::Black);
 		}
-
+		
 		didSetRing = false;
 	}
 	
@@ -1833,7 +1833,7 @@ void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -1874,15 +1874,15 @@ void DisplayMgr::drawShutdownScreen(){
 	
 	setKnobColor(KNOB_RIGHT, RGB::Black);
 	setKnobColor(KNOB_LEFT, RGB::Black);
-
+	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(10,35));
 	TRY(_vfd.write("  Well... Bye"));
 	sleep(1);
 	_vfd.clearScreen();
-
+	
 }
- 
+
 void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
@@ -1890,7 +1890,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	int64_t nowSecs = timespec_to_msec(&now) / 1000;
- 
+	
 	constexpr int busTimeout = 5;
 	
 	if(transition == TRANS_ENTERING) {
@@ -1901,7 +1901,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -2033,7 +2033,7 @@ void DisplayMgr::drawCANBusScreen1(modeTransition_t transition){
 		cachedProps.clear();
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
-//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
 		return;
 	}
 	
@@ -2145,7 +2145,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	if(gps->GetVelocity(velocity)){
 		char buffer[8];
 		
-//		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
+		//		printf("3  %f mph %f deg\n",  velocity.speed * 1.150779 , velocity.heading);
 		
 		//save heading
 		last_heading  = int(velocity.heading);
@@ -2160,10 +2160,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	if( last_heading != INT_MAX){
 		char buffer[12];
-
+		
 		string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 		string dir = ordinal[int(floor((last_heading / 45) + 0.5)) % 8]  ;
-
+		
 		memset(buffer, ' ', sizeof(buffer));
 		sprintf( buffer , "%3d\xa0\x1c%2s\x1d ",last_heading, dir.c_str());
 		_vfd.setCursor(midX +20 ,utmRow+20);
@@ -2895,7 +2895,7 @@ void DisplayMgr::showWaypoint(string uuid, showWaypointsCallBack_t cb ){
 			}
 		}
 		_wayPointCB = cb;
- 		setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
+		setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
 	}
 }
 
@@ -2953,8 +2953,8 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			setEvent(EVT_POP, MODE_UNKNOWN);
 			_wayPointCB = NULL;
 			_lineOffset = 0;
- 	//	popMode();
-
+			//	popMode();
+			
 			if(savedCB) {
 				savedCB(true, uuid, action);
 			}
@@ -2970,7 +2970,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 	
 	return wasHandled;
 }
- 
+
 
 void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	
@@ -3055,7 +3055,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			}
 			else {
-			
+				
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") ;
 				if(i == wps.size())
 					line += " MAKE WAYPOINT";
@@ -3073,7 +3073,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	drawTimeBox();
 }
 
- 
+
 bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	bool wasHandled = false;
 	
@@ -3095,7 +3095,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 			string uuid = wp.uuid;
 			
 			auto savedCB = _wayPointCB;
-	//		popMode();
+			//		popMode();
 			_lineOffset = 0;
 			_wayPointCB = NULL;
 			
@@ -3109,7 +3109,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	return wasHandled;
 	
 }
- 
+
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
@@ -3134,26 +3134,27 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		last_heading = INT_MAX;
 	}
-		
+	
 	// find waypoint with uuid
 	auto wps = mgr->getWaypoints();
 	
 	if(_lineOffset < wps.size()){
 		auto wp = wps[_lineOffset];
- 		string name = wp.name;
+		string name = wp.name;
 		
- 		if(name.size() > 12){
+		if(name.size() > 12){
 			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
-			name = truncate(name, 20);
-	 		_vfd.setFont(VFD::FONT_MINI);
- 		}
+			name = truncate(name, 22);
+			_vfd.setCursor(0,8);
+			_vfd.setFont(VFD::FONT_MINI);
+		}
 		else{
+			_vfd.setCursor(0,10);
 			_vfd.setFont(VFD::FONT_5x7);
- 		}
-	
-		_vfd.setCursor(0,10);
+		}
+		
 		_vfd.printPacket("%s", name.c_str());
-
+		
 		uint8_t col = 0;
 		uint8_t topRow = 22;
 		
@@ -3261,7 +3262,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				value = string(buffer);
 			}
 				break;
-	
+				
 			case	FrameDB::KPH:
 			{
 				float mph = stof(rawValue) *  0.6213712;
@@ -3294,7 +3295,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 				value = string(buffer);
 			}
 				break;
-								
+				
 				
 			default:
 				value = rawValue;

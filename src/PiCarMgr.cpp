@@ -1580,7 +1580,17 @@ void PiCarMgr::displayWaypoint(string uuid){
 													 DisplayMgr::knob_action_t action ){
 					
 					if(didSucceed) {
-						displayWaypoints();
+						switch(newSelectedItem) {
+							case 0:		// update
+								break;
+								
+							case 1:		//delete
+								displayWaypoints(uuid);
+							break;
+								
+							default:
+								;
+						}
 					}
 				});
 			}

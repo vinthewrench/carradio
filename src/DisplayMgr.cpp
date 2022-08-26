@@ -1038,9 +1038,9 @@ void DisplayMgr::DisplayUpdate(){
 						auto savedCB = _simpleCB;
 						popMode();
 						_knobCB = NULL;
-						shouldRedraw = true;
-						shouldUpdate = true;
-						
+						//						shouldRedraw = true;
+						//						shouldUpdate = true;
+						//
 						if(savedCB) {
 							savedCB();
 						}
@@ -1337,20 +1337,36 @@ void DisplayMgr::drawMessageScreen(modeTransition_t transition){
 	
 	
 	if(transition == TRANS_ENTERING) {
-  		_vfd.clearScreen();
+		_vfd.clearScreen();
 		
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		TRY(_vfd.setCursor(0,10));
-		TRY(_vfd.write("Message"));
+		uint8_t width = _vfd.width();
+		
+		int centerX = width /2;
+		int centerY = _vfd.height() /2;
+		
+		string str = _menuTitle;
+		
+		if(str.size() > 12){
+			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+			str = truncate(str, 22);
+			
+			_vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY - 5);
+			_vfd.setFont(VFD::FONT_MINI);
+		}
+		else{
+			_vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY - 5);
+			_vfd.setFont(VFD::FONT_5x7);
+		}
+		
+		_vfd.printPacket("%s", str.c_str());
 	}
 	
 	if(transition == TRANS_LEAVING) {
- 		return;
+		return;
 	}
-
+ 
 	drawTimeBox();
-
- }
+}
 
 
 

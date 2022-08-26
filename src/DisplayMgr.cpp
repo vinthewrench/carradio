@@ -2950,10 +2950,10 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 				uuid = wps[_lineOffset].uuid;
 			}
 			
-			setEvent(EVT_POP, MODE_UNKNOWN);
+			popMode();
+	//			setEvent(EVT_POP, MODE_UNKNOWN);
 			_wayPointCB = NULL;
 			_lineOffset = 0;
-			//	popMode();
 			
 			if(savedCB) {
 				savedCB(true, uuid, action);

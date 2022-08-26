@@ -2912,7 +2912,6 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			_lineOffset = 0;
 			break;
 			
-			
 		case KNOB_UP:
 			if(_lineOffset < 255){
 				_lineOffset++;
@@ -3065,20 +3064,26 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	if(action == KNOB_CLICK){
 		
  	printf("processSelectorKnobActionForGPSWaypoint\n");
+		printf("_current_mode = %d\n", _current_mode);
+		printf("_saved_mode = %d\n", _saved_mode);
+		printf("POP\n");
 	 	 // exit from this back into waypoints and clear menus
  
-	//	pthread_mutex_lock (&_mutex);
  
 		//  if you actually selected a menu, then just pop the mode..
 		//  you dont have to give it a TRANS_LEAVING
 		_saved_mode = handleRadioEvent();
   
-//		popMode();			// remove the menu
+//			popMode();			// remove the menu
  //		drawGPSWaypointScreen(TRANS_LEAVING);
-		setEvent(EVT_POP, MODE_UNKNOWN);
-
-	//	pthread_mutex_unlock (&_mutex);
-
+		
+	//	setEvent(EVT_POP, MODE_UNKNOWN);
+		
+		popMode();
+		
+		printf("_current_mode = %d\n", _current_mode);
+		printf("_saved_mode = %d\n", _saved_mode);
+ 
  
 		
 	//	showWaypoints();

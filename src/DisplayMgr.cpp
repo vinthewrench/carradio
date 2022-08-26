@@ -2941,25 +2941,25 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			
 			if(_lineOffset >= wps.size()) {
 				if(_lineOffset == wps.size())
+				{
 					uuid = kNEW_WAYPOINT;
-				else
-					if(_lineOffset == wps.size()+1)
-						uuid = kEXIT;
+					wasHandled = true;
+ 				}
+				 
 			}
 			else {
 				uuid = wps[_lineOffset].uuid;
+				wasHandled = true;
 			}
 			
 			popMode();
-	//			setEvent(EVT_POP, MODE_UNKNOWN);
-			_wayPointCB = NULL;
+ 			_wayPointCB = NULL;
 			_lineOffset = 0;
 			
 			if(savedCB) {
-				savedCB(true, uuid, action);
+				savedCB(wasHandled, uuid, action);
 			}
-			wasHandled = true;
-			
+ 
 		}
 			break;
 			

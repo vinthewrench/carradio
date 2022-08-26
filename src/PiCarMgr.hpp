@@ -199,7 +199,7 @@ private:
 	void setDisplayMode(menu_mode_t menuMode);
 	
 	
-	void displayWaypoints();
+	void displayWaypoints(string intitialUUID = "");
 	void displayWaypoint(string uuid);
 
 	void tunerDoubleClicked();

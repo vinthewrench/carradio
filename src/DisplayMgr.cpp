@@ -3077,37 +3077,33 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	bool wasHandled = false;
 	
-	if(action == KNOB_CLICK){
-		
-		// exit from this back into waypoints and clear menus
-		_saved_mode = handleRadioEvent();
-		popMode();
-		setEvent(EVT_REDRAW, _current_mode );
-		wasHandled = true;
+	
+	string uuid = "";
+	
+	PiCarMgr*	mgr 	= PiCarMgr::shared();
+	auto wps 	= mgr->getWaypoints();
+	
+	if(_lineOffset < wps.size()){
+		auto wp = wps[_lineOffset];
+		uuid = wp.uuid;
 	}
-	else if(action == KNOB_DOUBLE_CLICK){
+	
+	auto savedCB = _wayPointCB;
+	
+	if(action == KNOB_CLICK ||  action == KNOB_DOUBLE_CLICK){
 		
-		PiCarMgr*	mgr 	= PiCarMgr::shared();
-		auto wps 	= mgr->getWaypoints();
 		
-		if(_lineOffset < wps.size()){
-			auto wp = wps[_lineOffset];
-			string uuid = wp.uuid;
-			
-			auto savedCB = _wayPointCB;
-			//		popMode();
-			_lineOffset = 0;
-			_wayPointCB = NULL;
-			
-			if(savedCB) {
-				savedCB(true,uuid, KNOB_DOUBLE_CLICK);
-			}
-		}
+		popMode();
+		_wayPointCB = NULL;
+		_lineOffset = 0;
 		wasHandled = true;
+		
+		if(savedCB) {
+			savedCB(wasHandled, uuid, action);
+		}
 	}
 	
 	return wasHandled;
-	
 }
 
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){

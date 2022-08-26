@@ -1353,7 +1353,7 @@ void DisplayMgr::drawMessageScreen(modeTransition_t transition){
 			_vfd.setFont(VFD::FONT_MINI);
 		}
 		else{
-			_vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY - 5);
+			_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY - 5);
 			_vfd.setFont(VFD::FONT_5x7);
 		}
 		

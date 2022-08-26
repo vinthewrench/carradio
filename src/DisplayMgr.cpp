@@ -3199,7 +3199,6 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
 			int bearing = int(r.second);
-			char buffer[12];
 			
 			string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 			string dir = ordinal[int(floor((bearing / 45) + 0.5)) % 8]  ;

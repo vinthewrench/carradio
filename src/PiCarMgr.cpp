@@ -1521,7 +1521,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_GPS:
-			void displayGPS();
+			displayGPS();
 			break;
 			
 		case MENU_WAYPOINTS:

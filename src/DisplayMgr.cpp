@@ -1346,10 +1346,9 @@ void DisplayMgr::drawMessageScreen(modeTransition_t transition){
 		
 		string str = _menuTitle;
 		
-		if(str.size() > 12){
+		if(str.size() > 20){
 			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-			str = truncate(str, 22);
-			
+			str = truncate(str, 40);
 			_vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY - 5);
 			_vfd.setFont(VFD::FONT_MINI);
 		}

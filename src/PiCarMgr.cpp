@@ -1613,16 +1613,17 @@ void PiCarMgr::displayWaypoint(string uuid){
 					if(didSucceed) {
 						switch(newSelectedItem) {
 							case 0:		// update
+								updateWaypoint(uuid);
 								displayWaypoint(uuid);
 								break;
 								
 							case 1:		//delete
+								deleteWaypoint(uuid);
 								displayWaypoints();
 							break;
 								
 							default:
 								displayWaypoint(uuid);
-								 
 						}
 					}
 				});

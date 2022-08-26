@@ -1571,8 +1571,8 @@ void PiCarMgr::displayGPS(){
 			constexpr time_t timeout_secs = 10;
 			
 			_display.showMenuScreen(menu_items,
-											2,
-											"Waypoint",
+											0,
+											"Current Waypoint",
 											timeout_secs,
 											[=](bool didSucceed,
 												 uint newSelectedItem,
@@ -1590,19 +1590,19 @@ void PiCarMgr::displayGPS(){
 								_display.showMessage("Waypoint Created", 2,[=](){
 									displayGPS();
 								});
+								return;
 								
 							}
 						}
 							break;
 							
-						default:
-							displayGPS();
+						default:;
 					}
 				}
-			});
+ 				displayGPS();
+ 			});
 		}
 	});
-	
 }
 
 

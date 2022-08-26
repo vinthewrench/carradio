@@ -2964,9 +2964,10 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			auto savedCB = _wayPointCB;
 			string uuid = "";
 			
-			if(_lineOffset >= wps.size()) {
-				wasHandled = false;
-			};
+			if(_lineOffset < wps.size()) {
+				uuid = wps[_lineOffset].uuid;
+				wasHandled = true;
+ 			};
 			 
 			popMode();
  			_wayPointCB = NULL;
@@ -3044,7 +3045,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		needsRedraw = false;
 		
 		vector<string> lines = {};
-		size_t totalLines = wps.size() + 2;  // add kEXIT and kNEW_WAYPOINT
+		size_t totalLines = wps.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;

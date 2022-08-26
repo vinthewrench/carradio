@@ -845,6 +845,8 @@ void PiCarMgr::getWaypointProps(){
 					.name = name,
 					.location.latitude = latitude,
 					.location.longitude = longitude,
+					.location.timestamp = {0,0},
+					.location.HDOP = 255,
 					.location.isValid = true
 				};
 				
@@ -852,7 +854,16 @@ void PiCarMgr::getWaypointProps(){
 					wp.location.altitude  =  item[PROP_ALTITUDE];
 					wp.location.altitudeIsValid = true;
 				}
-	
+				
+				if(item.contains(PROP_HDOP)   &&  item[(PROP_HDOP)].is_number_unsigned()){
+					wp.location.HDOP  =  item[PROP_HDOP];
+ 				}
+	 
+				if(item.contains(PROP_TIMESTAMP)   &&  item[(PROP_TIMESTAMP)].is_string()){
+					string timeStr = item[PROP_TIMESTAMP];
+	 					 wp.location.timestamp.tv_sec =  	TimeStamp(timeStr).getTime();
+	 			}
+				
 				_waypoints.push_back(wp);
 			}
 		}
@@ -869,14 +880,16 @@ void PiCarMgr::updateWaypointProps(){
 		item[PROP_TITLE] = wp.name;
 		item[PROP_LONGITUDE] = wp.location.longitude;
 		item[PROP_LATITUDE] = wp.location.latitude;
-		
+		item[PROP_HDOP] = wp.location.HDOP;
+		item[PROP_TIMESTAMP] = TimeStamp(wp.location.timestamp.tv_sec).RFC1123String();
+		 
 		if(wp.location.altitudeIsValid ){
 			item[PROP_ALTITUDE] = wp.location.altitude;
 		}
 
 		j.push_back(item);
 	}
-	
+ 
 	_db.setProperty(PROP_WAYPOINTS, j);
 }
 
@@ -1508,7 +1521,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_GPS:
-			_display.showGPS();
+			void displayGPS();
 			break;
 			
 		case MENU_WAYPOINTS:
@@ -1546,6 +1559,49 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 }
 
 
+void PiCarMgr::displayGPS(){
+	_display.showGPS( [=](DisplayMgr::knob_action_t action ){
+		if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+			
+			vector<string> menu_items = {
+				"New Waypoint",
+				"Exit",
+			};
+			
+			constexpr time_t timeout_secs = 10;
+			
+			_display.showMenuScreen(menu_items,
+											2,
+											"Waypoint",
+											timeout_secs,
+											[=](bool didSucceed,
+												 uint newSelectedItem,
+												 DisplayMgr::knob_action_t action ){
+				
+				if(didSucceed) {
+					switch(newSelectedItem) {
+						case 0:		// new
+						{
+							waypoint_prop_t  wp;
+							
+							if(createWaypoint("",wp)){
+								_waypoints.push_back(wp);
+								displayWaypoint(wp.uuid);
+							}
+						}
+							break;
+							
+						default:
+							displayGPS();
+					}
+				}
+			});
+		}
+	});
+	
+}
+
+
 void PiCarMgr::displayWaypoints(string intitialUUID){
 	
 	constexpr time_t timeout_secs = 10;
@@ -1562,8 +1618,6 @@ void PiCarMgr::displayWaypoints(string intitialUUID){
 				return;
 			}
 			else if(uuid == DisplayMgr::kNEW_WAYPOINT) {
-				
-				printf( " make new waypoint");
 				
 				waypoint_prop_t  wp;
 				

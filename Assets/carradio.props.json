@@ -143,46 +143,55 @@
 	],
 	"waypoints" : [
 		{
-		"title" : "Dog Park",
-		"longitude" :-122.8161,
-		"latitude" :  42.26521,
-		"uuid": "1"
-		 },
-		{
-		"title" : "Station 7",
-		"longitude" :-122.87728,
-		"latitude" :  42.42727,
-		"uuid": "2"
-		 },
-		{
-		"title" : "285 Beach",
-		"longitude" : -122.70219,
-		"latitude" :  42.18968,
-		"uuid": "3"
+			"latitude": 42.26521,
+			"longitude": -122.8161,
+			"title": "Dog Park",
+			"uuid": "1"
 		},
 		{
-		"title" : "MT Ashland",
-		"longitude" :-122.71926,
-		"latitude" :  42.08173,
-		"uuid": "4"
+			"latitude": 42.42727,
+			"longitude": -122.87728,
+			"title": "Station 7",
+			"uuid": "2"
 		},
 		{
-		"title" : "SNAP South",
-		"longitude" :	-122.67433,
-		"latitude" :  42.18602,
-		"uuid": "5"
+			"altitude": 605.7000122070313,
+			"latitude": 42.18962860107422,
+			"longitude": -122.70208740234375,
+			"title": "285 Beach",
+			"uuid": "3"
 		},
 		{
-		"title" : "Food 4 Less",
-		"longitude" :-122.87178,
-		"latitude" :  42.34901,
-		"uuid": "6"
+			"latitude": 42.08173,
+			"longitude": -122.71926,
+			"title": "MT Ashland",
+			"uuid": "4"
 		},
 		{
-		"title" : "Crater Lake",
-		"longitude" :-122.14401,
-		"latitude" :  42.93944,
-		"uuid": "7"
-		 }
+			"altitude": 606.7000122070313,
+			"latitude": 42.185890197753906,
+			"longitude": -122.6748275756836,
+			"title": "SNAP South",
+			"uuid": "5"
+		},
+		{
+			"latitude": 42.34901,
+			"longitude": -122.87178,
+			"title": "Food 4 Less",
+			"uuid": "6"
+		},
+		{
+			"latitude": 42.93944,
+			"longitude": -122.14401,
+			"title": "Crater Lake",
+			"uuid": "7"
+		},
+		{
+			"altitude": 724.9000244140625,
+			"latitude": 42.23600387573242,
+			"longitude": -122.86332702636719,
+			"title": "Home",
+			"uuid": "13544de5-246a-4181-8f5f-67e6deb23bd3"
+		},
 		]
 }

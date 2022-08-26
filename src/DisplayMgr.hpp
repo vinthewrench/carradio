@@ -102,7 +102,10 @@ public:
 	bool selectorKnobAction(knob_action_t action);
 
 	void showTime();
-	void showGPS();
+
+
+	typedef std::function<void(knob_action_t action)> knobCallBack_t;
+	void showGPS(knobCallBack_t cb = nullptr);
 	
 	// waypoint callback constants
 	static const string 	kEXIT;
@@ -178,6 +181,7 @@ private:
 	bool processSelectorKnobActionForDimmer( knob_action_t action);
 
 	bool processSelectorKnobActionForDTC( knob_action_t action);
+	bool processSelectorKnobActionForGPS( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoints( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
  
@@ -209,7 +213,7 @@ private:
 	void drawGPSWaypointScreen(modeTransition_t transition);
 
 	showWaypointsCallBack_t _wayPointCB;
-
+	knobCallBack_t _knobCB;
 
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);

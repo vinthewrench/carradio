@@ -504,12 +504,12 @@ void DisplayMgr::showDTCInfo(string code){
 	setEvent(EVT_PUSH, MODE_DTC_INFO, code);
 }
 
-void DisplayMgr::showGPS(){
-	setEvent(EVT_PUSH, MODE_GPS);
+void DisplayMgr::showGPS(knobCallBack_t cb){
+	_knobCB = cb;
+ 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
-
-
+ 
 void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_CANBUS);
@@ -666,6 +666,10 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			wasHandled = processSelectorKnobActionForGPSWaypoint(action);
 			break;
 			
+		case MODE_GPS:
+			wasHandled = processSelectorKnobActionForGPS(action);
+			break;
+ 
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
@@ -2859,6 +2863,25 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 // MARK: -  GPS waypoints
 
 
+bool DisplayMgr::processSelectorKnobActionForGPS( knob_action_t action){
+	bool wasHandled = false;
+	 
+	auto savedCB = _knobCB;
+	
+	if(action == KNOB_DOUBLE_CLICK){
+
+		popMode();
+		_knobCB = NULL;
+ 		wasHandled = true;
+		
+		if(savedCB) {
+			savedCB(action);
+		}
+	}
+	
+	return wasHandled;
+}
+
 void DisplayMgr::showWaypoints(string intitialUUID,
 										 time_t timeout,
 										 showWaypointsCallBack_t cb ){
@@ -3092,8 +3115,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	auto savedCB = _wayPointCB;
 	
 	if(action == KNOB_CLICK ||  action == KNOB_DOUBLE_CLICK){
-		
-		
+
 		popMode();
 		_wayPointCB = NULL;
 		_lineOffset = 0;

@@ -197,7 +197,7 @@ private:
 	vector<string> settingsMenuItems();
 	void setDisplayMode(menu_mode_t menuMode);
 	
-	
+	void displayGPS();
 	void displayWaypoints(string intitialUUID = "");
 	void displayWaypoint(string uuid);
 

@@ -40,7 +40,7 @@ typedef struct {
   GPSLocationDegrees 		longitude;
   GPSLocationDistance	 	altitude;
   
-  struct timespec			timestamp;			//local CLOCK_MONOTONIC timestamp of reading
+  struct timespec			timestamp;			//CLOCK_REALTIME timestamp of reading
   
   uint8_t						HDOP;   // dilution of precision (HDOP), in tenths
 

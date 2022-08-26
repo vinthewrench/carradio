@@ -437,7 +437,7 @@ void GPSmgr::processNMEA(const char *sentence){
 					}
 					
 					_lastLocation.numSat = frame.satellites_tracked;
-					_lastLocation.timestamp = now;
+					_lastLocation.timestamp = utc;
 					pthread_mutex_unlock (&_mutex);
 				}
 			}

@@ -205,7 +205,8 @@ private:
 	bool deleteWaypoint(string uuid);
 	bool updateWaypoint(string uuid);
 	bool createWaypoint(string name, waypoint_prop_t &wp );
-
+	void sortWaypoints();
+	
 	void tunerDoubleClicked();
 	
 	void doShutdown();

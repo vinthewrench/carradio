@@ -868,6 +868,7 @@ void PiCarMgr::getWaypointProps(){
 			}
 		}
 	}
+	sortWaypoints();
 }
 
 void PiCarMgr::updateWaypointProps(){
@@ -943,10 +944,22 @@ bool PiCarMgr::updateWaypoint(string uuid) {
 							remove_if(_waypoints.begin(), _waypoints.end(), ([=](const  waypoint_prop_t &wp){
 		 return wp.uuid == uuid;
 	 })));
+	 
+	 sortWaypoints();
  
 	return true;
 }
  
+void PiCarMgr::sortWaypoints() {
+
+	if( _waypoints.size() >0 ){
+		sort(_waypoints.begin(), _waypoints.end(),
+			  [] (const waypoint_prop_t& a,
+					const waypoint_prop_t& b) { return a.name < b.name; });
+	}
+ }
+ 
+
 
 // MARK: -  PiCarMgr main loop  thread
 
@@ -1586,6 +1599,7 @@ void PiCarMgr::displayGPS(){
 							
 							if(createWaypoint("",wp)){
 								_waypoints.push_back(wp);
+								sortWaypoints();
 								
 								_display.showMessage("Waypoint Created", 2,[=](){
 									displayGPS();

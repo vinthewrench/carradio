@@ -3142,12 +3142,18 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		auto wp = wps[_lineOffset];
  		string name = wp.name;
 		
-		name = truncate(name, 20);
- 
-		_vfd.setFont(VFD::FONT_MINI);
+ 		if(name.size() > 12){
+			std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+			name = truncate(name, 20);
+	 		_vfd.setFont(VFD::FONT_MINI);
+ 		}
+		else{
+			_vfd.setFont(VFD::FONT_5x7);
+ 		}
+	
 		_vfd.setCursor(0,10);
-		_vfd.printPacket("%-20s", name.c_str());
-		
+		_vfd.printPacket("%s", name.c_str());
+
 		uint8_t col = 0;
 		uint8_t topRow = 22;
 		

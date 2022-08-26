@@ -1582,7 +1582,7 @@ void PiCarMgr::displayGPS(){
 			};
 			
 			constexpr time_t timeout_secs = 10;
-			
+
 			_display.showMenuScreen(menu_items,
 											0,
 											"Current Waypoint",

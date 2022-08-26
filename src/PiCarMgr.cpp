@@ -1538,7 +1538,6 @@ void PiCarMgr::displayWaypoints(){
 					_waypoints.push_back(wp);
 					displayWaypoint(wp.uuid);
 				}
-				
 			}
 			else
 			{
@@ -1546,7 +1545,7 @@ void PiCarMgr::displayWaypoints(){
 			}
 		}
 	}
-								  );
+ );
 }
 
 

@@ -2938,7 +2938,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			
 			auto savedCB = _wayPointCB;
 			string uuid = "";
- 
+			
 			if(_lineOffset >= wps.size()) {
 				if(_lineOffset == wps.size())
 					uuid = kNEW_WAYPOINT;
@@ -2948,12 +2948,13 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			}
 			else {
 				string uuid = wps[_lineOffset].uuid;
- 			}
+			}
 			
-			popMode();
-			_lineOffset = 0;
+			setEvent(EVT_POP, MODE_UNKNOWN);
 			_wayPointCB = NULL;
-			
+			_lineOffset = 0;
+ 	//	popMode();
+
 			if(savedCB) {
 				savedCB(true, uuid, action);
 			}
@@ -2966,7 +2967,6 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			
 			break;
 	}
-	
 	
 	return wasHandled;
 }

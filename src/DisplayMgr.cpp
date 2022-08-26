@@ -893,7 +893,8 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 }
 
 void  DisplayMgr::popMode(){
-	_current_mode = _saved_mode==MODE_UNKNOWN ? MODE_TIME:_saved_mode;
+	
+	_current_mode = _saved_mode==MODE_UNKNOWN ? handleRadioEvent():_saved_mode;
 	_saved_mode = MODE_UNKNOWN;
 }
 

@@ -1036,12 +1036,10 @@ void DisplayMgr::DisplayUpdate(){
 					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						// timeout pop mode?
 						auto savedCB = _simpleCB;
-						popMode();
-	 					popMode();
-
+	//					popMode();
 						_knobCB = NULL;
-//												shouldRedraw = true;
-//												shouldUpdate = true;
+						shouldRedraw = false;
+						shouldUpdate = false;
 //						
 						if(savedCB) {
 							savedCB();

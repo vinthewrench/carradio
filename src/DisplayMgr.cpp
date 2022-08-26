@@ -29,6 +29,10 @@
 printf("FAIL AT line: %d\n", __LINE__ ); \
 }
 
+
+const string 	DisplayMgr::kEXIT = "DisplayMgr:EXIT";
+const string 	DisplayMgr::kNEW_WAYPOINT = "DisplayMgr:NEW_WAYPOINT";
+
 typedef void * (*THREADFUNCPTR)(void *);
 
 // Duppa I2CEncoderV2 knobs
@@ -2932,22 +2936,29 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
 			auto wps 	= mgr->getWaypoints();
 			
+			auto savedCB = _wayPointCB;
+			string uuid = "";
+ 
 			if(_lineOffset >= wps.size()) {
-				popMode();
+				if(_lineOffset == wps.size())
+					uuid = kNEW_WAYPOINT;
+				else
+					if(_lineOffset == wps.size()+1)
+						uuid = kEXIT;
 			}
 			else {
 				string uuid = wps[_lineOffset].uuid;
-				auto savedCB = _wayPointCB;
-				
-				popMode();
-				_lineOffset = 0;
-				_wayPointCB = NULL;
-				
-				if(savedCB) {
-					savedCB(true,uuid, action);
-				}
-				wasHandled = true;
+ 			}
+			
+			popMode();
+			_lineOffset = 0;
+			_wayPointCB = NULL;
+			
+			if(savedCB) {
+				savedCB(true, uuid, action);
 			}
+			wasHandled = true;
+			
 		}
 			break;
 			
@@ -3017,7 +3028,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		needsRedraw = false;
 		
 		vector<string> lines = {};
-		size_t totalLines = wps.size() + 1;
+		size_t totalLines = wps.size() + 2;  // add kEXIT and kNEW_WAYPOINT
 		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
@@ -3044,7 +3055,12 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			}
 			else {
-				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  "  EXIT";
+			
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") ;
+				if(i == wps.size())
+					line += " MAKE WAYPOINT";
+				else  if(i == wps.size()+1)
+					line += " EXIT";
 			}
 			
 			lines.push_back(line);
@@ -3186,7 +3202,6 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	}
 	
 	drawTimeBox();
-	
 }
 
 // MARK: -  Display value formatting

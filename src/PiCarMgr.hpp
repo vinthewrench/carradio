@@ -156,7 +156,6 @@ class PiCarMgr {
 
  	vector< waypoint_prop_t> getWaypoints() { return _waypoints;};
 	
-	
 private:
 	
 	typedef enum :int {
@@ -199,6 +198,10 @@ private:
 	vector<string> settingsMenuItems();
 	void setDisplayMode(menu_mode_t menuMode);
 	
+	
+	void displayWaypoints();
+	void displayWaypoint(string uuid);
+
 	void tunerDoubleClicked();
 	
 	void doShutdown();

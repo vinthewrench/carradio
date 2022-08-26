@@ -32,6 +32,7 @@ class DisplayMgr {
 	
 public:
 
+	
 	DisplayMgr();
 	~DisplayMgr();
 		
@@ -103,12 +104,17 @@ public:
 	void showTime();
 	void showGPS();
 	
+	// waypoint callback constants
+	static const string 	kEXIT;
+	static const  string kNEW_WAYPOINT;
+
+	typedef std::function<void(bool didSucceed,
+										string uuid,
+										knob_action_t action)> showWaypointsCallBack_t;
 	
-	typedef std::function<void(bool didSucceed, string uuid, knob_action_t action)> showWaypointsCallBack_t;
 	void showWaypoints( string intitialUUID,
  							 time_t timeout = 0,
-							 showWaypointsCallBack_t cb = nullptr
-							 );
+							 showWaypointsCallBack_t cb = nullptr);
 	
 	void showWaypoint(string uuid,  showWaypointsCallBack_t cb = nullptr) ;
 
@@ -219,8 +225,6 @@ private:
 	time_t					 _menuTimeout;
 	menuSelectedCallBack_t _menuCB;
 	string					  _menuTitle;
-//
-	
 	
 	uint8_t   	_lineOffset = 0;	// used for multi-line
 	

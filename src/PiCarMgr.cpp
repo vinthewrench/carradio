@@ -1482,44 +1482,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_WAYPOINTS:
-			_display.showWaypoints("", 20,
-										  [=](bool didSucceed,
-												string uuid,
-												DisplayMgr::knob_action_t action ){
-				
-				if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
-					_display.showWaypoint(uuid,[=](bool didSucceed,
-															 string uuid,
-															 DisplayMgr::knob_action_t action ) {
-						
-						if(didSucceed && action == DisplayMgr::KNOB_DOUBLE_CLICK) {
-							
-							vector<string> menu_items = {
-								"Update Waypoint",
-								"Delete Waypoint",
-								"Exit",
-							};
-							
-							
-							constexpr time_t timeout_secs = 10;
-							
-							_display.showMenuScreen(menu_items,
-															2,
-															"Waypoint",
-															timeout_secs,
-															[=](bool didSucceed,
-																 uint newSelectedItem,
-																 DisplayMgr::knob_action_t action ){
-								
-								if(didSucceed) {
-									
-								}
-							});
-	 					}
-					});
-	 			}
-			}
-		 );
+			displayWaypoints();
 			break;
 
 		case MENU_CANBUS:
@@ -1552,6 +1515,73 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 	}
 }
 
+
+void PiCarMgr::displayWaypoints(){
+	_display.showWaypoints("", 20,
+								  [=](bool didSucceed,
+										string uuid,
+										DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+			
+			if(uuid == DisplayMgr::kEXIT) {
+				// user exited.
+				return;
+			}
+			else if(uuid == DisplayMgr::kNEW_WAYPOINT) {
+				
+				printf( " make new waypoint");
+				
+				waypoint_prop_t  wp;
+				
+				if(createWaypoint("",wp)){
+					_waypoints.push_back(wp);
+					displayWaypoint(wp.uuid);
+				}
+				
+			}
+			else
+			{
+				displayWaypoint(uuid);
+			}
+		}
+	}
+								  );
+}
+
+
+void PiCarMgr::displayWaypoint(string uuid){
+	// push selected waypoints
+	_display.showWaypoint(uuid,[=](bool didSucceed,
+											 string uuid,
+											 DisplayMgr::knob_action_t action ) {
+		
+		if(didSucceed && action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+			
+			vector<string> menu_items = {
+				"Update Waypoint",
+				"Delete Waypoint",
+				"Exit",
+			};
+ 
+			constexpr time_t timeout_secs = 10;
+			
+			_display.showMenuScreen(menu_items,
+											2,
+											"Waypoint",
+											timeout_secs,
+											[=](bool didSucceed,
+												 uint newSelectedItem,
+												 DisplayMgr::knob_action_t action ){
+				
+				if(didSucceed) {
+					displayWaypoints();
+				}
+			});
+		}
+	});
+
+}
 
 void PiCarMgr::displayRadioMenu(){
 	constexpr time_t timeout_secs = 20;

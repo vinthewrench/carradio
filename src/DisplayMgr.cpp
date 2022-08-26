@@ -1006,8 +1006,8 @@ void DisplayMgr::DisplayUpdate(){
 						shouldRedraw = false;
 						shouldUpdate = true;
 					}
-					// give it 10 seconds
-					else if(diff.tv_sec >=  4){
+					// check for  timeout delay
+				else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						// timeout pop mode?
 						popMode();
 						shouldRedraw = true;

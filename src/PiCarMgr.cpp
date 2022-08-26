@@ -1547,7 +1547,10 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 
 
 void PiCarMgr::displayWaypoints(string intitialUUID){
-	_display.showWaypoints(intitialUUID, 20,
+	
+	constexpr time_t timeout_secs = 10;
+
+	_display.showWaypoints(intitialUUID, timeout_secs,
 								  [=](bool didSucceed,
 										string uuid,
 										DisplayMgr::knob_action_t action ){

@@ -2086,6 +2086,8 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
 	
+	printf("drawGPSScreen %d\n", transition);
+	
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
@@ -2866,6 +2868,8 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 bool DisplayMgr::processSelectorKnobActionForGPS( knob_action_t action){
 	bool wasHandled = false;
 	 
+	printf("processSelectorKnobActionForGPS %d\n", action);
+	
 	auto savedCB = _knobCB;
 	
 	if(action == KNOB_DOUBLE_CLICK){

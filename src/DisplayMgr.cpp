@@ -30,9 +30,6 @@ printf("FAIL AT line: %d\n", __LINE__ ); \
 }
 
 
-const string 	DisplayMgr::kEXIT = "DisplayMgr:EXIT";
-const string 	DisplayMgr::kNEW_WAYPOINT = "DisplayMgr:NEW_WAYPOINT";
-
 typedef void * (*THREADFUNCPTR)(void *);
 
 // Duppa I2CEncoderV2 knobs
@@ -2968,18 +2965,9 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			string uuid = "";
 			
 			if(_lineOffset >= wps.size()) {
-				if(_lineOffset == wps.size())
-				{
-					uuid = kNEW_WAYPOINT;
-					wasHandled = true;
- 				}
-				 
-			}
-			else {
-				uuid = wps[_lineOffset].uuid;
-				wasHandled = true;
-			}
-			
+				wasHandled = false;
+			};
+			 
 			popMode();
  			_wayPointCB = NULL;
 			_lineOffset = 0;
@@ -3083,12 +3071,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			}
 			else {
-				
-				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") ;
-				if(i == wps.size())
-					line += " MAKE WAYPOINT";
-				else  if(i == wps.size()+1)
-					line += " EXIT";
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT" ;
 			}
 			
 			lines.push_back(line);

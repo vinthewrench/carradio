@@ -107,9 +107,6 @@ public:
 	typedef std::function<void(knob_action_t action)> knobCallBack_t;
 	void showGPS(knobCallBack_t cb = nullptr);
 	
-	// waypoint callback constants
-	static const string 	kEXIT;
-	static const  string kNEW_WAYPOINT;
 
 	typedef std::function<void(bool didSucceed,
 										string uuid,

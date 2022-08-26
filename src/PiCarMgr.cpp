@@ -1605,34 +1605,16 @@ void PiCarMgr::displayGPS(){
 void PiCarMgr::displayWaypoints(string intitialUUID){
 	
 	constexpr time_t timeout_secs = 10;
-
+	
 	_display.showWaypoints(intitialUUID, timeout_secs,
 								  [=](bool didSucceed,
 										string uuid,
 										DisplayMgr::knob_action_t action ){
 		
 		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
-			
-			if(uuid == DisplayMgr::kEXIT) {
-				// user exited.
-				return;
-			}
-			else if(uuid == DisplayMgr::kNEW_WAYPOINT) {
-				
-				waypoint_prop_t  wp;
-				
-				if(createWaypoint("",wp)){
-					_waypoints.push_back(wp);
-					displayWaypoint(wp.uuid);
-				}
-			}
-			else
-			{
-				displayWaypoint(uuid);
-			}
+			displayWaypoint(uuid);
 		}
-	}
- );
+	});
 }
 
 

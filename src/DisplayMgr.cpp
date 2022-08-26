@@ -3080,6 +3080,8 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	//	setEvent(EVT_POP, MODE_UNKNOWN);
 		
 		popMode();
+		setEvent(EVT_REDRAW, _current_mode );
+
 		
 		printf("_current_mode = %d\n", _current_mode);
 		printf("_saved_mode = %d\n", _saved_mode);

@@ -512,6 +512,15 @@ void DisplayMgr::showCANbus(uint8_t page){
 	setEvent(EVT_PUSH, MODE_CANBUS);
 }
 
+void DisplayMgr::showMessage(string message,  time_t timeout, voidCallback_t cb){
+	_simpleCB = cb;
+	_menuTitle = message;
+	_menuTimeout = timeout;
+
+	setEvent(EVT_PUSH, MODE_MESSAGE);
+ }
+
+
 void DisplayMgr::setEvent(event_t evt,
 								  mode_state_t mod,
 								  string arg){
@@ -1016,6 +1025,28 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
+				
+				else if(_current_mode == MODE_MESSAGE) {
+					if(item.mode == MODE_MESSAGE) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					// check for  timeout delay
+					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+						// timeout pop mode?
+						auto savedCB = _simpleCB;
+						popMode();
+						_knobCB = NULL;
+						shouldRedraw = true;
+						shouldUpdate = true;
+						
+						if(savedCB) {
+							savedCB();
+						}
+						
+					}
+				}
 				else if(_current_mode == MODE_BALANCE) {
 					
 					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
@@ -1271,6 +1302,10 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 					drawCANBusScreen1(transition);
 				break;
 				
+			case MODE_MESSAGE:
+				drawMessageScreen(transition);
+				break;
+	 
 			case MODE_INFO:
 				drawInfoScreen(transition);
 				break;
@@ -1296,6 +1331,26 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 	}
 }
 
+
+
+void DisplayMgr::drawMessageScreen(modeTransition_t transition){
+	
+	
+	if(transition == TRANS_ENTERING) {
+  		_vfd.clearScreen();
+		
+		TRY(_vfd.setFont(VFD::FONT_5x7));
+		TRY(_vfd.setCursor(0,10));
+		TRY(_vfd.write("Message"));
+	}
+	
+	if(transition == TRANS_LEAVING) {
+ 		return;
+	}
+
+	drawTimeBox();
+
+ }
 
 
 
@@ -2082,9 +2137,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	uint8_t altRow = utmRow+30;
 	
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
-	
-	printf("drawGPSScreen %d\n", transition);
-	
+ 
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
@@ -2864,8 +2917,6 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
 bool DisplayMgr::processSelectorKnobActionForGPS( knob_action_t action){
 	bool wasHandled = false;
-	 
-	printf("processSelectorKnobActionForGPS %d\n", action);
 	
 	auto savedCB = _knobCB;
 	

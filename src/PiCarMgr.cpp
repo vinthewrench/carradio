@@ -1564,7 +1564,7 @@ void PiCarMgr::displayGPS(){
 		if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
 			
 			vector<string> menu_items = {
-				"New Waypoint",
+				"Save Waypoint",
 				"Exit",
 			};
 			
@@ -1586,7 +1586,11 @@ void PiCarMgr::displayGPS(){
 							
 							if(createWaypoint("",wp)){
 								_waypoints.push_back(wp);
-								displayWaypoint(wp.uuid);
+								
+								_display.showMessage("Waypoint Created", 1,[=](){
+									displayGPS();
+								});
+								
 							}
 						}
 							break;

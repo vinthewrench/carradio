@@ -69,6 +69,7 @@ public:
 		MODE_INFO,
 		MODE_DEV_STATUS,
 		MODE_MENU,
+		MODE_MESSAGE,
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -103,10 +104,10 @@ public:
 
 	void showTime();
 
-
+	void showMessage(string message = "", time_t timeout = 0, voidCallback_t cb = nullptr );
+	
 	typedef std::function<void(knob_action_t action)> knobCallBack_t;
 	void showGPS(knobCallBack_t cb = nullptr);
-	
 
 	typedef std::function<void(bool didSucceed,
 										string uuid,
@@ -195,7 +196,8 @@ private:
 	void drawSettingsScreen(modeTransition_t transition);
 	
 	void drawInfoScreen(modeTransition_t transition);
- 
+ 	void drawMessageScreen(modeTransition_t transition);
+
 	void drawInternalError(modeTransition_t transition);
  
 	void drawShutdownScreen();
@@ -211,7 +213,8 @@ private:
 
 	showWaypointsCallBack_t _wayPointCB;
 	knobCallBack_t _knobCB;
-
+	voidCallback_t	_simpleCB;
+	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);
 	

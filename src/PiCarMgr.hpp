@@ -187,8 +187,7 @@ private:
 	bool getSavedFrequencyForMode( RadioMgr::radio_mode_t mode, uint32_t &freqOut);
 	void getWaypointProps();
 	void updateWaypointProps();
-	bool createWaypoint(string name, waypoint_prop_t &wp );
-
+	
 	nlohmann::json GetRadioPresetsJSON();
  
 	void displayMenu();
@@ -201,6 +200,11 @@ private:
 	
 	void displayWaypoints(string intitialUUID = "");
 	void displayWaypoint(string uuid);
+
+	
+	bool deleteWaypoint(string uuid);
+	bool updateWaypoint(string uuid);
+	bool createWaypoint(string name, waypoint_prop_t &wp );
 
 	void tunerDoubleClicked();
 	

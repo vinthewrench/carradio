@@ -16,6 +16,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <regex>
+#include<bits/stdc++.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -904,6 +905,36 @@ bool PiCarMgr::createWaypoint(string name, waypoint_prop_t &wpout ) {
 	return success;
 }
 
+bool PiCarMgr::updateWaypoint(string uuid) {
+	bool success = false;
+	
+	GPSLocation_t location = {};
+	
+	if(_gps.GetLocation(location) & location.isValid){
+		
+		// find waypoint
+		for_each (_waypoints.begin(), _waypoints.end(),([=](const  waypoint_prop_t &wp){
+			if(wp.uuid == uuid){
+				wp.location = location;
+				success = true;
+ 			}
+		}));
+ 	}
+	
+	
+	return success;
+}
+
+ bool PiCarMgr::deleteWaypoint(string uuid) {
+ 
+	 _waypoints.erase(
+							remove_if(_waypoints.begin(), _waypoints.end(), ([=](const  waypoint_prop_t &wp){
+		 return wp.uuid == uuid;
+	 })));
+ 
+	return true;
+}
+ 
 
 // MARK: -  PiCarMgr main loop  thread
 

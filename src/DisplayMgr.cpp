@@ -3194,8 +3194,14 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(col+10, topRow+10 );
 			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
+			int bearing = int(r.second);
+			char buffer[12];
+			
+			string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
+			string dir = ordinal[int(floor((bearing / 45) + 0.5)) % 8]  ;
+
 			_vfd.setCursor(midX+25 ,topRow+10);
-			_vfd.printPacket("%3d\xa0", int(r.second));
+			_vfd.printPacket("%3d\xa0\x1c%2s\x1d ", bearing, dir.c_str());
 			
 			int heading = INT_MAX;
 			
@@ -3213,7 +3219,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			if( heading != INT_MAX){
 				_vfd.setCursor(col+10,topRow+22);
-				_vfd.printPacket("%s %3d\xa0 %s",heading<0?"<-":"", abs(heading), heading>0?"->":"");
+				_vfd.printPacket("%2s %3d\xa0 %2s",heading<0?"<-":"", abs(heading), heading>0?"->":"");
 			}
 		}
 		

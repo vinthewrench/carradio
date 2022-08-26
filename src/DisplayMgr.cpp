@@ -2947,7 +2947,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 						uuid = kEXIT;
 			}
 			else {
-				string uuid = wps[_lineOffset].uuid;
+				uuid = wps[_lineOffset].uuid;
 			}
 			
 			setEvent(EVT_POP, MODE_UNKNOWN);
@@ -3142,9 +3142,11 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		auto wp = wps[_lineOffset];
  		string name = wp.name;
 		
-		_vfd.setFont(VFD::FONT_5x7);
+		name = truncate(name, 20);
+ 
+		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(0,10);
-		_vfd.printPacket("%-12s", name.c_str());
+		_vfd.printPacket("%-20s", name.c_str());
 		
 		uint8_t col = 0;
 		uint8_t topRow = 22;

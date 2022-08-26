@@ -2878,7 +2878,7 @@ void DisplayMgr::showWaypoints(string intitialUUID,
 	setEvent(EVT_PUSH, MODE_GPS_WAYPOINTS);
 }
 
-void DisplayMgr::showWaypoint(string uuid ){
+void DisplayMgr::showWaypoint(string uuid, showWaypointsCallBack_t cb ){
 	
 	if(! uuid.empty()){
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
@@ -2890,9 +2890,8 @@ void DisplayMgr::showWaypoint(string uuid ){
 				break;
 			}
 		}
-		
-		setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
-		
+		_wayPointCB = cb;
+ 		setEvent(EVT_PUSH, MODE_GPS_WAYPOINT);
 	}
 }
 
@@ -2930,7 +2929,6 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			
 		case KNOB_CLICK:
 		{
-			
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
 			auto wps 	= mgr->getWaypoints();
 			
@@ -2939,13 +2937,15 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			}
 			else {
 				string uuid = wps[_lineOffset].uuid;
+				auto savedCB = _wayPointCB;
+				
 				popMode();
-	
-
-				if(_wayPointCB) {
-					_wayPointCB(true,uuid, action);
-				}
+				_lineOffset = 0;
 				_wayPointCB = NULL;
+				
+				if(savedCB) {
+					savedCB(true,uuid, action);
+				}
 				wasHandled = true;
 			}
 		}
@@ -3060,40 +3060,36 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
  
 bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	bool wasHandled = false;
- 
+	
 	if(action == KNOB_CLICK){
 		
- 	printf("processSelectorKnobActionForGPSWaypoint\n");
-		printf("_current_mode = %d\n", _current_mode);
-		printf("_saved_mode = %d\n", _saved_mode);
-		printf("POP\n");
-	 	 // exit from this back into waypoints and clear menus
- 
- 
-		//  if you actually selected a menu, then just pop the mode..
-		//  you dont have to give it a TRANS_LEAVING
+		// exit from this back into waypoints and clear menus
 		_saved_mode = handleRadioEvent();
-  
-//			popMode();			// remove the menu
- //		drawGPSWaypointScreen(TRANS_LEAVING);
-		
-	// 	setEvent(EVT_POP, MODE_UNKNOWN);
-	 		popMode();
+		popMode();
 		setEvent(EVT_REDRAW, _current_mode );
-
-		
-		printf("_current_mode = %d\n", _current_mode);
-		printf("_saved_mode = %d\n", _saved_mode);
- 
- 
-		
-	//	showWaypoints();
 		wasHandled = true;
 	}
 	else if(action == KNOB_DOUBLE_CLICK){
-		// add edit waypoint here
-	}
 		
+		PiCarMgr*	mgr 	= PiCarMgr::shared();
+		auto wps 	= mgr->getWaypoints();
+		
+		if(_lineOffset < wps.size()){
+			auto wp = wps[_lineOffset];
+			string uuid = wp.uuid;
+			
+			auto savedCB = _wayPointCB;
+	//		popMode();
+			_lineOffset = 0;
+			_wayPointCB = NULL;
+			
+			if(savedCB) {
+				savedCB(true,uuid, KNOB_DOUBLE_CLICK);
+			}
+		}
+		wasHandled = true;
+	}
+	
 	return wasHandled;
 	
 }
@@ -3122,8 +3118,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		last_heading = INT_MAX;
 	}
-	
-	
+		
 	// find waypoint with uuid
 	auto wps = mgr->getWaypoints();
 	

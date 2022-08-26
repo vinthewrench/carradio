@@ -1488,8 +1488,36 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 												DisplayMgr::knob_action_t action ){
 				
 				if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
-					_display.showWaypoint(uuid);
-				}
+					_display.showWaypoint(uuid,[=](bool didSucceed,
+															 string uuid,
+															 DisplayMgr::knob_action_t action ) {
+						
+						if(didSucceed && action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+							
+							vector<string> menu_items = {
+								"Update Waypoint",
+								"Delete Waypoint",
+								"Exit",
+							};
+							
+							
+							constexpr time_t timeout_secs = 10;
+							
+							_display.showMenuScreen(menu_items,
+															2,
+															"Waypoint",
+															timeout_secs,
+															[=](bool didSucceed,
+																 uint newSelectedItem,
+																 DisplayMgr::knob_action_t action ){
+								
+								if(didSucceed) {
+									
+								}
+							});
+	 					}
+					});
+	 			}
 			}
 		 );
 			break;

@@ -110,7 +110,7 @@ public:
 							 showWaypointsCallBack_t cb = nullptr
 							 );
 	
-	void showWaypoint(string uuid) ;
+	void showWaypoint(string uuid,  showWaypointsCallBack_t cb = nullptr) ;
 
 	void showStartup();
 	void showInfo();

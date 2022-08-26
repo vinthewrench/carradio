@@ -1587,7 +1587,7 @@ void PiCarMgr::displayGPS(){
 							if(createWaypoint("",wp)){
 								_waypoints.push_back(wp);
 								
-								_display.showMessage("Waypoint Created", 1,[=](){
+								_display.showMessage("Waypoint Created", 2,[=](){
 									displayGPS();
 								});
 								

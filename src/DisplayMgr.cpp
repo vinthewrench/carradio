@@ -1037,12 +1037,12 @@ void DisplayMgr::DisplayUpdate(){
 						// timeout pop mode?
 						auto savedCB = _simpleCB;
 						popMode();
-	//					popMode();
+	 					popMode();
 
 						_knobCB = NULL;
-												shouldRedraw = true;
-												shouldUpdate = true;
-						
+//												shouldRedraw = true;
+//												shouldUpdate = true;
+//						
 						if(savedCB) {
 							savedCB();
 						}

@@ -3191,8 +3191,10 @@ static string distanceString(double d) {
 		sprintf( buffer ,"%d ft", (int) round(d * 5280));
 	}else if(d < .06){ // yards
 		sprintf( buffer ,"%d yds", (int) round(d * 1760));
-	} else {
+	} else  if(d < 20) {
 		sprintf( buffer ,"%.2f mi", d);
+	} else {
+		sprintf( buffer ,"%3d mi", (int)round(d));
 	}
 	
 	return string(buffer);

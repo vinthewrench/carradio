@@ -3019,14 +3019,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_currentMenuItem = 0;
 		_menuCursor = 0;
 
-		string str = _editString;
-		
-		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY + 5);
-		_vfd.setFont(VFD::FONT_5x7);
-		
-		_vfd.printPacket("%s", str.c_str());
-		
-		
+			
 		_vfd.setCursor(0,height-10);
 		_vfd.printPacket("  Cancel");
 		
@@ -3040,13 +3033,27 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	}
 	
 
+	static int lastItem = INT_MAX;
 	
 	string str = _editString;
  	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( str.size() + 2));
- 
-	_vfd.setCursor(0, centerY + 10);
-	_vfd.printPacket("%2d", _currentMenuItem);
- 
+  
+	if(lastItem  != _currentMenuItem){
+		lastItem = _currentMenuItem;
+		
+		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY);
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		string str1 =  string("\x0E")  + str;
+		
+		_vfd.printPacket("%s", str1.c_str());
+		
+
+		_vfd.setCursor(0, centerY + 10);
+		_vfd.printPacket("%2d", _currentMenuItem);
+
+	}
+	 
 	drawTimeBox();
 }
 

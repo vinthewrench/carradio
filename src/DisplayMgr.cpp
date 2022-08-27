@@ -3019,14 +3019,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_currentMenuItem = 0;
 		_menuCursor = 0;
 
-			
-		_vfd.setCursor(0,height-10);
-		_vfd.printPacket("  Cancel");
-		
-		_vfd.setCursor(0,height);
-		_vfd.printPacket("  Save");
-
-		}
+			}
 	
 	if(transition == TRANS_LEAVING) {
 		return;
@@ -3060,7 +3053,13 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor(0, centerY + 10);
 		_vfd.printPacket("%2d", _currentMenuItem);
 
-	}
+		
+	_vfd.setCursor(0,height-10);
+	_vfd.printPacket("%sCancel", _currentMenuItem == str.size()? "\xb9":" ");
+	
+	_vfd.setCursor(0,height);
+	_vfd.printPacket("%sSave", _currentMenuItem == str.size()+1? "\xb9":" ");
+ 	}
 	 
 	drawTimeBox();
 }

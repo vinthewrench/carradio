@@ -2983,7 +2983,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 			
 		case KNOB_CLICK:
 		{
-			if( _currentMenuItem > _editString.size() +1){
+			if( _currentMenuItem >= _editString.size() +1){
  				auto savedCB = _editCB;
 				
 				popMode();

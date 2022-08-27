@@ -3044,16 +3044,16 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		string str1 =  string("\x0E ");
+		string outStr =  string("\x0E ");
 		for(int i = 0; i < str.size(); i ++){
 			if(i == _currentMenuItem) {
-				str1 +=  string("[") + str1[i] + string("]");
+				outStr +=  string("[") + _editString[i] + string("]");
 			}
 			else
-				str1 +=  str1[i];
+				outStr +=  str[i];
 	 	}
 	 
-		_vfd.printPacket("%s", str1.c_str());
+		_vfd.printPacket("%s", outStr.c_str());
 		
 
 		_vfd.setCursor(0, centerY + 10);

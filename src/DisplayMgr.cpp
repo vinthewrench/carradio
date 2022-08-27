@@ -2992,7 +2992,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor(0,10);
-		_vfd.printPacket("%16s", _menuTitle.c_str());
+		_vfd.printPacket("%-14s", _menuTitle.c_str());
 		
 		uint8_t width = _vfd.width();
 		

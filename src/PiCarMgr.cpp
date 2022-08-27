@@ -1656,7 +1656,7 @@ void PiCarMgr::displayWaypoint(string uuid){
 			else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
 				
 				vector<string> menu_items = {
-					"Edit Waypoint"
+					"Edit Waypoint",
 					"Update Waypoint",
 					"Delete Waypoint",
 					"Exit",
@@ -1697,6 +1697,7 @@ void PiCarMgr::displayWaypoint(string uuid){
 												break;
 											}}
 									}
+									displayWaypoint(uuid);
 								});
 							}
 								 

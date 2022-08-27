@@ -3035,13 +3035,14 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 	static int lastItem = INT_MAX;
 	
-	string str = _editString;
+	string str = _editString + string(" ");
+	
  	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( str.size() + 2));
   
 	if(lastItem  != _currentMenuItem){
 		lastItem = _currentMenuItem;
 		
-		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY);
+		_vfd.setCursor( 20 /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		string outStr =  string("\x0E ");

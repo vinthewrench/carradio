@@ -2964,40 +2964,43 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 // MARK: -  Edit String
 
 
- bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
+bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
- 
-	 
-	 switch(action){
-		 case KNOB_UP:
-			 _currentMenuItem += 1;
-			 setEvent(EVT_NONE,MODE_EDIT_STRING);
- 			 wasHandled = true;
-			 break;
-			 
-		 case KNOB_DOWN:
-			 _currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
-			 setEvent(EVT_NONE,MODE_EDIT_STRING);
-			 wasHandled = true;
- 			 break;
-			 
-		 case KNOB_CLICK:
-		 {
-			 auto savedCB = _editCB;
-
-			 popMode();
-			 _editCB = NULL;
-			 wasHandled = true;
-
-			 if(savedCB) {
-				 savedCB(false, _editString);
-			 }
-		 }
-			 
-		 default: break;
-	 }
-
-	 	return wasHandled;
+	
+	
+	switch(action){
+		case KNOB_UP:
+			_currentMenuItem += 1;
+			setEvent(EVT_NONE,MODE_EDIT_STRING);
+			wasHandled = true;
+			break;
+			
+		case KNOB_DOWN:
+			_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+			setEvent(EVT_NONE,MODE_EDIT_STRING);
+			wasHandled = true;
+			break;
+			
+		case KNOB_CLICK:
+		{
+			if( _currentMenuItem > _editString.size() +1){
+ 				auto savedCB = _editCB;
+				
+				popMode();
+				_editCB = NULL;
+				wasHandled = true;
+				
+				bool shouldSave =  _currentMenuItem == _editString.size() +2;
+					if(savedCB) {
+					savedCB(shouldSave, _editString);
+				}
+			}
+		}
+			
+		default: break;
+	}
+	
+	return wasHandled;
 }
  
 

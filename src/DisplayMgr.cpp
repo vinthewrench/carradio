@@ -3183,6 +3183,22 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	return wasHandled;
 }
 
+static string distanceString(double d) {
+ 
+	char buffer[16] = {0};
+	 
+	if(d < .02){ // feet
+		sprintf( buffer ,"%d ft", (int) round(d * 5280));
+	}else if(d < .06){ // yards
+		sprintf( buffer ,"%d yds", (int) round(d * 1760));
+	} else {
+		sprintf( buffer ,"%.2f mi", d);
+	}
+	
+	return string(buffer);
+	
+};
+
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
@@ -3246,7 +3262,9 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			auto r = GPSmgr::dist_bearing(here,wp.location);
 			
 			_vfd.setCursor(col+10, topRow+10 );
-			_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
+			
+			_vfd.printPacket("%-6s",  distanceString(r.first * 0.6213711922).c_str());
+	//		_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
 			int bearing = int(r.second);
 			

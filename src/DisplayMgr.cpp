@@ -2988,13 +2988,15 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				
 				popMode();
 				_editCB = NULL;
-				wasHandled = true;
+	 
 				
 				bool shouldSave =  _currentMenuItem == _editString.size() +2;
 					if(savedCB) {
 					savedCB(shouldSave, _editString);
 				}
 			}
+			
+			wasHandled = true;
 		}
 			
 		default: break;
@@ -3018,11 +3020,10 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor(0,7);
 		_vfd.printPacket("%-14s", _menuTitle.c_str());
 		
-		
 		_currentMenuItem = 0;
 		_menuCursor = 0;
 
-			}
+		}
 	
 	if(transition == TRANS_LEAVING) {
 		return;

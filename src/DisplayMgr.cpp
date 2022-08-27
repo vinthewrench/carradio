@@ -503,10 +503,10 @@ void DisplayMgr::showDTCInfo(string code){
 
 void DisplayMgr::showGPS(knobCallBack_t cb){
 	_knobCB = cb;
- 	setEvent(EVT_PUSH, MODE_GPS);
+	setEvent(EVT_PUSH, MODE_GPS);
 }
 
- 
+
 void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_CANBUS);
@@ -516,9 +516,19 @@ void DisplayMgr::showMessage(string message,  time_t timeout, voidCallback_t cb)
 	_simpleCB = cb;
 	_menuTitle = message;
 	_menuTimeout = timeout;
-
+	
 	setEvent(EVT_PUSH, MODE_MESSAGE);
- }
+}
+
+
+void DisplayMgr::editString(string title, string strIn,
+									 editStringCallBack_t cb){
+	_editCB = cb;
+	_editString = strIn;
+	_menuTitle = title;
+	
+	setEvent(EVT_PUSH, MODE_EDIT_STRING);
+}
 
 
 void DisplayMgr::setEvent(event_t evt,
@@ -556,6 +566,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_BALANCE:
 		case MODE_DIMMER:
 		case MODE_FADER:
+		case MODE_EDIT_STRING:
 		case MODE_DTC:
 		case MODE_DTC_INFO:
 		case MODE_MENU:
@@ -675,12 +686,15 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_GPS:
 			wasHandled = processSelectorKnobActionForGPS(action);
 			break;
- 
+			
 		case MODE_DTC_INFO:
 			wasHandled = processSelectorKnobActionForDTCInfo(action);
 			break;
 			
-			
+		case MODE_EDIT_STRING:
+			wasHandled = processSelectorKnobActionForEditString(action);
+			break;
+		
 		default:
 			break;
 	}
@@ -1018,7 +1032,7 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 					// check for  timeout delay
-				else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						// timeout pop mode?
 						popMode();
 						shouldRedraw = true;
@@ -1036,11 +1050,11 @@ void DisplayMgr::DisplayUpdate(){
 					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						// timeout pop mode?
 						auto savedCB = _simpleCB;
-	//					popMode();
+						//					popMode();
 						_knobCB = NULL;
 						shouldRedraw = false;
 						shouldUpdate = false;
-//						
+						//
 						if(savedCB) {
 							savedCB();
 						}
@@ -1131,10 +1145,26 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
+				else if(_current_mode == MODE_EDIT_STRING) {
+					
+					// check for {EVT_NONE,MODE_EDIT_STRING}  which is a click
+					if(item.mode == MODE_EDIT_STRING) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					//					// give it 10 seconds
+					//					else if(diff.tv_sec >=  10){
+					//						// timeout pop mode?
+					//						popMode();
+					//						shouldRedraw = true;
+					//						shouldUpdate = true;
+					//					}
+					//				}
+				}
 				
 				// check for ay other timeout delay 1.3 secs
-				
-				else if(diff.tv_sec >=  1){
+								else if(diff.tv_sec >=  1){
 					// should we pop the mode?
 					if(!isStickyMode(_current_mode)){
 						popMode();
@@ -1282,7 +1312,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_GPS_WAYPOINTS:
 				drawGPSWaypointsScreen(transition);
 				break;
-				
+
+			case MODE_MESSAGE:
+				drawGPSWaypointsScreen(transition);
+				break;
+
 			case MODE_GPS_WAYPOINT:
 				drawGPSWaypointScreen(transition);
 				break;
@@ -1302,10 +1336,10 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 					drawCANBusScreen1(transition);
 				break;
 				
-			case MODE_MESSAGE:
-				drawMessageScreen(transition);
+			case MODE_EDIT_STRING:
+				drawEditStringScreen(transition);
 				break;
-	 
+				
 			case MODE_INFO:
 				drawInfoScreen(transition);
 				break;
@@ -1363,7 +1397,7 @@ void DisplayMgr::drawMessageScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
- 
+	
 	drawTimeBox();
 }
 
@@ -2152,7 +2186,7 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 	uint8_t altRow = utmRow+30;
 	
 	GPSmgr*	gps 	= PiCarMgr::shared()->gps();
- 
+	
 	if(transition == TRANS_ENTERING) {
 		setKnobColor(KNOB_RIGHT, RGB::Yellow);
 		_vfd.clearScreen();
@@ -2927,6 +2961,60 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 	
 }
 
+// MARK: -  Edit String
+
+
+ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
+	bool wasHandled = false;
+	
+	auto savedCB = _editCB;
+
+	if(action == KNOB_CLICK){
+
+		popMode();
+		_editCB = NULL;
+		wasHandled = true;
+
+		if(savedCB) {
+			savedCB(false, _editString);
+		}
+	}
+	
+	return wasHandled;
+}
+ 
+
+void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
+	
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.setCursor(0,10);
+		_vfd.printPacket("%16s", _menuTitle.c_str());
+		
+		uint8_t width = _vfd.width();
+		
+		int centerX = width /2;
+		int centerY = _vfd.height() /2;
+		
+		string str = _editString;
+		
+		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY + 5);
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		_vfd.printPacket("%s", str.c_str());
+	}
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	drawTimeBox();
+}
+
+
 // MARK: -  GPS waypoints
 
 
@@ -2936,10 +3024,10 @@ bool DisplayMgr::processSelectorKnobActionForGPS( knob_action_t action){
 	auto savedCB = _knobCB;
 	
 	if(action == KNOB_DOUBLE_CLICK){
-
+		
 		popMode();
 		_knobCB = NULL;
- 		wasHandled = true;
+		wasHandled = true;
 		
 		if(savedCB) {
 			savedCB(action);
@@ -3033,16 +3121,16 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			if(_lineOffset < wps.size()) {
 				uuid = wps[_lineOffset].uuid;
 				wasHandled = true;
- 			};
-			 
+			};
+			
 			popMode();
- 			_wayPointCB = NULL;
+			_wayPointCB = NULL;
 			_lineOffset = 0;
 			
 			if(savedCB) {
 				savedCB(wasHandled, uuid, action);
 			}
- 
+			
 		}
 			break;
 			
@@ -3169,7 +3257,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	auto savedCB = _wayPointCB;
 	
 	if(action == KNOB_CLICK ||  action == KNOB_DOUBLE_CLICK){
-
+		
 		popMode();
 		_wayPointCB = NULL;
 		_lineOffset = 0;
@@ -3184,9 +3272,9 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 }
 
 static string distanceString(double d) {
- 
+	
 	char buffer[16] = {0};
-	 
+	
 	if(d < .02){ // feet
 		sprintf( buffer ,"%d ft", (int) round(d * 5280));
 	}else if(d < .06){ // yards
@@ -3266,13 +3354,13 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			_vfd.setCursor(col+10, topRow+10 );
 			
 			_vfd.printPacket("%-6s",  distanceString(r.first * 0.6213711922).c_str());
-	//		_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
+			//		_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
 			int bearing = int(r.second);
 			
 			string ordinal[] =  {"N ","NE","E ", "SE","S ","SW","W ","NW"} ;
 			string dir = ordinal[int(floor((bearing / 45) + 0.5)) % 8]  ;
-
+			
 			_vfd.setCursor(midX+25 ,topRow+10);
 			_vfd.printPacket("%3d\xa0\x1c%2s\x1d ", bearing, dir.c_str());
 			

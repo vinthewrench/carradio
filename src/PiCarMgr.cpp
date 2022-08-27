@@ -929,6 +929,8 @@ bool PiCarMgr::updateWaypoint(string uuid) {
 			auto wp = &_waypoints[i];
 			if(wp->uuid == uuid){
 				wp->location = location;
+				updateWaypointProps();
+				_db.savePropertiesToFile();
 				success = true;
 				break;
 			}
@@ -946,7 +948,8 @@ bool PiCarMgr::updateWaypoint(string uuid) {
 	 })));
 	 
 	 sortWaypoints();
- 
+	 updateWaypointProps();
+	 _db.savePropertiesToFile();
 	return true;
 }
  
@@ -1600,6 +1603,8 @@ void PiCarMgr::displayGPS(){
 							if(createWaypoint("",wp)){
 								_waypoints.push_back(wp);
 								sortWaypoints();
+								updateWaypointProps();
+								_db.savePropertiesToFile();
 								
 								_display.showMessage("Waypoint Created", 2,[=](){
 									displayGPS();
@@ -1651,6 +1656,7 @@ void PiCarMgr::displayWaypoint(string uuid){
 			else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
 				
 				vector<string> menu_items = {
+					"Edit Waypoint"
 					"Update Waypoint",
 					"Delete Waypoint",
 					"Exit",
@@ -1668,12 +1674,39 @@ void PiCarMgr::displayWaypoint(string uuid){
 					
 					if(didSucceed) {
 						switch(newSelectedItem) {
-							case 0:		// update
+							case 0:		// edit
+							{
+								string name = "";
+								
+								for( int i = 0; i < _waypoints.size(); i++){
+									auto wp = &_waypoints[i];
+									if(wp->uuid == uuid){
+										name = wp->name;
+										break;
+									}}
+								_display.editString("Edit Waypoint", name,
+														  [=](bool didSucceed,
+																string newName) {
+									if(didSucceed){
+										for( int i = 0; i < _waypoints.size(); i++){
+											auto wp = &_waypoints[i];
+											if(wp->uuid == uuid){
+												wp->name = newName;
+												updateWaypointProps();
+												_db.savePropertiesToFile();
+												break;
+											}}
+									}
+								});
+							}
+								 
+								break;
+							case 1:		// update
 								updateWaypoint(uuid);
 								displayWaypoint(uuid);
 								break;
 								
-							case 1:		//delete
+							case 2:		//delete
 								deleteWaypoint(uuid);
 								displayWaypoints();
 							break;

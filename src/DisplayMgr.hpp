@@ -70,6 +70,8 @@ public:
 		MODE_DEV_STATUS,
 		MODE_MENU,
 		MODE_MESSAGE,
+		MODE_EDIT_STRING,
+
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -118,6 +120,13 @@ public:
 							 showWaypointsCallBack_t cb = nullptr);
 	
 	void showWaypoint(string uuid,  showWaypointsCallBack_t cb = nullptr) ;
+
+	
+	typedef std::function<void(bool didSucceed,
+										string strOut)> editStringCallBack_t;
+
+	void editString(string title = "", string strIn = "",
+						 editStringCallBack_t cb = nullptr);
 
 	void showStartup();
 	void showInfo();
@@ -182,6 +191,7 @@ private:
 	bool processSelectorKnobActionForGPS( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoints( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
+	bool processSelectorKnobActionForEditString( knob_action_t action);
  
 	void drawRadioScreen(modeTransition_t transition);
 	void drawGPSScreen(modeTransition_t transition);
@@ -206,15 +216,20 @@ private:
 	void drawEngineCheck();
 	void drawTemperature();
 	void drawTimeBox();
-	
+	void drawEditStringScreen(modeTransition_t transition);
+
 	// waypoint stuff
 	void drawGPSWaypointsScreen(modeTransition_t transition);
 	void drawGPSWaypointScreen(modeTransition_t transition);
 
+	
 	showWaypointsCallBack_t _wayPointCB;
 	knobCallBack_t _knobCB;
 	voidCallback_t	_simpleCB;
 	
+	editStringCallBack_t _editCB;
+	string				 	_editString;
+
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);
 	

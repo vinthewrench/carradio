@@ -2966,51 +2966,87 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
  bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
-	
-	auto savedCB = _editCB;
+ 
+	 
+	 switch(action){
+		 case KNOB_UP:
+			 _currentMenuItem += 1;
+			 setEvent(EVT_NONE,MODE_EDIT_STRING);
+ 			 wasHandled = true;
+			 break;
+			 
+		 case KNOB_DOWN:
+			 _currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+			 setEvent(EVT_NONE,MODE_EDIT_STRING);
+			 wasHandled = true;
+ 			 break;
+			 
+		 case KNOB_CLICK:
+		 {
+			 auto savedCB = _editCB;
 
-	if(action == KNOB_CLICK){
+			 popMode();
+			 _editCB = NULL;
+			 wasHandled = true;
 
-		popMode();
-		_editCB = NULL;
-		wasHandled = true;
+			 if(savedCB) {
+				 savedCB(false, _editString);
+			 }
+		 }
+			 
+		 default: break;
+	 }
 
-		if(savedCB) {
-			savedCB(false, _editString);
-		}
-	}
-	
-	return wasHandled;
+	 	return wasHandled;
 }
  
 
 void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	
-	
+	uint8_t height = _vfd.height();
+	uint8_t width = _vfd.width();
+ 	int centerX = width /2;
+	int centerY = _vfd.height() /2;
+
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		
 		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.setCursor(0,10);
+		_vfd.setCursor(0,7);
 		_vfd.printPacket("%-14s", _menuTitle.c_str());
 		
-		uint8_t width = _vfd.width();
 		
-		int centerX = width /2;
-		int centerY = _vfd.height() /2;
-		
+		_currentMenuItem = 0;
+		_menuCursor = 0;
+
 		string str = _editString;
 		
 		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY + 5);
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		_vfd.printPacket("%s", str.c_str());
-	}
+		
+		
+		_vfd.setCursor(0,height-10);
+		_vfd.printPacket("  Cancel");
+		
+		_vfd.setCursor(0,height);
+		_vfd.printPacket("  Save");
+
+		}
 	
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
 	
+
+	
+	string str = _editString;
+ 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( str.size() + 2));
+ 
+	_vfd.setCursor(0, centerY + 10);
+	_vfd.printPacket("%2d", _currentMenuItem);
+ 
 	drawTimeBox();
 }
 

@@ -1665,7 +1665,7 @@ void PiCarMgr::displayWaypoint(string uuid){
 				constexpr time_t timeout_secs = 10;
 				
 				_display.showMenuScreen(menu_items,
-												2,
+												0,
 												"Waypoint",
 												timeout_secs,
 												[=](bool didSucceed,

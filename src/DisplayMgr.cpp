@@ -3044,8 +3044,15 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor( centerX - ((str.size()*7) /2 ), centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		string str1 =  string("\x0E")  + str;
-		
+		string str1 =  string("\x0E ");
+		for(int i = 0; i < str.size(); i ++){
+			if(i == _currentMenuItem) {
+				str1 +=  string("\x1A\x48") + str1[i] + string("\x1A\x00");
+			}
+			else
+				str1 +=  str1[i];
+	 	}
+	 
 		_vfd.printPacket("%s", str1.c_str());
 		
 

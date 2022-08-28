@@ -3076,10 +3076,10 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 		
 	_vfd.setCursor(0,height-10);
-	_vfd.printPacket("%s Cancel", _currentMenuItem == str.size()? "\xb9":" ");
+	_vfd.printPacket("%s Cancel", _currentMenuItem == _editString.size()? "\xb9":" ");
 	
 	_vfd.setCursor(0,height);
-	_vfd.printPacket("%s Save", _currentMenuItem == str.size()+1? "\xb9":" ");
+	_vfd.printPacket("%s Save", _currentMenuItem == _editString.size()+1? "\xb9":" ");
  	}
 	 
 	drawTimeBox();

@@ -3071,7 +3071,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
 			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)?(_isEditing? charChoices[_editChoice]:'\xaF') :' ';
+				buf1[i] = (i == _currentMenuItem)?'\xaf':' ';
 			}
 			_vfd.printPacket("%s", buf1);
 		}

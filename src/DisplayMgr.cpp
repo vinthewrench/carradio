@@ -3045,7 +3045,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		string outStr =  string("\x0E ");
 		for(int i = 0; i < str.size(); i ++){
 			if(i == _currentMenuItem) {
-				outStr +=  string("\x1a\x18") + str[i] + string("\x1a\x04");
+				outStr +=  string("\x1a\x03") + str[i] + string("\x1a\x04");
 			}
 			else
 				outStr +=  str[i];

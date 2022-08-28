@@ -3057,7 +3057,8 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 //			_vfd.setCursor( startCursor, centerY +8);
 //			_vfd.printPacket( "\x0E");
 			_vfd.setCursor( startCursor +  (_currentMenuItem * 6) /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
-			_vfd.printPacket( "\x18\x98\x04\xFb \x1D");
+			_vfd.printPacket("|");
+//			_vfd.printPacket( "\x18\x98\x04\xFb \x1D");
 		};
  
 		_vfd.setCursor(0, centerY + 10);

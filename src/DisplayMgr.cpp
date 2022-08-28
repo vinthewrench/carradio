@@ -3062,6 +3062,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 				for(int i = 0; i < std::strlen(charChoices); i ++){
 					if(_editString[_currentMenuItem] == charChoices[i]){
 						_editChoice = i;
+						break;
 					}
 				}
 		}

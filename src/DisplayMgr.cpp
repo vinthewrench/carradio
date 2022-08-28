@@ -3063,8 +3063,8 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		
 		string outStr = "";
 	 	for(int i = 0; i < strlen; i++){
-			outStr += _isEditing? charChoices[_editChoice]:_editString[i];
- 		}
+			outStr +=  (_isEditing &&  (i == _currentMenuItem))? charChoices[_editChoice]:_editString[i];
+		}
 		_vfd.printPacket("%s", outStr.c_str());
 
 		{

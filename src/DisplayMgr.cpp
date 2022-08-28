@@ -3041,7 +3041,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		return;
 	}
  
-	static  const char* charChoices =  "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~";
+	static  const char* charChoices =  "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]abcdefghijklmnopqrstuvwxyz{|}\x93\x89";
 	
 	static int lastItem = INT_MAX;
 	static bool lasEditMode = false;

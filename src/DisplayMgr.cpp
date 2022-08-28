@@ -3039,6 +3039,8 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		lastItem = _currentMenuItem;
 		
 		int startCursor = 20;
+		int strlen = (int) _editString.size();
+		
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("%s", _editString.c_str());
@@ -3046,7 +3048,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		{
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
-			for(int i = 0; i < sizeof(buf1) -1; i++){
+			for(int i = 0; i < strlen; i++){
 				buf1[i] = (i == _currentMenuItem)?'|':' ';
 			}
 			_vfd.printPacket("%s", buf1);
@@ -3076,10 +3078,10 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 		
 	_vfd.setCursor(0,height-10);
-	_vfd.printPacket("%s Cancel", _currentMenuItem == _editString.size()? "\xb9":" ");
+	_vfd.printPacket("%s Cancel", _currentMenuItem == strlen? "\xb9":" ");
 	
 	_vfd.setCursor(0,height);
-	_vfd.printPacket("%s Save", _currentMenuItem == _editString.size()+1? "\xb9":" ");
+	_vfd.printPacket("%s Save", _currentMenuItem == strlen+1? "\xb9":" ");
  	}
 	 
 	drawTimeBox();

@@ -3039,21 +3039,27 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	if(lastItem  != _currentMenuItem){
 		lastItem = _currentMenuItem;
 		
-		_vfd.setCursor( 20 /*centerX - ((_editString.size()*7) /2 )*/, centerY);
+		int startCursor = 20;
+		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		string outStr =  string("\x0E ");
 		for(int i = 0; i < str.size(); i ++){
-			if(i == _currentMenuItem) {
-				outStr +=  string("\x7c") + str[i] + string("\x7c");
-			}
-			else
+//			if(i == _currentMenuItem) {
+//				outStr +=  string("\x7c") + str[i] + string("\x7c");
+//			}
+//			else
 				outStr +=  str[i];
 	 	}
-	 
 		_vfd.printPacket("%s", outStr.c_str());
-		
 
+		if(_currentMenuItem 	 <= str.size()){
+			_vfd.setCursor( startCursor, centerY +8);
+			_vfd.printPacket( "\x0E");
+			_vfd.setCursor( startCursor +  (_currentMenuItem * 6) /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
+			_vfd.printPacket( "\x18\x98\x04\xFb \x1D");
+		};
+ 
 		_vfd.setCursor(0, centerY + 10);
 		_vfd.printPacket("%2d", _currentMenuItem);
 

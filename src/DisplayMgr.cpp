@@ -3034,7 +3034,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	
 	string str = _editString + string(" ");
 	
- 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 1));
+ 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 2));
   
 	if(lastItem  != _currentMenuItem){
 		lastItem = _currentMenuItem;

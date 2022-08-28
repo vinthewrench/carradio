@@ -2992,13 +2992,12 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 			
 		case KNOB_CLICK:
 		{
-			if(_currentMenuItem > _editString.size()){
+			if(_currentMenuItem >= _editString.size()){
 				auto savedCB = _editCB;
 				
 				popMode();
 				_editCB = NULL;
-				
-				
+					
 				bool shouldSave =  _currentMenuItem == _editString.size() +2;
 				if(savedCB) {
 					savedCB(shouldSave, Utils::trim(_editString));
@@ -3055,7 +3054,6 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
-	
 		int startCursor = 20;
 		int strlen = (int) _editString.size();
 
@@ -3086,7 +3084,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
 			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)?'\xaf':' ';
+				buf1[i] = (i == _currentMenuItem)? (_isEditing?'\xa0':'\xaf') :' ';
 			}
 			_vfd.printPacket("%s", buf1);
 		}

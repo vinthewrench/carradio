@@ -2983,7 +2983,10 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 			
 		case KNOB_CLICK:
 		{
-			if( _currentMenuItem > _editString.size()){
+			if( _currentMenuItem < _editString.size()){
+				_isEditing  = !_isEditing;
+		}
+		else if( _currentMenuItem > _editString.size()){
  				auto savedCB = _editCB;
 				
 				popMode();
@@ -3022,7 +3025,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		
 		_currentMenuItem = 0;
 		_menuCursor = 0;
-
+		_isEditing = false;
 		}
 	
 	if(transition == TRANS_LEAVING) {
@@ -3049,33 +3052,15 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
 			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)?'\xaF':' ';
+				buf1[i] = (i == _currentMenuItem)?(_isEditing?'\xba':'\xaF') :' ';
 			}
 			_vfd.printPacket("%s", buf1);
 		}
-//		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
-//
-//		string outStr =  string("\x0E ");
-//		for(int i = 0; i < str.size(); i ++){
-////			if(i == _currentMenuItem) {
-////				outStr +=  string("\x7c") + str[i] + string("\x7c");
-////			}
-////			else
-//				outStr +=  str[i];
-//	 	}
-//		_vfd.printPacket("%s", outStr.c_str());
-//
-//		if(_currentMenuItem 	 <= str.size()){
-////			_vfd.setCursor( startCursor, centerY +8);
-////			_vfd.printPacket( "\x0E");
-//			_vfd.setCursor( startCursor +  (_currentMenuItem * 6) /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
-//			_vfd.printPacket("|");
-////			_vfd.printPacket( "\x18\x98\x04\xFb \x1D");
-//		};
-//
+
+// debug
 		_vfd.setCursor(0, centerY + 10);
 		_vfd.printPacket("%2d", _currentMenuItem);
-
+	//
 		
 	_vfd.setCursor(0,height-10);
 	_vfd.printPacket("%s Cancel", _currentMenuItem == strlen? "\xb9":" ");

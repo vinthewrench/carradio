@@ -3039,7 +3039,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		lastItem = _currentMenuItem;
 		
 		int startCursor = 20;
-		int strlen = (int) _editString.size();
+		int strlen = (int) _editString.size()+1;
 		
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
@@ -3049,7 +3049,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
 			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)?'|':' ';
+				buf1[i] = (i == _currentMenuItem)?'\xaF':' ';
 			}
 			_vfd.printPacket("%s", buf1);
 		}

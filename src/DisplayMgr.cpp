@@ -3051,13 +3051,12 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
   	_editChoice  = min(_editChoice ,  static_cast<int>( strlen(charChoices)));
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
-		lastItem = _currentMenuItem;
-		lasEditMode = _isEditing;
+	
 	
 		int startCursor = 20;
 		int strlen = (int) _editString.size()+1;
 
-		if(lastEditChoice == INT_MAX && _isEditing){
+		if(lasEditMode == false && _isEditing){
 			if(_currentMenuItem < strlen  )
 				for(int i = 0; i < std::strlen(charChoices); i ++){
 					if(_editString[_currentMenuItem] == charChoices[i]){
@@ -3067,7 +3066,10 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 				}
 		}
 		lastEditChoice = _editChoice;
-	 
+		lastItem = _currentMenuItem;
+		lasEditMode = _isEditing;
+		
+		
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		

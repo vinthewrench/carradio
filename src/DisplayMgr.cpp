@@ -2970,13 +2970,22 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	
 	switch(action){
 		case KNOB_UP:
-			_currentMenuItem += 1;
+			
+			if(_isEditing)
+				_editChoice +=1;
+			else
+				_currentMenuItem += 1;
+			
 			setEvent(EVT_NONE,MODE_EDIT_STRING);
 			wasHandled = true;
 			break;
 			
 		case KNOB_DOWN:
-			_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+			if(_isEditing)
+				_editChoice = max( _editChoice - 1,  static_cast<int>(0));
+			else
+				_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+			
 			setEvent(EVT_NONE,MODE_EDIT_STRING);
 			wasHandled = true;
 			break;
@@ -3031,15 +3040,20 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
+ 
+	static  const char* charChoices =  "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~";
 	
-
 	static int lastItem = INT_MAX;
-	
-	 
+	static bool lasEditMode = false;
+	static int lastEditChoice = INT_MAX;
+
  	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 2));
-  
-	if(lastItem  != _currentMenuItem){
+  	_editChoice  = min(_editChoice ,  static_cast<int>( strlen(charChoices)));
+
+	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 		lastItem = _currentMenuItem;
+		lasEditMode = _isEditing;
+		lastEditChoice = _editChoice;
 		
 		int startCursor = 20;
 		int strlen = (int) _editString.size()+1;
@@ -3052,7 +3066,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
 			char buf1[20] = {0};
 			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)?(_isEditing?'\xba':'\xaF') :' ';
+				buf1[i] = (i == _currentMenuItem)?(_isEditing? charChoices[_editChoice]:'\xaF') :' ';
 			}
 			_vfd.printPacket("%s", buf1);
 		}

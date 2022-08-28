@@ -230,7 +230,8 @@ private:
 	editStringCallBack_t _editCB;
 	string				 	_editString;
 	bool 						_isEditing;
-
+	int 						_editChoice;
+	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);
 	

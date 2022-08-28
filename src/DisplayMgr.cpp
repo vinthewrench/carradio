@@ -2992,21 +2992,23 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 			
 		case KNOB_CLICK:
 		{
-			if( _currentMenuItem < _editString.size()){
-				_isEditing  = !_isEditing;
-		}
-		else if( _currentMenuItem > _editString.size()){
- 				auto savedCB = _editCB;
+			if(_currentMenuItem > _editString.size()){
+				auto savedCB = _editCB;
 				
 				popMode();
 				_editCB = NULL;
-	 
+				
 				
 				bool shouldSave =  _currentMenuItem == _editString.size() +2;
-					if(savedCB) {
-					savedCB(shouldSave, _editString);
+				if(savedCB) {
+					savedCB(shouldSave, Utils::trim(_editString));
 				}
 			}
+			else {
+				_isEditing  = !_isEditing;
+			}
+			
+			
 			
 			wasHandled = true;
 		}
@@ -3032,6 +3034,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor(0,7);
 		_vfd.printPacket("%-14s", _menuTitle.c_str());
 		
+		_editString += " ";
 		_currentMenuItem = 0;
 		_menuCursor = 0;
 		_isEditing = false;
@@ -3047,14 +3050,14 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	static bool lasEditMode = false;
 	static int lastEditChoice = INT_MAX;
 
- 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 2));
+ 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 3));
   	_editChoice  = min(_editChoice ,  static_cast<int>( strlen(charChoices)));
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
 	
 		int startCursor = 20;
-		int strlen = (int) _editString.size()+1;
+		int strlen = (int) _editString.size();
 
 		if(lasEditMode == false && _isEditing){
 			if(_currentMenuItem < strlen  )

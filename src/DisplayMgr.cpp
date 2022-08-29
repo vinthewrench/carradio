@@ -3074,7 +3074,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 		default: break;
 	}
 	
-	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
+//	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
 
 	return wasHandled;
 }

@@ -3010,6 +3010,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					
 					if( charChoices[_editChoice] == DELETE_CHAR){
 						_editString.erase(_currentMenuItem,1);
+						_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
 						setEvent(EVT_NONE,MODE_EDIT_STRING);
 						wasHandled = true;
 						break;

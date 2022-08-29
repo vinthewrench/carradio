@@ -3001,43 +3001,60 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				
 				popMode();
 				_editCB = NULL;
-					
+				
 				bool shouldSave =  _currentMenuItem == _editString.size() +1;
 				if(savedCB) {
 					savedCB(shouldSave, Utils::trim(_editString));
 				}
+				wasHandled = true;
+
 			}
-			else {
-				if(_isEditing && _currentMenuItem < _editString.size()){
-					
-					if( charChoices[_editChoice] == DELETE_CHAR){
-						_editString.erase(_currentMenuItem,1);
-						_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+			else if(_isEditing && _currentMenuItem < _editString.size()){
+				
+				// did we enter a delete  char
+				if( charChoices[_editChoice] == DELETE_CHAR){
+					_editString.erase(_currentMenuItem,1);
+					_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+					setEvent(EVT_NONE,MODE_EDIT_STRING);
+					wasHandled = true;
+					break;
+				}
+				// did we enter a clear string char
+				else  if( charChoices[_editChoice] == CLEAR_CHAR){
+					_editString = " ";
+					_currentMenuItem = 0;
+					setEvent(EVT_NONE,MODE_EDIT_STRING);
+					wasHandled = true;
+					break;
+				}
+				// are we at the end of a string
+				else  if(_currentMenuItem == _editString.size() -1){
+					// did we enter a  space?
+					if( charChoices[_editChoice] == ' '){
+						// this means we want to leave edit mode
+						_isEditing = false;
 						setEvent(EVT_NONE,MODE_EDIT_STRING);
 						wasHandled = true;
 						break;
 					}
-					else  if( charChoices[_editChoice] == CLEAR_CHAR){
-						_editString = " ";
-						_currentMenuItem = 0;
+					else {
+						// stay in edit mode and move forward
+						_currentMenuItem++;
 						setEvent(EVT_NONE,MODE_EDIT_STRING);
 						wasHandled = true;
+						break;
 					}
-					else
-						_currentMenuItem++;
 				}
-	
+				
+				_currentMenuItem++;
 				_isEditing  = !_isEditing;
 				if (_editString.back() != ' ') _editString += ' ';
-					
 				setEvent(EVT_NONE,MODE_EDIT_STRING);
+				
+				wasHandled = true;
+				
 			}
-			
-			
-			
-			wasHandled = true;
 		}
-			
 		default: break;
 	}
 	
@@ -3049,7 +3066,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	
 	uint8_t height = _vfd.height();
 	uint8_t width = _vfd.width();
- 	int centerX = width /2;
+// 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
 
 	if(transition == TRANS_ENTERING) {

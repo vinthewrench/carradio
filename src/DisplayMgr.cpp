@@ -3004,10 +3004,11 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				}
 			}
 			else {
+				if(_isEditing && _currentMenuItem < _editString.size()) _currentMenuItem++;
+	
 				_isEditing  = !_isEditing;
 				if (_editString.back() != ' ') _editString += ' ';
-				if(_currentMenuItem < _editString.size()) _currentMenuItem++;
-				
+					
 				setEvent(EVT_NONE,MODE_EDIT_STRING);
 			}
 			

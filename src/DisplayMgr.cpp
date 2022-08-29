@@ -3071,7 +3071,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
-		int startCursor = 20;
+		int startCursor = 10;
 		int strlen = (int) _editString.size();
 
 		if(lasEditMode == false && _isEditing){
@@ -3109,7 +3109,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			for(int i = 0; i < strlen; i++){
 				buf1[i] = (i == _currentMenuItem)? (_isEditing?'\xa0':'\xaf') :' ';
 			}
-			_vfd.printPacket("%s", buf1);
+			_vfd.printPacket("%-18s", buf1);
 		}
 
 // debug

@@ -3151,8 +3151,8 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 //		_vfd.setCursor(0, centerY + 10);
 //		_vfd.printPacket("%2d", _currentMenuItem);
 //	//
-		_vfd.setCursor(0, centerY + 10);
-		_vfd.printPacket("\x1A\x60\x18\x08\x1C\x5C\x48\x3E\x1D\x1D\x14\x36");
+//		_vfd.setCursor(0, centerY + 10);
+//		_vfd.printPacket("\x1A\x40\x18\x08\x1C\x5C\x48\x3E\x1D\x1D\x14\x36");
 							  
 	 
 	_vfd.setCursor(0,height-10);

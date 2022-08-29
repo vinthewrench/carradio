@@ -3032,8 +3032,6 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 								break;
 							}
 						}
-							
-
 					}
 					// did we enter a clear string char
 					else  if( charChoices[_editChoice] == CLEAR_CHAR){
@@ -3109,7 +3107,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
-		int startCursor = 10;
+		int startCursor = 20;
 		int strlen = (int) _editString.size();
 
 		if(lasEditMode == false && _isEditing){
@@ -3125,11 +3123,9 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		lastItem = _currentMenuItem;
 		lasEditMode = _isEditing;
 		
-		
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
-		
-		
+				
 		if(_isEditing && _currentMenuItem < strlen)
 			_editString[_currentMenuItem] = charChoices[_editChoice];
 		

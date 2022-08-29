@@ -1313,7 +1313,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				break;
 
 			case MODE_MESSAGE:
-				drawGPSWaypointsScreen(transition);
+				drawMessageScreen(transition);
 				break;
 
 			case MODE_GPS_WAYPOINT:

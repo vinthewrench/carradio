@@ -2998,7 +2998,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				popMode();
 				_editCB = NULL;
 					
-				bool shouldSave =  _currentMenuItem == _editString.size() +2;
+				bool shouldSave =  _currentMenuItem == _editString.size() +1;
 				if(savedCB) {
 					savedCB(shouldSave, Utils::trim(_editString));
 				}

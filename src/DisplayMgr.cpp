@@ -2966,7 +2966,7 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 constexpr char DELETE_CHAR  = '\x9F';
 constexpr char CLEAR_CHAR  = '\xBD';
 
-static  const char* charChoices =  "\x9F" "\xBD" "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
+static  const char* charChoices =  "\x9F" "\xBD" " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
 
 bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
@@ -3024,6 +3024,15 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					if( charChoices[_editChoice] == DELETE_CHAR){
 						_editString.erase(_currentMenuItem,1);
 						_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+						
+						// set the edit choice to the new selected char
+						for(int i = 0; i < std::strlen(charChoices); i ++){
+							if(_editString[_currentMenuItem] == charChoices[i]){
+								_editChoice = i;
+								break;
+							}
+						}
+							
 
 					}
 					// did we enter a clear string char

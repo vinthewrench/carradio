@@ -2964,7 +2964,9 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 
 
 constexpr char DELETE_CHAR  = '\x9F';
-static  const char* charChoices =  "\x9F""ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
+constexpr char CLEAR_CHAR  = '\xBD';
+
+static  const char* charChoices =  "\x9F" "\xBD" "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
 
 bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
@@ -3014,6 +3016,12 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 						setEvent(EVT_NONE,MODE_EDIT_STRING);
 						wasHandled = true;
 						break;
+					}
+					else  if( charChoices[_editChoice] == CLEAR_CHAR){
+						_editString = " ";
+						_currentMenuItem = 0;
+						setEvent(EVT_NONE,MODE_EDIT_STRING);
+						wasHandled = true;
 					}
 					else
 						_currentMenuItem++;

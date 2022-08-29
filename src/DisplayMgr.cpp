@@ -2972,6 +2972,8 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
 	
 	
+	printf("Knob %d  %2d - %", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
+	
 	switch(action){
 		case KNOB_UP:
 			

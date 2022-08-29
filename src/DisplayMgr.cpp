@@ -2966,7 +2966,7 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 constexpr char DELETE_CHAR  = '\x9F';
 constexpr char CLEAR_CHAR  = '\xBD';
 
-static  const char* charChoices =  "\x9F" "\xBD" " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
+static  const char* charChoices =  "\x9F" "\xBD" " " "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
 
 bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
@@ -3050,7 +3050,10 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 						}
 						else {
 							// stay in edit mode and move forward
-							if (_editString.back() != ' ') _editString += ' ';
+							if (_editString.back() != ' ') {
+								_editString += ' ';
+								_editChoice = 2; //  location of space
+							}
 							_currentMenuItem++;
 						}
 					}

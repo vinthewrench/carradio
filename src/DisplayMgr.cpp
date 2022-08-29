@@ -3050,8 +3050,8 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 						}
 						else {
 							// stay in edit mode and move forward
+							if (_editString.back() != ' ') _editString += ' ';
 							_currentMenuItem++;
-	
 						}
 					}
 					// in a string and entring a normal char

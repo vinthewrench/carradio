@@ -3005,6 +3005,8 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 			}
 			else {
 				_isEditing  = !_isEditing;
+				if (_editString.back() != ' ') _editString += ' ';
+				
 				setEvent(EVT_NONE,MODE_EDIT_STRING);
 			}
 			

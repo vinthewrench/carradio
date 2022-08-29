@@ -1606,6 +1606,8 @@ void PiCarMgr::displayGPS(){
 								updateWaypointProps();
 								_db.savePropertiesToFile();
 								
+								printf("created %s\n", wp.uuid.c_str());
+								
 								_display.showMessage("Waypoint Created", 2,[=](){
 									displayGPS();
 								});

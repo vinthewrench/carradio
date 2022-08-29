@@ -3009,50 +3009,54 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				wasHandled = true;
 
 			}
-			else if(_isEditing && _currentMenuItem < _editString.size()){
+			// did we click on a string?
+			
+			else if(_currentMenuItem < _editString.size()){
 				
-				// did we enter a delete  char
-				if( charChoices[_editChoice] == DELETE_CHAR){
-					_editString.erase(_currentMenuItem,1);
-					_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
-					setEvent(EVT_NONE,MODE_EDIT_STRING);
-					wasHandled = true;
-					break;
+				// entering edit mode?
+				if(!_isEditing) {
+					_isEditing  = true;
+					if (_editString.back() != ' ') _editString += ' ';
 				}
-				// did we enter a clear string char
-				else  if( charChoices[_editChoice] == CLEAR_CHAR){
-					_editString = " ";
-					_currentMenuItem = 0;
-					setEvent(EVT_NONE,MODE_EDIT_STRING);
-					wasHandled = true;
-					break;
-				}
-				// are we at the end of a string
-				else  if(_currentMenuItem == _editString.size() -1){
-					// did we enter a  space?
-					if( charChoices[_editChoice] == ' '){
-						// this means we want to leave edit mode
-						_isEditing = false;
-						setEvent(EVT_NONE,MODE_EDIT_STRING);
-						wasHandled = true;
-						break;
+				else {
+				// already in edit mode
+					// did we enter a delete  char
+					if( charChoices[_editChoice] == DELETE_CHAR){
+						_editString.erase(_currentMenuItem,1);
+						_currentMenuItem = max( _currentMenuItem - 1,  static_cast<int>(0));
+
 					}
+					// did we enter a clear string char
+					else  if( charChoices[_editChoice] == CLEAR_CHAR){
+						_editString = " ";
+						_currentMenuItem = 0;
+
+					}
+					// are we at the end of a string
+					else  if(_currentMenuItem == _editString.size() -1){
+						// did we enter a  space?
+						if( charChoices[_editChoice] == ' '){
+							// this means we want to leave edit mode
+							_isEditing = false;
+	
+						}
+						else {
+							// stay in edit mode and move forward
+							_currentMenuItem++;
+	
+						}
+					}
+					// in a string and entring a normal char
 					else {
-						// stay in edit mode and move forward
+						// break edit mode and mode
 						_currentMenuItem++;
-						setEvent(EVT_NONE,MODE_EDIT_STRING);
-						wasHandled = true;
-						break;
+						_isEditing = false;
 					}
 				}
 				
-				_currentMenuItem++;
-				_isEditing  = !_isEditing;
-				if (_editString.back() != ' ') _editString += ' ';
-				setEvent(EVT_NONE,MODE_EDIT_STRING);
-				
+ 				setEvent(EVT_NONE,MODE_EDIT_STRING);
 				wasHandled = true;
-				
+
 			}
 		}
 		default: break;
@@ -3065,7 +3069,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	
 	uint8_t height = _vfd.height();
-	uint8_t width = _vfd.width();
+//	uint8_t width = _vfd.width();
 // 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
 

@@ -3075,11 +3075,17 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		string outStr = "";
-	 	for(int i = 0; i < strlen; i++){
-			outStr +=  (_isEditing &&  (i == _currentMenuItem))? charChoices[_editChoice]:_editString[i];
-		}
-		_vfd.printPacket("%s", outStr.c_str());
+		
+		if(_isEditing && _currentMenuItem < strlen)
+			_editString[_currentMenuItem] = charChoices[_editChoice];
+		
+		_vfd.printPacket("%s", _editString.c_str());
+		
+//		string outStr = "";
+//	 	for(int i = 0; i < strlen; i++){
+//			outStr +=  (_isEditing &&  (i == _currentMenuItem))? charChoices[_editChoice]:_editString[i];
+//		}
+//		_vfd.printPacket("%s", outStr.c_str());
 
 		{
 			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);

@@ -3095,22 +3095,16 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		if(_isEditing && _currentMenuItem < strlen)
 			_editString[_currentMenuItem] = charChoices[_editChoice];
 		
-		_vfd.printPacket("%s", _editString.c_str());
+		_vfd.printPacket("%-18s", _editString.c_str());
 		
-//		string outStr = "";
-//	 	for(int i = 0; i < strlen; i++){
-//			outStr +=  (_isEditing &&  (i == _currentMenuItem))? charChoices[_editChoice]:_editString[i];
+//		{
+//			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
+//			char buf1[20] = {0};
+//			for(int i = 0; i < strlen; i++){
+//				buf1[i] = (i == _currentMenuItem)? (_isEditing?'\xa0':'\xaf') :' ';
+//			}
+//			_vfd.printPacket("%-18s", buf1);
 //		}
-//		_vfd.printPacket("%s", outStr.c_str());
-
-		{
-			_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY+8);
-			char buf1[20] = {0};
-			for(int i = 0; i < strlen; i++){
-				buf1[i] = (i == _currentMenuItem)? (_isEditing?'\xa0':'\xaf') :' ';
-			}
-			_vfd.printPacket("%-18s", buf1);
-		}
 
 // debug
 		_vfd.setCursor(0, centerY + 10);

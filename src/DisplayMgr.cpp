@@ -2972,7 +2972,6 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
 	
 	
-	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
 	
 	switch(action){
 		case KNOB_UP:
@@ -3059,7 +3058,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					else {
 						// break edit mode and mode
 						_currentMenuItem++;
- 						_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size()));
+ //						_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size()));
 						_isEditing = false;
 					}
 				}
@@ -3072,6 +3071,8 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 		default: break;
 	}
 	
+	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
+
 	return wasHandled;
 }
  

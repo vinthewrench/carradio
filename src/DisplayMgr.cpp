@@ -29,7 +29,6 @@
 printf("FAIL AT line: %d\n", __LINE__ ); \
 }
 
-
 typedef void * (*THREADFUNCPTR)(void *);
 
 // Duppa I2CEncoderV2 knobs
@@ -2964,6 +2963,9 @@ bool DisplayMgr::processSelectorKnobActionForDTCInfo( knob_action_t action){
 // MARK: -  Edit String
 
 
+constexpr char DELETE_CHAR  = '\x9F';
+static  const char* charChoices =  "\x9F""ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
+
 bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 	bool wasHandled = false;
 	
@@ -3004,7 +3006,17 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 				}
 			}
 			else {
-				if(_isEditing && _currentMenuItem < _editString.size()) _currentMenuItem++;
+				if(_isEditing && _currentMenuItem < _editString.size()){
+					
+					if( charChoices[_editChoice] == DELETE_CHAR){
+						_editString.erase(_currentMenuItem,1);
+						setEvent(EVT_NONE,MODE_EDIT_STRING);
+						wasHandled = true;
+						break;
+					}
+					else
+						_currentMenuItem++;
+				}
 	
 				_isEditing  = !_isEditing;
 				if (_editString.back() != ' ') _editString += ' ';
@@ -3048,7 +3060,6 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		return;
 	}
  
-	static  const char* charChoices =  "\xBE\x9F" "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 abcdefghijklmnopqrstuvwxyz[\\]!\"#$%&'()*+,-./:;<=>?@{|}";
 	
 	static int lastItem = INT_MAX;
 	static bool lasEditMode = false;

@@ -3103,7 +3103,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			for(int i = 0; i < strlen; i++){
 				buf1[i] = (i == _currentMenuItem)? (_isEditing?'\xa0':'\xaf') :' ';
 			}
-			_vfd.printPacket("%s", buf1);
+			_vfd.printPacket("%-18s", buf1);
 		}
 
 // debug

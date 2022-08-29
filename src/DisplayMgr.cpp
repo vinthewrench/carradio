@@ -3107,7 +3107,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 
 	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
-		int startCursor = 20;
+		int startCursor = 30;
 		int strlen = (int) _editString.size();
 
 		if(lasEditMode == false && _isEditing){

@@ -3059,6 +3059,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					else {
 						// break edit mode and mode
 						_currentMenuItem++;
+ 						_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size()));
 						_isEditing = false;
 					}
 				}

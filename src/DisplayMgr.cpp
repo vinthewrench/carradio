@@ -3147,10 +3147,10 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			_vfd.printPacket("%-18s", buf1);
 		}
 
-// debug
-		_vfd.setCursor(0, centerY + 10);
-		_vfd.printPacket("%2d", _currentMenuItem);
-	//
+//// debug
+//		_vfd.setCursor(0, centerY + 10);
+//		_vfd.printPacket("%2d", _currentMenuItem);
+//	//
 		
 	_vfd.setCursor(0,height-10);
 	_vfd.printPacket("%s Cancel", _currentMenuItem == strlen? "\xb9":" ");

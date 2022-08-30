@@ -1816,7 +1816,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				lastMode = mode;
 			}
 			
-			
 			if(mode == RadioMgr::AUX){
 				
 				string str = "AUX";
@@ -1825,7 +1824,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				TRY(_vfd.setFont(VFD::FONT_10x14));
 				TRY(_vfd.setCursor( freqCenter ,centerY+10));
 				TRY(_vfd.write(str));
-				
 			}
 			else {
 				
@@ -1880,7 +1878,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 					modeStart += 5;
 				
 				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(modeStart, centerY+4) ;
+				_vfd.setCursor(modeStart, centerY+0) ;
 				_vfd.write(modStr);
    
 				_vfd.setFont(VFD::FONT_10x14);

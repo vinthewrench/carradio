@@ -700,7 +700,7 @@ void RadioMgr::SDRProcessor(){
 #if DEBUG_DEMOD
 				
 //				 Show statistics.
-							fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
+							fprintf(stderr, "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB \n",
 									  block,
 									  _frequency *  1.0e-6,
 									  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,

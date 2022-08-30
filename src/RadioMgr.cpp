@@ -20,7 +20,7 @@
 #include "FmDecode.hpp"
 #include "VhfDecode.hpp"
 
-#define DEBUG_DEMOD 1
+#define DEBUG_DEMOD 0
 typedef void * (*THREADFUNCPTR)(void *);
 
 

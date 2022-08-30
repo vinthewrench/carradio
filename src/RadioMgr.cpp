@@ -696,33 +696,34 @@ void RadioMgr::SDRProcessor(){
 					//				display->showRadioChange();
 					
 				}
-				
-#if DEBUG_DEMOD
-				
-//				 Show statistics.
-							printf( "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
-									  block,
-									  _frequency *  1.0e-6,
-									  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
-									  20*log10(_sdrDecoder->get_if_level()),
-									  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
-									  20*log10(audio_level) + 3.01);
-				
-				
-				//			// Show stereo status.
-				//	 			if (_sdrDecoder->stereo_detected() != got_stereo) {
-				//
-				//		 		got_stereo = _sdrDecoder->stereo_detected();
-				//				if (got_stereo)
-				//					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
-				//							  _sdrDecoder->get_pilot_level());
-				//				else
-				//					fprintf(stderr, "\nlost stereo signal\n");
-				//			}
-				
-#endif
-				
+
 			}
+ 
+#if DEBUG_DEMOD
+			
+//				 Show statistics.
+						printf( "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
+								  block,
+								  _frequency *  1.0e-6,
+								  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
+								  20*log10(_sdrDecoder->get_if_level()),
+								  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
+								  20*log10(audio_level) + 3.01);
+			
+			
+			//			// Show stereo status.
+			//	 			if (_sdrDecoder->stereo_detected() != got_stereo) {
+			//
+			//		 		got_stereo = _sdrDecoder->stereo_detected();
+			//				if (got_stereo)
+			//					fprintf(stderr, "\ngot stereo signal (pilot level = %f)\n",
+			//							  _sdrDecoder->get_pilot_level());
+			//				else
+			//					fprintf(stderr, "\nlost stereo signal\n");
+			//			}
+			
+#endif
+			
 			
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.

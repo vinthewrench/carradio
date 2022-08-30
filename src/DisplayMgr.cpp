@@ -1864,7 +1864,9 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				string str = 	RadioMgr::hertz_to_string(freq, precision);
 				string hzstr =	RadioMgr::freqSuffixString(freq);
 				string modStr = RadioMgr::modeString(mode);
-				
+				RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+				string muxstring = RadioMgr::muxstring(mux);
+
 				auto freqCenter =  centerX - (str.size() * 11) + 18;
 				if(precision > 1)  freqCenter += 10*2;
 				
@@ -1874,17 +1876,21 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				else if  (precision == 1)
 					modeStart += 5;
 				
-				TRY(_vfd.setFont((modStr.size() > 3)?VFD::FONT_MINI:VFD::FONT_5x7 ));
-				TRY(_vfd.setCursor(modeStart, centerY+2));
-				TRY(_vfd.write(modStr));
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.setCursor(modeStart, centerY+2) ;
+				_vfd.write(modStr);
+ 
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.setCursor(modeStart, centerY+10);
+				_vfd.write(muxstring);
 				
-				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+10));
-				TRY(_vfd.write(str));
-				
-				TRY(_vfd.setFont(VFD::FONT_5x7));
-				TRY(_vfd.write( " " + hzstr));
-				
+				_vfd.setFont(VFD::FONT_10x14);
+				_vfd.setCursor( freqCenter ,centerY+10);
+				_vfd.write(str);
+
+				_vfd.setFont(VFD::FONT_5x7);
+				_vfd.write( " " + hzstr);
+			
 				// Draw title centered inb char buffer
 				constexpr int  titleMaxSize = 20;
 				char titlebuff[titleMaxSize + 1];
@@ -1914,13 +1920,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		}
 	}
 	
-	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
-	string muxstring = RadioMgr::muxstring(mux);
-	
-	TRY(_vfd.setFont(VFD::FONT_MINI));
-	TRY(_vfd.setCursor(8, centerY+10));
-	TRY(_vfd.write(muxstring));
-	
+
 	drawEngineCheck();
 	drawTemperature();
 	drawTimeBox();

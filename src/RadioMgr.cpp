@@ -690,9 +690,10 @@ void RadioMgr::SDRProcessor(){
 			if(_mode == BROADCAST_FM) {
 				// Stereo indicator change
 				bool detect = dynamic_cast<FmDecoder *>(_sdrDecoder)->stereo_detected();
+				_mux = detect? MUX_STEREO:MUX_MONO;
+
 				if (detect != got_stereo) {
 					got_stereo = detect;
-					_mux = detect? MUX_STEREO:MUX_MONO;
 					//				display->showRadioChange();
 					
 				}

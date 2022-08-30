@@ -700,6 +700,10 @@ void RadioMgr::SDRProcessor(){
 
 			}
  
+			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
+			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
+			
+ 
 #if DEBUG_DEMOD
 			
 //				 Show statistics.

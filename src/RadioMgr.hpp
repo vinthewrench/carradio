@@ -75,6 +75,9 @@ public:
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
+	double get_if_level() {return _IF_Level;};
+	double get_baseband_level() {return _baseband_level;};
+
 	uint32_t nextFrequency(bool up);
 	
 //	uint32_t nextFrequency(bool up, bool constrain = false);
@@ -91,6 +94,10 @@ private:
 	radio_mode_t 		_mode;
 	uint32_t				_frequency;
 	radio_mux_t 		_mux;
+	
+	double				_IF_Level;
+	double 				_baseband_level;
+	
 	bool					_isOn;
 	 
 	// Create source data queue.

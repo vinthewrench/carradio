@@ -1756,8 +1756,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	static bool didSetRing = false;
 	
+	static int  modeStart = 5;
+	
 	static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
 	
+	RadioMgr::radio_mode_t  mode  = radio->radioMode();
+	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+	string muxstring = RadioMgr::muxstring(mux);
+
 	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
 	//			 radio->radioMuxMode(),
 	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
@@ -1801,8 +1807,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			TRY(_vfd.write(str));
 		}
 		else {
-			RadioMgr::radio_mode_t  mode  = radio->radioMode();
-			uint32_t 					freq =  radio->frequency();
+				uint32_t 					freq =  radio->frequency();
 			// we might need an extra refresh if switching modes
 			if(lastMode != mode){
 				_vfd.clearScreen();
@@ -1864,13 +1869,11 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				string str = 	RadioMgr::hertz_to_string(freq, precision);
 				string hzstr =	RadioMgr::freqSuffixString(freq);
 				string modStr = RadioMgr::modeString(mode);
-				RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
-				string muxstring = RadioMgr::muxstring(mux);
-
+	
 				auto freqCenter =  centerX - (str.size() * 11) + 18;
 				if(precision > 1)  freqCenter += 10*2;
 				
-				auto modeStart = 5;
+				modeStart = 5;
 				if(precision == 0)
 					modeStart += 15;
 				else if  (precision == 1)
@@ -1880,12 +1883,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.setCursor(modeStart, centerY+2) ;
 				_vfd.write(modStr);
  
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(modeStart, centerY+10);
-				_vfd.write(muxstring);
-	
-				_vfd.setCursor(modeStart, centerY+15);
-				_vfd.printPacket("%3d", int(radio->get_if_level()));
+
 				
 				_vfd.setFont(VFD::FONT_10x14);
 				_vfd.setCursor( freqCenter ,centerY+10);
@@ -1923,6 +1921,19 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		}
 	}
 	
+	if(radio->isOn()
+		&& ( mode == RadioMgr::BROADCAST_FM
+				||  mode == RadioMgr::VHF
+				||  mode == RadioMgr::GMRS	))
+	{
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(modeStart, centerY+10);
+		_vfd.write(muxstring);
+		
+		_vfd.setCursor(modeStart, centerY+15);
+		_vfd.printPacket("%3d", int(radio->get_if_level()));
+	}
+ 
 
 	drawEngineCheck();
 	drawTemperature();

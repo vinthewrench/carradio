@@ -23,8 +23,8 @@ public:
  	virtual void process(const IQSampleVector& samples_in,
 								SampleVector& audio) = 0;
 
-	virtual  double get_if_level() = 0;
+	virtual  double get_if_level()  const = 0;
 	
-	virtual double get_baseband_level() = 0;
+	virtual double get_baseband_level() const = 0;
  
 };

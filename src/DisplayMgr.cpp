@@ -1585,7 +1585,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.write(buffer) ;
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.write( (t->tm_hour > 12)?"PM":"AM");
+		_vfd.write( (t->tm_hour > 12)?" PM":" AM");
 	}
 	
 	

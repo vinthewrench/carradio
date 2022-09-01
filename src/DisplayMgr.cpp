@@ -1576,28 +1576,21 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		setKnobColor(KNOB_RIGHT, RGB::Black);
 		setKnobColor(KNOB_LEFT, RGB::Black);
 	}
-	//		_leftRing.clearAll();
-	std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
 	
-	_vfd.setCursor(10,35) ;
-	_vfd.setFont(VFD::FONT_10x14) ;
-	_vfd.write(buffer) ;
+	if(now != -1){
+ 		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
+		
+		_vfd.setCursor(10,35) ;
+		_vfd.setFont(VFD::FONT_10x14) ;
+		_vfd.write(buffer) ;
+		
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.write( (t->tm_hour > 12)?"PM":"AM");
+	}
 	
-	_vfd.setFont(VFD::FONT_5x7) ;
-	_vfd.write( (t->tm_hour > 12)?"PM":"AM");
 	
 	drawTemperature();
-	
-	drawEngineCheck();
-	
-	//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-	//		char buffer[64] = {0};
-	//
-	//		TRY(_vfd.setCursor(64, 55));
-	//		TRY(_vfd.setFont(VFD::FONT_5x7));
-	//		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
-	//		TRY(_vfd.write(buffer));
-	//	}
+ 	drawEngineCheck();
 	
 }
 
@@ -1637,6 +1630,17 @@ void  DisplayMgr::drawTemperature(){
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.printPacket("%-10s", buffer);
 	}
+	
+	
+	//	if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+	//		char buffer[64] = {0};
+	//
+	//		TRY(_vfd.setCursor(64, 55));
+	//		TRY(_vfd.setFont(VFD::FONT_5x7));
+	//		sprintf(buffer, "CPU:%d\xa0" "C ", (int) round(cTemp) );
+	//		TRY(_vfd.write(buffer));
+	//	}
+	
 }
 
 
@@ -2904,8 +2908,15 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 			wasHandled = true;
 		}
 		else if(_lineOffset == totalCodes){
-			// erase codes.
+	//		erase  from DB OBD_DTC_STORED/
+			frameDB->clearValue("OBD_DTC_STORED");
+			
+		// tell ECU to erase it
 			can->sendDTCEraseRequest();
+			
+			// redraw
+			setEvent(EVT_NONE,MODE_DTC);
+
 			wasHandled = true;
 		}
 		else {

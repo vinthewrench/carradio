@@ -415,6 +415,11 @@ int FrameDB::valuesCount() {
 }
 
 
+
+void FrameDB::clearValue(string_view key){
+	_values.erase(key);
+}
+
 void FrameDB::updateValue(string_view key, string value, time_t when){
  
 	if(when == 0)

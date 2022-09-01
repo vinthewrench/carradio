@@ -109,6 +109,8 @@ public:
 	bool obd_request(string key, vector <uint8_t> & request);
 	
 	void updateValue(string_view key, string value, time_t when);
+	void clearValue(string_view key);
+
 	void clearValues();
 	int valuesCount();
 

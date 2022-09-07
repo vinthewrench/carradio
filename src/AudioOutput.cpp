@@ -629,15 +629,21 @@ static int (* const set_raw[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t
 
 static int convert_prange(int val, int min, int max)
 {
-int range = max - min;
-int tmp;
-
-if (range == 0)
-  return 0;
-val -= min;
-tmp = rint((double)val/(double)range * 100);
-return tmp;
+	int range = max - min;
+	int tmp;
+	
+	if (range == 0)
+		return 0;
+	val -= min;
+	tmp = rint((double)val/(double)range * 100);
+	return tmp;
 }
+
+/* Function to convert from percentage to volume. val = percentage */
+
+#define convert_prange1(val, min, max) \
+	ceil((val) * ((max) - (min)) * 0.01 + (min))
+
 
 static double get_normalized_volume(snd_mixer_elem_t *elem,
 												snd_mixer_selem_channel_id_t channel,
@@ -667,7 +673,8 @@ static double get_normalized_volume(snd_mixer_elem_t *elem,
 	{
 
 		int pcnt = 	convert_prange(value, min,max);
- 		printf("volume(min: %ld, max: %ld) = %i [%i%%] \n", min,max, value, pcnt);
+		int val2 = convert_prange1(pcnt,  min,max);
+ 		printf("volume(min: %ld, max: %ld) = %li [%i%%] => %li\n", min,max, value, pcnt, val2);
 
 	}
 		  if (use_linear_dB_scale(min, max))

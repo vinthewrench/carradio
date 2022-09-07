@@ -627,6 +627,18 @@ static int (* const set_raw[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t
 		  snd_mixer_selem_set_capture_volume,
 };
 
+static int convert_prange(int val, int min, int max)
+{
+int range = max - min;
+int tmp;
+
+if (range == 0)
+  return 0;
+val -= min;
+tmp = rint((double)val/(double)range * 100);
+return tmp;
+}
+
 static double get_normalized_volume(snd_mixer_elem_t *elem,
 												snd_mixer_selem_channel_id_t channel,
 												enum ctl_dir ctl_dir)
@@ -652,9 +664,12 @@ static double get_normalized_volume(snd_mixer_elem_t *elem,
 		  if (err < 0)
 					 return 0;
 	
-	printf("get_normalized_volume(min: %ld, max: %ld) value = %ld\n", min,max, value);
+	{
 
+		int pcnt = 	convert_prange(value, min,max);
+ 		printf("volume(min: %ld, max: %ld) = %i [%i%%] \n", min,max, value, pcnt);
 
+	}
 		  if (use_linear_dB_scale(min, max))
 					 return (value - min) / (double)(max - min);
 

@@ -645,6 +645,8 @@ static double get_normalized_volume(snd_mixer_elem_t *elem,
 					 if (err < 0)
 								return 0;
 
+			  printf("get_normalized_volume(min: %d, max: %d) value = %d\n", min,max, value);
+			  
 					 return (value - min) / (double)(max - min);
 		  }
 
@@ -676,6 +678,7 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 
 		  err = get_dB_range[ctl_dir](elem, &min, &max);
 		  if (err < 0 || min >= max) {
+			  
 					 err = get_raw_range[ctl_dir](elem, &min, &max);
 					 if (err < 0)
 								return err;

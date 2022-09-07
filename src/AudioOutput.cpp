@@ -644,15 +644,16 @@ static double get_normalized_volume(snd_mixer_elem_t *elem,
 					 err = get_raw[ctl_dir](elem, channel, &value);
 					 if (err < 0)
 								return 0;
-
-			  printf("get_normalized_volume(min: %d, max: %d) value = %d\n", min,max, value);
-			  
-					 return (value - min) / (double)(max - min);
+ 
+			  return (value - min) / (double)(max - min);
 		  }
 
 		  err = get_dB[ctl_dir](elem, channel, &value);
 		  if (err < 0)
 					 return 0;
+	
+	printf("get_normalized_volume(min: %ld, max: %ld) value = %ld\n", min,max, value);
+
 
 		  if (use_linear_dB_scale(min, max))
 					 return (value - min) / (double)(max - min);

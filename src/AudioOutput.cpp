@@ -627,24 +627,6 @@ static int (* const set_raw[2])(snd_mixer_elem_t *, snd_mixer_selem_channel_id_t
 		  snd_mixer_selem_set_capture_volume,
 };
 
-static int convert_prange(int val, int min, int max)
-{
-	int range = max - min;
-	int tmp;
-	
-	if (range == 0)
-		return 0;
-	val -= min;
-	tmp = rint((double)val/(double)range * 100);
-	return tmp;
-}
-
-/* Function to convert from percentage to volume. val = percentage */
-
-#define convert_prange1(val, min, max) \
-	ceil((val) * ((max) - (min)) * 0.01 + (min))
-
-
 static double get_normalized_volume(snd_mixer_elem_t *elem,
 												snd_mixer_selem_channel_id_t channel,
 												enum ctl_dir ctl_dir)
@@ -662,21 +644,14 @@ static double get_normalized_volume(snd_mixer_elem_t *elem,
 					 err = get_raw[ctl_dir](elem, channel, &value);
 					 if (err < 0)
 								return 0;
- 
-			  return (value - min) / (double)(max - min);
+
+					 return (value - min) / (double)(max - min);
 		  }
 
 		  err = get_dB[ctl_dir](elem, channel, &value);
 		  if (err < 0)
 					 return 0;
-	
-	{
 
-		int pcnt = 	convert_prange(value, min,max);
-		int val2 = convert_prange1(pcnt,  min,max);
- 		printf("volume(min: %ld, max: %ld) = %li [%i%%] => %li\n", min,max, value, pcnt, val2);
-
-	}
 		  if (use_linear_dB_scale(min, max))
 					 return (value - min) / (double)(max - min);
 
@@ -701,7 +676,6 @@ static int set_normalized_volume(snd_mixer_elem_t *elem,
 
 		  err = get_dB_range[ctl_dir](elem, &min, &max);
 		  if (err < 0 || min >= max) {
-			  
 					 err = get_raw_range[ctl_dir](elem, &min, &max);
 					 if (err < 0)
 								return err;

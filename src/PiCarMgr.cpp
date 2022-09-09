@@ -52,7 +52,8 @@ constexpr uint 	gpio_relay1_line_number	= 26;
 constexpr uint 	gpio_int_line_number	= 27;
 const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
- 
+
+
 constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);

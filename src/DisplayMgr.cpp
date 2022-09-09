@@ -1556,8 +1556,13 @@ void DisplayMgr::drawDeviceStatus(){
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
 	
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
+	time_t rawtime;
+	struct tm timeinfo = {0};
+
+	time(&rawtime);
+	localtime_r(&rawtime, &timeinfo); // fills in your structure,
+												 // instead of returning a pointer to a static
+
 	char buffer[128] = {0};
 	
 	if(transition == TRANS_LEAVING) {
@@ -1577,15 +1582,15 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		setKnobColor(KNOB_LEFT, RGB::Black);
 	}
 	
-	if(now != -1){
- 		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", t);
+	if(rawtime != -1){
+ 		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", &timeinfo);
 		
 		_vfd.setCursor(10,35) ;
 		_vfd.setFont(VFD::FONT_10x14) ;
 		_vfd.write(buffer) ;
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.write( (t->tm_hour > 12)?" PM":" AM");
+		_vfd.write( (timeinfo.tm_hour > 12)?" PM":" AM");
 	}
 	
 	
@@ -2299,10 +2304,16 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 
 void DisplayMgr::drawTimeBox(){
 	// Draw time
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
+	
+	time_t rawtime;
+	struct tm timeinfo = {0};
+
+	time(&rawtime);
+	localtime_r(&rawtime, &timeinfo); // fills in your structure,
+												 // instead of returning a pointer to a static
+
 	char timebuffer[16] = {0};
-	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", t);
+	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", &timeinfo);
 	_vfd.setFont(VFD::FONT_5x7);
 	_vfd.setCursor(_vfd.width() - (strlen(timebuffer) * 6) ,7);
 	_vfd.write(timebuffer);

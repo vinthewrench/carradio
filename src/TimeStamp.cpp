@@ -62,8 +62,15 @@ std::string TimeStamp::logFileString(){
 
 	std::string TimeStamp::ClockString(bool isGMT){
 		char timeStr[80] = {0};
+		
+		time_t rawtime;
 		struct tm timeinfo = {0};
-		if(isGMT)
+
+		time(&rawtime);
+		localtime_r(&rawtime, &timeinfo); // fills in your structure,
+													 // instead of returning a pointer to a static
+ 
+ 		if(isGMT)
 			gmtime_r(&_time, &timeinfo);
 		else
 			localtime_r(&_time, &timeinfo);

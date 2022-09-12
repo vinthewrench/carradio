@@ -1935,8 +1935,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		_vfd.setCursor(modeStart, centerY+8);
 		_vfd.write(muxstring);
 		
-		_vfd.setCursor(20, centerY+18);
-		_vfd.printPacket("%3d  %3d  ", int(radio->get_if_level()),  int(radio->get_baseband_level()));
+		_vfd.setCursor(10, centerY+18);
+		_vfd.printPacket("%3d ", int(radio->get_if_level()));
 	}
  
 

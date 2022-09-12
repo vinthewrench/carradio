@@ -244,7 +244,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			if(! _sdr.setOffsetTuning(false))
 				return false;
 	
-			if(! _sdr.setACGMode(true))
+			if(! _sdr.setACGMode(false))
 				return false;
  
 			if(! _sdr.setFrequency(tuner_freq))

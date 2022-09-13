@@ -354,7 +354,32 @@ bool PiCarDB::getTimeProperty(string key, time_t * valOut){
 }
 
 
+ 
+bool  PiCarDB::getIntProperty(string key, int * valOut){
+	
+	if( _props.contains(key))
+	{
+		if(_props.at(key).is_number_integer()){
+			auto val = _props.at(key);
+			
+			if(valOut)
+				*valOut =  val;
+			return true;
+		}
+	}
+	else 	if(_props.at(key).is_string()){
+		string val = _props.at(key);
+		
+		int intValue = atoi(val.c_str());
+		if(valOut)
+			*valOut =  intValue;
+		return true;
+		
+	}
+	return false;
+}
 
+			
 bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 	
 	if( _props.contains(key))

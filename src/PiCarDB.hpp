@@ -47,6 +47,7 @@ class PiCarDB  {
 	bool getTimeProperty(string key, time_t * value);
 	bool getFloatProperty(string key, float * valOut);
 	bool getBoolProperty(string key, bool * valOut);
+	bool getIntProperty(string key, int * value);
 	bool getJSONProperty(string key, nlohmann::json  *j);
 	
 	bool removeProperty(string key);

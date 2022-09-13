@@ -1894,8 +1894,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.setCursor( freqCenter ,centerY+10);
 				_vfd.write(str);
 
-				_vfd.setFont(VFD::FONT_5x7);
-				_vfd.write( " " + hzstr);
+				_vfd.setFont(VFD::FONT_MINI); _vfd.write( " ");
+				_vfd.setFont(VFD::FONT_5x7); _vfd.write( hzstr);
 			
 				// Draw title centered inb char buffer
 				constexpr int  titleMaxSize = 20;

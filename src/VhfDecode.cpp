@@ -125,7 +125,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	// rms level is faster responding for triggering squelch
 	m_rms_level = 0.80 * m_rms_level + 0.05 * if_rms;
  
-	if(m_squelch_level && (m_rms_level < m_squelch_level * .01)){
+	if(m_squelch_level && (m_rms_level < m_squelch_level * .1)){
 	
 		printf("OFF rms: %.5f\t if: %.5f\tsquelch:%.5f\n", if_rms, m_rms_level, m_squelch_level * .01);
 

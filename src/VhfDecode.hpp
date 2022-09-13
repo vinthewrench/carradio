@@ -110,7 +110,6 @@ public:
 	}
 	
 	bool isSquelched() const  {
-		printf("isSquelched:%d\n", m_is_squelched );
 		return m_is_squelched;
 	};
  
@@ -131,7 +130,6 @@ private:
 	 double          m_baseband_mean;
 	 double          m_baseband_level;
 	 int	           m_squelch_level;
-	 double          m_rms_level;
 	 bool      	     m_is_squelched;;
 
 	 IQSampleVector  m_buf_iftuned;

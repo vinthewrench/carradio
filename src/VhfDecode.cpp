@@ -121,7 +121,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	 double if_rms = rms_level_approx(m_buf_iffiltered);
 	 m_if_level = 0.95 * m_if_level + 0.05 * if_rms;
 
-	printf("rms: %.5f\n", if_rms);
+	printf("rms: %.5f \t if: %.5f \n", if_rms, m_if_level);
 	
 	 // Extract carrier frequency.
 	 m_phasedisc.process(m_buf_iffiltered, m_buf_baseband);

@@ -127,6 +127,7 @@ private:
 	 double          m_baseband_mean;
 	 double          m_baseband_level;
 	 double          m_squelch_level;
+	 double          m_rms_level;
 
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;

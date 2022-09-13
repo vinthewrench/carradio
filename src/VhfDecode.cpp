@@ -105,9 +105,6 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_deemph_mono(
 		  (deemphasis == 0) ? 1.0 : (deemphasis * sample_rate_pcm * 1.0e-6))
 {
-	
-	printf("VHF Set Squelch level = %3d\n", m_squelch_level);
-
 	 // nothing more to do
 }
 

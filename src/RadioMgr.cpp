@@ -340,9 +340,6 @@ void 	 RadioMgr::setSquelchLevel(int level){
 	_squelchLevel = level;
 	if(_sdrDecoder)
 		_sdrDecoder->set_squelch_level(level);
-	
-	printf("setSquelchLevel = %3d\n", _squelchLevel);
-
 }
 
 

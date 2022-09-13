@@ -79,6 +79,9 @@ public:
 	double get_baseband_level() {return _baseband_level;};
 	bool  isSquelched() {return  _sdrDecoder?_sdrDecoder->isSquelched():false;};
  
+	void 	setSquelchLevel(int level);
+	int 	getSquelchLevel(){ return _squelchLevel;};
+	
 	uint32_t nextFrequency(bool up);
 	
 //	uint32_t nextFrequency(bool up, bool constrain = false);
@@ -95,6 +98,7 @@ private:
 	radio_mode_t 		_mode;
 	uint32_t				_frequency;
 	radio_mux_t 		_mux;
+	int					_squelchLevel;
 	
 	double				_IF_Level;
 	double 				_baseband_level;

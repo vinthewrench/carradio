@@ -422,11 +422,11 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_AUTO_SHUTDOWN_MODE, _autoShutdownMode);
  
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
+	_db.setProperty(PROP_SQUELCH_LEVEL, _radio.getSquelchLevel());
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
 	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
-	
 }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -492,6 +492,11 @@ void PiCarMgr::restoreRadioSettings(){
 			}
 		}
 	}
+	
+	// SET SQUELCH
+	int squelch_level = 0;
+	_db.getIntValue(PROP_SQUELCH_LEVEL, squelch_level);
+ 	_radio.setSquelchLevel(squelch_level);
 	
 	// SET Preset stations
 	

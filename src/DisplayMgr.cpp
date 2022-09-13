@@ -1098,6 +1098,22 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
+				else if(_current_mode == MODE_SQUELCH) {
+					
+					// check for {EVT_NONE,MODE_SQUELCH}  which is a fader change
+					if(item.mode == MODE_SQUELCH) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					else if(diff.tv_sec >=  5){
+						// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+				}
+ 
 				else if(_current_mode == MODE_DIMMER) {
 					
 					// check for {EVT_NONE,MODE_DIMMER}  which is a dimmer change

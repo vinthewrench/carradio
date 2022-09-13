@@ -35,6 +35,8 @@ RadioMgr::RadioMgr(){
 	_shouldQuit = false;
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
+	
+	_squelchLevel = -25;
   
 	pthread_create(&_auxReaderTID, NULL,
 								  (THREADFUNCPTR) &RadioMgr::AuxReaderThread, (void*)this);
@@ -270,7 +272,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 												  VhfDecoder::default_freq_dev,       // freq_dev
 												bandwidth_pcm,
 												downsample,
-												-25  // squelch level
+												_squelchLevel  // squelch level
 												);
 			
 			_shouldReadAux = false;
@@ -333,6 +335,13 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	return true;
 }
  
+
+void 	 RadioMgr::setSquelchLevel(int level){
+	_squelchLevel = level;
+	if(_sdrDecoder)
+		_sdrDecoder->set_squelch_level(level);
+}
+
 
 uint32_t RadioMgr::frequency(){
 	return _frequency;

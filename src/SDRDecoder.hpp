@@ -29,5 +29,6 @@ public:
 	
 	virtual  bool 	isSquelched() const = 0;
 
+	virtual void 	set_squelch_level(int level)  = 0;
  
 };

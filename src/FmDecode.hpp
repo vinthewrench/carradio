@@ -201,7 +201,9 @@ public:
 	 {
 		  return m_pilotpll.get_pilot_level();
 	 }
-
+	
+	void set_squelch_level(int level)  {}; // does nothing on  broadcast FM
+ 
 	bool isSquelched() const  { return false; };
 	
 

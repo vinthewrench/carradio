@@ -83,4 +83,5 @@ inline static const string  PROP_PRESET_FREQ					= "freq";
 inline static const string  PROP_PRESET_MODE					= "mode";
 inline static const string  PROP_SYNC_CLOCK_TO_GPS			= "clocksync_gps_secs";
 inline static const string  PROP_W1_MAP						= "w1Map";
+inline static const string  PROP_SQUELCH_LEVEL				= "squelch";
 

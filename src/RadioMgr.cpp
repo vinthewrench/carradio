@@ -269,7 +269,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 												  VhfDecoder::default_bandwidth_if,   // bandwidth_if
 												  VhfDecoder::default_freq_dev,       // freq_dev
 												bandwidth_pcm,
-												downsample
+												downsample,
+												5  // squelch level
 												);
 			
 			_shouldReadAux = false;

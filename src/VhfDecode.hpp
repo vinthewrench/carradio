@@ -110,6 +110,7 @@ public:
 	}
 	
 	bool isSquelched() const  {
+		printf("isSquelched:%d\n", m_is_squelched );
 		return m_is_squelched;
 	};
  

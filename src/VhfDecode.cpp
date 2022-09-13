@@ -62,7 +62,8 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 							double bandwidth_if,
 							double freq_dev,
 							double bandwidth_pcm,
-							unsigned int downsample)
+							unsigned int downsample,
+							double squelch_level  )
 
 	 // Initialize member fields
 	 : m_sample_rate_if(sample_rate_if)
@@ -74,6 +75,7 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_if_level(0)
 	 , m_baseband_mean(0)
 	 , m_baseband_level(0)
+	 , m_squelch_level(squelch_level)
 
 	 // Construct FineTuner
 	 , m_finetuner(m_tuning_table_size, m_tuning_shift)
@@ -119,6 +121,8 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	 double if_rms = rms_level_approx(m_buf_iffiltered);
 	 m_if_level = 0.95 * m_if_level + 0.05 * if_rms;
 
+	printf("rms: %.5f\n", if_rms);
+	
 	 // Extract carrier frequency.
 	 m_phasedisc.process(m_buf_iffiltered, m_buf_baseband);
 

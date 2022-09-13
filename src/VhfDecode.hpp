@@ -64,7 +64,8 @@ public:
 				  double bandwidth_if=default_bandwidth_if,
 				  double freq_dev=default_freq_dev,
 				  double bandwidth_pcm=default_bandwidth_pcm,
-				  unsigned int downsample=1);
+				  unsigned int downsample=1,
+				  double squelch_level  = 0);
 
 	 /**
 	  * Process IQ samples and return audio samples.
@@ -98,7 +99,16 @@ public:
 		  return m_baseband_level;
 	 }
 
+	void set_squelch_level(double level)
+	{
+		m_squelch_level = level;
+	}
 	
+	double get_squelch_level() const
+	{
+		 return m_squelch_level;
+	}
+ 
 	
 private:
  
@@ -116,6 +126,7 @@ private:
 	 double          m_if_level;
 	 double          m_baseband_mean;
 	 double          m_baseband_level;
+	 double          m_squelch_level;
 
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;

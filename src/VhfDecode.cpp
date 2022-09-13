@@ -123,17 +123,14 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	double if_rms = rms_level_approx(m_buf_iffiltered);
 	m_if_level = 0.95 * m_if_level + 0.05 * if_rms;
 	
-	constexpr float squelch_scaler = .0015;
-	
-	// rms level is faster responding for triggering squelch
+	 	// rms level is faster responding for triggering squelch
 	m_rms_level = 0.60 * m_rms_level + 0.05 * if_rms;
- 
-	auto level = 20*log10(0.95 * m_if_level + 0.05 * if_rms);
+	int current_level  = int (20*log10(0.95 * m_if_level + 0.05 * if_rms));
 	
-	if(m_squelch_level && (m_rms_level < m_squelch_level * squelch_scaler)){
+	if(m_squelch_level && ( current_level < m_squelch_level) ){
 	
 		m_is_squelched = true;
-		printf("OFF rms: %.5f\t if: %.5f\tsquelch:%.5f %3d\n", if_rms, m_rms_level, m_squelch_level * squelch_scaler ,int(level));
+		printf("OFF rms: %.5f\t if: %.5f\t squelch:%3d <  %3d\n", if_rms, m_rms_level, current_level ,m_squelch_level);
 
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
 			m_buf_mono[i] =  0.0;
@@ -144,8 +141,8 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		
 		m_is_squelched = false;
 
-		printf("ON  rms: %.5f\t if: %.5f\tsquelch:%.5f %3d\n", if_rms, m_rms_level, m_squelch_level * squelch_scaler ,int(level));
-	
+		printf("ON rms: %.5f\t if: %.5f\t squelch:%3d <  %3d\n", if_rms, m_rms_level, current_level ,m_squelch_level);
+
 		// Extract carrier frequency.
 		m_phasedisc.process(m_buf_iffiltered, m_buf_baseband);
 		

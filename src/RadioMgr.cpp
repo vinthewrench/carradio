@@ -36,7 +36,7 @@ RadioMgr::RadioMgr(){
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
 	
-	_squelchLevel = -25;
+	_squelchLevel = 0;
   
 	pthread_create(&_auxReaderTID, NULL,
 								  (THREADFUNCPTR) &RadioMgr::AuxReaderThread, (void*)this);
@@ -340,6 +340,9 @@ void 	 RadioMgr::setSquelchLevel(int level){
 	_squelchLevel = level;
 	if(_sdrDecoder)
 		_sdrDecoder->set_squelch_level(level);
+	
+	printf("setSquelchLevel = %3d\n", _squelchLevel);
+
 }
 
 

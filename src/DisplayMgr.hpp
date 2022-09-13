@@ -58,6 +58,7 @@ public:
 		MODE_DIMMER,
 		MODE_BALANCE,
 		MODE_FADER,
+		MODE_SQUELCH,
 		MODE_RADIO,
 		MODE_CANBUS,
 		MODE_GPS,
@@ -136,6 +137,8 @@ public:
 	void showDimmerChange();	
 	void showBalanceChange();
 	void showFaderChange();
+	void showSquelchChange();
+	
 	void showRadioChange();
 	void showCANbus(uint8_t page = 0);
 	void showSettings();
@@ -185,6 +188,11 @@ private:
 	void drawFaderScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForBalance( knob_action_t action);
 	bool processSelectorKnobActionForFader( knob_action_t action);
+	 
+	void drawSquelchScreen(modeTransition_t transition);
+	bool processSelectorKnobActionForSquelch( knob_action_t action);
+
+	
 	bool processSelectorKnobActionForDimmer( knob_action_t action);
 
 	bool processSelectorKnobActionForDTC( knob_action_t action);

@@ -1839,6 +1839,7 @@ vector<string> PiCarMgr::settingsMenuItems(){
 	vector<string> menu_items = {
 		"Audio Balance",
 		"Audio Fader",
+		"Squelch",
 		dim_entry,
 		"Shutdown Delay",
 		"Exit",
@@ -1873,6 +1874,10 @@ void PiCarMgr::displaySettingsMenu(){
 						break;
 
 					case 2:
+						_display.showSquelchChange();
+						break;
+
+					case 3:
 						if(action == DisplayMgr::KNOB_CLICK){
 							if(!_autoDimmerMode)
 								_display.showDimmerChange();
@@ -1883,7 +1888,7 @@ void PiCarMgr::displaySettingsMenu(){
  						}
 						break;
 
-					case 3:
+					case 4:
 						displayShutdownMenu();
 						break;
 						

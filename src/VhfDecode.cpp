@@ -77,6 +77,7 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_baseband_level(0)
 	 , m_squelch_level(squelch_level)
 	 , m_rms_level(0)
+	 ,m_is_squelched(false)
 
 	 // Construct FineTuner
 	 , m_finetuner(m_tuning_table_size, m_tuning_shift)
@@ -129,6 +130,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
  
 	if(m_squelch_level && (m_rms_level < m_squelch_level * squelch_scaler)){
 	
+		m_is_squelched = true;
 		printf("OFF rms: %.5f\t if: %.5f\tsquelch:%.5f\n", if_rms, m_rms_level, m_squelch_level * squelch_scaler);
 
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
@@ -138,6 +140,8 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	else
 	{
 		
+		m_is_squelched = false;
+
 		printf("ON  rms: %.5f\t if: %.5f\tsquelch:%.5f\n", if_rms, m_rms_level, m_squelch_level * squelch_scaler);
 	
 		// Extract carrier frequency.

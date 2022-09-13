@@ -202,6 +202,9 @@ public:
 		  return m_pilotpll.get_pilot_level();
 	 }
 
+	bool isSquelched() const  { return false; };
+	
+
 	 /** Return PPS events from the most recently processed block. */
 	 std::vector<PilotPhaseLock::PpsEvent> get_pps_events() const
 	 {

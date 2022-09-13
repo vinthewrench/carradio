@@ -26,5 +26,8 @@ public:
 	virtual  double get_if_level()  const = 0;
 	
 	virtual double get_baseband_level() const = 0;
+	
+	virtual  bool 	isSquelched() const = 0;
+
  
 };

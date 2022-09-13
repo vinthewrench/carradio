@@ -77,7 +77,8 @@ public:
 
 	double get_if_level() {return _IF_Level;};
 	double get_baseband_level() {return _baseband_level;};
-
+	bool  isSquelched() {return  _sdrDecoder?_sdrDecoder->isSquelched():false;};
+ 
 	uint32_t nextFrequency(bool up);
 	
 //	uint32_t nextFrequency(bool up, bool constrain = false);

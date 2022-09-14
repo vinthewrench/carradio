@@ -2808,10 +2808,10 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+	//		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
 			// draw marker
 			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0xBB,
 			VFD_SET_WRITEMODE, 0x00,};	// Normal
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);

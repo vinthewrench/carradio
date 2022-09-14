@@ -2789,7 +2789,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		
 		int squelch = radio->getSquelchLevel();
  
-		uint8_t itemX = (( static_cast<float>(abs(maxSquelch)) / static_cast<float>((rightbox - leftbox))) * abs(squelch))  + rightbox;
+		uint8_t itemX = (( static_cast<float>(abs(maxSquelch)) / static_cast<float>((rightbox - leftbox))) * abs(squelch))  + leftbox;
 		
 		printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch),abs(squelch) );
 		itemX &= 0xfE; // to nearest 2

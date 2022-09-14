@@ -2791,9 +2791,9 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
  
 		auto boxwidth = (rightbox - leftbox);
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(abs(maxSquelch)) ;
-		uint8_t itemX = step * abs(squelch)   + leftbox;
+		uint8_t itemX = (step * squelch) + rightbox;
 		
-		printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch),abs(squelch) );
+		printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch), squelch  );
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );

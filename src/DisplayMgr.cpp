@@ -1899,7 +1899,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				||  mode == RadioMgr::GMRS	))
 	{
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(modeStart, centerY+8);
+		_vfd.setCursor(modeStart, centerY+9);
 		_vfd.write(muxstring);
 		
 		_vfd.setCursor(10, centerY+19);

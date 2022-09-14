@@ -2777,12 +2777,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		
-		// draw centered heading
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Squelch";
-		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-		_vfd.write(str);
-		
+			
 		//draw box outline
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
@@ -2816,9 +2811,12 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 		
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(10, height-5);
-		_vfd.printPacket("SQULCH: %3d", squelch );
+		// draw centered heading
+		
+		char buffer[64] = {0};
+		sprintf(buffer, "Squelch: %3d",squelch);
+		_vfd.setCursor( midX - ((strlen(buffer)*5) /2 ), topbox - 5);
+		_vfd.printPacket(buffer);
  	}
 }
  

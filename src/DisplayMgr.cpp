@@ -1100,7 +1100,7 @@ void DisplayMgr::DisplayUpdate(){
 				}
 				else if(_current_mode == MODE_SQUELCH) {
 					
-					// check for {EVT_NONE,MODE_SQUELCH}  which is a fader change
+					// check for {EVT_NONE,MODE_SQUELCH}  which is a squelch change
 					if(item.mode == MODE_SQUELCH) {
 						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
 						shouldRedraw = false;
@@ -1718,67 +1718,6 @@ void DisplayMgr::drawEngineCheck(){
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.printPacket("%-20s", buffer);
 	
-	
-}
-
-void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
-	
-	PiCarMgr* mgr	= PiCarMgr::shared();
-	
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-	uint8_t midX = width/2;
-	uint8_t midY = height/2;
-	
-	uint8_t leftbox 	= 20;
-	uint8_t rightbox 	= width - 20;
-	uint8_t topbox 	= midY -5 ;
-	uint8_t bottombox = midY + 5 ;
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING) {
-		_vfd.clearScreen();
-		
-		// draw centered heading
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Dim Screen";
-		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-		_vfd.write(str);
-		
-		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-		_vfd.writePacket(buff1, sizeof(buff1), 0);
-	}
-	
-	// brightness scales between 0 - 1.0
-	float dim =  mgr->dimLevel();
-	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
-	
-	// clear rest of inside of box
-	if(dim < 1)
-	{
-		// there is some kind of bug in the Noritake VFD where id you send
-		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
-		uint8_t start = itemX+1;
-		if(start == 96) start = 95;
-		
-		uint8_t buff2[] = {
-			VFD_CLEAR_AREA,
-			// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
-		
-		_vfd.writePacket(buff2, sizeof(buff2), 1000);
-	}
-	
-	// fill  area box
-	uint8_t buff3[] = {VFD_SET_AREA,
-		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-		static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
-	_vfd.writePacket(buff3, sizeof(buff3), 1000);
 	
 }
 
@@ -2505,6 +2444,113 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
+// MARK: -  Dimmer Screen
+
+
+void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+	
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = "Dim Screen";
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
+		
+		//draw box outline
+		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+	}
+	
+	// brightness scales between 0 - 1.0
+	float dim =  mgr->dimLevel();
+	uint8_t itemX = leftbox +  (rightbox - leftbox) * dim;
+	
+	// clear rest of inside of box
+	if(dim < 1)
+	{
+		// there is some kind of bug in the Noritake VFD where id you send
+		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+		uint8_t start = itemX+1;
+		if(start == 96) start = 95;
+		
+		uint8_t buff2[] = {
+			VFD_CLEAR_AREA,
+			// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 1000);
+	}
+	
+	// fill  area box
+	uint8_t buff3[] = {VFD_SET_AREA,
+		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+		static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
+	_vfd.writePacket(buff3, sizeof(buff3), 1000);
+	
+}
+
+bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
+	bool wasHandled = false;
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	
+	double brightness = mgr->dimLevel();
+	double increment = .125;
+	
+	if(brightness > -1){
+		
+		if(action == KNOB_UP){
+			
+			if(brightness < 1.0){
+				brightness += increment;
+				brightness = min(brightness, 1.0);
+				
+				mgr->setDimLevel(brightness);
+				setBrightness(brightness);
+				setEvent(EVT_NONE,MODE_DIMMER);
+			}
+			wasHandled = true;
+		}
+		else if(action == KNOB_DOWN){
+			
+			if(brightness > 0){
+				brightness -= increment;
+				brightness = max(brightness, 0.0);
+				
+				mgr->setDimLevel(brightness);
+				setBrightness(brightness);
+				setEvent(EVT_NONE,MODE_DIMMER);
+			}
+			wasHandled = true;
+		}
+	}
+	
+	if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+}
+
 // MARK: -  Balance Audio Screen
 
 
@@ -2571,6 +2617,39 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 }
 
 
+bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
+	bool wasHandled = false;
+	
+	AudioOutput* audio	= PiCarMgr::shared()->audio();
+	
+	double balance = audio->balance();
+	// limit the precision
+	balance = std::floor((balance * 100) + .5) / 100;
+	
+	if(action == KNOB_UP){
+		
+		if(balance < 1.0){
+			audio->setBalance(balance +.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
+		}
+		wasHandled = true;
+	}
+	
+	else if(action == KNOB_DOWN){
+		
+		if(balance > -1.0){
+			audio->setBalance(balance -.1);
+			setEvent(EVT_NONE,MODE_BALANCE);
+		}
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		popMode();
+	}
+	
+	return wasHandled;
+}
+
 // MARK: -  Fader Audio Screen
 
 
@@ -2636,41 +2715,6 @@ void DisplayMgr::drawFaderScreen(modeTransition_t transition){
 	}
 }
 
-// MARK: -  Balance/ Fader / Brightness knob selector
-
-bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
-	bool wasHandled = false;
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	double balance = audio->balance();
-	// limit the precision
-	balance = std::floor((balance * 100) + .5) / 100;
-	
-	if(action == KNOB_UP){
-		
-		if(balance < 1.0){
-			audio->setBalance(balance +.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	
-	else if(action == KNOB_DOWN){
-		
-		if(balance > -1.0){
-			audio->setBalance(balance -.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-}
-
 
 bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
 	bool wasHandled = false;
@@ -2705,48 +2749,8 @@ bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
 	return wasHandled;
 }
 
-bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
-	bool wasHandled = false;
-	
-	PiCarMgr* mgr	= PiCarMgr::shared();
-	
-	double brightness = mgr->dimLevel();
-	double increment = .125;
-	
-	if(brightness > -1){
-		
-		if(action == KNOB_UP){
-			
-			if(brightness < 1.0){
-				brightness += increment;
-				brightness = min(brightness, 1.0);
-				
-				mgr->setDimLevel(brightness);
-				setBrightness(brightness);
-				setEvent(EVT_NONE,MODE_DIMMER);
-			}
-			wasHandled = true;
-		}
-		else if(action == KNOB_DOWN){
-			
-			if(brightness > 0){
-				brightness -= increment;
-				brightness = max(brightness, 0.0);
-				
-				mgr->setDimLevel(brightness);
-				setBrightness(brightness);
-				setEvent(EVT_NONE,MODE_DIMMER);
-			}
-			wasHandled = true;
-		}
-	}
-	
-	if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-}
+
+ 
 
 // MARK: -  Squelch  Screen
 
@@ -2798,6 +2802,8 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
+		_vfd.setFont(VFD::FONT_5x7);
+
 		// clear inside of box
 		uint8_t buff2[] = {VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),

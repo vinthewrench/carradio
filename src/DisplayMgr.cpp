@@ -1902,7 +1902,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		_vfd.setCursor(modeStart, centerY+8);
 		_vfd.write(muxstring);
 		
-		_vfd.setCursor(10, centerY+20);
+		_vfd.setCursor(10, centerY+19);
 		_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
 							  radio->isSquelched()?"SQLCH":"" );
 	}

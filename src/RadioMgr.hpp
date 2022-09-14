@@ -81,7 +81,8 @@ public:
  
 	void 	setSquelchLevel(int level);
 	int 	getSquelchLevel(){ return _squelchLevel;};
-	
+	int 	getMaxSquelchRange();
+ 
 	uint32_t nextFrequency(bool up);
 	
 //	uint32_t nextFrequency(bool up, bool constrain = false);

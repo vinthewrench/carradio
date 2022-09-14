@@ -2822,22 +2822,27 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
  
 bool DisplayMgr::processSelectorKnobActionForSquelch( knob_action_t action){
 	bool wasHandled = false;
- 
+	
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	
+	int maxSquelch = radio->getMaxSquelchRange();
+	int squelch = radio->getSquelchLevel();
+	
 	if(action == KNOB_UP){
-		
-//		if(fade < 1.0){
-//			audio->setFader(fade +.1);
+		if(squelch < 0){
+			radio->setSquelchLevel(squelch +1 );
 			setEvent(EVT_NONE,MODE_SQUELCH);
-//		}
+		}
 		wasHandled = true;
 	}
 	
 	else if(action == KNOB_DOWN){
-//
-//		if(fade > -1.0){
-//			audio->setFader(fade -.1);
+		
+		
+		if(squelch > maxSquelch){
+			radio->setSquelchLevel(squelch - 1 );
 			setEvent(EVT_NONE,MODE_SQUELCH);
-//		}
+		}
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){

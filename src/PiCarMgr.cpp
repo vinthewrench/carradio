@@ -496,6 +496,8 @@ void PiCarMgr::restoreRadioSettings(){
 	// SET SQUELCH
 	int squelch_level = 0;
 	_db.getIntProperty(PROP_SQUELCH_LEVEL, &squelch_level);
+	if(squelch_level < _radio.getMaxSquelchRange())
+		squelch_level = _radio.getMaxSquelchRange();
 	_radio.setSquelchLevel(squelch_level);
  
 	// SET Preset stations

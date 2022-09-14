@@ -342,6 +342,10 @@ void 	 RadioMgr::setSquelchLevel(int level){
 		_sdrDecoder->set_squelch_level(level);
 }
 
+int 	RadioMgr::getMaxSquelchRange(){
+	return -45;
+}
+ 
 
 uint32_t RadioMgr::frequency(){
 	return _frequency;

@@ -2814,7 +2814,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		// draw centered heading
 		
 		char buffer[64] = {0};
-		sprintf(buffer, "Squelch: %3d",squelch);
+		sprintf(buffer, "Squelch: %-3d",squelch);
 		_vfd.setCursor( midX - ((strlen(buffer)*5) /2 ), topbox - 5);
 		_vfd.printPacket(buffer);
  	}

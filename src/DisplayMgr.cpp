@@ -2754,6 +2754,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	int maxSquelch = radio->getMaxSquelchRange();
 
 	AudioOutput* audio	= PiCarMgr::shared()->audio();
 	
@@ -2784,10 +2785,10 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
-		_vfd.setCursor(leftbox - 10, bottombox -1 );
-		_vfd.write("F");
-		_vfd.setCursor(rightbox + 5, bottombox -1 );
-		_vfd.write("R");
+		_vfd.setCursor(leftbox - 20, bottombox -1 );
+		_vfd.printPacket("%3d", maxSquelch);
+ 		_vfd.setCursor(rightbox + 5, bottombox -1 );
+		_vfd.write("0");
 	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time

@@ -2754,10 +2754,8 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-	int maxSquelch = radio->getMaxSquelchRange();
-
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
+	int			 maxSquelch = radio->getMaxSquelchRange();
+ 
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
@@ -2784,21 +2782,14 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		//draw box outline
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
-		_vfd.setCursor(leftbox - 20, bottombox -1 );
-		_vfd.printPacket("%3d", maxSquelch);
- 		_vfd.setCursor(rightbox + 5, bottombox -1 );
-		_vfd.write("0");
-	}
+		}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		int squelch = radio->getSquelchLevel();
-		
-		double fader = audio->fader();
-		
-		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * fader;
+ 
+		uint8_t itemX = ((abs(maxSquelch) / (rightbox - leftbox)) * abs(squelch))  + rightbox;
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );

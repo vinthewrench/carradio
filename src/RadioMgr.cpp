@@ -632,14 +632,10 @@ void RadioMgr::SDRReader(){
 	while(!_shouldQuit){
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldReadSDR){
-				
-				printf("_shouldReadSDR = false\n");
 				usleep(200000);
 				continue;
 			}
 	 
-		printf("_shouldReadSDR = true\n");
-
 		if (!_sdr.getSamples(iqsamples)) {
 			//			 fprintf(stderr, "ERROR: getSamples\n");
 			continue;
@@ -750,6 +746,7 @@ void RadioMgr::SDRProcessor(){
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
 			
 			
+			printf("process block\n");
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.
 			if (block > 0) {

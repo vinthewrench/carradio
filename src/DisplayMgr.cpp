@@ -2836,8 +2836,6 @@ bool DisplayMgr::processSelectorKnobActionForSquelch( knob_action_t action){
 	}
 	
 	else if(action == KNOB_DOWN){
-		
-		
 		if(squelch > maxSquelch){
 			radio->setSquelchLevel(squelch - 1 );
 			setEvent(EVT_NONE,MODE_SQUELCH);

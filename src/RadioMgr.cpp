@@ -235,6 +235,14 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 
 			didUpdate = true;
 		}
+		else if(_mode == SCANNER) {
+			_sdr.resetBuffer();
+			_output_buffer.flush();
+			_shouldReadSDR = false;
+			_shouldReadAux = true;
+
+			didUpdate = true;
+		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
 	 		_sdr.resetBuffer();
@@ -337,9 +345,15 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  
 
 void 	 RadioMgr::setSquelchLevel(int level){
+	
+//	PiCarDB*			db 		= PiCarMgr::shared()->db();
+
 	_squelchLevel = level;
 	if(_sdrDecoder)
 		_sdrDecoder->set_squelch_level(level);
+	
+//	db->updateValue(VAL_MODULATION_MODE, _squelchLevel);
+
 }
 
 int 	RadioMgr::getMaxSquelchRange(){
@@ -375,6 +389,10 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "AUX";
 			break;
 
+		case SCANNER:
+			str = "SCAN";
+			break;
+
 			
 		default: ;
 	}
@@ -391,6 +409,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 else if(str == "VHF") mode = VHF;
 	 else if(str == "GMRS") mode = GMRS;
 	 else if(str == "AUX") mode = AUX;
+	 else if(str == "SCANNER") mode = SCANNER;
 		return mode;
 		
 }
@@ -457,6 +476,12 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			break;
 
 		case AUX:
+			minFreq = 0;
+			maxFreq = 0;
+			success = true;
+			break;
+
+		case SCANNER:
 			minFreq = 0;
 			maxFreq = 0;
 			success = true;
@@ -681,7 +706,6 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
 		
-		
 		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
@@ -705,29 +729,48 @@ void RadioMgr::SDRProcessor(){
 				// Stereo indicator change
 				bool detect = dynamic_cast<FmDecoder *>(_sdrDecoder)->stereo_detected();
 				_mux = detect? MUX_STEREO:MUX_MONO;
-
+				
 				if (detect != got_stereo) {
 					got_stereo = detect;
 					//				display->showRadioChange();
-					
 				}
-
 			}
- 
+			
 			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
 			
- 
+			
+			// Throw away first block. It is noisy because IF filters
+			// are still starting up.
+			if (block > 0) {
+				
+				// Write samples to output.
+				// Buffered write.
+				_output_buffer.push(move(audiosamples));
+			}
+			
+			
+#warning add scanner code here
+// add scanner code here
+			
+	/*
+	 if( _sdrDecoder->squelch_hits() > dwell_count ) {
+	 
+	 // switch channels
+	 }
+	 
+	 */
+			
 #if DEBUG_DEMOD
 			
-//				 Show statistics.
-						printf( "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
-								  block,
-								  _frequency *  1.0e-6,
-								  //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
-								  20*log10(_sdrDecoder->get_if_level()),
-								  20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
-								  20*log10(audio_level) + 3.01);
+			//				 Show statistics.
+			printf( "\rblk=%6d  freq=%8.4fMHz  IF=%+5.1fdB  BB=%+5.1fdB  audio=%+5.1fdB ",
+					 block,
+					 _frequency *  1.0e-6,
+					 //					  (tuner_freq + _sdrDecoder->get_tuning_offset()) * 1.0e-6,
+					 20*log10(_sdrDecoder->get_if_level()),
+					 20*log10(_sdrDecoder->get_baseband_level()) + 3.01,
+					 20*log10(audio_level) + 3.01);
 			
 			
 			//			// Show stereo status.
@@ -742,16 +785,6 @@ void RadioMgr::SDRProcessor(){
 			//			}
 			
 #endif
-			
-			
-			// Throw away first block. It is noisy because IF filters
-			// are still starting up.
-			if (block > 0) {
-				
-				// Write samples to output.
-				// Buffered write.
-				_output_buffer.push(move(audiosamples));
-			}
 			
 		}
 		else {

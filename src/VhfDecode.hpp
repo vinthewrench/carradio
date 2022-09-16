@@ -108,6 +108,10 @@ public:
 		return m_is_squelched;
 	};
  
+	int squelch_hits() const  {
+		return m_squelch_hits;
+	};
+
 private:
  
 	 /** Duplicate mono signal in left/right channels. */
@@ -125,8 +129,9 @@ private:
 	 double          m_baseband_mean;
 	 double          m_baseband_level;
 	 int	           m_squelch_level;
-	 bool      	     m_is_squelched;;
-
+	 bool      	     m_is_squelched;
+	 int 				  m_squelch_hits;
+ 
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;
 	 SampleVector    m_buf_baseband;

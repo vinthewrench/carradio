@@ -206,7 +206,8 @@ public:
  
 	bool isSquelched() const  { return false; };
 	
-
+	int squelch_hits() const { return 0; };
+ 
 	 /** Return PPS events from the most recently processed block. */
 	 std::vector<PilotPhaseLock::PpsEvent> get_pps_events() const
 	 {

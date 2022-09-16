@@ -79,7 +79,8 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 		return false;
 	}
 	
- 	printf("AudioLineInput connected\n");
+	
+ 	printf("AudioLineInput(%d) connected\n", samplerate);
 	
 #endif
 	

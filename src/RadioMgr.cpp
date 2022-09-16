@@ -632,11 +632,14 @@ void RadioMgr::SDRReader(){
 	while(!_shouldQuit){
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldReadSDR){
+				
+				printf("_shouldReadSDR = false\n");
 				usleep(200000);
 				continue;
 			}
 	 
-		
+		printf("_shouldReadSDR = true\n");
+
 		if (!_sdr.getSamples(iqsamples)) {
 			//			 fprintf(stderr, "ERROR: getSamples\n");
 			continue;

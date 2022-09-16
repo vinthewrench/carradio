@@ -212,7 +212,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
- 	//	printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+  		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
  		
@@ -568,6 +568,7 @@ void RadioMgr::AuxReader(){
 		if(!_isSetup || !_shouldReadAux){
 			
 			if(aux_setup){
+	printf("_lineInput.stop\n");
 				_lineInput.stop();
 				aux_setup = false;
 			}
@@ -576,6 +577,8 @@ void RadioMgr::AuxReader(){
 		}
 	
 		if(!aux_setup){
+			
+ printf("_lineInput.begin\n");
 			_lineInput.begin(pcmrate, true) ;
 			aux_setup = true;
 		}

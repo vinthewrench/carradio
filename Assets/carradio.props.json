@@ -106,7 +106,7 @@
 			"mode": "AUX"
 		},
 		{
-			"freq": 0,
+			"freq": 1,
 			"mode": "SCANNER"
 		},
 		{

@@ -128,6 +128,7 @@ PiCarMgr::PiCarMgr(){
 		
 	_stations.clear();
 	_preset_stations.clear();
+	_scanner_freqs.clear();
 	
 }
 
@@ -432,6 +433,8 @@ void PiCarMgr::saveRadioSettings(){
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
 	_db.setProperty(PROP_PRESETS, GetRadioPresetsJSON());
+	_db.setProperty(SCANNER_FREQS, GetScannerChannelJSON());
+	
 }
 
 void PiCarMgr::restoreRadioSettings(){
@@ -538,6 +541,39 @@ void PiCarMgr::restoreRadioSettings(){
 		_preset_stations = presets;
 	}
 	
+	// SET Scanner Freq
+	
+	_scanner_freqs.clear();
+	if(_db.getJSONProperty(SCANNER_FREQS,&j)
+		&&  j.is_array()){
+		
+		vector < pair<RadioMgr::radio_mode_t,uint32_t>>  presets;
+		presets.clear();
+		
+		for(auto item : j ){
+			if(item.is_object()
+				&&  item.contains(PROP_PRESET_MODE)
+				&&  item[PROP_PRESET_MODE].is_string()
+				&&  item.contains(PROP_PRESET_FREQ)
+				&&  item[(PROP_PRESET_FREQ)].is_number()){
+				
+				auto mode = RadioMgr::stringToMode( item[PROP_PRESET_MODE]);
+				auto freq = item[PROP_PRESET_FREQ] ;
+				
+				presets.push_back(make_pair(mode, freq));
+			}
+		}
+		
+		//sort them in order of frequency
+		if( presets.size() >0 ){
+			sort(presets.begin(), presets.end(),
+				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
+						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
+		}
+		
+		_scanner_freqs = presets;
+	}
+ 
 	_tuner_mode = TUNE_ALL;
 	uint16_t val = 0;
 	if(_db.getUint16Property(PROP_TUNER_MODE, &val)){
@@ -583,6 +619,9 @@ void PiCarMgr::restoreRadioSettings(){
 	
 	getWaypointProps();
 }
+
+
+// MARK: - Presets
 
 nlohmann::json PiCarMgr::GetRadioPresetsJSON(){
 	json j;
@@ -639,6 +678,156 @@ bool PiCarMgr::isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
 	return false;
 }
 
+
+bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
+											uint32_t frequency,
+											bool tunerMovedCW,
+											station_info_t &info){
+	
+	if(_preset_stations.size() == 0 ) {
+		// if there are no known frequencies  all then to fallback to all.
+		info.band = band;
+		info.frequency =  _radio.nextFrequency(tunerMovedCW);
+		info.title = "";
+		info.location = "";
+		return true;
+	}
+	
+	auto v = _preset_stations;
+	
+	if(tunerMovedCW){
+		
+		for ( auto i = v.begin(); i != v.end(); ++i ) {
+			if(frequency >= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+			return true;;
+		}
+	}
+	else {
+		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
+			if(frequency <= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+			return true;;
+		}
+	}
+	
+	return false;
+}
+
+// MARK: - Presets
+
+nlohmann::json PiCarMgr::GetScannerChannelJSON(){
+	json j;
+	
+	for (auto& entry : _scanner_freqs) {
+		json j1;
+		j1[PROP_PRESET_MODE] = RadioMgr::modeString(entry.first);
+		j1[PROP_PRESET_FREQ] =  entry.second;
+		j.push_back(j1);
+	}
+
+	return j;
+}
+
+bool PiCarMgr::setScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+	
+	if(!isScannerChannel(mode,freq)){
+		
+		auto presets = _scanner_freqs;
+		
+		presets.push_back(make_pair(mode, freq));
+		
+		// re-sort them
+		sort(presets.begin(), presets.end(),
+			  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
+					const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
+		
+		_scanner_freqs = presets;
+		return true;
+	}
+	
+	return false;
+}
+
+bool PiCarMgr::clearScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+	
+	for(auto it = _scanner_freqs.begin(); it != _scanner_freqs.end(); it++){
+		if(it->first == mode && it->second == freq){
+			_scanner_freqs.erase(it);
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool PiCarMgr::isScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
+	
+	for(auto e: _scanner_freqs){
+		if(e.first == mode && e.second == freq){
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool PiCarMgr::nextScannerStation(RadioMgr::radio_mode_t band,
+											uint32_t frequency,
+											bool tunerMovedCW,
+											station_info_t &info){
+	
+	if(_preset_stations.size() == 0 ) {
+		// if there are no known frequencies  all then to fallback to all.
+		info.band = band;
+		info.frequency =  _radio.nextFrequency(tunerMovedCW);
+		info.title = "";
+		info.location = "";
+		return true;
+	}
+	
+	auto v = _scanner_freqs;
+	
+	if(tunerMovedCW){
+		
+		for ( auto i = v.begin(); i != v.end(); ++i ) {
+			if(frequency >= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+			return true;;
+		}
+	}
+	else {
+		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
+			if(frequency <= i->second)
+				continue;
+			
+			info.title = "";
+			info.location = "";
+			info.band = i->first;
+			info.frequency =  i->second;
+			return true;;
+		}
+	}
+	
+	return false;
+}
+
+//  MARK: - FrequencyandMode
 
 void PiCarMgr::getSavedFrequencyandMode( RadioMgr::radio_mode_t &modeOut, uint32_t &freqOut){
 	
@@ -784,50 +973,6 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 }
 
 
-bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
-											uint32_t frequency,
-											bool tunerMovedCW,
-											station_info_t &info){
-	
-	if(_preset_stations.size() == 0 ) {
-		// if there are no known frequencies  all then to fallback to all.
-		info.band = band;
-		info.frequency =  _radio.nextFrequency(tunerMovedCW);
-		info.title = "";
-		info.location = "";
-		return true;
-	}
-	
-	auto v = _preset_stations;
-	
-	if(tunerMovedCW){
-		
-		for ( auto i = v.begin(); i != v.end(); ++i ) {
-			if(frequency >= i->second)
-				continue;
-			
-			info.title = "";
-			info.location = "";
-			info.band = i->first;
-			info.frequency =  i->second;
-			return true;;
-		}
-	}
-	else {
-		for ( auto i = v.rbegin(); i != v.rend(); ++i ) {
-			if(frequency <= i->second)
-				continue;
-			
-			info.title = "";
-			info.location = "";
-			info.band = i->first;
-			info.frequency =  i->second;
-			return true;;
-		}
-	}
-	
-	return false;
-}
 
 // MARK: -  Waypoints
 

@@ -134,6 +134,48 @@
 			"mode": "GMRS"
 		}
 	],
+	"scanner_freqs": [
+		{
+			"freq": 155610000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 155430000,
+			"mode": "VHF"
+		},
+		
+		{
+			"freq": 156210000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 155010000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 155805000,
+			"mode": "VHF"
+		},
+		
+		{
+			"freq": 154310000,
+			"mode": "VHF"
+		},
+		
+		{
+			"freq": 154130000,
+			"mode": "VHF"
+		},
+		
+		{
+			"freq": 154680000,
+			"mode": "VHF"
+		},
+		{
+			"freq": 156045000,
+			"mode": "VHF"
+		}
+	],
 	"w1Map": [
 		{
 			"id": "28-3c49f64979eb",
@@ -198,5 +240,5 @@
 			"title": "Home",
 			"uuid": "13544de5-246a-4181-8f5f-67e6deb23bd3"
 		}
-		]
+	]
 }

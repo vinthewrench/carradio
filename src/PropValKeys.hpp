@@ -79,6 +79,8 @@ inline static const string  PROP_LAST_MENU_SELECTED		= "last_menu";
 
 inline static const string  PROP_TUNER_MODE					= "tuner_knob_mode";
 inline static const string  PROP_PRESETS						= "tuner_presets";
+inline static const string  SCANNER_FREQS						= "scanner_freqs";
+
 inline static const string  PROP_PRESET_FREQ					= "freq";
 inline static const string  PROP_PRESET_MODE					= "mode";
 inline static const string  PROP_SYNC_CLOCK_TO_GPS			= "clocksync_gps_secs";

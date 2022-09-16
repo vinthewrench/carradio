@@ -138,6 +138,18 @@ class PiCarMgr {
 									bool up,
 									station_info_t &info);
 
+	
+	bool setScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool clearScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool isScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+
+	bool nextScannerStation(RadioMgr::radio_mode_t band,
+									uint32_t frequency,
+									bool up,
+									station_info_t &info);
+
+	
+	
 	bool  hasWifi(stringvector *ifnames = NULL);
 	
 	bool 	shouldSyncClockToGPS(uint16_t &deviation);
@@ -189,6 +201,7 @@ private:
 	void updateWaypointProps();
 	
 	nlohmann::json GetRadioPresetsJSON();
+	nlohmann::json GetScannerChannelJSON();
  
 	void displayMenu();
 	void displayRadioMenu();
@@ -234,6 +247,7 @@ private:
 	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
 	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
+  	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _scanner_freqs;
   
 	vector<waypoint_prop_t> _waypoints;
  

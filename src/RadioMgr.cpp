@@ -330,8 +330,6 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			_shouldReadSDR = true;
 		}
 		
-		printf("_shouldReadSDR: %d\t_shouldReadAux: %d\n",_shouldReadSDR,_shouldReadAux );
-		
 		didUpdate = true;
 	}
 	
@@ -742,8 +740,6 @@ void RadioMgr::SDRProcessor(){
 			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
 			
-			
-			printf("process block\n");
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.
 			if (block > 0) {
@@ -854,7 +850,9 @@ void RadioMgr::OutputProcessor(){
 		SampleVector samples =_output_buffer.pull();
 		AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 		
-		if(_mode	== AUX){
+		
+#warning  FIX this latter
+		if(_mode	== AUX || _mode == SCANNER){
 			audio->writeAudio(samples);
 		}
 		else {

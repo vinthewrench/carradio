@@ -80,7 +80,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	}
 	
 	
- 	printf("AudioLineInput(%d) connected\n", samplerate);
+ //	printf("AudioLineInput(%d) connected\n", samplerate);
 	
 #endif
 	
@@ -97,7 +97,7 @@ void AudioLineInput::stop(){
 
 	 // Close device.
 	 if (_pcm != NULL) {
-  printf("AudioLineInput closed\n");
+//  printf("AudioLineInput closed\n");
 		  snd_pcm_close(_pcm);
 	 }
 		

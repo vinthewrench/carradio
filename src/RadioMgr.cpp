@@ -482,8 +482,8 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			break;
 
 		case SCANNER:
-			minFreq = 0;
-			maxFreq = 0;
+			minFreq = 1;
+			maxFreq = 1;
 			success = true;
 			break;
 

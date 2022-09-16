@@ -503,7 +503,7 @@ uint32_t RadioMgr::nextFrequency(bool up){
 			break;
 
 		case SCANNER:
-			newfreq = 0;
+			newfreq = 1;
 			break;
 
 		case BROADCAST_AM:

@@ -632,7 +632,9 @@ void RadioMgr::SDRReader(){
 	while(!_shouldQuit){
 			// radio is off sleep for awhile.
 			if(!_isSetup || !_shouldReadSDR){
- 				usleep(200000);
+				
+				printf("_shouldReadSDR false\n");
+  				usleep(200000);
 				continue;
 			}
 	 

@@ -589,7 +589,7 @@ void RadioMgr::AuxReader(){
 			if( _lineInput.getSamples(samples)){
 				_output_buffer.push(move(samples));
 
-//				printf("aux read %d samples\n", samples.size());
+ 			printf("aux read %d samples\n", samples.size());
 			}
 		}
 	}

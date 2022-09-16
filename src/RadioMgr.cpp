@@ -330,6 +330,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 			_shouldReadSDR = true;
 		}
 		
+		printf("_shouldReadSDR: %d\t_shouldReadAux: %d\n",_shouldReadSDR,_shouldReadAux );
+		
 		didUpdate = true;
 	}
 	
@@ -585,8 +587,6 @@ void RadioMgr::AuxReader(){
 			// get input
 			if( _lineInput.getSamples(samples)){
 				_output_buffer.push(move(samples));
-
-				printf("aux read %lu samples\n", samples.size());
 			}
 		}
 	}

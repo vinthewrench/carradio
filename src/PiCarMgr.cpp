@@ -1747,7 +1747,7 @@ void PiCarMgr::displayRadioMenu(){
 		"VHF",
 		"GMRS",
 		"AUX",
-		"SCANNER"
+		"Scanner",
 		"-",
 		"Exit"
 	};

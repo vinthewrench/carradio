@@ -501,7 +501,11 @@ uint32_t RadioMgr::nextFrequency(bool up){
 		case AUX:
 			newfreq = 0;
 			break;
-			
+
+		case SCANNER:
+			newfreq = 0;
+			break;
+
 		case BROADCAST_AM:
 			// AM steps are 10khz
 			if(up) {

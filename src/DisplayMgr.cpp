@@ -1801,6 +1801,16 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				TRY(_vfd.setCursor( freqCenter ,centerY+10));
 				TRY(_vfd.write(str));
 			}
+			else  if(mode == RadioMgr::SCANNER){
+				
+				string str = "SCANNER";
+				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
+				
+				TRY(_vfd.setFont(VFD::FONT_10x14));
+				TRY(_vfd.setCursor( freqCenter ,centerY+10));
+				TRY(_vfd.write(str));
+			}
+
 			else {
 				
 				uint32_t 	maxFreq, minFreq;

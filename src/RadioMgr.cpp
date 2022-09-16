@@ -31,6 +31,8 @@ RadioMgr::RadioMgr(){
 	_frequency = 0;
 	_isOn = false;
 	_isSetup = false;
+	_scannerChannels.clear();
+	_isScanning	= false;
 	
 	_shouldQuit = false;
 	_shouldReadSDR = false;
@@ -552,6 +554,26 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 	
 	return string(buffer);
 }
+
+
+// MARK: -  Scanner
+bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
+	
+	_scannerChannels = channels;
+	return true;
+	
+}
+
+vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
+
+	if(_isScanning){
+		return _scannerChannels;
+	}
+	else
+		return {};
+	
+}
+
 
 // MARK: -  AuxReader thread
 

@@ -246,8 +246,8 @@ private:
 	menu_mode_t										_lastMenuMode;		// used for unwinding
 	
 	map<RadioMgr::radio_mode_t, vector<station_info_t>> _stations;
-	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _preset_stations;
-  	vector < pair<RadioMgr::radio_mode_t,uint32_t>>  _scanner_freqs;
+	vector < RadioMgr::channel_t >  _preset_stations;
+  	vector < RadioMgr::channel_t >  _scanner_freqs;
   
 	vector<waypoint_prop_t> _waypoints;
  

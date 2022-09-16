@@ -49,6 +49,8 @@ public:
 	}radio_mux_t;
 	
  
+	typedef pair<RadioMgr::radio_mode_t,uint32_t> channel_t;
+	 
 	RadioMgr();
 	~RadioMgr();
 	
@@ -73,6 +75,9 @@ public:
 	bool setFrequencyandMode(radio_mode_t, uint32_t freq = 0, bool force = false);
 	radio_mode_t radioMode() {return _mode;};
 	uint32_t frequency();
+	
+	bool scanChannels( vector < RadioMgr::channel_t >  channels );
+	vector < RadioMgr::channel_t >  scannerChannels();
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
@@ -116,6 +121,10 @@ private:
 	mutable std::mutex _mutex;		// when changing frequencies and modes.
 	SDRDecoder*			_sdrDecoder;
 	AudioLineInput		_lineInput;
+	
+	vector < RadioMgr::channel_t > _scannerChannels;
+	bool									_isScanning;
+
 	
 	//  Reader threads
 	bool					 _shouldQuit;

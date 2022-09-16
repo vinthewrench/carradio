@@ -1803,7 +1803,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			}
 			else  if(mode == RadioMgr::SCANNER){
 				
-				string str = "SCANNER";
+				string str = "Scanner";
 				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
 				
 				TRY(_vfd.setFont(VFD::FONT_10x14));

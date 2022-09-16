@@ -106,6 +106,10 @@
 			"mode": "AUX"
 		},
 		{
+			"freq": 0,
+			"mode": "SCANNER"
+		},
+		{
 			"freq": 103500000,
 			"mode": "FM"
 		},

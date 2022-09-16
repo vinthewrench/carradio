@@ -390,7 +390,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 			break;
 
 		case SCANNER:
-			str = "SCAN";
+			str = "SCANNER";
 			break;
 
 			

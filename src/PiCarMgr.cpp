@@ -1992,7 +1992,7 @@ void PiCarMgr::displayRadioMenu(){
 					uint32_t maxFreq;
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
-				printf("getSavedFrequencyForMode(%s %u) \n", modeString(radioMode).c_str(), freq);
+				printf("getSavedFrequencyForMode(%s %u) \n", RadioMgr::modeString(radioMode).c_str(), freq);
  
 				
 				if(radioMode == RadioMgr::SCANNER){

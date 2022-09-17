@@ -141,50 +141,10 @@
 	],
 	"scanner_freqs": [
 		{
-			"freq": 155610000,
+			"freq": 162400000,
 			"mode": "VHF"
-		},
-		{
-			"freq": 155430000,
-			"mode": "VHF"
-		},
-		
-		{
-			"freq": 119400000,
-			"mode": "VHF"
-		},
+		} 
 
-		{
-			"freq": 156210000,
-			"mode": "VHF"
-		},
-		{
-			"freq": 155010000,
-			"mode": "VHF"
-		},
-		{
-			"freq": 155805000,
-			"mode": "VHF"
-		},
-		
-		{
-			"freq": 154310000,
-			"mode": "VHF"
-		},
-		
-		{
-			"freq": 154130000,
-			"mode": "VHF"
-		},
-		
-		{
-			"freq": 154680000,
-			"mode": "VHF"
-		},
-		{
-			"freq": 156045000,
-			"mode": "VHF"
-		}
 	],
 	"w1Map": [
 		{

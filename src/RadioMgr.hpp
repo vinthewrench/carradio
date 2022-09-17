@@ -125,6 +125,8 @@ private:
 	vector < RadioMgr::channel_t > _scannerChannels;
 	bool									_isScanning;
 
+	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);
+
 	
 	//  Reader threads
 	bool					 _shouldQuit;

@@ -197,6 +197,16 @@ bool RadioMgr::setON(bool isOn) {
 
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
+#warning  FINISH SCANNER CODE
+
+	_isScanning = false;
+	_scannerChannels	= {};
+	return setFrequencyandModeInternal(newMode, newFreq, force);
+}
+
+ 
+bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFreq, bool force){
+	
  
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 	PiCarDB*			db 		= PiCarMgr::shared()->db();
@@ -237,6 +247,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 
 			didUpdate = true;
 		}
+#warning  FINISH SCANNER CODE
 		else if(_mode == SCANNER) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
@@ -558,9 +569,16 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 
 // MARK: -  Scanner
 bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
+
+	
+#warning  FINISH SCANNER CODE
+
 	
 	_scannerChannels = channels;
-	return true;
+	
+	_isScanning = channels.size() > 0;
+	
+	return _isScanning;
 	
 }
 
@@ -772,7 +790,7 @@ void RadioMgr::SDRProcessor(){
 			}
 			
 			
-#warning add scanner code here
+#warning  FINISH SCANNER CODE
 // add scanner code here
 			
 	/*
@@ -873,7 +891,7 @@ void RadioMgr::OutputProcessor(){
 		AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 		
 		
-#warning  FIX this latter
+#warning  FINISH SCANNER CODE
 		if(_mode	== AUX || _mode == SCANNER){
 			audio->writeAudio(samples);
 		}

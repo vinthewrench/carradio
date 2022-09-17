@@ -1271,7 +1271,14 @@ void PiCarMgr::PiCarLoop(){
 						
 						_audio.setMute(false);
 						getSavedFrequencyandMode(mode,freq);
-						_radio.setFrequencyandMode(mode, freq);
+						
+						if(mode == RadioMgr::SCANNER){
+							_radio.scanChannels(_scanner_freqs);
+						}
+						else {
+							_radio.setFrequencyandMode(mode, freq);
+						}
+						
 						_radio.setON(true);
 						setRelay1(true);
 
@@ -1365,7 +1372,12 @@ void PiCarMgr::PiCarLoop(){
 							break;
 					}
 					
-					_radio.setFrequencyandMode(mode, nextFreq);
+					if(mode == RadioMgr::SCANNER){
+						_radio.scanChannels(_scanner_freqs);
+					}
+					else {
+						_radio.setFrequencyandMode(mode, nextFreq);
+					}
 				}
 			}
 			
@@ -1978,7 +1990,14 @@ void PiCarMgr::displayRadioMenu(){
 					uint32_t maxFreq;
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
-				_radio.setFrequencyandMode(radioMode, freq, true);
+				
+				if(radioMode == RadioMgr::SCANNER){
+					_radio.scanChannels(_scanner_freqs);
+				}
+				else {
+					_radio.setFrequencyandMode(radioMode, freq, true);
+				}
+				
 				_radio.setON(true);
 				setRelay1(true);
 

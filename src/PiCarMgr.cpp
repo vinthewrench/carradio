@@ -1985,7 +1985,7 @@ void PiCarMgr::displayRadioMenu(){
 			}
 			
 			
-			// if it was a radio selection, turn it one and select
+			// if it was a radio selection, turn it on and select
 			
 			if(radioMode != RadioMgr::MODE_UNKNOWN){
 				uint32_t freq;

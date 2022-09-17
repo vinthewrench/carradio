@@ -592,9 +592,10 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 	_scannerChannels = channels;
 	_isScanning = channels.size() > 0;
 	
+	printf("scanChannels(%ld)\n", _scannerChannels.size());
+	
 	if(_isScanning){
-		
-		auto channel = _scannerChannels.front();
+	 	auto channel = _scannerChannels.front();
  		setFrequencyandModeInternal(channel.first, channel.second, true);
  	}
 	

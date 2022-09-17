@@ -382,7 +382,12 @@ int 	RadioMgr::getMaxSquelchRange(){
 }
  
 
+#warning  FINISH SCANNER CODE
+
 uint32_t RadioMgr::frequency(){
+	if(_isScanning){
+		return 1.;
+	}
 	return _frequency;
  }
 

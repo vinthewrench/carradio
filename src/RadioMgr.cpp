@@ -158,7 +158,7 @@ bool RadioMgr::setON(bool isOn) {
 		display->showTime();
 	}
 	else {
-		setFrequencyandMode(_mode,_frequency, true);
+		setFrequencyandModeInternal(_mode,_frequency, true);
 		display->showRadioChange();
 	}
 	

@@ -1274,6 +1274,8 @@ void PiCarMgr::PiCarLoop(){
 						_audio.setMute(false);
 						getSavedFrequencyandMode(mode,freq);
 						
+						printf("getSavedFrequencyForMode(%s %u) \n", RadioMgr::modeString(mode).c_str(), freq);
+		 
 						if(mode == RadioMgr::SCANNER){
 							_radio.scanChannels(_scanner_freqs);
 						}
@@ -1992,7 +1994,6 @@ void PiCarMgr::displayRadioMenu(){
 					uint32_t maxFreq;
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
-				printf("getSavedFrequencyForMode(%s %u) \n", RadioMgr::modeString(radioMode).c_str(), freq);
  
 				
 				if(radioMode == RadioMgr::SCANNER){

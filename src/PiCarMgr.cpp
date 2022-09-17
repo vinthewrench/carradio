@@ -402,6 +402,8 @@ bool PiCarMgr::updateRadioPrefs() {
 
 void PiCarMgr::saveRadioSettings(){
 	
+	printf("saveRadioSettings %s\n",  RadioMgr::modeString(_lastRadioMode).c_str());
+	
 	updateRadioPrefs();
 	updateWaypointProps();
  

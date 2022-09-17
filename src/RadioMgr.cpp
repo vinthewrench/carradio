@@ -256,14 +256,14 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			didUpdate = true;
 		}
 #warning  FINISH SCANNER CODE
-		else if(_mode == SCANNER) {
-			_sdr.resetBuffer();
-			_output_buffer.flush();
-			_shouldReadSDR = false;
-			_shouldReadAux = true;
-
-			didUpdate = true;
-		}
+//		else if(_mode == SCANNER) {
+//			_sdr.resetBuffer();
+//			_output_buffer.flush();
+//			_shouldReadSDR = false;
+//			_shouldReadAux = true;
+//
+//			didUpdate = true;
+//		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
 	 		_sdr.resetBuffer();
@@ -905,7 +905,7 @@ void RadioMgr::OutputProcessor(){
 		
 		
 #warning  FINISH SCANNER CODE
-		if(_mode	== AUX || _mode == SCANNER){
+		if(_mode	== AUX ){ //   }|| _mode == SCANNER){
 			audio->writeAudio(samples);
 		}
 		else {

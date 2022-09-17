@@ -207,9 +207,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	
 #warning  FINISH SCANNER CODE
 
-	printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
-
-	_isScanning = false;
+ 	_isScanning = false;
 	_scannerChannels	= {};
 	return setFrequencyandModeInternal(newMode, newFreq, force);
 }
@@ -591,9 +589,7 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 	
 	_scannerChannels = channels;
 	_isScanning = channels.size() > 0;
-	
-	printf("scanChannels(%ld)\n", _scannerChannels.size());
-	
+		
 	if(_isScanning){
 	 	auto channel = _scannerChannels.front();
  		setFrequencyandModeInternal(channel.first, channel.second, true);

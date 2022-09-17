@@ -401,9 +401,7 @@ bool PiCarMgr::updateRadioPrefs() {
 }
 
 void PiCarMgr::saveRadioSettings(){
-	
-	printf("saveRadioSettings %s\n",  RadioMgr::modeString(_lastRadioMode).c_str());
-	
+ 
 	updateRadioPrefs();
 	updateWaypointProps();
  
@@ -1274,8 +1272,6 @@ void PiCarMgr::PiCarLoop(){
 						_audio.setMute(false);
 						getSavedFrequencyandMode(mode,freq);
 						
-						printf("getSavedFrequencyForMode(%s %u) \n", RadioMgr::modeString(mode).c_str(), freq);
-		 
 						if(mode == RadioMgr::SCANNER){
 							_radio.scanChannels(_scanner_freqs);
 						}

@@ -195,6 +195,14 @@ bool RadioMgr::setON(bool isOn) {
 //	return freq;
 //}
 
+
+RadioMgr::radio_mode_t RadioMgr::radioMode(){
+	if(_isScanning)
+		return SCANNER;
+
+	return _mode;
+}
+ 
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
 #warning  FINISH SCANNER CODE
@@ -575,8 +583,13 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 
 	
 	_scannerChannels = channels;
-	
 	_isScanning = channels.size() > 0;
+	
+	if(_isScanning){
+		
+		auto channel = _scannerChannels.front();
+ 		setFrequencyandModeInternal(channel.first, channel.second, true);
+ 	}
 	
 	return _isScanning;
 	

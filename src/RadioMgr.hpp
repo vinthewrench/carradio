@@ -73,7 +73,7 @@ public:
 	bool isOn() {return _isOn;};
 	
 	bool setFrequencyandMode(radio_mode_t, uint32_t freq = 0, bool force = false);
-	radio_mode_t radioMode() {return _mode;};
+	radio_mode_t radioMode();
 	uint32_t frequency();
 	
 	bool scanChannels( vector < RadioMgr::channel_t >  channels );

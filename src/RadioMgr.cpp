@@ -207,6 +207,8 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	
 #warning  FINISH SCANNER CODE
 
+	printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+
 	_isScanning = false;
 	_scannerChannels	= {};
 	return setFrequencyandModeInternal(newMode, newFreq, force);
@@ -232,7 +234,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 		
-  		printf("setFrequencyandMode(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+  		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		std::lock_guard<std::mutex> lock(_mutex);
  		

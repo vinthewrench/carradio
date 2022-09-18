@@ -389,6 +389,7 @@ uint32_t RadioMgr::frequency(){
 string RadioMgr::modeString(radio_mode_t mode){
  
 	string str = "?";
+	
 	switch (mode) {
 		case BROADCAST_AM:
 			str = "AM";

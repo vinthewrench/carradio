@@ -1349,8 +1349,10 @@ void PiCarMgr::PiCarLoop(){
 					// was handled - do nothing
 				}
 				// change tuner
-				else if((_display.active_mode() == DisplayMgr::MODE_RADIO) &&  _radio.isOn() ){
-					
+				else if( _radio.isOn()
+						  &&  ( _display.active_mode() == DisplayMgr::MODE_RADIO
+								 || _display.active_mode() == DisplayMgr::MODE_SCANNER)){
+	 
 					auto nextFreq = _radio.frequency();
 					auto mode 	   = _radio.radioMode();
 					
@@ -1376,8 +1378,8 @@ void PiCarMgr::PiCarLoop(){
 							}
 							break;
 					}
-	 
-					if(_radio.isScanning()){
+ 
+					if( mode == RadioMgr::SCANNER){
 						_radio.scanChannels(_scanner_freqs);
 						_display.showScannerChange();
 					}

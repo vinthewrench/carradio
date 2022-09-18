@@ -1944,6 +1944,15 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		
 		if(foundSignal){
 			
+			PiCarMgr::station_info_t info;
+			if(mgr->getStationInfo(mode, freq, info)){
+				string titleStr = truncate(info.title, 20);
+				
+				auto titleStart =  centerX - ((titleStr.size() * 6)/2);
+				_vfd.setCursor( titleStart ,centerY-5 );
+				_vfd.write( titleStr);
+			}
+
 			string channelStr = RadioMgr::modeString(mode) + " "
 			+ RadioMgr::hertz_to_string(freq, 3) + " "
 			+ RadioMgr::freqSuffixString(freq);
@@ -1951,22 +1960,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 			auto channelStart =  centerX - ((channelStr.size() * 6)/2);
 			_vfd.setCursor( channelStart ,centerY + 5 );
 			_vfd.write( channelStr);
-			
-			
-			PiCarMgr::station_info_t info;
-			if(mgr->getStationInfo(mode, freq, info)){
-				string titleStr = truncate(info.title, 15);
-				
-				auto titleStart =  centerX - ((titleStr.size() * 6)/2);
-				_vfd.setCursor( titleStart ,centerY );
-				_vfd.write( titleStr);
-			}
-			
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor(10, centerY+19);
-			_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
-								  radio->isSquelched()?"SQLCH":"" );
-			
+ 
 		}
 		else {
 			// draw scanning

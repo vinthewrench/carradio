@@ -77,6 +77,8 @@ public:
 	uint32_t frequency();
 	
 	bool scanChannels( vector < RadioMgr::channel_t >  channels );
+	void pauseScan(bool shouldPause);
+	
 	vector < RadioMgr::channel_t >  scannerChannels();
  	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
 	bool isScanning() {return _isScanning;};
@@ -127,6 +129,7 @@ private:
 	vector < RadioMgr::channel_t > _scannerChannels;
 	uint									_currentScanOffset;
 	bool									_isScanning;
+	bool									_scanningPaused;
 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);
 

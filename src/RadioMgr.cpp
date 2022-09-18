@@ -158,8 +158,15 @@ bool RadioMgr::setON(bool isOn) {
 		display->showTime();
 	}
 	else {
-		setFrequencyandModeInternal(_mode,_frequency, true);
-		display->showRadioChange();
+		if(isScanning()){
+			pauseScan(false);
+ 			display->showScannerChange();
+ 		}
+		else {
+			setFrequencyandModeInternal(_mode,_frequency, true);
+			display->showRadioChange();
+
+		}
 	}
 	
 	return true;
@@ -589,6 +596,7 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 	if(_isScanning){
 	 	auto channel = _scannerChannels.front();
 		_currentScanOffset = 0;
+		_scanningPaused = false;
 		
  		setFrequencyandModeInternal(channel.first, channel.second, true);
  	}
@@ -603,6 +611,11 @@ vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 	}
 	else
 		return {};
+}
+
+
+void RadioMgr::pauseScan(bool shouldPause){
+	_scanningPaused = shouldPause;
 }
 
 

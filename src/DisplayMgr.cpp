@@ -497,6 +497,8 @@ void DisplayMgr::showRadioChange(){
 }
 
 void DisplayMgr::showScannerChange(){
+	
+	printf("showScannerChange\n");
 	setEvent(EVT_PUSH, MODE_SCANNER );
 }
  

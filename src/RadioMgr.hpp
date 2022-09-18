@@ -79,7 +79,8 @@ public:
 	bool scanChannels( vector < RadioMgr::channel_t >  channels );
 	vector < RadioMgr::channel_t >  scannerChannels();
  	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
-	
+	bool isScanning() {return _isScanning;};
+
 	radio_mux_t radioMuxMode() {return _mux;};
 
 	double get_if_level() {return _IF_Level;};

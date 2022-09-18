@@ -1283,7 +1283,8 @@ void PiCarMgr::PiCarLoop(){
 						setRelay1(true);
 
 						_display.LEDeventVol();
-						if(mode == RadioMgr::SCANNER)
+						
+						if(_radio.isScanning())
 							_display.showScannerChange();
 						else
 							_display.showRadioChange();
@@ -1376,7 +1377,7 @@ void PiCarMgr::PiCarLoop(){
 							break;
 					}
 	 
-					if(mode == RadioMgr::SCANNER){
+					if(_radio.isScanning()){
 						_radio.scanChannels(_scanner_freqs);
 						_display.showScannerChange();
 					}
@@ -1997,7 +1998,7 @@ void PiCarMgr::displayRadioMenu(){
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
  				
-				if(radioMode == RadioMgr::SCANNER){
+				if(_radio.isScanning()){
 					_radio.scanChannels(_scanner_freqs);
 					_display.showScannerChange();
 				}

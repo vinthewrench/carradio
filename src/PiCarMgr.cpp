@@ -1284,7 +1284,7 @@ void PiCarMgr::PiCarLoop(){
 
 						_display.LEDeventVol();
 						if(mode == RadioMgr::SCANNER)
-							_display.showScannerChange()();
+							_display.showScannerChange();
 						else
 							_display.showRadioChange();
 						

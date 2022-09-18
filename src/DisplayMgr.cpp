@@ -1933,14 +1933,13 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	int centerY = _vfd.height() /2;
 	
 	
-		RadioMgr::radio_mode_t  mode;
-		uint32_t						freq;
-
+	RadioMgr::radio_mode_t  mode;
+	uint32_t						freq;
+	
 	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
- 
+	
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		_vfd.clearScreen();
-	
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		if(foundSignal){
@@ -1967,15 +1966,15 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 			_vfd.setCursor(10, centerY+19);
 			_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
 								  radio->isSquelched()?"SQLCH":"" );
-
+			
 		}
 		else {
-	 			// draw scanning
+			// draw scanning
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor(2,centerY);
 			_vfd.printPacket("SCANNING...");
- 		}
-	 
+		}
+		
 		
 		_vfd.setCursor(0, 60);
 		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
@@ -1985,18 +1984,16 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		else {
 			_vfd.printPacket("      ");
 		}
-
+		
 	}
 	
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.setCursor(10, centerY+19);
-
-	if(foundSignal){
-		_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
-							  radio->isSquelched()?"SQLCH":"" );
-	}
-	else
-		_vfd.printPacket("              ");
+	
+	if(foundSignal)
+		_vfd.printPacket("%3d" , int(radio->get_if_level()));
+  	else
+		_vfd.printPacket("      ");
 	
 	drawEngineCheck();
 	drawTemperature();

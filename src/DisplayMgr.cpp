@@ -1933,15 +1933,17 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	int centerY = _vfd.height() /2;
 	
 	
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		_vfd.clearScreen();
-	
 		RadioMgr::radio_mode_t  mode;
 		uint32_t						freq;
 
+	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
+ 
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		_vfd.clearScreen();
+	
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		if(radio->getCurrentScannerChannel(mode, freq)){
+		if(foundSignal){
 			
 			string channelStr = RadioMgr::modeString(mode) + " "
 			+ RadioMgr::hertz_to_string(freq, 3) + " "
@@ -1985,12 +1987,20 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		}
 
 	}
- 
- 
+	
+	_vfd.setFont(VFD::FONT_MINI);
+	_vfd.setCursor(10, centerY+19);
+
+	if(foundSignal){
+		_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
+							  radio->isSquelched()?"SQLCH":"" );
+	}
+	else
+		_vfd.printPacket("              ");
+	
 	drawEngineCheck();
 	drawTemperature();
 	drawTimeBox();
-
 }
 
 void DisplayMgr::drawSettingsScreen(modeTransition_t transition){

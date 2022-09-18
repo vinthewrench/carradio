@@ -594,12 +594,9 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 	_isScanning = channels.size() > 0;
 		
 	if(_isScanning){
-	 	auto channel = _scannerChannels.front();
 		_currentScanOffset = 0;
-		_scanningPaused = false;
-		
- 		setFrequencyandModeInternal(channel.first, channel.second, true);
- 	}
+		pauseScan(false);
+	}
 	
 	return _isScanning;
 }
@@ -616,6 +613,11 @@ vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 
 void RadioMgr::pauseScan(bool shouldPause){
 	_scanningPaused = shouldPause;
+	
+	if(!_scanningPaused){
+		channel_t channel = _scannerChannels[_currentScanOffset];
+		setFrequencyandModeInternal(channel.first, channel.second, true);
+ 	}
 }
 
 

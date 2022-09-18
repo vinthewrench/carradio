@@ -2242,86 +2242,94 @@ void PiCarMgr::displayShutdownMenu(){
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();
 	
-	if(dMode == DisplayMgr::MODE_RADIO
-		&& _radio.isOn()){
-		// display set/preset menu
+	if( _radio.isOn()) {
 		
-		RadioMgr::radio_mode_t  mode  = _radio.radioMode();
-		uint32_t 					freq =  _radio.frequency();
-		
-		constexpr time_t timeout_secs = 10;
-		
-		vector<string> menu_items = {
-			(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
-			(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
-			_preset_stations.size() == 0?"No Presets"
-			: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
-			"-",
-			isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
-			"-",
-			"Clear all presets"
-		};
-		
-		_display.showMenuScreen(menu_items,
-										_tuner_mode,		// select the mode we are in - so triple click has no effect
-										"Channel Presets",
-										timeout_secs,
-										[=](bool didSucceed,
-											 uint newSelectedItem,
-										  		DisplayMgr::knob_action_t action ){
+		if(_radio.isScanning()){
+			// display scanner menu
 			
-			if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+			printf("double click with scanner\n");
+	
+		}
+		else if(dMode == DisplayMgr::MODE_RADIO ){
+			// display set/preset menu
+			
+			RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+			uint32_t 					freq =  _radio.frequency();
+			
+			constexpr time_t timeout_secs = 10;
+			
+			vector<string> menu_items = {
+				(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
+				(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
+				_preset_stations.size() == 0?"No Presets"
+				: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
+				"-",
+				isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
+				"-",
+				"Clear all presets"
+			};
+			
+			_display.showMenuScreen(menu_items,
+											_tuner_mode,		// select the mode we are in - so triple click has no effect
+											"Channel Presets",
+											timeout_secs,
+											[=](bool didSucceed,
+												 uint newSelectedItem,
+												 DisplayMgr::knob_action_t action ){
 				
-				switch (newSelectedItem) {
-						
-					case 0: // Tune All
-						_tuner_mode = TUNE_ALL;
-						saveRadioSettings();
-						_db.savePropertiesToFile();
-						break;
-						
-					case 1: // Tune known
-						_tuner_mode = TUNE_KNOWN;
-						saveRadioSettings();
-						break;
-						
-					case 2: // Tune presets
-						if(_preset_stations.size() > 0){
-							_tuner_mode = TUNE_PRESETS;
+				if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+					
+					switch (newSelectedItem) {
+							
+						case 0: // Tune All
+							_tuner_mode = TUNE_ALL;
 							saveRadioSettings();
 							_db.savePropertiesToFile();
-						}
-						break;
-						
-					case 4: // set/clear
-					{
-						RadioMgr::radio_mode_t  mode  = _radio.radioMode();
-						uint32_t 					freq =  _radio.frequency();
-						if( isPresetChannel(mode, freq)){
+							break;
 							
-							if(clearPresetChannel(mode, freq))
+						case 1: // Tune known
+							_tuner_mode = TUNE_KNOWN;
+							saveRadioSettings();
+							break;
+							
+						case 2: // Tune presets
+							if(_preset_stations.size() > 0){
+								_tuner_mode = TUNE_PRESETS;
 								saveRadioSettings();
-						}
-						else
+								_db.savePropertiesToFile();
+							}
+							break;
+							
+						case 4: // set/clear
 						{
-							if(setPresetChannel(mode, freq))
-								saveRadioSettings();
+							RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+							uint32_t 					freq =  _radio.frequency();
+							if( isPresetChannel(mode, freq)){
+								
+								if(clearPresetChannel(mode, freq))
+									saveRadioSettings();
+							}
+							else
+							{
+								if(setPresetChannel(mode, freq))
+									saveRadioSettings();
+							}
 						}
+							
+							break;
+							
+						case 6: // clear all presets
+							// this needs to also take you off of presets mode
+						default:
+							break;
 					}
-						
-						break;
-						
-					case 6: // clear all presets
-						// this needs to also take you off of presets mode
-					default:
-						break;
+					
 				}
 				
-			}
-			
-			_display.showRadioChange();
-			
-		});
+				_display.showRadioChange();
+				
+			});
+		}
 	}
 }
 

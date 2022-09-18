@@ -1810,16 +1810,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				TRY(_vfd.setCursor( freqCenter ,centerY+10));
 				TRY(_vfd.write(str));
 			}
-			else  if(mode == RadioMgr::SCANNER){
-				
-				string str = "Scanner";
-				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
-				
-				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+10));
-				TRY(_vfd.write(str));
-			}
-
 			else {
 				
 				uint32_t 	maxFreq, minFreq;
@@ -1942,16 +1932,59 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	int centerY = _vfd.height() /2;
 	
 	
-	if(transition == TRANS_ENTERING) {
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		_vfd.clearScreen();
+	
+		RadioMgr::radio_mode_t  mode;
+		uint32_t						freq;
+
+		_vfd.setFont(VFD::FONT_5x7);
 		
-		// draw titles
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,centerY);
-		_vfd.printPacket("SCANNER");
+		if(radio->getCurrentScannerChannel(mode, freq)){
+			
+			string freqStr = 	RadioMgr::hertz_to_string(freq, 3);
+			string hzstr =	RadioMgr::freqSuffixString(freq);
+			
+			_vfd.setCursor(2,centerY);
+			_vfd.printPacket("%s %s",freqStr.c_str(),hzstr.c_str() );
+	 
+			// Draw title centered inb char buffer
+			constexpr int  titleMaxSize = 20;
+			char titlebuff[titleMaxSize + 1];
+			memset(titlebuff,' ', titleMaxSize);
+			titlebuff[titleMaxSize] = '\0';
+			int titleStart =  centerX - ((titleMaxSize * 6)/2);
+			int titleBottom = centerY -10;
+			PiCarMgr::station_info_t info;
+			if(mgr->getStationInfo(mode, freq, info)){
+				string title = truncate(info.title, titleMaxSize);
+				int titleLen = (int)title.size();
+				int offset  = (titleMaxSize /2) - (titleLen/2);
+				memcpy( titlebuff+offset , title.c_str(), titleLen );
+			};
+			_vfd.setCursor( titleStart ,titleBottom );
+			_vfd.write( titlebuff);
+ 		}
+		else {
+	 			// draw scanning
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setCursor(2,centerY);
+			_vfd.printPacket("SCANNING...");
+ 		}
+	 
+		
+		_vfd.setCursor(0, 60);
+		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.printPacket("PRESET");
+		}
+		else {
+			_vfd.printPacket("      ");
+		}
+
 	}
  
-	
+ 
 	drawEngineCheck();
 	drawTemperature();
 	drawTimeBox();

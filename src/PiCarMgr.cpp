@@ -674,6 +674,9 @@ bool PiCarMgr::isPresetChannel(RadioMgr::radio_mode_t mode, uint32_t  freq){
 		if(e.first == mode && e.second == freq){
 			return true;
 		}
+		else if(mode == RadioMgr::SCANNER && e.first == RadioMgr::SCANNER) {
+			return true;
+		}
 	}
 	return false;
 }

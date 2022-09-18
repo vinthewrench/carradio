@@ -625,6 +625,9 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 	if(!_isScanning || _currentScanOffset > _scannerChannels.size())
 		return false;
 	
+	if(isSquelched())
+		return false;
+ 
 	channel_t channel = _scannerChannels[_currentScanOffset];
 	
 	mode = channel.first;

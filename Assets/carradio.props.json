@@ -141,8 +141,8 @@
 	],
 	"scanner_freqs": [
 		{
-			"freq": 462600000,
-			"mode": "GMRS"
+			"freq": 155610000,
+			"mode": "VHF"
 		} 
 
 	],

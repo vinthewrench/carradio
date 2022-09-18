@@ -918,7 +918,7 @@ void RadioMgr::OutputProcessor(){
 		
 		
 #warning  FINISH SCANNER CODE
-		if(_mode	== AUX ){ //   }|| _mode == SCANNER){
+		if(_mode	== AUX ){
 			audio->writeAudio(samples);
 		}
 		else {

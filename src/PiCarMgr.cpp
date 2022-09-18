@@ -383,7 +383,7 @@ bool PiCarMgr::updateRadioPrefs() {
 		_lastRadioMode = RadioMgr::AUX;
 		didUpdate = true;
 	}
-	else if(_radio.radioMode() == RadioMgr::SCANNER){
+	else if(_radio.isScanning()){
 			_lastFreqForMode[RadioMgr::SCANNER] = 1;
 			_lastRadioMode = RadioMgr::SCANNER;
 			didUpdate = true;
@@ -1353,41 +1353,55 @@ void PiCarMgr::PiCarLoop(){
 				else if( _radio.isOn()
 						  &&  ( _display.active_mode() == DisplayMgr::MODE_RADIO
 								 || _display.active_mode() == DisplayMgr::MODE_SCANNER)){
-	 
+					
 					auto nextFreq = _radio.frequency();
 					auto mode 	   = _radio.radioMode();
-					
+					bool isScanning = _radio.isScanning();
 					switch(_tuner_mode){
 						case TUNE_ALL:
-							nextFreq = _radio.nextFrequency(tunerMovedCW);
+							if(isScanning) {
+								// if you are scanning an roll tuner - do nothing
+							}
+							else
+								nextFreq = _radio.nextFrequency(tunerMovedCW);
 							break;
 							
 						case TUNE_KNOWN:
 						{
-							PiCarMgr::station_info_t info;
-							if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
-								nextFreq = info.frequency;
+							if(isScanning) {
+								// if you are scanning an roll tuner - do nothing
 							}
+							else {
+								PiCarMgr::station_info_t info;
+								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
+									nextFreq = info.frequency;
+								}
+								
+							}
+							
 						}
 							break;
 							
 						case TUNE_PRESETS:
+							// if you are scanning an roll tuner - move to next preset
 							PiCarMgr::station_info_t info;
 							if(nextPresetStation(mode, nextFreq, tunerMovedCW, info)){
 								nextFreq = info.frequency;
 								mode = info.band;
+								isScanning =( mode == RadioMgr::SCANNER);
+								
 							}
 							break;
 					}
- 
-					if( mode == RadioMgr::SCANNER){
+					
+					if( isScanning){
 						_radio.scanChannels(_scanner_freqs);
 						_display.showScannerChange();
 					}
 					else {
 						_radio.setFrequencyandMode(mode, nextFreq);
 						_display.showRadioChange();
-						}
+					}
 				}
 			}
 			
@@ -1960,6 +1974,8 @@ void PiCarMgr::displayRadioMenu(){
 			
 			RadioMgr::radio_mode_t  radioMode  = RadioMgr::MODE_UNKNOWN;
 			
+			bool useScanner = false;
+			
 			switch (newSelectedItem) {
 					
 				case 0: // AM not supported yet
@@ -1977,47 +1993,51 @@ void PiCarMgr::displayRadioMenu(){
 				case 3: // GMRS
 					radioMode  = RadioMgr::GMRS;
 					break;
-	
+					
 				case 4: // AUX
 					radioMode  = RadioMgr::AUX;
 					break;
-	
+					
 				case 5: // SCANNER
-					radioMode  = RadioMgr::SCANNER;
+					useScanner = true;
 					break;
-	
+					
 				default:		//ignore
 					break;
 			}
 			
-			
 			// if it was a radio selection, turn it on and select
 			
-			if(radioMode != RadioMgr::MODE_UNKNOWN){
+			bool saveSetting = false;
+			
+			if(useScanner){
+				_radio.scanChannels(_scanner_freqs);
+				_display.showScannerChange();
+				saveSetting = true;
+			}
+			else if(radioMode != RadioMgr::MODE_UNKNOWN){
 				uint32_t freq;
 				
 				if( ! getSavedFrequencyForMode(radioMode, freq) ){
 					uint32_t maxFreq;
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
- 				
-				if(_radio.isScanning()){
-					_radio.scanChannels(_scanner_freqs);
-					_display.showScannerChange();
-				}
-				else {
-					_radio.setFrequencyandMode(radioMode, freq, true);
-					_display.showRadioChange();
-				}
 				
+				_radio.setFrequencyandMode(radioMode, freq, true);
+				_display.showRadioChange();
+				saveSetting = true;
+			}
+			
+			if(saveSetting) {
 				_radio.setON(true);
 				setRelay1(true);
-
+				
 				saveRadioSettings();
 				_db.savePropertiesToFile();
 				return;
 			}
 		}
+		
 		if(_lastMenuMode != MENU_UNKNOWN){
 			// restore old mode thast was set in main menu
 			setDisplayMode(_lastMenuMode);

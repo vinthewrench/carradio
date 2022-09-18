@@ -1942,29 +1942,25 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		
 		if(radio->getCurrentScannerChannel(mode, freq)){
 			
-			string freqStr = 	RadioMgr::hertz_to_string(freq, 3);
-			string hzstr =	RadioMgr::freqSuffixString(freq);
+			string channelStr = RadioMgr::modeString(mode) + " "
+			+ RadioMgr::hertz_to_string(freq, 3)
+			+ RadioMgr::freqSuffixString(freq);
 			
-			_vfd.setCursor(2,centerY);
-			_vfd.printPacket("%s %s",freqStr.c_str(),hzstr.c_str() );
-	 
-			// Draw title centered inb char buffer
-			constexpr int  titleMaxSize = 20;
-			char titlebuff[titleMaxSize + 1];
-			memset(titlebuff,' ', titleMaxSize);
-			titlebuff[titleMaxSize] = '\0';
-			int titleStart =  centerX - ((titleMaxSize * 6)/2);
-			int titleBottom = centerY -10;
+			auto channelStart =  centerX - ((channelStr.size() * 6)/2);
+			_vfd.setCursor( channelStart ,centerY + 10 );
+			_vfd.write( channelStr);
+			
+			
 			PiCarMgr::station_info_t info;
 			if(mgr->getStationInfo(mode, freq, info)){
-				string title = truncate(info.title, titleMaxSize);
-				int titleLen = (int)title.size();
-				int offset  = (titleMaxSize /2) - (titleLen/2);
-				memcpy( titlebuff+offset , title.c_str(), titleLen );
-			};
-			_vfd.setCursor( titleStart ,titleBottom );
-			_vfd.write( titlebuff);
- 		}
+				string titleStr = truncate(info.title, 20);
+				
+				auto titleStart =  centerX - ((titleStr.size() * 6)/2);
+				_vfd.setCursor( titleStart ,centerY );
+				_vfd.write( titleStr);
+			}
+			
+		}
 		else {
 	 			// draw scanning
 			_vfd.setFont(VFD::FONT_MINI);

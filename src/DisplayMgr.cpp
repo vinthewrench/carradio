@@ -1949,13 +1949,13 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 			+ RadioMgr::freqSuffixString(freq);
 			
 			auto channelStart =  centerX - ((channelStr.size() * 6)/2);
-			_vfd.setCursor( channelStart ,centerY + 10 );
+			_vfd.setCursor( channelStart ,centerY + 5 );
 			_vfd.write( channelStr);
 			
 			
 			PiCarMgr::station_info_t info;
 			if(mgr->getStationInfo(mode, freq, info)){
-				string titleStr = truncate(info.title, 20);
+				string titleStr = truncate(info.title, 15);
 				
 				auto titleStart =  centerX - ((titleStr.size() * 6)/2);
 				_vfd.setCursor( titleStart ,centerY );

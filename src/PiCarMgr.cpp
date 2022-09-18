@@ -1755,9 +1755,14 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_EXIT:
-			if(_radio.isOn())
-				_display.showRadioChange();
-				else _display.showTime();
+			if(_radio.isOn()) {
+				if(_radio.isScanning())
+					_display.showScannerChange();
+				else
+					_display.showRadioChange();
+				
+			}
+			 else _display.showTime();
 			break;
 			
 			

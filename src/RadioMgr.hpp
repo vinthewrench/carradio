@@ -78,6 +78,7 @@ public:
 	
 	bool scanChannels( vector < RadioMgr::channel_t >  channels );
 	vector < RadioMgr::channel_t >  scannerChannels();
+ 	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
 	
 	radio_mux_t radioMuxMode() {return _mux;};
 
@@ -123,6 +124,7 @@ private:
 	AudioLineInput		_lineInput;
 	
 	vector < RadioMgr::channel_t > _scannerChannels;
+	uint									_currentScanOffset;
 	bool									_isScanning;
 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);

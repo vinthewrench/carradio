@@ -60,6 +60,7 @@ public:
 		MODE_FADER,
 		MODE_SQUELCH,
 		MODE_RADIO,
+		MODE_SCANNER,
 		MODE_CANBUS,
 		MODE_GPS,
 		MODE_GPS_WAYPOINTS,
@@ -140,6 +141,8 @@ public:
 	void showSquelchChange();
 	
 	void showRadioChange();
+	void showScannerChange();
+
 	void showCANbus(uint8_t page = 0);
 	void showSettings();
 
@@ -202,6 +205,8 @@ private:
 	bool processSelectorKnobActionForEditString( knob_action_t action);
  
 	void drawRadioScreen(modeTransition_t transition);
+	void drawScannerScreen(modeTransition_t transition);
+ 
 	void drawGPSScreen(modeTransition_t transition);
  
 	void drawCANBusScreen(modeTransition_t transition);

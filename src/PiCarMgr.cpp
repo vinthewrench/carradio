@@ -1283,7 +1283,11 @@ void PiCarMgr::PiCarLoop(){
 						setRelay1(true);
 
 						_display.LEDeventVol();
-						_display.showRadioChange();
+						if(mode == RadioMgr::SCANNER)
+							_display.showScannerChange()();
+						else
+							_display.showRadioChange();
+						
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
 					}
 				}
@@ -1371,13 +1375,15 @@ void PiCarMgr::PiCarLoop(){
 							}
 							break;
 					}
-					
+	 
 					if(mode == RadioMgr::SCANNER){
 						_radio.scanChannels(_scanner_freqs);
+						_display.showScannerChange();
 					}
 					else {
 						_radio.setFrequencyandMode(mode, nextFreq);
-					}
+						_display.showRadioChange();
+						}
 				}
 			}
 			
@@ -1990,13 +1996,14 @@ void PiCarMgr::displayRadioMenu(){
 					uint32_t maxFreq;
 					RadioMgr:: freqRangeOfMode(radioMode, freq,maxFreq );
 				}
- 
-				
+ 				
 				if(radioMode == RadioMgr::SCANNER){
 					_radio.scanChannels(_scanner_freqs);
+					_display.showScannerChange();
 				}
 				else {
 					_radio.setFrequencyandMode(radioMode, freq, true);
+					_display.showRadioChange();
 				}
 				
 				_radio.setON(true);

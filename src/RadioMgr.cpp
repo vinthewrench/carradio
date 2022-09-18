@@ -255,15 +255,6 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 
 			didUpdate = true;
 		}
-#warning  FINISH SCANNER CODE
-//		else if(_mode == SCANNER) {
-//			_sdr.resetBuffer();
-//			_output_buffer.flush();
-//			_shouldReadSDR = false;
-//			_shouldReadAux = true;
-//
-//			didUpdate = true;
-//		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
 	 		_sdr.resetBuffer();
@@ -358,7 +349,11 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 		db->updateValue(VAL_MODULATION_MODE, _mode);
 		db->updateValue(VAL_RADIO_FREQ, _frequency);
 	//	db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
-		display->showRadioChange();
+		
+		if(_isScanning)
+			display->showScannerChange();
+		else
+			display->showRadioChange();
 	}
 	
 	return true;
@@ -592,11 +587,12 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 		
 	if(_isScanning){
 	 	auto channel = _scannerChannels.front();
+		_currentScanOffset = 0;
+		
  		setFrequencyandModeInternal(channel.first, channel.second, true);
  	}
 	
 	return _isScanning;
-	
 }
 
 vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
@@ -606,7 +602,19 @@ vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 	}
 	else
 		return {};
+}
+
+
+bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
+	if(!_isScanning || _currentScanOffset > _scannerChannels.size())
+		return false;
 	
+	channel_t channel = _scannerChannels[_currentScanOffset];
+	
+	mode = channel.first;
+	freq = channel.second;
+	
+	return true;
 }
 
 

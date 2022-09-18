@@ -496,6 +496,10 @@ void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 }
 
+void DisplayMgr::showScannerChange(){
+	setEvent(EVT_PUSH, MODE_SCANNER );
+}
+ 
 void DisplayMgr::showDTC(){
 	setEvent(EVT_PUSH, MODE_DTC);
 }
@@ -509,7 +513,6 @@ void DisplayMgr::showGPS(knobCallBack_t cb){
 	setEvent(EVT_PUSH, MODE_GPS);
 }
 
-
 void DisplayMgr::showCANbus(uint8_t page){
 	_currentPage = page;
 	setEvent(EVT_PUSH, MODE_CANBUS);
@@ -522,7 +525,6 @@ void DisplayMgr::showMessage(string message,  time_t timeout, voidCallback_t cb)
 	
 	setEvent(EVT_PUSH, MODE_MESSAGE);
 }
-
 
 void DisplayMgr::editString(string title, string strIn,
 									 editStringCallBack_t cb){
@@ -891,6 +893,7 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 	switch(md){
 		case MODE_TIME:
 		case MODE_RADIO:
+		case MODE_SCANNER:
 		case MODE_SETTINGS:
 		case MODE_GPS:
 		case MODE_GPS_WAYPOINT:
@@ -1323,7 +1326,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_RADIO:
 				drawRadioScreen(transition);
 				break;
-				
+
+			case MODE_SCANNER:
+				drawScannerScreen(transition);
+				break;
+ 
 			case MODE_SETTINGS:
 				drawSettingsScreen(transition);
 				break;
@@ -1920,6 +1927,33 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	drawEngineCheck();
 	drawTemperature();
 	drawTimeBox();
+}
+
+
+
+void DisplayMgr::drawScannerScreen(modeTransition_t transition){
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	RadioMgr* radio 	= PiCarMgr::shared()->radio();
+	
+	int centerX = _vfd.width() /2;
+	int centerY = _vfd.height() /2;
+	
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		// draw titles
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(2,centerY);
+		_vfd.printPacket("SCANNER");
+	}
+ 
+	
+	drawEngineCheck();
+	drawTemperature();
+	drawTimeBox();
+
 }
 
 void DisplayMgr::drawSettingsScreen(modeTransition_t transition){

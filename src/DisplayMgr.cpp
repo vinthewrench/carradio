@@ -1943,7 +1943,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		if(radio->getCurrentScannerChannel(mode, freq)){
 			
 			string channelStr = RadioMgr::modeString(mode) + " "
-			+ RadioMgr::hertz_to_string(freq, 3)
+			+ RadioMgr::hertz_to_string(freq, 3) + " "
 			+ RadioMgr::freqSuffixString(freq);
 			
 			auto channelStart =  centerX - ((channelStr.size() * 6)/2);
@@ -1960,6 +1960,10 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 				_vfd.write( titleStr);
 			}
 			
+			_vfd.setCursor(10, centerY+19);
+			_vfd.printPacket("%3d %-8s", int(radio->get_if_level()),
+								  radio->isSquelched()?"SQLCH":"" );
+
 		}
 		else {
 	 			// draw scanning

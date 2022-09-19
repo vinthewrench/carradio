@@ -5,7 +5,7 @@
 		"vol": 0.049239939777512357
 	},
 	"dimmer_level" :  0.345,
-	"squelch" : -24,
+	"squelch" : -20,
 	"auto_dimmer_mode" : true,
 	"canbus-display": [
 		{

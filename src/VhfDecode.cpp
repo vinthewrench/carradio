@@ -137,7 +137,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 			m_is_squelched	 = true;
 		
 		// if we did get a signal before - then count it out before announcing no signal
-		else if(m_squelch_hits++ > m_squelch_dwell){
+		else if(++m_squelch_hits > m_squelch_dwell){
 			m_is_squelched	 = true;
 			m_had_signal = false;
  		}

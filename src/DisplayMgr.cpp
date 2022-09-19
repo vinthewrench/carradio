@@ -2511,23 +2511,26 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	if(foundSignal){
 		_vfd.setFont(VFD::FONT_5x7);
 		
+		constexpr int maxLen = 20;
+		string spaces(maxLen, ' ');
+		
 		PiCarMgr::station_info_t info;
 		if(mgr->getStationInfo(mode, freq, info)){
-			string titleStr = truncate(info.title, 20);
-			
-			auto titleStart =  centerX - ((titleStr.size() * 6)/2);
-			_vfd.setCursor( titleStart ,centerY-5 );
-			_vfd.write( titleStr);
-		}
+			string titleStr = truncate(info.title, maxLen);
+ 			string portionOfSpaces = spaces.substr(0, maxLen - titleStr.size() / 2);
+			titleStr = portionOfSpaces + titleStr;
+			_vfd.setCursor(0,centerY-5);
+			_vfd.printPacket("%20s",titleStr.c_str() );
+			}
 		
 		string channelStr = RadioMgr::modeString(mode) + " "
 		+ RadioMgr::hertz_to_string(freq, 3) + " "
 		+ RadioMgr::freqSuffixString(freq);
-		
-		auto channelStart =  centerX - ((channelStr.size() * 6)/2);
-		_vfd.setCursor( channelStart ,centerY + 5 );
-		_vfd.write( channelStr);
-		
+ 
+		string portionOfSpaces = spaces.substr(0, maxLen - channelStr.size() / 2);
+		channelStr = portionOfSpaces + channelStr;
+		_vfd.setCursor(0,centerY+5);
+		_vfd.printPacket("%20s",channelStr.c_str() );
 	}
 	else {
 		// draw scanning

@@ -652,7 +652,7 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 	 if(!_scannerMode )
 		return false;
 
-	 uint  nextOffset =  _currentScanOffset++ % _scannerChannels.size();
+	 uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
 	 
 	 channel_t channel = _scannerChannels[nextOffset];
 	 

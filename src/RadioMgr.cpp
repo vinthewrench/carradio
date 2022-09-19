@@ -652,6 +652,8 @@ bool RadioMgr::tuneNextScannerChannel(){
 	if(!_scannerMode )
 		return false;
 	
+	printf("tuneNextScannerChannel\n");
+	
 	uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
 	
 	channel_t channel = _scannerChannels[nextOffset];

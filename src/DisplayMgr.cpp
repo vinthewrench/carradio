@@ -2495,10 +2495,8 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		else {
 			_vfd.printPacket("      ");
 		}
-
 	}
-	
-	
+ 
 	if(transition ==  TRANS_REFRESH) {
 		// Squelch change?
 	}

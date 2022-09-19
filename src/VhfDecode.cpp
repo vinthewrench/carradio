@@ -139,7 +139,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		m_is_squelched = false;
 		m_squelch_hits = 0;
 		
- 		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
+ //		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
 		// Extract carrier frequency.
 		m_phasedisc.process(m_buf_iffiltered, m_buf_baseband);
 		

@@ -108,7 +108,7 @@ public:
 		return m_is_squelched;
 	};
  
-	int squelch_hits() const  {
+	uint squelch_hits() const  {
 		return m_squelch_hits;
 	};
 
@@ -130,7 +130,7 @@ private:
 	 double          m_baseband_level;
 	 int	           m_squelch_level;
 	 bool      	     m_is_squelched;
-	 int 				  m_squelch_hits;
+	 uint 			  m_squelch_hits;
  
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;

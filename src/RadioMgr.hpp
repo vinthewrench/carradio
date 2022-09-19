@@ -81,6 +81,8 @@ public:
 	
 	vector < RadioMgr::channel_t >  scannerChannels();
  	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
+	bool nextScannerChannel(radio_mode_t &mode, uint32_t &freq);
+	
 	bool isScannerMode(){return _scannerMode;};
 	bool scannerLocked();
 	
@@ -93,6 +95,8 @@ public:
 	void 	setSquelchLevel(int level);
 	int 	getSquelchLevel(){ return _squelchLevel;};
 	int 	getMaxSquelchRange();
+	void 	setSquelchDwell(uint val){ _squelchLevel = val;};
+	
  
 	uint32_t nextFrequency(bool up);
 	
@@ -131,6 +135,7 @@ private:
 	uint									_currentScanOffset;
 	bool									_scannerMode;
 	bool									_scanningPaused;
+	uint									_squelchDwell = 30;
 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);
 

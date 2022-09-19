@@ -899,12 +899,12 @@ void RadioMgr::SDRProcessor(){
 			if(_scannerMode){
 				// time to change channels.
 				
-				DisplayMgr*		display 	= PiCarMgr::shared()->display();
+//				DisplayMgr*		display 	= PiCarMgr::shared()->display();
 				
 				static bool wasSquelched = false;
-				bool isSquelched = _sdrDecoder->isSquelched();
+				bool sqlch = isSquelched();
 				
-				if(isSquelched ){
+				if(sqlch ){
 					
 					RadioMgr::radio_mode_t  mode;
 					uint32_t						freq;
@@ -915,10 +915,10 @@ void RadioMgr::SDRProcessor(){
 				}
 				else if(wasSquelched){
 					// tell the display we are not squelched anymore.
-					display->showScannerChange();
+					
+//					display->showScannerChange();
 				}
-				wasSquelched = isSquelched;
-				
+				wasSquelched = sqlch;
 			}
 			
 		}

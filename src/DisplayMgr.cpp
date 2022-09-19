@@ -496,10 +496,15 @@ void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 }
 
-void DisplayMgr::showScannerChange(){
+void DisplayMgr::showScannerChange(bool force){
 	
-	printf("showScannerChange\n");
-	setEvent(EVT_PUSH, MODE_SCANNER );
+	if(force){
+		setEvent(EVT_PUSH, MODE_SCANNER );
+	}
+	else {
+		setEvent(EVT_NONE, MODE_SCANNER );
+	}
+	
 }
  
 void DisplayMgr::showDTC(){
@@ -1135,7 +1140,15 @@ void DisplayMgr::DisplayUpdate(){
 					}
 				}
 				
-				else if(_current_mode == MODE_MENU) {
+				else if(_current_mode == MODE_SCANNER) {
+					
+					// check for {EVT_NONE,MODE_SCANNER}  which is a squelch change
+					if(item.mode == MODE_SCANNER) {
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+				}
+	 			else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
@@ -1924,82 +1937,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 
 
 
-void DisplayMgr::drawScannerScreen(modeTransition_t transition){
-	
-	PiCarMgr* mgr	= PiCarMgr::shared();
-	RadioMgr* radio 	= PiCarMgr::shared()->radio();
-	
-	int centerX = _vfd.width() /2;
-	int centerY = _vfd.height() /2;
-	
-	
-	
-	if(transition == TRANS_LEAVING) {
- 		return;
-	}
-
-	
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		_vfd.clearScreen();
-		
-		_vfd.setCursor(0, 60);
-		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.printPacket("PRESET");
-		}
-		else {
-			_vfd.printPacket("      ");
-		}
-
- 	}
-	
-	RadioMgr::radio_mode_t  mode;
-	uint32_t						freq;
-	
-	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
-	
-	if(foundSignal){
-		_vfd.setFont(VFD::FONT_5x7);
-		
-		PiCarMgr::station_info_t info;
-		if(mgr->getStationInfo(mode, freq, info)){
-			string titleStr = truncate(info.title, 20);
-			
-			auto titleStart =  centerX - ((titleStr.size() * 6)/2);
-			_vfd.setCursor( titleStart ,centerY-5 );
-			_vfd.write( titleStr);
-		}
-		
-		string channelStr = RadioMgr::modeString(mode) + " "
-		+ RadioMgr::hertz_to_string(freq, 3) + " "
-		+ RadioMgr::freqSuffixString(freq);
-		
-		auto channelStart =  centerX - ((channelStr.size() * 6)/2);
-		_vfd.setCursor( channelStart ,centerY + 5 );
-		_vfd.write( channelStr);
-		
-	}
-	else {
-		// draw scanning
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,centerY);
-		_vfd.printPacket("SCANNING...");
-	}
-	 
-	
-	_vfd.setFont(VFD::FONT_MINI);
-	_vfd.setCursor(10, centerY+19);
-	
-	if(foundSignal)
-		_vfd.printPacket("%3d" , int(radio->get_if_level()));
-  	else
-		_vfd.printPacket("      ");
-	
-	drawEngineCheck();
-	drawTemperature();
-	drawTimeBox();
-}
-
 void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
 	//printf("drawSettingsScreen %d\n",transition);
 	
@@ -2531,6 +2468,87 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
+
+// MARK: -  SCanner Screen
+
+void DisplayMgr::drawScannerScreen(modeTransition_t transition){
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	RadioMgr* radio 	= PiCarMgr::shared()->radio();
+	
+	int centerX = _vfd.width() /2;
+	int centerY = _vfd.height() /2;
+	
+	if(transition == TRANS_LEAVING) {
+		return;
+	}
+
+	
+	if(transition == TRANS_ENTERING){
+		_vfd.clearScreen();
+		
+		_vfd.setCursor(0, 60);
+		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.printPacket("PRESET");
+		}
+		else {
+			_vfd.printPacket("      ");
+		}
+
+	}
+	
+	
+	if(transition ==  TRANS_REFRESH) {
+		// Squelch change?
+	}
+	
+	RadioMgr::radio_mode_t  mode;
+	uint32_t						freq;
+	
+	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
+	
+	if(foundSignal){
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		PiCarMgr::station_info_t info;
+		if(mgr->getStationInfo(mode, freq, info)){
+			string titleStr = truncate(info.title, 20);
+			
+			auto titleStart =  centerX - ((titleStr.size() * 6)/2);
+			_vfd.setCursor( titleStart ,centerY-5 );
+			_vfd.write( titleStr);
+		}
+		
+		string channelStr = RadioMgr::modeString(mode) + " "
+		+ RadioMgr::hertz_to_string(freq, 3) + " "
+		+ RadioMgr::freqSuffixString(freq);
+		
+		auto channelStart =  centerX - ((channelStr.size() * 6)/2);
+		_vfd.setCursor( channelStart ,centerY + 5 );
+		_vfd.write( channelStr);
+		
+	}
+	else {
+		// draw scanning
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(2,centerY);
+		_vfd.printPacket("SCANNING...");
+	}
+	 
+	
+	_vfd.setFont(VFD::FONT_MINI);
+	_vfd.setCursor(10, centerY+19);
+	
+	if(foundSignal)
+		_vfd.printPacket("%3d" , int(radio->get_if_level()));
+	else
+		_vfd.printPacket("      ");
+	
+	drawEngineCheck();
+	drawTemperature();
+	drawTimeBox();
+}
 // MARK: -  Dimmer Screen
 
 

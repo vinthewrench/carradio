@@ -141,7 +141,7 @@ public:
 	void showSquelchChange();
 	
 	void showRadioChange();
-	void showScannerChange();
+	void showScannerChange(bool force = true);
 
 	void showCANbus(uint8_t page = 0);
 	void showSettings();
@@ -159,7 +159,6 @@ public:
  
 	
 	void updateMenuItems(vector<menuItem_t> items);   // can be called from menuSelectedCallBack_t
-	
 	
 private:
 	

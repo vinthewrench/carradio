@@ -129,7 +129,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		m_is_squelched = true;
 		m_squelch_hits++;
 		
-//		printf("OFF rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
+ 		printf("OFF rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n", if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
 			m_buf_mono[i] =  0.0;
 		}
@@ -139,7 +139,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		m_is_squelched = false;
 		m_squelch_hits = 0;
 		
-//		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
+ 		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
 		// Extract carrier frequency.
 		m_phasedisc.process(m_buf_iffiltered, m_buf_baseband);
 		

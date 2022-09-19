@@ -365,7 +365,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	//	db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
 		
 		if(_scannerMode)
-			display->showScannerChange();
+			display->showScannerChange(false);
 		else
 			display->showRadioChange();
 	}

@@ -76,7 +76,7 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_baseband_mean(0)
 	 , m_baseband_level(0)
 	 , m_squelch_level(squelch_level)
-	 , m_is_squelched(false),
+	 , m_is_squelched(false)
 	 , m_squelch_hits(0)
  
 	 // Construct FineTuner

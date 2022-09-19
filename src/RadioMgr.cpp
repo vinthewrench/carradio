@@ -633,11 +633,11 @@ bool  RadioMgr::isSquelched() {
  
 
 bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
-	if(!_scannerMode || _currentScanOffset > _scannerChannels.size())
+	if(!_scannerMode)
 		return false;
 	
-	if(isSquelched())
-		return false;
+//	if(isSquelched())
+//		return false;
  
 	channel_t channel = _scannerChannels[_currentScanOffset];
 	

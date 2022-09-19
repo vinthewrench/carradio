@@ -2520,7 +2520,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  			string portionOfSpaces = spaces.substr(0, maxLen - titleStr.size() / 2);
 			titleStr = portionOfSpaces + titleStr;
 			_vfd.setCursor(0,centerY-5);
-			_vfd.printPacket("%20s",titleStr.c_str() );
+			_vfd.printPacket("%-20s",titleStr.c_str() );
 			}
 		
 		string channelStr = RadioMgr::modeString(mode) + " "
@@ -2530,7 +2530,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		string portionOfSpaces = spaces.substr(0, maxLen - channelStr.size() / 2);
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
-		_vfd.printPacket("%20s",channelStr.c_str() );
+		_vfd.printPacket("%-20s",channelStr.c_str() );
 	}
 	else {
 		// draw scanning

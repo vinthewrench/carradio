@@ -145,6 +145,10 @@
 	],
 	"scanner_freqs": [
 		{
+			"freq": 162400000,
+			"mode": "VHF"
+		},
+		{
 			"freq": 155610000,
 			"mode": "VHF"
 		},
@@ -152,12 +156,7 @@
 			"freq": 155430000,
 			"mode": "VHF"
 		},
-		
-		{
-			"freq": 119400000,
-			"mode": "VHF"
-		},
-		
+				
 		{
 			"freq": 156210000,
 			"mode": "VHF"

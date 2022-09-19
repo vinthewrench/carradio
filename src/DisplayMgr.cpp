@@ -2469,7 +2469,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 }
 
 
-// MARK: -  SCanner Screen
+// MARK: -  Scanner Screen
 
 void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	
@@ -2531,12 +2531,6 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
 		_vfd.printPacket("%-20s",channelStr.c_str() );
-	}
-	else {
-		// draw scanning
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(2,centerY);
-		_vfd.printPacket("SCANNING...");
 	}
 	 
 	

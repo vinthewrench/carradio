@@ -204,9 +204,9 @@ public:
 	
 	void set_squelch_level(int level)  {}; // does nothing on  broadcast FM
  
+	void 	set_squelch_dwell(uint count) {};
+
 	bool isSquelched() const  { return false; };
-	
-	uint squelch_hits() const { return 0; };
  
 	 /** Return PPS events from the most recently processed block. */
 	 std::vector<PilotPhaseLock::PpsEvent> get_pps_events() const

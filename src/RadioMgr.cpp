@@ -894,7 +894,7 @@ void RadioMgr::SDRProcessor(){
 			
 			if(_scannerMode){
 				// time to change channels.
-				if( _sdrDecoder->squelch_hits() >  _squelchDwell){
+				if( _sdrDecoder->isSquelched()){
 					
 					RadioMgr::radio_mode_t  mode;
 					uint32_t						freq;

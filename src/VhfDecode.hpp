@@ -107,10 +107,12 @@ public:
 	bool isSquelched() const  {
 		return m_is_squelched;
 	};
- 
-	uint squelch_hits() const  {
-		return m_squelch_hits;
-	};
+	
+	void set_squelch_dwell(uint count){
+		m_squelch_dwell = count;
+	}
+
+	
 
 private:
  
@@ -130,8 +132,10 @@ private:
 	 double          m_baseband_level;
 	 int	           m_squelch_level;
 	 bool      	     m_is_squelched;
+	 bool				  m_had_signal;
 	 uint 			  m_squelch_hits;
- 
+	 uint 			  m_squelch_dwell;
+
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;
 	 SampleVector    m_buf_baseband;

@@ -28,9 +28,9 @@ public:
 	virtual double get_baseband_level() const = 0;
 	
 	virtual  bool 	isSquelched() const = 0;
-
-	virtual uint   squelch_hits() const = 0;
-	
+ 
 	virtual void 	set_squelch_level(int level)  = 0;
+	
+	virtual void 	set_squelch_dwell(uint count)  = 0;
  
 };

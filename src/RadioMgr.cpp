@@ -225,24 +225,27 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
  
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 	PiCarDB*			db 		= PiCarMgr::shared()->db();
+	AudioOutput*	audio  = PiCarMgr::shared()->audio();
+	
 	bool 			didUpdate = false;
 	
 	if(!_isSetup)
 		return false;
-		
-	if(newMode){
-	}
+ 
+	bool wasMuted = audio->isMuted();
 	
 	if(!isOn()){
 		_frequency = newFreq;
 		_mode = newMode;
  	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
-		
-  		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
-
+	
 		std::lock_guard<std::mutex> lock(_mutex);
- 		
+		 	
+		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+
+		audio->setMute(true);
+		
 		// SOMETHING ABOUT MODES HERE?
 		_frequency = newFreq;
 		_mode = newMode;
@@ -348,6 +351,10 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_shouldReadAux = false;
 			_shouldReadSDR = true;
 		}
+		
+		
+		if(!wasMuted)
+			audio->setMute(false);
 		
 		didUpdate = true;
 	}
@@ -588,7 +595,6 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 
 	
 #warning  FINISH SCANNER CODE
-
 	
 	_scannerChannels = channels;
 	_isScanning = channels.size() > 0;

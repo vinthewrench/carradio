@@ -1381,7 +1381,6 @@ void PiCarMgr::PiCarLoop(){
 								}
 								
 							}
-							
 						}
 							break;
 							

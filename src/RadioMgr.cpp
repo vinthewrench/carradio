@@ -627,6 +627,11 @@ void RadioMgr::pauseScan(bool shouldPause){
 }
 
 
+bool  RadioMgr::isSquelched() {
+	return  _sdrDecoder?_sdrDecoder->isSquelched():false;
+}
+ 
+
 bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
 	if(!_scannerMode || _currentScanOffset > _scannerChannels.size())
 		return false;
@@ -891,7 +896,6 @@ void RadioMgr::SDRProcessor(){
 #warning  FINISH SCANNER CODE
 // add scanner code here
 			
-			
 			if(_scannerMode){
 				// time to change channels.
 				if( _sdrDecoder->isSquelched()){
@@ -901,7 +905,6 @@ void RadioMgr::SDRProcessor(){
 
 					if( nextScannerChannel(mode, freq)){
 						setFrequencyandModeInternal(mode, freq, true);
-						
 					}
 				}
 			}

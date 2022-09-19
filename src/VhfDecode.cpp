@@ -131,19 +131,20 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	bool hasSignal =  m_squelch_level == 0 || current_level >   m_squelch_level;
  
 	if(!hasSignal ){
- 		m_squelch_hits++;
-		
+ 
 		// if we never got a signal  then it squelches immediately
 		if(!m_had_signal)
 			m_is_squelched	 = true;
 		
 		// if we did get a signal before - then count it out before announcing no signal
-		else if(m_squelch_hits > m_squelch_dwell){
+		else if(m_squelch_hits++ > m_squelch_dwell){
 			m_is_squelched	 = true;
 			m_had_signal = false;
  		}
 		
- 		printf("OFF rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n", if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
+ 		printf("OFF %3s rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
+				 (m_is_squelched?"SQ": " "),
+				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
 
 		// squelch output
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {

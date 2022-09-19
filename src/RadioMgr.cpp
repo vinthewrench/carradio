@@ -866,8 +866,6 @@ void RadioMgr::SDRProcessor(){
 				_output_buffer.push(move(audiosamples));
 			}
 			
-			_mutex.unlock();
-			
 			
 #if DEBUG_DEMOD
 			
@@ -894,27 +892,17 @@ void RadioMgr::SDRProcessor(){
 			
 #endif
 			
-#warning  FINISH SCANNER CODE
-			// add scanner code here
+			bool shouldTuneToNextChannel = false;
 			
 			if(_scannerMode){
 				// time to change channels.
-				
-//				DisplayMgr*		display 	= PiCarMgr::shared()->display();
-				
-				static bool wasSquelched = false;
-				bool sqlch = isSquelched();
-				
-				if(sqlch ){
-					
-					tuneNextScannerChannel();
-		 		}
-				else if(wasSquelched){
-					// tell the display we are not squelched anymore.
-					
-//					display->showScannerChange();
-				}
-				wasSquelched = sqlch;
+				shouldTuneToNextChannel = isSquelched();
+			}
+			
+			_mutex.unlock();
+			
+			if(shouldTuneToNextChannel ){
+				tuneNextScannerChannel();
 			}
 			
 		}

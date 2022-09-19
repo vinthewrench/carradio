@@ -819,15 +819,16 @@ void RadioMgr::SDRProcessor(){
 		
 		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
 			
-			/// this block is critical.  dont change frequencies in the middle of a process.
-			std::lock_guard<std::mutex> lock(_mutex);
-			
+	 
 			if(!_shouldReadSDR)
 				continue;
 			
+			/// this block is critical.  dont change frequencies in the middle of a process.
+			_mutex.lock();
+
 			// Decode FM signal.
 			_sdrDecoder->process(iqsamples, audiosamples);
-			
+ 
 			// Measure audio level.
 			double audio_mean, audio_rms;
 			samples_mean_rms(audiosamples, audio_mean, audio_rms);
@@ -858,33 +859,10 @@ void RadioMgr::SDRProcessor(){
 				// Buffered write.
 				_output_buffer.push(move(audiosamples));
 			}
-			
-			
-#warning  FINISH SCANNER CODE
-// add scanner code here
-			
-			if(_scannerMode){
-				// time to change channels.
- 				if( _sdrDecoder->squelch_hits() >  _squelchDwell){
-					
-					RadioMgr::radio_mode_t  mode;
-					uint32_t						freq;
+	 
+			_mutex.unlock();
 
-					if( nextScannerChannel(mode, freq)){
-						setFrequencyandModeInternal(mode, freq, true);
-						
-					}
-				}
-			}
-			
-	/*
-	 if( _sdrDecoder->squelch_hits() > dwell_count ) {
 	 
-	 // switch channels
-	 }
-	 
-	 */
-			
 #if DEBUG_DEMOD
 			
 			//				 Show statistics.
@@ -910,6 +888,24 @@ void RadioMgr::SDRProcessor(){
 			
 #endif
 			
+#warning  FINISH SCANNER CODE
+// add scanner code here
+			
+			
+			if(_scannerMode){
+				// time to change channels.
+				if( _sdrDecoder->squelch_hits() >  _squelchDwell){
+					
+					RadioMgr::radio_mode_t  mode;
+					uint32_t						freq;
+
+					if( nextScannerChannel(mode, freq)){
+						setFrequencyandModeInternal(mode, freq, true);
+						
+					}
+				}
+			}
+
 		}
 		else {
 			usleep(200000);

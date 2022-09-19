@@ -648,19 +648,20 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 }
 
 
- bool RadioMgr::nextScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
-	 if(!_scannerMode )
+bool RadioMgr::tuneNextScannerChannel(){
+	if(!_scannerMode )
 		return false;
-
-	 uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
-	 
-	 channel_t channel = _scannerChannels[nextOffset];
-	 
-	 mode = channel.first;
-	 freq = channel.second;
-
-	 return true;
- };
+	
+	uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
+	
+	channel_t channel = _scannerChannels[nextOffset];
+	_currentScanOffset = nextOffset;
+	
+	RadioMgr::radio_mode_t   mode = channel.first;;
+	uint32_t  					  freq = channel.second;
+	
+	return setFrequencyandModeInternal(mode, freq, true);
+};
 
 bool RadioMgr::scannerLocked(){
 	return _scannerMode;
@@ -906,13 +907,8 @@ void RadioMgr::SDRProcessor(){
 				
 				if(sqlch ){
 					
-					RadioMgr::radio_mode_t  mode;
-					uint32_t						freq;
-					
-					if( nextScannerChannel(mode, freq)){
-						setFrequencyandModeInternal(mode, freq, true);
-					}
-				}
+					tuneNextScannerChannel();
+		 		}
 				else if(wasSquelched){
 					// tell the display we are not squelched anymore.
 					

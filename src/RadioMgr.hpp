@@ -81,8 +81,8 @@ public:
 	
 	vector < RadioMgr::channel_t >  scannerChannels();
  	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
-	bool nextScannerChannel(radio_mode_t &mode, uint32_t &freq);
-	
+	bool tuneNextScannerChannel();
+ 
 	bool isScannerMode(){return _scannerMode;};
 	bool scannerLocked();
 	

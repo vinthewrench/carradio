@@ -824,16 +824,16 @@ void RadioMgr::SDRProcessor(){
 		
 		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
 			
-	 
+			
 			if(!_shouldReadSDR)
 				continue;
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			_mutex.lock();
-
+			
 			// Decode FM signal.
 			_sdrDecoder->process(iqsamples, audiosamples);
- 
+			
 			// Measure audio level.
 			double audio_mean, audio_rms;
 			samples_mean_rms(audiosamples, audio_mean, audio_rms);
@@ -864,10 +864,10 @@ void RadioMgr::SDRProcessor(){
 				// Buffered write.
 				_output_buffer.push(move(audiosamples));
 			}
-	 
+			
 			_mutex.unlock();
-
-	 
+			
+			
 #if DEBUG_DEMOD
 			
 			//				 Show statistics.
@@ -894,21 +894,33 @@ void RadioMgr::SDRProcessor(){
 #endif
 			
 #warning  FINISH SCANNER CODE
-// add scanner code here
+			// add scanner code here
 			
 			if(_scannerMode){
 				// time to change channels.
-				if( _sdrDecoder->isSquelched()){
+				
+				DisplayMgr*		display 	= PiCarMgr::shared()->display();
+				
+				static bool wasSquelched = false;
+				bool isSquelched = _sdrDecoder->isSquelched();
+				
+				if(isSquelched ){
 					
 					RadioMgr::radio_mode_t  mode;
 					uint32_t						freq;
-
+					
 					if( nextScannerChannel(mode, freq)){
 						setFrequencyandModeInternal(mode, freq, true);
 					}
 				}
+				else if(wasSquelched){
+					// tell the display we are not squelched anymore.
+					display->showScannerChange();
+				}
+				wasSquelched = isSquelched;
+				
 			}
-
+			
 		}
 		else {
 			usleep(200000);

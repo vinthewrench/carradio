@@ -902,11 +902,7 @@ void RadioMgr::SDRProcessor(){
 			_mutex.unlock();
 			
 			if(shouldTuneToNextChannel ){
-				
-				printf("tuneNextScannerChannel\n");
-				
-
-				tuneNextScannerChannel();
+ 				tuneNextScannerChannel();
 			}
 			
 		}

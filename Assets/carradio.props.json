@@ -109,6 +109,10 @@
 			"freq": 1,
 			"mode": "SCANNER"
 		},
+ 		{
+			"freq": 102700000,
+			"mode": "FM"
+		},
 		{
 			"freq": 103500000,
 			"mode": "FM"

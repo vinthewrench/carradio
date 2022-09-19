@@ -81,8 +81,9 @@ public:
 	
 	vector < RadioMgr::channel_t >  scannerChannels();
  	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
-	bool isScanning() {return _isScanning;};
-
+	bool isScannerMode(){return _scannerMode;};
+	bool scannerLocked();
+	
 	radio_mux_t radioMuxMode() {return _mux;};
 
 	double get_if_level() {return _IF_Level;};
@@ -128,7 +129,7 @@ private:
 	
 	vector < RadioMgr::channel_t > _scannerChannels;
 	uint									_currentScanOffset;
-	bool									_isScanning;
+	bool									_scannerMode;
 	bool									_scanningPaused;
 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);

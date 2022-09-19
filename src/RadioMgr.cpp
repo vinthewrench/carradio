@@ -32,7 +32,7 @@ RadioMgr::RadioMgr(){
 	_isOn = false;
 	_isSetup = false;
 	_scannerChannels.clear();
-	_isScanning	= false;
+	_scannerMode	= false;
 	
 	_shouldQuit = false;
 	_shouldReadSDR = false;
@@ -158,7 +158,7 @@ bool RadioMgr::setON(bool isOn) {
 		display->showTime();
 	}
 	else {
-		if(isScanning()){
+		if(isScannerMode()){
 			pauseScan(false);
  			display->showScannerChange();
  		}
@@ -204,7 +204,7 @@ bool RadioMgr::setON(bool isOn) {
 
 
 RadioMgr::radio_mode_t RadioMgr::radioMode(){
-	if(_isScanning)
+	if(_scannerMode)
 		return SCANNER;
 
 	return _mode;
@@ -214,7 +214,7 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 	
 #warning  FINISH SCANNER CODE
 
- 	_isScanning = false;
+	_scannerMode = false;
 	_scannerChannels	= {};
 	return setFrequencyandModeInternal(newMode, newFreq, force);
 }
@@ -364,7 +364,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 		db->updateValue(VAL_RADIO_FREQ, _frequency);
 	//	db->updateValue(VAL_MODULATION_MUX, RadioMgr::MUX_UNKNOWN);
 		
-		if(_isScanning)
+		if(_scannerMode)
 			display->showScannerChange();
 		else
 			display->showRadioChange();
@@ -394,7 +394,7 @@ int 	RadioMgr::getMaxSquelchRange(){
 #warning  FINISH SCANNER CODE
 
 uint32_t RadioMgr::frequency(){
-	if(_isScanning){
+	if(_scannerMode){
 		return 1.;
 	}
 	return _frequency;
@@ -597,19 +597,19 @@ bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
 #warning  FINISH SCANNER CODE
 	
 	_scannerChannels = channels;
-	_isScanning = channels.size() > 0;
+	_scannerMode = channels.size() > 0;
 		
-	if(_isScanning){
+	if(_scannerMode){
 		_currentScanOffset = 0;
 		pauseScan(false);
 	}
 	
-	return _isScanning;
+	return _scannerMode;
 }
 
 vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 
-	if(_isScanning){
+	if(_scannerMode){
 		return _scannerChannels;
 	}
 	else
@@ -628,7 +628,7 @@ void RadioMgr::pauseScan(bool shouldPause){
 
 
 bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
-	if(!_isScanning || _currentScanOffset > _scannerChannels.size())
+	if(!_scannerMode || _currentScanOffset > _scannerChannels.size())
 		return false;
 	
 	if(isSquelched())
@@ -641,6 +641,12 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 	
 	return true;
 }
+
+
+bool RadioMgr::scannerLocked(){
+	return _scannerMode;
+}
+
 
 
 // MARK: -  AuxReader thread

@@ -383,7 +383,7 @@ bool PiCarMgr::updateRadioPrefs() {
 		_lastRadioMode = RadioMgr::AUX;
 		didUpdate = true;
 	}
-	else if(_radio.isScanning()){
+	else if(_radio.isScannerMode()){
 			_lastFreqForMode[RadioMgr::SCANNER] = 1;
 			_lastRadioMode = RadioMgr::SCANNER;
 			didUpdate = true;
@@ -1287,7 +1287,7 @@ void PiCarMgr::PiCarLoop(){
 
 						_display.LEDeventVol();
 						
-						if(_radio.isScanning())
+						if(_radio.isScannerMode())
 							_display.showScannerChange();
 						else
 							_display.showRadioChange();
@@ -1339,7 +1339,7 @@ void PiCarMgr::PiCarLoop(){
 				_display.LEDeventVol();
 				
 				// if the radio was not displayed, set it there now
-				if(_radio.isScanning())
+				if(_radio.isScannerMode())
 					_display.showScannerChange();
 				else
 					_display.showRadioChange();
@@ -1359,7 +1359,7 @@ void PiCarMgr::PiCarLoop(){
 					
 					auto nextFreq = _radio.frequency();
 					auto mode 	   = _radio.radioMode();
-					bool isScanning = _radio.isScanning();
+					bool isScanning = _radio.isScannerMode();
 					switch(_tuner_mode){
 						case TUNE_ALL:
 							if(isScanning) {
@@ -1758,7 +1758,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			
 		case MENU_EXIT:
 			if(_radio.isOn()) {
-				if(_radio.isScanning())
+				if(_radio.isScannerMode())
 					_display.showScannerChange();
 				else
 					_display.showRadioChange();
@@ -2246,7 +2246,7 @@ void PiCarMgr::tunerDoubleClicked(){
 	
 	if( _radio.isOn()) {
 		
-		if(_radio.isScanning()){
+		if(_radio.isScannerMode()){
 			// display scanner menu
 			
 			printf("double click with scanner\n");

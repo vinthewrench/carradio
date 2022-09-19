@@ -1936,7 +1936,9 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	RadioMgr::radio_mode_t  mode;
 	uint32_t						freq;
 	
-	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
+	bool foundSignal = 
+	
+	radio->getCurrentScannerChannel(mode, freq);
 	
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		_vfd.clearScreen();

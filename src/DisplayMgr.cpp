@@ -2481,14 +2481,13 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
 
+	static uint8_t scanOffset = 0;
 	
 	if(transition == TRANS_ENTERING){
-		_vfd.clearScreen();
+		_rightRing.clearAll();
+		scanOffset = 0;
+ 		_vfd.clearScreen();
 		
 		_vfd.setCursor(0, 60);
 		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
@@ -2500,10 +2499,23 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		}
 	}
  
+	
+	if(transition == TRANS_LEAVING) {
+		_rightRing.clearAll();
+ 		return;
+	}
+
 	if(transition ==  TRANS_REFRESH) {
+ 		_rightRing.setColor(scanOffset,RGB::Black);
+ 		scanOffset =  mod(scanOffset+1, 24);
+		_rightRing.setColor(scanOffset,RGB::Red);
 		// Squelch change?
 	}
 	
+	if(transition ==  TRANS_IDLE) {
+ 		_rightRing.setColor(scanOffset,RGB::Green);
+ 	}
+
 	RadioMgr::radio_mode_t  mode;
 	uint32_t						freq;
 	

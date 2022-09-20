@@ -2513,7 +2513,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	}
 	
 	if(transition ==  TRANS_IDLE) {
- 		_rightRing.setColor(scanOffset,RGB::Green);
+ 		_rightRing.setColor(scanOffset,RGB::Orange);
  	}
 
 	RadioMgr::radio_mode_t  mode;

@@ -891,8 +891,9 @@ void RadioMgr::SDRProcessor(){
 			
 			if(_scannerMode){
 				// time to change channels.
-				shouldTuneToNextChannel = isSquelched();
-			}
+	 			if(isSquelched())
+					tuneNextScannerChannel();
+ 			}
 			
 
 			// Throw away first block. It is noisy because IF filters
@@ -936,13 +937,7 @@ void RadioMgr::SDRProcessor(){
 			usleep(200000);
 			continue;
 		}
-		
-		if(shouldTuneToNextChannel ){
-			tuneNextScannerChannel();
-		}
-		
-		
-		
+	 
 	}
 	
 }

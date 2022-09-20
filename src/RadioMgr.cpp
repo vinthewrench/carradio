@@ -236,6 +236,9 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
 		}
 	}
 	
+	printf("queueSetFrequencyandMode(%s %u) %d %d \n", modeString(mode).c_str(), freq, force, shouldPush);
+
+	
 	if(shouldPush)
 		_channelEventQueue.push({mode,freq, force});
 	

@@ -658,7 +658,7 @@ bool  RadioMgr::isSquelched() {
 }
  
 
-bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq, bool &squelched){
+bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &freq){
 	
 	if(!_scannerMode)
 		return false;
@@ -670,9 +670,7 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 	
 	mode = channel.first;
 	freq = channel.second;
-	
-	squelched = isSquelched();
-	
+ 
 	return true;
 }
 

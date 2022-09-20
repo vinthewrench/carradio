@@ -80,7 +80,7 @@ public:
 	void pauseScan(bool shouldPause);
 	
 	vector < RadioMgr::channel_t >  scannerChannels();
- 	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq, bool &squelched);
+ 	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
 	bool tuneNextScannerChannel();
  
 	bool isScannerMode(){return _scannerMode;};

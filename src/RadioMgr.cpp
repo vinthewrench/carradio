@@ -808,6 +808,8 @@ void RadioMgr::SDRProcessor(){
 	
 	for (unsigned int block = 0; !_shouldQuit;  block++) {
 		
+		bool shouldTuneToNextChannel = false;
+		
 		if(!_isSetup){
 			usleep(200000);
 			continue;
@@ -828,14 +830,13 @@ void RadioMgr::SDRProcessor(){
 		
 		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
 			
+			/// this block is critical.  dont change frequencies in the middle of a process.
+			std::lock_guard<std::mutex> lock(_mutex);
 			
 			if(!_shouldReadSDR)
 				continue;
 			
-			/// this block is critical.  dont change frequencies in the middle of a process.
-			_mutex.lock();
-			
-			// Decode FM signal.
+	 			// Decode FM signal.
 			_sdrDecoder->process(iqsamples, audiosamples);
 			
 			// Measure audio level.
@@ -860,6 +861,12 @@ void RadioMgr::SDRProcessor(){
 			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
 			
+			if(_scannerMode){
+				// time to change channels.
+				shouldTuneToNextChannel = isSquelched();
+			}
+			
+
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.
 			if (block > 0) {
@@ -868,20 +875,7 @@ void RadioMgr::SDRProcessor(){
 				// Buffered write.
 				_output_buffer.push(move(audiosamples));
 			}
-			
-			bool shouldTuneToNextChannel = false;
-			
-			if(_scannerMode){
-				// time to change channels.
-				shouldTuneToNextChannel = isSquelched();
-			}
-			
-			_mutex.unlock();
-			
-			if(shouldTuneToNextChannel ){
-				tuneNextScannerChannel();
-			}
-
+ 
 			
 #if DEBUG_DEMOD
 			
@@ -914,6 +908,12 @@ void RadioMgr::SDRProcessor(){
 			usleep(200000);
 			continue;
 		}
+		
+		if(shouldTuneToNextChannel ){
+			tuneNextScannerChannel();
+		}
+		
+		
 		
 	}
 	

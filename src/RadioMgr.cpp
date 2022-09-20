@@ -869,6 +869,19 @@ void RadioMgr::SDRProcessor(){
 				_output_buffer.push(move(audiosamples));
 			}
 			
+			bool shouldTuneToNextChannel = false;
+			
+			if(_scannerMode){
+				// time to change channels.
+				shouldTuneToNextChannel = isSquelched();
+			}
+			
+			_mutex.unlock();
+			
+			if(shouldTuneToNextChannel ){
+				tuneNextScannerChannel();
+			}
+
 			
 #if DEBUG_DEMOD
 			
@@ -895,18 +908,6 @@ void RadioMgr::SDRProcessor(){
 			
 #endif
 			
-			bool shouldTuneToNextChannel = false;
-			
-			if(_scannerMode){
-				// time to change channels.
-				shouldTuneToNextChannel = isSquelched();
-			}
-			
-			_mutex.unlock();
-			
-			if(shouldTuneToNextChannel ){
- 				tuneNextScannerChannel();
-			}
 			
 		}
 		else {

@@ -242,7 +242,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	
 		std::lock_guard<std::mutex> lock(_mutex);
 		 	
-		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+//		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		audio->setMute(true);
 		

@@ -2476,6 +2476,9 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
+	
+ 	printf("drawScannerScreen %d\n",transition);
+
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 	

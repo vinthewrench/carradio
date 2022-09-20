@@ -2505,21 +2505,28 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  		return;
 	}
 
+	RadioMgr::radio_mode_t  mode;
+	uint32_t						freq;
+	bool 							squelched;
+	
+	bool foundSignal = radio->getCurrentScannerChannel(mode, freq, squelched);
+
 	if(transition ==  TRANS_REFRESH) {
  		_rightRing.setColor(scanOffset,RGB::Black);
  		scanOffset =  mod(scanOffset+1, 24);
 		_rightRing.setColor(scanOffset,RGB::Red);
 		// Squelch change?
+		
+		if(foundSignal && !squelched)
+			_rightRing.setColor(scanOffset,RGB::Red);
+		else
+			_rightRing.setColor(scanOffset,RGB::Green);
 	}
 	
-	if(transition ==  TRANS_IDLE) {
- 		_rightRing.setColor(scanOffset,RGB::Green);
- 	}
+//	if(transition ==  TRANS_IDLE) {
+// 		_rightRing.setColor(scanOffset,RGB::Green);
+// 	}
 
-	RadioMgr::radio_mode_t  mode;
-	uint32_t						freq;
-	
-	bool foundSignal = radio->getCurrentScannerChannel(mode, freq);
 	
 	if(foundSignal){
 		_vfd.setFont(VFD::FONT_5x7);

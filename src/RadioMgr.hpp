@@ -80,7 +80,7 @@ public:
 	void pauseScan(bool shouldPause);
 	
 	vector < RadioMgr::channel_t >  scannerChannels();
- 	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq);
+ 	bool getCurrentScannerChannel(radio_mode_t &mode, uint32_t &freq, bool &squelched);
 	bool tuneNextScannerChannel();
  
 	bool isScannerMode(){return _scannerMode;};
@@ -96,8 +96,7 @@ public:
 	int 	getSquelchLevel(){ return _squelchLevel;};
 	int 	getMaxSquelchRange();
 	void 	setSquelchDwell(uint val){ _squelchLevel = val;};
-	
- 
+	 
 	uint32_t nextFrequency(bool up);
 	
 //	uint32_t nextFrequency(bool up, bool constrain = false);

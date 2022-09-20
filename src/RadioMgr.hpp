@@ -139,7 +139,8 @@ private:
 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);
 
-	
+	void queueSetFrequencyandMode(radio_mode_t, uint32_t freq = 0, bool force = false);
+
 	//  Reader threads
 	bool					 _shouldQuit;
 	bool					 _shouldReadSDR;
@@ -149,7 +150,8 @@ private:
 	pthread_t			_sdrReaderTID;
 	pthread_t			_sdrProcessorTID;
 	pthread_t			_outputProcessorTID;
-	
+	pthread_t			_channelManagerID;
+
 	void SDRReader();		// C++ version of thread
 	// C wrappers for SDRReader;
 	static void* SDRReaderThread(void *context);
@@ -170,6 +172,23 @@ private:
 	// C wrappers for SDRReader;
 	static void* OutputProcessorThread(void *context);
 	static void OutputProcessorThreadCleanup(void *context);
+ 
+	void ChannelManager();		// C++ version of thread
+	// C wrappers for ChannelManager;
+	static void* ChannelManagerThread(void *context);
+	static void ChannelManagerThreadCleanup(void *context);
+
+	
+	  typedef struct {
+		  radio_mode_t  mode;
+		  uint32_t 		freq;
+		  bool			force;
+	  }  channelEventQueueItem_t;
+
+	  queue<channelEventQueueItem_t> _channelEventQueue; // upper 8 bits is mode . lower 8 is event
+
+	pthread_cond_t 	_channelCond = PTHREAD_COND_INITIALIZER;
+	pthread_mutex_t 	_channelmutex = PTHREAD_MUTEX_INITIALIZER;
 
 };
 

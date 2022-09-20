@@ -34,6 +34,8 @@ RadioMgr::RadioMgr(){
 	_scannerChannels.clear();
 	_scannerMode	= false;
 	
+	_channelEventQueue= {};
+	
 	_shouldQuit = false;
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
@@ -51,10 +53,19 @@ RadioMgr::RadioMgr(){
 
 	 pthread_create(&_outputProcessorTID, NULL,
 									(THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
+	
+	pthread_create(&_channelManagerID, NULL,
+								  (THREADFUNCPTR) &RadioMgr::ChannelManagerThread, (void*)this);
+
+	
  }
  
 RadioMgr::~RadioMgr(){
 	stop();
+	
+	pthread_cond_signal(&_channelCond);
+
+	pthread_join(_channelManagerID, NULL);
 	pthread_join(_auxReaderTID, NULL);
 	pthread_join(_sdrReaderTID, NULL);
 	pthread_join(_sdrProcessorTID, NULL);
@@ -70,6 +81,8 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate){
 
 bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	
+	_channelEventQueue= {};
+
 	_isSetup = false;
 	_pcmrate = pcmrate;
 	_shouldReadSDR = false;
@@ -163,7 +176,7 @@ bool RadioMgr::setON(bool isOn) {
  			display->showScannerChange();
  		}
 		else {
-			setFrequencyandModeInternal(_mode,_frequency, true);
+			queueSetFrequencyandMode(_mode,_frequency, true);
 			display->showRadioChange();
 
 		}
@@ -209,6 +222,29 @@ RadioMgr::radio_mode_t RadioMgr::radioMode(){
 
 	return _mode;
 }
+
+void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool force){
+	
+	pthread_mutex_lock (&_channelmutex);
+	
+	// dont keep pushing the same thing
+	bool shouldPush = true;
+	if(!_channelEventQueue.empty()){
+		auto item = _channelEventQueue.back();
+		if(item.mode == mode &&  item.freq == freq ){
+			shouldPush = false;
+		}
+	}
+	
+	if(shouldPush)
+		_channelEventQueue.push({mode,freq, force});
+	
+	pthread_mutex_unlock (&_channelmutex);
+	
+	if(shouldPush)
+		pthread_cond_signal(&_channelCond);
+}
+
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
@@ -216,12 +252,13 @@ bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool
 
 	_scannerMode = false;
 	_scannerChannels	= {};
-	return setFrequencyandModeInternal(newMode, newFreq, force);
+	queueSetFrequencyandMode(newMode, newFreq, force);
+	
+	return true;
 }
 
  
 bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFreq, bool force){
-	
  
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();
 	PiCarDB*			db 		= PiCarMgr::shared()->db();
@@ -242,7 +279,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	
 		std::lock_guard<std::mutex> lock(_mutex);
 		 	
-//		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
+		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		audio->setMute(true);
 		
@@ -622,7 +659,7 @@ void RadioMgr::pauseScan(bool shouldPause){
 	
 	if(!_scanningPaused){
 		channel_t channel = _scannerChannels[_currentScanOffset];
-		setFrequencyandModeInternal(channel.first, channel.second, true);
+		queueSetFrequencyandMode(channel.first, channel.second, true);
  	}
 }
 
@@ -663,7 +700,9 @@ bool RadioMgr::tuneNextScannerChannel(){
 	RadioMgr::radio_mode_t   mode = channel.first;;
 	uint32_t  					  freq = channel.second;
 	
-	return setFrequencyandModeInternal(mode, freq, true);
+	queueSetFrequencyandMode(mode, freq, true);
+	return true;
+	
 };
 
 bool RadioMgr::scannerLocked(){
@@ -1002,6 +1041,70 @@ void* RadioMgr::OutputProcessorThread(void *context){
 
  
 void RadioMgr::OutputProcessorThreadCleanup(void *context){
+	//RadioMgr* d = (RadioMgr*)context;
+
+ 
+//	printf("cleanup sdr\n");
+}
+
+// MARK: -  Channel Manager  thread
+
+ 
+void RadioMgr::ChannelManager(){
+	
+	PRINT_CLASS_TID;
+	
+	pthread_condattr_t attr;
+	pthread_condattr_init( &attr);
+	
+	pthread_cond_init( &_channelCond, &attr);
+	
+	while(!_shouldQuit){
+		
+		if(!_isSetup){
+			usleep(200000);
+			continue;
+		}
+		
+		pthread_mutex_lock (&_channelmutex);
+		
+		bool shouldWait = (_channelEventQueue.size() == 0);
+		
+		if (shouldWait)
+			pthread_cond_wait(&_channelCond, &_channelmutex);
+		
+		//		pthread_mutex_lock (&_mutex);
+		channelEventQueueItem_t item = {MODE_UNKNOWN,0, false};
+		if(_channelEventQueue.size()){
+			item = _channelEventQueue.front();
+			_channelEventQueue.pop();
+		}
+		
+		pthread_mutex_unlock (&_channelmutex);
+	 
+		// change channel
+		setFrequencyandModeInternal(item.mode, item.freq, item.force);
+ 	}
+	
+}
+
+
+void* RadioMgr::ChannelManagerThread(void *context){
+	RadioMgr* d = (RadioMgr*)context;
+
+	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
+	pthread_cleanup_push(   &RadioMgr::ChannelManagerThreadCleanup ,context);
+ 
+	d->ChannelManager();
+	
+	pthread_exit(NULL);
+	
+	pthread_cleanup_pop(0);
+	return((void *)1);
+}
+
+ 
+void RadioMgr::ChannelManagerThreadCleanup(void *context){
 	//RadioMgr* d = (RadioMgr*)context;
 
  

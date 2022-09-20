@@ -1751,9 +1751,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
-	
-	static bool didSetRing = false;
-	
+		
 	static int  modeStart = 5;
 	
 	static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
@@ -1768,7 +1766,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_LEAVING) {
 		_rightRing.clearAll();
-		didSetRing = false;
 		return;
 	}
 	
@@ -1785,12 +1782,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			setKnobColor(KNOB_LEFT, RGB::Black);
 		}
 		
-		didSetRing = false;
 	}
 	
 	if(transition == TRANS_IDLE) {
 		_rightRing.clearAll();
-		didSetRing = false;
 	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
@@ -1810,7 +1805,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			if(lastMode != mode){
 				_vfd.clearScreen();
 				_rightRing.clearAll();
-				didSetRing = false;
 				lastMode = mode;
 			}
 			
@@ -1849,8 +1843,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 							_rightRing.setColor(i, 0, 0, 0);
 						}
 					}
-					
-					didSetRing = true;
 				}
 				
 				int precision = 0;

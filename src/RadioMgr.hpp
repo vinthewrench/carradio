@@ -134,8 +134,7 @@ private:
 	uint									_currentScanOffset;
 	bool									_scannerMode;
 	bool									_scanningPaused;
-	uint									_squelchDwell = 30;
-
+ 
 	bool setFrequencyandModeInternal(radio_mode_t, uint32_t freq = 0, bool force = false);
 
 	void queueSetFrequencyandMode(radio_mode_t, uint32_t freq = 0, bool force = false);

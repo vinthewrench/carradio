@@ -2507,7 +2507,8 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 
 	RadioMgr::radio_mode_t  mode;
 	uint32_t						freq;
-	bool 							squelched;
+	bool 							squelched = true;
+	
 	
 	bool foundSignal = radio->getCurrentScannerChannel(mode, freq, squelched);
 
@@ -2517,7 +2518,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		_rightRing.setColor(scanOffset,RGB::Red);
 		// Squelch change?
 		
-		if(foundSignal && !squelched)
+		if(squelched)
 			_rightRing.setColor(scanOffset,RGB::Red);
 		else
 			_rightRing.setColor(scanOffset,RGB::Green);

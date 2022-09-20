@@ -244,8 +244,6 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
-#warning  FINISH SCANNER CODE
-
 	_scannerMode = false;
 	_scannerChannels	= {};
 	queueSetFrequencyandMode(newMode, newFreq, force);
@@ -423,8 +421,6 @@ int 	RadioMgr::getMaxSquelchRange(){
 	return -45;
 }
  
-
-#warning  FINISH SCANNER CODE
 
 uint32_t RadioMgr::frequency(){
 	if(_scannerMode){
@@ -625,9 +621,6 @@ string  RadioMgr::hertz_to_string(double hz, int precision){
 
 // MARK: -  Scanner
 bool RadioMgr::scanChannels( vector < RadioMgr::channel_t >  channels ){
-
-	
-#warning  FINISH SCANNER CODE
 	
 	_scannerChannels = channels;
 	_scannerMode = channels.size() > 0;
@@ -998,7 +991,7 @@ void RadioMgr::OutputProcessor(){
 			 // too often.
 			
 			
-			// revisit this..  teh 2 is for stereo..
+			// revisit this..  the 2 is for stereo..
 			
 			_output_buffer.wait_buffer_fill(_pcmrate * 2);
 			
@@ -1008,8 +1001,6 @@ void RadioMgr::OutputProcessor(){
 		SampleVector samples =_output_buffer.pull();
 		AudioOutput*	 audio  = PiCarMgr::shared()->audio();
 		
-		
-#warning  FINISH SCANNER CODE
 		if(_mode	== AUX ){
 			audio->writeAudio(samples);
 		}

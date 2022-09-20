@@ -1339,10 +1339,15 @@ void PiCarMgr::PiCarLoop(){
 				_display.LEDeventVol();
 				
 				// if the radio was not displayed, set it there now
-				if(_radio.isScannerMode())
-					_display.showScannerChange();
-				else
-					_display.showRadioChange();
+				auto dMode =  _display.active_mode();
+ 				if(_radio.isScannerMode()){
+					if(dMode != DisplayMgr::MODE_SCANNER)
+						_display.showScannerChange();
+				}
+				else {
+					if(dMode != DisplayMgr::MODE_RADIO)
+						_display.showRadioChange();
+				}
 			}
 			
 			// MARK:   Tuner button moved

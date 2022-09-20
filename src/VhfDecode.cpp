@@ -136,7 +136,7 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		
 		if(!m_had_signal){
 				// if we never got a signal  then it indicates squelches after 3 tries
-			if(m_squelch_hits > 2){
+			if(m_squelch_hits > 1){
 				m_is_squelched	 = true;
 	 			}
 		}

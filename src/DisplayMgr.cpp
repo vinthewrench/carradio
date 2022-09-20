@@ -2515,7 +2515,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	if(transition ==  TRANS_REFRESH) {
  		_rightRing.setColor(scanOffset,RGB::Black);
  		scanOffset =  mod(scanOffset+1, 24);
-		_rightRing.setColor(scanOffset,RGB::Red);
+//		_rightRing.setColor(scanOffset,RGB::Red);
 		// Squelch change?
 		
 		if(squelched)

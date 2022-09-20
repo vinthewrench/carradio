@@ -145,9 +145,9 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 			m_is_squelched	 = true;
 			m_had_signal = false;
 			
-			printf("SQ rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
-	 				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
-  		}
+//			printf("SQ rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
+//	 				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
+ 		}
  
 		// squelch output
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {

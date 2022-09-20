@@ -56,8 +56,6 @@ RadioMgr::RadioMgr(){
 	
 	pthread_create(&_channelManagerID, NULL,
 								  (THREADFUNCPTR) &RadioMgr::ChannelManagerThread, (void*)this);
-
-	
  }
  
 RadioMgr::~RadioMgr(){
@@ -173,13 +171,11 @@ bool RadioMgr::setON(bool isOn) {
 	else {
 		if(isScannerMode()){
 			pauseScan(false);
- 			display->showScannerChange();
- 		}
+  		}
 		else {
-			queueSetFrequencyandMode(_mode,_frequency, true);
-			display->showRadioChange();
-
-		}
+			if(_mode != MODE_UNKNOWN)
+				queueSetFrequencyandMode(_mode,_frequency, true);
+ 		}
 	}
 	
 	return true;

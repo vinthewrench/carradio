@@ -575,6 +575,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_GPS:
 		case MODE_GPS_WAYPOINT:
 		case MODE_GPS_WAYPOINTS:
+		case MODE_SCANNER_CHANNELS:
 		case MODE_BALANCE:
 		case MODE_DIMMER:
 		case MODE_FADER:

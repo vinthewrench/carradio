@@ -3925,6 +3925,8 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 				savedCB(wasHandled, channel, action);
 			}
 			
+			return true;
+			
 		}
 			break;
 			

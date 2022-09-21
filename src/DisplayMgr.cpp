@@ -574,6 +574,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_CANBUS:
 		case MODE_GPS:
 		case MODE_GPS_WAYPOINT:
+		case MODE_CHANNEL_INFO:
 		case MODE_GPS_WAYPOINTS:
 		case MODE_SCANNER_CHANNELS:
 		case MODE_BALANCE:
@@ -716,6 +717,10 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			wasHandled = processSelectorKnobActionForScannerChannels(action);
 			break;
  
+		case MODE_CHANNEL_INFO:
+			wasHandled = processSelectorKnobActionForChannelInfo(action);
+			break;
+
 		default:
 			break;
 	}
@@ -1386,8 +1391,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_GPS_WAYPOINT:
 				drawGPSWaypointScreen(transition);
 				break;
-				
-
+	 
 			case MODE_MESSAGE:
 				drawMessageScreen(transition);
 				break;
@@ -1395,7 +1399,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_SCANNER_CHANNELS:
 				drawScannerChannels(transition);
 				break;
-				
+
+			case MODE_CHANNEL_INFO:
+				drawChannelInfo(transition);
+				break;
+ 
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
@@ -2487,15 +2495,14 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 
 // MARK: -  Scanner Screen
+void drawChannelInfo(modeTransition_t transition);
 
 void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
-	
- 	printf("drawScannerScreen %d\n",transition);
-
+ 
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 
@@ -3862,14 +3869,60 @@ void DisplayMgr::showChannel( RadioMgr::channel_t channel,
 
 	if(channel.first != RadioMgr::MODE_UNKNOWN){
 		
-		(cb) (true, channel, KNOB_CLICK);
-		
-//		_currentChannel = channel;
-//		_showChannelCB = cb;
-// 		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);
+		_currentChannel = channel;
+		_showChannelCB = cb;
+ 		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);
 	}
 }
 
+
+bool DisplayMgr::processSelectorKnobActionForChannelInfo( knob_action_t action){
+	bool wasHandled = false;
+	
+	
+	string uuid = "";
+ 
+	auto savedCB = _showChannelCB;
+	auto savedChannel = _currentChannel;
+	
+	if(action == KNOB_CLICK ||  action == KNOB_DOUBLE_CLICK){
+		
+		popMode();
+		_showChannelCB = NULL;
+		_currentChannel = {RadioMgr::MODE_UNKNOWN, 0};
+		wasHandled = true;
+		
+		if(savedCB) {
+			savedCB(wasHandled, savedChannel, action);
+		}
+	}
+	
+	return wasHandled;
+}
+
+
+void DisplayMgr::drawChannelInfo(modeTransition_t transition){
+	
+	PiCarMgr*		mgr 	= PiCarMgr::shared();
+ 
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+ 
+	if(transition == TRANS_LEAVING) {
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
+		_vfd.clearScreen();
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING){
+		_rightKnob.setAntiBounce(antiBounceSlow);
+	 	_vfd.clearScreen();
+ 	}
+	
+ 
+	drawTimeBox();
+}
 
 
 void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,

@@ -217,8 +217,8 @@ private:
 	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
 	bool processSelectorKnobActionForEditString( knob_action_t action);
 	bool processSelectorKnobActionForScannerChannels( knob_action_t action);
-	
-	
+	bool processSelectorKnobActionForChannelInfo( knob_action_t action);
+ 
 	void drawRadioScreen(modeTransition_t transition);
 	void drawScannerScreen(modeTransition_t transition);
  
@@ -252,8 +252,8 @@ private:
 
 	//chanel management stuff
 	void drawScannerChannels(modeTransition_t transition);
-
-	
+	void drawChannelInfo(modeTransition_t transition);
+ 
 	showWaypointsCallBack_t _wayPointCB;
 	showScannerChannelsCallBack_t _scannnerChannelsCB;
 	knobCallBack_t _knobCB;

@@ -3582,7 +3582,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			}
 			
 			if(!success)
-				setEvent(EVT_POP, MODE_UNKNOWN);
+				setEvent(EVT_REDRAW, _current_mode);
 
 			wasHandled = true;
 		}
@@ -3936,7 +3936,7 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			}
 	
 			if(!success)
-				setEvent(EVT_POP, MODE_UNKNOWN);
+				setEvent(EVT_REDRAW, _current_mode);
 			
 			wasHandled = true;
 

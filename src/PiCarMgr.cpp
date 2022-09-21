@@ -2266,15 +2266,22 @@ void PiCarMgr::tunerDoubleClicked(){
 			constexpr time_t timeout_secs = 10;
 			
 			vector<string> menu_items = {
-				(_tuner_mode ==  TUNE_ALL ?	"[All channels]": "All channels"),
-				(_tuner_mode ==  TUNE_KNOWN ?"[Known stations]": "Known stations"),
-				_preset_stations.size() == 0?"No Presets"
-				: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
+				(_tuner_mode ==  TUNE_ALL 		?	"[All channels]": "All channels"),
+				(_tuner_mode ==  TUNE_KNOWN 	?"[Known stations]": "Known stations"),
+				_preset_stations.size() == 0?	"No Presets"
+														: ((_tuner_mode ==  TUNE_PRESETS ?"[Presets]": "Presets")),
 				"-",
 				isPresetChannel(mode, freq)?"Remove Preset":"Add Preset",
 				"-",
 				"Clear all presets"
 			};
+			
+			if(mode == RadioMgr::VHF || mode == RadioMgr::GMRS){
+				menu_items.push_back("-");
+	 			menu_items.push_back( isScannerChannel(mode, freq)?"Remove Scanner":"Add Scanner");
+			};
+			
+			
 			
 			_display.showMenuScreen(menu_items,
 											_tuner_mode,		// select the mode we are in - so triple click has no effect
@@ -2326,11 +2333,27 @@ void PiCarMgr::tunerDoubleClicked(){
 							break;
 							
 						case 6: // clear all presets
-							// this needs to also take you off of presets mode
+							_tuner_mode = TUNE_KNOWN;
+							_preset_stations.clear();
+							saveRadioSettings();
+ 							break;
+							
+						case 8: // set/clear from scanner
+						{
+							if(isScannerChannel(mode, freq)){
+								
+								if(clearScannerChannel(mode, freq))
+									saveRadioSettings();
+							}
+							else
+							{
+								if(setScannerChannel(mode, freq))
+									saveRadioSettings();
+							}
+						}
 						default:
 							break;
 					}
-					
 				}
 				
 				_display.showRadioChange();

@@ -1261,14 +1261,12 @@ DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
 	if(radio->isOn()){
-		newState = MODE_RADIO;
+		newState = radio->isScannerMode()?MODE_SCANNER:MODE_RADIO;
 	}else {
 		newState = MODE_TIME;
 	}
-	
-	
+
 	return newState;
-	
 }
 
 

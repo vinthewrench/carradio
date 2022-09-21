@@ -2277,7 +2277,7 @@ void PiCarMgr::scannerChannelMenu(RadioMgr::channel_t selectedChannel ){
 	};
 	
 	_display.showMenuScreen(menu_items,
-									1,
+									2,
 									"Scanner List",
 									timeout_secs,
 									[=](bool didSucceed,

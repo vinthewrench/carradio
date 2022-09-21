@@ -23,6 +23,7 @@
 #include "CommonDefs.hpp"
 #include "DuppaLEDRing.hpp"
 #include "DuppaKnob.hpp"
+#include "RadioMgr.hpp"
 #include "GPSmgr.hpp"
 
 using namespace std;
@@ -73,7 +74,7 @@ public:
 		MODE_MENU,
 		MODE_MESSAGE,
 		MODE_EDIT_STRING,
-
+		MODE_SCANNER_CHANNELS
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -124,6 +125,14 @@ public:
 	void showWaypoint(string uuid,  showWaypointsCallBack_t cb = nullptr) ;
 
 	
+	typedef std::function<void(bool didSucceed,
+										RadioMgr::channel_t channel,
+										knob_action_t action)> showScannerChannelsCallBack_t;
+
+	void showScannerChannels( RadioMgr::channel_t initialChannel = {RadioMgr::MODE_UNKNOWN, 0},
+							 		time_t timeout = 0,
+									 showScannerChannelsCallBack_t cb = nullptr);
+ 
 	typedef std::function<void(bool didSucceed,
 										string strOut)> editStringCallBack_t;
 
@@ -202,7 +211,9 @@ private:
 	bool processSelectorKnobActionForGPSWaypoints( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoint( knob_action_t action);
 	bool processSelectorKnobActionForEditString( knob_action_t action);
- 
+	bool processSelectorKnobActionForScannerChannels( knob_action_t action);
+	
+	
 	void drawRadioScreen(modeTransition_t transition);
 	void drawScannerScreen(modeTransition_t transition);
  
@@ -234,8 +245,12 @@ private:
 	void drawGPSWaypointsScreen(modeTransition_t transition);
 	void drawGPSWaypointScreen(modeTransition_t transition);
 
+	//chanel management stuff
+	void drawScannerChannels(modeTransition_t transition);
+
 	
 	showWaypointsCallBack_t _wayPointCB;
+	showScannerChannelsCallBack_t _scannnerChannelsCB;
 	knobCallBack_t _knobCB;
 	voidCallback_t	_simpleCB;
 	

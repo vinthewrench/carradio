@@ -139,15 +139,6 @@ class PiCarMgr {
 									station_info_t &info);
 
 	
-	bool setScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
-	bool clearScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
-	bool isScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
-
-	bool nextScannerStation(RadioMgr::radio_mode_t band,
-									uint32_t frequency,
-									bool up,
-									station_info_t &info);
-
 	
 	
 	bool  hasWifi(stringvector *ifnames = NULL);
@@ -158,6 +149,19 @@ class PiCarMgr {
  
 	bool setRelay1(bool state);
 	
+	// MARK: - scanner Channels
+	
+	bool setScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool clearScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+	bool isScannerChannel(RadioMgr::radio_mode_t mode, uint32_t  freq);
+
+	bool nextScannerStation(RadioMgr::radio_mode_t band,
+									uint32_t frequency,
+									bool up,
+									station_info_t &info);
+
+	vector< RadioMgr::channel_t> getScannerChannels() { return _scanner_freqs;};
+ 
 	// MARK: - waypoints
 
 	typedef struct  {
@@ -221,6 +225,7 @@ private:
 	void sortWaypoints();
 	
 	void tunerDoubleClicked();
+	void scannerDoubleClicked();
 	
 	void doShutdown();
 	

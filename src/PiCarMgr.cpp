@@ -2246,6 +2246,31 @@ void PiCarMgr::displayShutdownMenu(){
 	
 }
 
+void PiCarMgr::scannerDoubleClicked(){
+	
+	constexpr time_t timeout_secs = 10;
+	
+	if(_radio.isScannerMode()){
+		_radio.pauseScan(true);
+		
+		RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+		uint32_t 					freq =  _radio.frequency();
+		
+		_display.showScannerChannels({mode,freq},
+											  timeout_secs,
+											  [=](bool didSucceed,
+													RadioMgr::channel_t channel,
+													DisplayMgr::knob_action_t action ){
+			
+			if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+
+			}
+			_radio.pauseScan(false);
+	 		});
+	}
+}
+
+
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();
 	
@@ -2253,9 +2278,7 @@ void PiCarMgr::tunerDoubleClicked(){
 		
 		if(_radio.isScannerMode()){
 			// display scanner menu
-			
-			printf("double click with scanner\n");
-	
+			scannerDoubleClicked();
 		}
 		else if(dMode == DisplayMgr::MODE_RADIO ){
 			// display set/preset menu

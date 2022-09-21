@@ -711,6 +711,10 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 			wasHandled = processSelectorKnobActionForEditString(action);
 			break;
 		
+		case MODE_SCANNER_CHANNELS:
+			wasHandled = processSelectorKnobActionForScannerChannels(action);
+			break;
+ 
 		default:
 			break;
 	}
@@ -1056,7 +1060,21 @@ void DisplayMgr::DisplayUpdate(){
 						shouldUpdate = true;
 					}
 				}
-				
+				else if(_current_mode == MODE_SCANNER_CHANNELS) {
+					// check for {EVT_NONE,MODE_SCANNER_CHANNELS}  which is a scroll change
+					if(item.mode == MODE_SCANNER_CHANNELS) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					// check for  timeout delay
+					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+						// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+				}
 				else if(_current_mode == MODE_MESSAGE) {
 					if(item.mode == MODE_MESSAGE) {
 						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
@@ -1359,13 +1377,18 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_GPS_WAYPOINTS:
 				drawGPSWaypointsScreen(transition);
 				break;
+				
+			case MODE_GPS_WAYPOINT:
+				drawGPSWaypointScreen(transition);
+				break;
+				
 
 			case MODE_MESSAGE:
 				drawMessageScreen(transition);
 				break;
 
-			case MODE_GPS_WAYPOINT:
-				drawGPSWaypointScreen(transition);
+			case MODE_SCANNER_CHANNELS:
+				drawScannerChannels(transition);
 				break;
 				
 			case MODE_DTC:
@@ -3606,7 +3629,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		needsRedraw = true;
 	}
 	
-	// chack for change in gps offsets ?
+	// check for change in gps offsets ?
 	// if anything changed, needsRedraw = true
 	
 	if( lastOffset != _lineOffset){
@@ -3817,6 +3840,195 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	
 	drawTimeBox();
 }
+
+
+// MARK: -  Scanner Channels
+
+void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
+											 time_t timeout ,
+												 showScannerChannelsCallBack_t cb){
+	_lineOffset = 0;
+	
+	// set _lineOffset to proper entry
+	if (initialChannel.first  != RadioMgr::MODE_UNKNOWN){
+		PiCarMgr*		mgr 	= PiCarMgr::shared();
+		auto channels 	= mgr->getScannerChannels();
+		
+		for( int i = 0; i < channels.size(); i++){
+			if(channels[i].first == initialChannel.first
+				&& channels[i].second == initialChannel.second){
+				_lineOffset = i;
+				break;
+			}
+		}
+	}
+	
+	_scannnerChannelsCB = cb;
+	_menuTimeout = timeout;
+	setEvent(EVT_PUSH, MODE_SCANNER_CHANNELS);
+}
+
+ 
+bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t action){
+	bool wasHandled = false;
+	
+	switch(action){
+			
+		case KNOB_EXIT:
+			if(_scannnerChannelsCB) {
+				_scannnerChannelsCB(false, {RadioMgr::MODE_UNKNOWN, 0}, action);
+			}
+			setEvent(EVT_POP, MODE_UNKNOWN);
+			_wayPointCB = NULL;
+			_lineOffset = 0;
+			break;
+			
+		case KNOB_UP:
+			if(_lineOffset < 255){
+				_lineOffset++;
+				setEvent(EVT_NONE,MODE_SCANNER_CHANNELS);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_DOWN:
+			if(_lineOffset != 0) {
+				_lineOffset--;
+				setEvent(EVT_NONE,MODE_SCANNER_CHANNELS);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_CLICK:
+		{
+			PiCarMgr*	mgr 	= PiCarMgr::shared();
+ 			auto channels = mgr->getScannerChannels();
+			RadioMgr::channel_t channel = {RadioMgr::MODE_UNKNOWN, 0};
+			
+			auto savedCB = _scannnerChannelsCB;
+		 
+			if(_lineOffset < channels.size()) {
+ 				channel = channels[_lineOffset];
+				wasHandled = true;
+			};
+			
+			popMode();
+			_wayPointCB = NULL;
+			_lineOffset = 0;
+			
+			if(savedCB) {
+				savedCB(wasHandled, channel, action);
+			}
+			
+		}
+			break;
+			
+		case KNOB_DOUBLE_CLICK:
+			
+			break;
+	}
+	
+	return wasHandled;
+}
+
+
+void DisplayMgr::drawScannerChannels(modeTransition_t transition){
+	
+	PiCarMgr*		mgr 	= PiCarMgr::shared();
+ 
+	constexpr int displayedLines = 5;
+ 
+	static int lastOffset = 0;
+	static int firstLine = 0;
+	
+	bool needsRedraw = false;
+	
+	if(transition == TRANS_LEAVING) {
+		
+		_rightKnob.setAntiBounce(antiBounceDefault);
+ 		_vfd.clearScreen();
+		lastOffset = 0;
+		firstLine = 0;
+		return;
+	}
+
+	auto channels = mgr->getScannerChannels();
+	
+	if(transition == TRANS_ENTERING){
+		_rightKnob.setAntiBounce(antiBounceSlow);
+//		setKnobColor(KNOB_RIGHT, RGB::Yellow);
+
+		_vfd.clearScreen();
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setCursor(0,10);
+		_vfd.write("Scanner");
+		
+		// safety check
+		if(_lineOffset >=  channels.size())
+			_lineOffset = 0;
+		
+		lastOffset = INT_MAX;
+		firstLine = 0;
+		needsRedraw = true;
+
+	}
+	
+	// check for change in gps offsets ?
+	// if anything changed, needsRedraw = true
+	
+	if( lastOffset != _lineOffset){
+		lastOffset = _lineOffset;
+		needsRedraw = true;
+	}
+	
+	if(needsRedraw){
+		needsRedraw = false;
+		
+		vector<string> lines = {};
+		size_t totalLines = channels.size() + 1;  // add kEXIT and kNEW_WAYPOINT
+		
+		if(_lineOffset > totalLines -1)
+			_lineOffset = totalLines -1;
+		
+		// framer code
+		if( (_lineOffset - displayedLines + 1) > firstLine) {
+			firstLine = _lineOffset - displayedLines + 1;
+		}
+		else if(_lineOffset < firstLine) {
+			firstLine = max(firstLine - 1,  0);
+		}
+		
+		// create lines
+		for(auto i = 0 ; i < totalLines; i++){
+			
+			string line = "";
+			bool isSelected = i == _lineOffset;
+			
+			if(i < channels.size()) {
+				RadioMgr::radio_mode_t  mode = channels[i].first;
+				uint32_t freq = channels[i].second;
+				
+				string channelStr = RadioMgr::modeString(mode) + " "
+				+ RadioMgr::hertz_to_string(freq, 3) + " "
+				+ RadioMgr::freqSuffixString(freq);
+ 
+				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  channelStr;
+			}
+			else {
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT" ;
+			}
+			
+			lines.push_back(line);
+		}
+		
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.printLines(20, 9, lines, firstLine, displayedLines);
+	}
+	
+	drawTimeBox();
+}
+
 
 // MARK: -  Display value formatting
 

@@ -3950,10 +3950,20 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
 		_vfd.printPacket("%-20s",channelStr.c_str() );
- 
- 	}
+  
+		_vfd.setCursor(0, 60);
+		
+		bool isPreset = mgr->isPresetChannel(mode, freq);
+		bool isScanner = mgr->isScannerChannel(mode, freq);
+		
+		_vfd.printPacket("           ");
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("%s %s", isPreset?"PRESET":"", isScanner?"SCANNER":"");
+  	}
  
 	drawTimeBox();
+	
+	
 }
 
 

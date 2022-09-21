@@ -3972,6 +3972,12 @@ void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
 												 showScannerChannelsCallBack_t cb){
 	_lineOffset = 0;
 	
+	
+	string modStr = RadioMgr::modeString(initialChannel.first);
+	string freqStr = 	RadioMgr::hertz_to_string(initialChannel.second, 3);
+	printf("showScannerChannels(%s %s)\n", modStr.c_str(), freqStr.c_str());
+
+	
 	// set _lineOffset to proper entry
 	if (initialChannel.first  != RadioMgr::MODE_UNKNOWN){
 		PiCarMgr*		mgr 	= PiCarMgr::shared();

@@ -3560,7 +3560,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
 			auto wps 	= mgr->getWaypoints();
 			bool success = false;
-	
+			
 			auto savedCB = _wayPointCB;
 			string uuid = "";
 			
@@ -3576,6 +3576,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			if(savedCB) {
 				savedCB(success, uuid, action);
 			}
+			
 			wasHandled = true;
 		}
 			break;
@@ -3876,8 +3877,7 @@ void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
 bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t action){
 	bool wasHandled = false;
 	
-	printf("processSelectorKnobActionForScannerChannels %d\n", action);
-	
+ 
 	switch(action){
 			
 		case KNOB_EXIT:
@@ -3909,8 +3909,9 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 		{
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
  			auto channels = mgr->getScannerChannels();
-			RadioMgr::channel_t channel = {RadioMgr::MODE_UNKNOWN, 0};
 			bool success = false;
+		
+			RadioMgr::channel_t channel = {RadioMgr::MODE_UNKNOWN, 0};
 			
 			auto savedCB = _scannnerChannelsCB;
 		 
@@ -3926,9 +3927,8 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			if(savedCB) {
 				savedCB(success, channel, action);
 			}
-			
-				wasHandled = true;
-			}
+			wasHandled = true;
+		}
 			break;
 			
 		case KNOB_DOUBLE_CLICK:

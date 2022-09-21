@@ -2323,8 +2323,7 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 												DisplayMgr::knob_action_t action ){
 		
 		if(action == DisplayMgr::KNOB_CLICK) {
-			
-			
+	 
 			_display.showChannel(selectedChannel, [=](bool didSucceed,
 																	RadioMgr::channel_t channel,
 																	DisplayMgr::knob_action_t action ){
@@ -2342,7 +2341,12 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 			});
 			
 			return;
-		};
+		}
+		else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
+			scannerChannelMenu(selectedChannel);
+			return;
+ 		}
+		
 		_radio.pauseScan(false);
 		
 	});

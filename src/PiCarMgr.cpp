@@ -2264,6 +2264,51 @@ void PiCarMgr::scannerDoubleClicked(){
 		 
 }
  
+void PiCarMgr::scannerChannelMenu(RadioMgr::channel_t selectedChannel ){
+	
+	RadioMgr::radio_mode_t  mode  = selectedChannel.first;
+	uint32_t 					freq =  selectedChannel.second;
+	constexpr time_t timeout_secs = 10;
+
+	vector<string> menu_items = {
+		isScannerChannel(mode, freq)?"Remove":"Add",
+		"-",
+		"Exit"
+	};
+	
+	_display.showMenuScreen(menu_items,
+									1,
+									"Scanner List",
+									timeout_secs,
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+			switch (newSelectedItem) {
+				case 0:
+					// remove/ add
+				{
+					if(isScannerChannel(mode, freq)){
+						
+						if(clearScannerChannel(mode, freq))
+							saveRadioSettings();
+					}
+					else
+					{
+						if(setScannerChannel(mode, freq))
+							saveRadioSettings();
+					}
+				}
+				default:
+					break;
+ 			};
+		};
+		
+		displayScannerChannels(selectedChannel);
+	});
+	
+}
 
 
 void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
@@ -2286,17 +2331,14 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 				
 				if(action == DisplayMgr::KNOB_CLICK) {
 					displayScannerChannels(channel);
-					return;
-				}
- 
-//				else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
-//
-//				}
+ 				}
+ 				else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+					scannerChannelMenu(channel);
+ 				}
  				else
 				{
 					_radio.pauseScan(false);
 				}
-				
 			});
 			
 			return;
@@ -2339,8 +2381,6 @@ void PiCarMgr::tunerDoubleClicked(){
 				menu_items.push_back("-");
 	 			menu_items.push_back( isScannerChannel(mode, freq)?"Remove Scanner":"Add Scanner");
 			};
-			
-			
 			
 			_display.showMenuScreen(menu_items,
 											_tuner_mode,		// select the mode we are in - so triple click has no effect

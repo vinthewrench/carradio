@@ -3581,6 +3581,9 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 				savedCB(success, uuid, action);
 			}
 			
+			if(!success)
+				setEvent(EVT_POP, MODE_UNKNOWN);
+
 			wasHandled = true;
 		}
 			break;
@@ -3923,7 +3926,7 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
  				channel = channels[_lineOffset];
 				success = true;
 			};
-			
+		
 			popMode();
 			_wayPointCB = NULL;
 			_lineOffset = 0;
@@ -3931,6 +3934,10 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			if(savedCB) {
 				savedCB(success, channel, action);
 			}
+	
+			if(!success)
+				setEvent(EVT_POP, MODE_UNKNOWN);
+			
 			wasHandled = true;
 
 		}

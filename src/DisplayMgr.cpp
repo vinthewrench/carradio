@@ -3923,7 +3923,11 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 	 	_vfd.clearScreen();
-		
+ 
+		_vfd.setCursor(0,7);
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printPacket("CHANNEL INFO");
+	 
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		constexpr int maxLen = 20;

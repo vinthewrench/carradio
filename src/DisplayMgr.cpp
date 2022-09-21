@@ -3856,6 +3856,22 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 
 // MARK: -  Scanner Channels
 
+
+void DisplayMgr::showChannel( RadioMgr::channel_t channel,
+									  showChannelCallBack_t cb) {
+
+	if(channel.first != RadioMgr::MODE_UNKNOWN){
+		
+		(cb) (true, channel, KNOB_CLICK);
+		
+//		_currentChannel = channel;
+//		_showChannelCB = cb;
+// 		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);
+	}
+}
+
+
+
 void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
 											 time_t timeout ,
 												 showScannerChannelsCallBack_t cb){
@@ -4053,6 +4069,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 	
 	drawTimeBox();
 }
+
 
 
 // MARK: -  Display value formatting

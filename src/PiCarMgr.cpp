@@ -2259,19 +2259,27 @@ void PiCarMgr::scannerDoubleClicked(){
 		_display.showScannerChannels({mode,freq},
 											  timeout_secs,
 											  [=](bool didSucceed,
-													RadioMgr::channel_t channel,
+													RadioMgr::channel_t selectedChannel,
 													DisplayMgr::knob_action_t action ){
 			
-			if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
-
-			}
-			_radio.pauseScan(false);
+			if(action == DisplayMgr::KNOB_CLICK) {
+				
+				_display.showChannel(selectedChannel, [=](bool didSucceed,
+																		RadioMgr::channel_t channel,
+																		DisplayMgr::knob_action_t action ){
+					
+					_radio.pauseScan(false);
+					
+				});
+				
+				return;
+			};
 			
-			_display.showScannerChange(true);
-	 		});
+			_radio.pauseScan(false);
+		});
 	}
 }
-
+ 
 
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();

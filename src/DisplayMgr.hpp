@@ -74,7 +74,8 @@ public:
 		MODE_MENU,
 		MODE_MESSAGE,
 		MODE_EDIT_STRING,
-		MODE_SCANNER_CHANNELS
+		MODE_SCANNER_CHANNELS,
+		MODE_CHANNEL_INFO
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -133,6 +134,13 @@ public:
 							 		time_t timeout = 0,
 									 showScannerChannelsCallBack_t cb = nullptr);
  
+	typedef std::function<void(bool didSucceed,
+										RadioMgr::channel_t channel,
+										knob_action_t action)> showChannelCallBack_t;
+
+	void showChannel( RadioMgr::channel_t channel,
+						  showChannelCallBack_t cb = nullptr);
+  
 	typedef std::function<void(bool didSucceed,
 										string strOut)> editStringCallBack_t;
 
@@ -202,10 +210,7 @@ private:
 	 
 	void drawSquelchScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForSquelch( knob_action_t action);
-
-	
 	bool processSelectorKnobActionForDimmer( knob_action_t action);
-
 	bool processSelectorKnobActionForDTC( knob_action_t action);
 	bool processSelectorKnobActionForGPS( knob_action_t action);
 	bool processSelectorKnobActionForGPSWaypoints( knob_action_t action);
@@ -258,6 +263,9 @@ private:
 	string				 	_editString;
 	bool 						_isEditing;
 	int 						_editChoice;
+	
+	showChannelCallBack_t	_showChannelCB;
+	RadioMgr::channel_t		_currentChannel;
 	
 // display value formatting
  	bool normalizeCANvalue(string key, string & value);

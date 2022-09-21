@@ -1670,6 +1670,8 @@ int PiCarMgr::main_menu_map_offset(PiCarMgr::menu_mode_t mode ){
 
 void PiCarMgr::displayMenu(){
 	
+	printf("displayMenu\n");
+	
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {};

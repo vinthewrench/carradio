@@ -2248,7 +2248,7 @@ void PiCarMgr::displayShutdownMenu(){
 
 void PiCarMgr::scannerDoubleClicked(){
 	
-	constexpr time_t timeout_secs = 10;
+	constexpr time_t timeout_secs = 20;
 	
 	if(_radio.isScannerMode()){
 		_radio.pauseScan(true);

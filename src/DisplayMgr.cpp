@@ -2540,15 +2540,17 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		constexpr int maxLen = 20;
 		string spaces(maxLen, ' ');
 		
+		string titleStr = "";
 		PiCarMgr::station_info_t info;
 		if(mgr->getStationInfo(mode, freq, info)){
-			string titleStr = truncate(info.title, maxLen);
+			titleStr = truncate(info.title, maxLen);
  			string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 			titleStr = portionOfSpaces + titleStr;
-			_vfd.setCursor(0,centerY-5);
-			_vfd.printPacket("%-20s",titleStr.c_str() );
 			}
-		
+	
+		_vfd.setCursor(0,centerY-5);
+		_vfd.printPacket("%-20s",titleStr.c_str() );
+
 		string channelStr = RadioMgr::modeString(mode) + " "
 		+ RadioMgr::hertz_to_string(freq, 3) + " "
 		+ RadioMgr::freqSuffixString(freq);

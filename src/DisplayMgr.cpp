@@ -3559,13 +3559,14 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		{
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
 			auto wps 	= mgr->getWaypoints();
-			
+			bool success = false;
+	
 			auto savedCB = _wayPointCB;
 			string uuid = "";
 			
 			if(_lineOffset < wps.size()) {
 				uuid = wps[_lineOffset].uuid;
-				wasHandled = true;
+				success = true;
 			};
 			
 			popMode();
@@ -3573,9 +3574,9 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			_lineOffset = 0;
 			
 			if(savedCB) {
-				savedCB(wasHandled, uuid, action);
+				savedCB(success, uuid, action);
 			}
-			
+			wasHandled = true;
 		}
 			break;
 			
@@ -3909,12 +3910,13 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
  			auto channels = mgr->getScannerChannels();
 			RadioMgr::channel_t channel = {RadioMgr::MODE_UNKNOWN, 0};
+			bool success = false;
 			
 			auto savedCB = _scannnerChannelsCB;
 		 
 			if(_lineOffset < channels.size()) {
  				channel = channels[_lineOffset];
-				wasHandled = true;
+				success = true;
 			};
 			
 			popMode();
@@ -3922,12 +3924,11 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			_lineOffset = 0;
 			
 			if(savedCB) {
-				savedCB(wasHandled, channel, action);
+				savedCB(success, channel, action);
 			}
 			
-			return true;
-			
-		}
+				wasHandled = true;
+			}
 			break;
 			
 		case KNOB_DOUBLE_CLICK:

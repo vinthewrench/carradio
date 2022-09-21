@@ -4009,9 +4009,14 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 				RadioMgr::radio_mode_t  mode = channels[i].first;
 				uint32_t freq = channels[i].second;
 				
-				string channelStr = RadioMgr::modeString(mode) + " "
-				+ RadioMgr::hertz_to_string(freq, 3) + " "
-				+ RadioMgr::freqSuffixString(freq);
+				string channelStr = RadioMgr::hertz_to_string(freq, 3);
+				
+				PiCarMgr::station_info_t info;
+				if(mgr->getStationInfo(mode, freq, info)){
+					string title = truncate(info.title,  20);
+					channelStr += + " " + title;
+				}
+ 
  
 				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  channelStr;

@@ -41,7 +41,7 @@ using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 12";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 13";
 
 
 const char* path_display  = "/dev/ttyUSB0";
@@ -1634,11 +1634,7 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 		case DisplayMgr::MODE_INFO:
 			mode = MENU_INFO;
 			break;
-			
-		case DisplayMgr::MODE_SETTINGS:
-			mode = MENU_SETTINGS;
-			break;
-			
+				
 		case DisplayMgr::MODE_CANBUS:
 			mode = MENU_CANBUS;
 			break;

@@ -2119,11 +2119,7 @@ void PiCarMgr::displaySettingsMenu(){
 					case 4:
 						displayShutdownMenu();
 						break;
-						
-						//				case 1:
-						// //					_display.showSettings(1);
-						//					break;
-						
+		 
 					default:
 						
 						if(_lastMenuMode != MENU_UNKNOWN){

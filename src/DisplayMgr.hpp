@@ -66,7 +66,6 @@ public:
 		MODE_GPS,
 		MODE_GPS_WAYPOINTS,
 		MODE_GPS_WAYPOINT,
-		MODE_SETTINGS,
 		MODE_DTC,
 		MODE_DTC_INFO,
 		MODE_INFO,
@@ -161,8 +160,7 @@ public:
 	void showScannerChange(bool force = true);
 
 	void showCANbus(uint8_t page = 0);
-	void showSettings();
-
+	 
 	void showDevStatus();
 
  	// Menu Screen Management

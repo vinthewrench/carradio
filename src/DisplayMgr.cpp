@@ -49,6 +49,11 @@ static constexpr uint8_t VFD_SET_AREA = 0x11;
 static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
+static  const string moreUp = "\x1b\x98\x04\xfb\x1d";
+static  const string moreDown = "\x1b\x98\x04\xf9\x1d";
+static  const string moreNext = "\x1b\x98\x04\xfa\x1d";
+static  const string morePrev = "\x1b\x98\x04\xfc\x1d";
+
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -467,11 +472,7 @@ void DisplayMgr::showTime(){
 void DisplayMgr::showInfo(){
 	setEvent(EVT_PUSH, MODE_INFO);
 }
-
-void DisplayMgr::showSettings(){
-	setEvent(EVT_PUSH, MODE_SETTINGS);
-}
-
+ 
 void DisplayMgr::showDevStatus(){
 	setEvent(EVT_PUSH, MODE_DEV_STATUS );
 }
@@ -884,8 +885,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			_menuCursor = max(_menuCursor - 1,  0);
 		}
 		
-		const string moreUp = "\x1b\x98\x04\xfb\x1d";
-		const string moreDown = "\x1b\x98\x04\xf9\x1d";
 		const string moreNone = " ";
 
 		uint8_t cursorV = startV;
@@ -915,7 +914,6 @@ bool DisplayMgr::isStickyMode(mode_state_t md){
 		case MODE_TIME:
 		case MODE_RADIO:
 		case MODE_SCANNER:
-		case MODE_SETTINGS:
 		case MODE_GPS:
 		case MODE_GPS_WAYPOINT:
 		case MODE_INFO:
@@ -1375,10 +1373,6 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				drawScannerScreen(transition);
 				break;
  
-			case MODE_SETTINGS:
-				drawSettingsScreen(transition);
-				break;
-				
 			case MODE_MENU:
 				drawMenuScreen(transition);
 				break;
@@ -1965,32 +1959,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 
 
 
-void DisplayMgr::drawSettingsScreen(modeTransition_t transition){
-	//printf("drawSettingsScreen %d\n",transition);
-	
-	
-	if(transition == TRANS_ENTERING) {
-		_rightKnob.setAntiBounce(antiBounceSlow);
-		setKnobColor(KNOB_RIGHT, RGB::Orange);
-		_vfd.clearScreen();
-	}
-	
-	if(transition == TRANS_LEAVING) {
-		_rightKnob.setAntiBounce(antiBounceDefault);
-		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
-		return;
-	}
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(0,10));
-	TRY(_vfd.write("Settings"));
-	
-	TRY(_vfd.setFont(VFD::FONT_5x7));
-	TRY(_vfd.setCursor(_vfd.width()-5,60));
-	TRY(_vfd.write(">"));
-}
-
-
 void DisplayMgr::drawInternalError(modeTransition_t transition){
 	
 	//	printf("displayInternalError  %d\n",transition);
@@ -2111,7 +2079,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	TRY(_vfd.setFont(VFD::FONT_5x7));
 	TRY(_vfd.setCursor(_vfd.width()-5,60));
-	TRY(_vfd.write(">"));
+	_vfd.write(moreNext) ;
 	
 }
 

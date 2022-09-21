@@ -3864,9 +3864,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 
 void DisplayMgr::showChannel( RadioMgr::channel_t channel,
 									  showChannelCallBack_t cb) {
-	printf("showChannel\n");
-
-	if(channel.first != RadioMgr::MODE_UNKNOWN){
+ 	if(channel.first != RadioMgr::MODE_UNKNOWN){
  		_currentChannel = channel;
 		_showChannelCB = cb;
  		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);

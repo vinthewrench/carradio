@@ -3875,6 +3875,8 @@ void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
 bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t action){
 	bool wasHandled = false;
 	
+	printf("processSelectorKnobActionForScannerChannels %d\n", action);
+	
 	switch(action){
 			
 		case KNOB_EXIT:

@@ -2495,8 +2495,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 
 // MARK: -  Scanner Screen
-void drawChannelInfo(modeTransition_t transition);
-
+ 
 void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();

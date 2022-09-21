@@ -948,8 +948,6 @@ void  DisplayMgr::popMode(){
  
 	auto newMode = _saved_mode==MODE_UNKNOWN ? handleRadioEvent():_saved_mode;
 	
-	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
- 
 	_current_mode = newMode;
 	_saved_mode = MODE_UNKNOWN;
 }
@@ -3905,9 +3903,11 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
  
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
+//	uint8_t width = _vfd.width();
+//	uint8_t height = _vfd.height();
  
+	int centerY = _vfd.height() /2;
+
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		//		setKnobColor(KNOB_RIGHT, RGB::Lime);
@@ -3915,11 +3915,41 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 		return;
 	}
 	
+	
+	RadioMgr::radio_mode_t  mode = _currentChannel.first;
+	uint32_t						freq = _currentChannel.second;
+	
+ 
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
 	 	_vfd.clearScreen();
+		
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		constexpr int maxLen = 20;
+		string spaces(maxLen, ' ');
+		
+		string titleStr = "";
+		PiCarMgr::station_info_t info;
+		if(mgr->getStationInfo(mode, freq, info)){
+			titleStr = truncate(info.title, maxLen);
+			string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+			titleStr = portionOfSpaces + titleStr;
+			}
+
+		_vfd.setCursor(0,centerY-5);
+		_vfd.printPacket("%-20s",titleStr.c_str() );
+
+		string channelStr = RadioMgr::modeString(mode) + " "
+		+ RadioMgr::hertz_to_string(freq, 3) + " "
+		+ RadioMgr::freqSuffixString(freq);
+
+		string portionOfSpaces = spaces.substr(0, (maxLen - channelStr.size()) / 2);
+		channelStr = portionOfSpaces + channelStr;
+		_vfd.setCursor(0,centerY+5);
+		_vfd.printPacket("%-20s",channelStr.c_str() );
+ 
  	}
-	
  
 	drawTimeBox();
 }

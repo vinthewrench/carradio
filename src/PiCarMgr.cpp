@@ -2253,9 +2253,10 @@ void PiCarMgr::scannerDoubleClicked(){
 	if(_radio.isScannerMode()){
 		_radio.pauseScan(true);
 		
-		RadioMgr::radio_mode_t  mode  = _radio.radioMode();
-		uint32_t 					freq =  _radio.frequency();
-		
+		RadioMgr::radio_mode_t  mode;
+		uint32_t						freq;
+		_radio.getCurrentScannerChannel(mode, freq);
+ 
 		_display.showScannerChannels({mode,freq},
 											  timeout_secs,
 											  [=](bool didSucceed,

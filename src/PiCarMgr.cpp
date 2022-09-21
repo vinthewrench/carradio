@@ -2264,6 +2264,7 @@ void PiCarMgr::scannerDoubleClicked(){
 			
 			if(action == DisplayMgr::KNOB_CLICK) {
 				
+				
 				_display.showChannel(selectedChannel, [=](bool didSucceed,
 																		RadioMgr::channel_t channel,
 																		DisplayMgr::knob_action_t action ){

@@ -4024,20 +4024,21 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			break;
 			
 		case KNOB_CLICK:
+		case KNOB_DOUBLE_CLICK:
 		{
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
- 			auto channels = mgr->getScannerChannels();
+			auto channels = mgr->getScannerChannels();
 			bool success = false;
-		
+			
 			RadioMgr::channel_t channel = {RadioMgr::MODE_UNKNOWN, 0};
 			
 			auto savedCB = _scannnerChannelsCB;
-		 
+			
 			if(_lineOffset < channels.size()) {
- 				channel = channels[_lineOffset];
+				channel = channels[_lineOffset];
 				success = true;
 			};
-		
+			
 			popMode();
 			_wayPointCB = NULL;
 			_lineOffset = 0;
@@ -4045,17 +4046,13 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			if(savedCB) {
 				savedCB(success, channel, action);
 			}
-	
+			
 			if(!success)
 				setEvent(EVT_REDRAW, _current_mode);
 			
 			wasHandled = true;
-
+			
 		}
-			break;
-			
-		case KNOB_DOUBLE_CLICK:
-			
 			break;
 	}
 	

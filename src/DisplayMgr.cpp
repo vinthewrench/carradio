@@ -3988,7 +3988,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		needsRedraw = false;
 		
 		vector<string> lines = {};
-		size_t totalLines = channels.size() + 1;  // add kEXIT  
+		size_t totalLines = channels.size() + 1;  // add kEXIT
 		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;

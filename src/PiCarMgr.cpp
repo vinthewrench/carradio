@@ -2266,6 +2266,8 @@ void PiCarMgr::scannerDoubleClicked(){
 
 			}
 			_radio.pauseScan(false);
+			
+			_display.showScannerChange(true);
 	 		});
 	}
 }

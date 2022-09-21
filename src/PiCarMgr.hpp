@@ -218,7 +218,10 @@ private:
 	void displayWaypoints(string intitialUUID = "");
 	void displayWaypoint(string uuid);
 
+	void displayScannerChannels(RadioMgr::channel_t selectedChannel
+										 	= {RadioMgr::MODE_UNKNOWN, 0 });
 	
+ 
 	bool deleteWaypoint(string uuid);
 	bool updateWaypoint(string uuid);
 	bool createWaypoint(string name, waypoint_prop_t &wp );

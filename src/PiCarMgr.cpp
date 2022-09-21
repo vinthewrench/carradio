@@ -2251,38 +2251,62 @@ void PiCarMgr::scannerDoubleClicked(){
 	constexpr time_t timeout_secs = 20;
 	
 	if(_radio.isScannerMode()){
+		
 		_radio.pauseScan(true);
 		
 		RadioMgr::radio_mode_t  mode;
 		uint32_t						freq;
 		_radio.getCurrentScannerChannel(mode, freq);
  
-		_display.showScannerChannels({mode,freq},
-											  timeout_secs,
-											  [=](bool didSucceed,
-													RadioMgr::channel_t selectedChannel,
-													DisplayMgr::knob_action_t action ){
-			
-			if(action == DisplayMgr::KNOB_CLICK) {
-				
-				
-				_display.showChannel(selectedChannel, [=](bool didSucceed,
-																		RadioMgr::channel_t channel,
-																		DisplayMgr::knob_action_t action ){
-					
-					_radio.pauseScan(false);
-					
-				});
-				
-				return;
-			};
-			
-			_radio.pauseScan(false);
-		});
+		displayScannerChannels({mode,freq});
+		
 	}
+		 
 }
  
 
+
+void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
+	constexpr time_t timeout_secs = 20;
+	
+	_radio.pauseScan(true);
+	
+	_display.showScannerChannels(selectedChannel,
+										  timeout_secs,
+										  [=](bool didSucceed,
+												RadioMgr::channel_t selectedChannel,
+												DisplayMgr::knob_action_t action ){
+		
+		if(action == DisplayMgr::KNOB_CLICK) {
+			
+			
+			_display.showChannel(selectedChannel, [=](bool didSucceed,
+																	RadioMgr::channel_t channel,
+																	DisplayMgr::knob_action_t action ){
+				
+				if(action == DisplayMgr::KNOB_CLICK) {
+					displayScannerChannels(channel);
+					return;
+				}
+ 
+//				else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+//
+//				}
+ 				else
+				{
+					_radio.pauseScan(false);
+				}
+				
+			});
+			
+			return;
+		};
+		_radio.pauseScan(false);
+		
+	});
+	
+}
+ 
 void PiCarMgr::tunerDoubleClicked(){
 	DisplayMgr::mode_state_t dMode = _display.active_mode();
 	

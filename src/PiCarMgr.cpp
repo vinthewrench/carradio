@@ -185,9 +185,7 @@ bool PiCarMgr::begin(){
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
-//		_display.setKnobBackLight(false);
-		_display.setKnobBackLight(true);
-
+ 		_display.setKnobBackLight(false);
 		_display.setBrightness(_dimLevel);
 
 		// SETUP CANBUS

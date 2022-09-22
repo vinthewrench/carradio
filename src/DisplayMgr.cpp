@@ -2959,7 +2959,11 @@ bool DisplayMgr::processSelectorKnobActionForSquelch( knob_action_t action){
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
-		popMode();
+		
+		setEvent(EVT_POP, MODE_UNKNOWN);
+		wasHandled = true;
+
+//		popMode();
 	}
 	
 	return wasHandled;

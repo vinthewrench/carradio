@@ -403,9 +403,9 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 	printf("setKnobBackLight %d\n", isOn);
 	
 	switch (_current_mode) {
-		case MODE_TIME:
-		case MODE_RADIO:
 			
+		default:
+	 
 			if(_backlightKnobs){
 				setKnobColor(KNOB_RIGHT, RGB::Lime);
 				setKnobColor(KNOB_LEFT, RGB::Lime);
@@ -416,8 +416,7 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 			}
 			
 			
-		default: ;
-			
+ 
 	}
 	return true;
 }

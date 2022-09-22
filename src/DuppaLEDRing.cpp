@@ -114,7 +114,7 @@ bool DuppaLEDRing::reset(void) {
 		&&  _i2cPort.writeByte(RESET_REG,0xAE);
 		
 		if(success){
-			usleep(400);
+			usleep(1000);
 		}
 	}
 	return success;

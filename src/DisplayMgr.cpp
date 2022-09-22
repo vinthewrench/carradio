@@ -331,7 +331,7 @@ void DisplayMgr::runLEDEventVol(){
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
-		 		printf("\nVOL RUN\n");
+		 		printf("\nVOL RUN (%d)\n", ledvol);
 			
 		}
 		else {

@@ -1527,7 +1527,7 @@ void PiCarMgr::idle(){
 	string JK_DIMMER_SW = "JK_DIMMER_SW";
 	string DAYTIME = "DAYTIME";
 	
-	bool isDayTime = false;
+	static bool isDayTime = true;
 	
 	string rawValue;
 	if( fDB->valueWithKey(JK_DIMMER_SW, &rawValue)

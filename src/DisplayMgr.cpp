@@ -2892,7 +2892,6 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
-		
 			
 		//draw box outline
 		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
@@ -2961,7 +2960,6 @@ bool DisplayMgr::processSelectorKnobActionForSquelch( knob_action_t action){
 	}
 	else if(action == KNOB_CLICK){
 		popMode();
-		wasHandled = true;
 	}
 	
 	return wasHandled;

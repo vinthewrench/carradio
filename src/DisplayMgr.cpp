@@ -315,9 +315,7 @@ void DisplayMgr::runLEDEventVol(){
 	if( _ledEvent & LED_EVENT_VOL ){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
-		
-		 	 	printf("\nVOL STARTUP\n");
-	}
+ 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
 		struct timespec now, diff;
@@ -329,9 +327,7 @@ void DisplayMgr::runLEDEventVol(){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
 			int ledvol = volume*23;
-			
-			printf("\nVOL RUN (%d)\n", ledvol);
-
+ 
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
@@ -345,10 +341,7 @@ void DisplayMgr::runLEDEventVol(){
 				_leftRing.setColor( i, 0, 0, 0);
 				usleep(10 * 1000);
 			}
-			
-			 	printf("\nVOL RUN DONE\n");
-			
-		}
+ 		}
 	}
 	
 }
@@ -993,10 +986,8 @@ void DisplayMgr::DisplayUpdate(){
 		// if there are LED events, run the update every half second
 		// elese wait a whole second
 		if(_ledEvent){
-			ts.tv_sec += 1;
-			ts.tv_nsec += 0;
-	//			ts.tv_sec += 0;
-//			ts.tv_nsec += 10.0e8;		// half second
+			ts.tv_sec += 0;
+ 			ts.tv_nsec += 10.0e8;		// half second
 		}
 		else {
 			ts.tv_sec += 1;

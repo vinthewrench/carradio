@@ -324,7 +324,7 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespec_sub( &diff, &now, &startedEvent);
 		
-		if(diff.tv_sec <  1){
+		if(diff.tv_sec <  4){
 			
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24

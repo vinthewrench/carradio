@@ -115,6 +115,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightKnob.setDoubleClickTime(doubleClickTime);
 		_leftKnob.setDoubleClickTime(doubleClickTime);
 		
+		_leftRing.reset();
+		_rightRing.reset();
+	
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
 		_leftRing.setConfig(0x01);
@@ -321,7 +324,7 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespec_sub( &diff, &now, &startedEvent);
 		
-		if(diff.tv_sec <  4){
+		if(diff.tv_sec <  1){
 			
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24

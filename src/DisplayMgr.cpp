@@ -403,6 +403,9 @@ bool DisplayMgr::setBrightness(double level) {
 bool DisplayMgr::setKnobBackLight(bool isOn){
 	_backlightKnobs = isOn;
 	
+#warning __ REMOVE ME
+	isOn = true;
+	
 	switch (_current_mode) {
 		case MODE_TIME:
 		case MODE_RADIO:

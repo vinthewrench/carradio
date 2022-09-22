@@ -993,8 +993,10 @@ void DisplayMgr::DisplayUpdate(){
 		// if there are LED events, run the update every half second
 		// elese wait a whole second
 		if(_ledEvent){
-			ts.tv_sec += 0;
-			ts.tv_nsec += 10.0e8;		// half second
+			ts.tv_sec += 1;
+			ts.tv_nsec += 0;
+	//			ts.tv_sec += 0;
+//			ts.tv_nsec += 10.0e8;		// half second
 		}
 		else {
 			ts.tv_sec += 1;

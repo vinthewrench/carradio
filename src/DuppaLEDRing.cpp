@@ -280,6 +280,8 @@ bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t 
 	return true;
 #endif
 
+//	printf("setColor %d  (%3d,%3d,%3d)\n", led_n, red, green, blue);
+
 	led_n = ledFromOffset(led_n);
 
 	if(_i2cPort.isAvailable()
@@ -300,6 +302,8 @@ bool  DuppaLEDRing::setRED(uint8_t led_n, uint8_t color){
 
 	led_n = ledFromOffset(led_n);
 	
+//	printf("setRED %d  (%3d)\n", led_n, color);
+
 	if(_i2cPort.isAvailable()
 		&& selectBank(PAGE0)){
 		success =	_i2cPort.writeByte(issi_led_map[0][led_n], color);
@@ -313,6 +317,8 @@ bool  DuppaLEDRing::setGREEN(uint8_t led_n, uint8_t color){
 #if defined(__APPLE__)
 	return true;
 #endif
+
+//	printf("setGREEN %d  (%3d)\n", led_n, color);
 
 	led_n = ledFromOffset(led_n);
 
@@ -329,6 +335,8 @@ bool  DuppaLEDRing::setBLUE(uint8_t led_n, uint8_t color){
 #if defined(__APPLE__)
 	return true;
 #endif
+
+//	printf("setBLUE %d  (%3d)\n", led_n, color);
 
 	led_n = ledFromOffset(led_n);
 

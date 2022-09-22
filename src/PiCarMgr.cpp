@@ -1433,7 +1433,7 @@ void PiCarMgr::PiCarLoop(){
 				}
 				else {
 					
-					// special case ,, we are scanning and click tuner knob  
+					// special case ,, we are scanning and click tuner knob
 					// go right to squelch
 					if(_radio.isOn() &&	_radio.isScannerMode()){
 						_display.showSquelchChange();
@@ -1524,8 +1524,9 @@ void PiCarMgr::idle(){
 	string JK_DIMMER_SW = "JK_DIMMER_SW";
 	string DAYTIME = "DAYTIME";
 	
-	bool isDayTime = false;
-	
+//	bool isDayTime = false;
+	bool isDayTime = true;
+
 	string rawValue;
 	if( fDB->valueWithKey(JK_DIMMER_SW, &rawValue)
 		&& fDB->boolForKey(DAYTIME, isDayTime) ) {

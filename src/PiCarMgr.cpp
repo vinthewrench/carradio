@@ -727,7 +727,7 @@ bool PiCarMgr::nextPresetStation(RadioMgr::radio_mode_t band,
 	return false;
 }
 
-// MARK: - Presets
+// MARK: - Scanner
 
 nlohmann::json PiCarMgr::GetScannerChannelJSON(){
 	json j;
@@ -1431,7 +1431,15 @@ void PiCarMgr::PiCarLoop(){
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing
 				}
-				else{
+				else {
+					
+					// special case ,, we are scanning and click tuner knob  
+					// go right to squelch
+					if(_radio.isOn() &&	_radio.isScannerMode()){
+						_display.showSquelchChange();
+						continue;
+					}
+					
 					displayMenu();
 				}
 			}

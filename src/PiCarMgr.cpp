@@ -269,6 +269,7 @@ void PiCarMgr::stop(){
 	if(_isSetup  ){
 		_isSetup = false;
 		
+		_display.setKnobBackLight(false);
 		_gps.stop();
 		_can.stop();
 		_w1.stop();

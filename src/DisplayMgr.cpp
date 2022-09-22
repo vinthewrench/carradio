@@ -236,7 +236,7 @@ void DisplayMgr::runLEDEventStartup(){
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
 		if(ledStep < 24 * 4){
-			
+	
 #if 1
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};

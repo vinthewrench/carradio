@@ -279,7 +279,7 @@ bool  DuppaLEDRing::setColor(uint8_t led_n, uint8_t red, uint8_t green, uint8_t 
 #if defined(__APPLE__)
 	return true;
 #endif
-
+ 
 //	printf("setColor %d  (%3d,%3d,%3d)\n", led_n, red, green, blue);
 
 	led_n = ledFromOffset(led_n);

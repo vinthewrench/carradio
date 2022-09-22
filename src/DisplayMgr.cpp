@@ -950,8 +950,8 @@ void  DisplayMgr::popMode(){
  
 	auto newMode = _saved_mode==MODE_UNKNOWN ? handleRadioEvent():_saved_mode;
 	
-	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
- 
+//	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
+//
 	_current_mode = newMode;
 	_saved_mode = MODE_UNKNOWN;
 }
@@ -2475,6 +2475,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
  
+	printf("drawScannerScreen(%d)\n", transition);
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 
@@ -2883,6 +2884,8 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
+	printf("drawSquelchScreen(%d)\n", transition);
+
 	if(transition == TRANS_LEAVING) {
 		return;
 	}

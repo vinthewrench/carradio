@@ -950,7 +950,7 @@ void  DisplayMgr::popMode(){
  
 	auto newMode = _saved_mode==MODE_UNKNOWN ? handleRadioEvent():_saved_mode;
 	
-//	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
+ 	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
 //
 	_current_mode = newMode;
 	_saved_mode = MODE_UNKNOWN;

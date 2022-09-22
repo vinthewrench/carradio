@@ -315,7 +315,7 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
 		
-		//	 	printf("\nVOL STARTUP\n");
+		 	 	printf("\nVOL STARTUP\n");
 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
@@ -328,10 +328,12 @@ void DisplayMgr::runLEDEventVol(){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
 			int ledvol = volume*23;
+			
+			printf("\nVOL RUN (%d)\n", ledvol);
+
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
-		 		printf("\nVOL RUN (%d)\n", ledvol);
 			
 		}
 		else {
@@ -376,6 +378,8 @@ bool DisplayMgr::setBrightness(double level) {
 	if(_isSetup){
 		_dimLevel = level;
 		
+		printf("setBrightness %f\n", level);
+
 		// vfd 0 -7
 		uint8_t vfdLevel =  level * 7.0 ;
 		

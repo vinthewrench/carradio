@@ -247,7 +247,6 @@ void DisplayMgr::runLEDEventStartup(){
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
 			_rightRing.clearAll();
-			
 		}
 	}
 }
@@ -306,7 +305,7 @@ void DisplayMgr::runLEDEventVol(){
 	if( _ledEvent & LED_EVENT_VOL ){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
- 	}
+	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
 		struct timespec now, diff;
@@ -318,9 +317,9 @@ void DisplayMgr::runLEDEventVol(){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
 			int ledvol = volume*23;
- 
+			
 			for (int i = 0 ; i < 24; i++) {
-	//			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
 			
 		}
@@ -329,10 +328,10 @@ void DisplayMgr::runLEDEventVol(){
 			
 			// scan the LEDS off
 			for (int i = 0; i < 24; i++) {
-//				_leftRing.setColor( i, 0, 0, 0);
+				_leftRing.setColor( i, 0, 0, 0);
 				usleep(10 * 1000);
 			}
- 		}
+		}
 	}
 	
 }

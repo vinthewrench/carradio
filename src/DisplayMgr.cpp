@@ -391,7 +391,7 @@ void DisplayMgr::runLEDEventScanner(){
 		
 		printf("SCAN STOP:%08x\n", _ledEvent);
 
-		ledEventSet(LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_HOLD, 0);
+		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
 		_rightRing.clearAll();
 	}
  }

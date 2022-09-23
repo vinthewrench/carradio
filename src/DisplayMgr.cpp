@@ -238,8 +238,10 @@ void DisplayMgr::runLEDEventStartup(){
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
 		
-		if(ledStep < 24 * 4){
+		if(ledStep < 24 ){
 	
+			printf("\nLED RUN (%d)\n",ledStep);
+
 #if 0
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};
@@ -247,11 +249,10 @@ void DisplayMgr::runLEDEventStartup(){
 			_rightRing.setLEDs(data);
 			
 #else
-			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
-			ledStep++;
-			_leftRing.setColor(mod(ledStep, 24), 255, 255, 255);
+			
+			_leftRing.setGREEN(mod(ledStep, 24), 0xff);
 			usleep(20 * 1000);
-#endif
+	#endif
 			
 		}
 		else {

@@ -367,9 +367,10 @@ void DisplayMgr::runLEDEventScanner(){
 		}
 		
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
-		data[mod(++ledStep, 24)] = {255,0,0};
+		data[ledStep] = {255,0,0};
  		_rightRing.setLEDs(data);
-		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
+		ledStep = mod(ledStep+1, 24);
+ 		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
 	}
 	
 	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
@@ -377,7 +378,7 @@ void DisplayMgr::runLEDEventScanner(){
 		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
 
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
-		data[mod(ledStep, 24)] = {0,255,0};
+		data[ledStep] = {0,255,0};
 		_rightRing.setLEDs(data);
 		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_HOLD);
 	}

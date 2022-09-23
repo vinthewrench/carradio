@@ -232,6 +232,9 @@ void DisplayMgr::ledEventUpdate(){
 
 
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
+	
+	printf("ledEventSet %08x %08x\n",set,reset);
+	
 	pthread_mutex_lock (&_mutex);
 	_ledEvent &= ~reset;
 	_ledEvent |= set;

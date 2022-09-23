@@ -233,7 +233,7 @@ void DisplayMgr::ledEventUpdate(){
 
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	
-	printf("ledEventSet %08x %08x\n",set,reset);
+//	printf("ledEventSet %08x %08x\n",set,reset);
 	
 	pthread_mutex_lock (&_mutex);
 	_ledEvent &= ~reset;
@@ -2484,7 +2484,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
  
- 	printf("drawScannerScreen(%d)\n", transition);
+// 	printf("drawScannerScreen(%d)\n", transition);
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 

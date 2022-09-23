@@ -696,8 +696,7 @@ bool RadioMgr::tuneNextScannerChannel(){
 	uint32_t  					  freq = channel.second;
  
 	queueSetFrequencyandMode(mode, freq, true);
-	DisplayMgr*		display 	= PiCarMgr::shared()->display();
- 	display->LEDeventScannerStep();
+
 	return true;
 	
 };
@@ -899,9 +898,17 @@ void RadioMgr::SDRProcessor(){
 			
 			if(_scannerMode){
 				// time to change channels.
-	 			if(isSquelched())
+				
+				DisplayMgr*		display 	= PiCarMgr::shared()->display();
+				if(isSquelched()){
 					tuneNextScannerChannel();
- 			}
+					display->LEDeventScannerStep();
+				}
+				else
+				{
+					display->LEDeventScannerHold();
+				}
+			}
 			
 
 			// Throw away first block. It is noisy because IF filters

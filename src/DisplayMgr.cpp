@@ -254,7 +254,7 @@ void DisplayMgr::runLEDEventStartup(){
 //		_leftRing.clearAll();
 //		ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
  
- 		if(ledStep < 24 ){
+ 		if(ledStep < 24 * 4 ){
 //
 //			printf("\nLED RUN (%d)\n",ledStep);
 //

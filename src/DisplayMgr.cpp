@@ -200,7 +200,7 @@ void DisplayMgr::ledEventUpdate(){
 		
 		// dim it then restore
 		//		uint8_t sav =  _leftRing.GlobalCurrent();
-		_leftRing.clearAll();
+//		_leftRing.clearAll();
 		//		_leftRing.SetGlobalCurrent(sav);
 	}
 	
@@ -314,12 +314,12 @@ void DisplayMgr::runLEDEventMute(){
 				float volume =  audio->mutedVolume();
 				// muted LED scales between 1 and 24
 				int ledvol = volume*23;
-				for (int i = 0 ; i < 24; i++)
-					_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+//				for (int i = 0 ; i < 24; i++)
+// 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 				
 			}
 			else {
-				_leftRing.clearAll();
+//				_leftRing.clearAll();
 			}
 		}
 	}
@@ -349,7 +349,7 @@ void DisplayMgr::runLEDEventVol(){
 			int ledvol = volume*23;
  
 			for (int i = 0 ; i < 24; i++) {
-				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+	//			_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
 			
 		}
@@ -358,7 +358,7 @@ void DisplayMgr::runLEDEventVol(){
 			
 			// scan the LEDS off
 			for (int i = 0; i < 24; i++) {
-				_leftRing.setColor( i, 0, 0, 0);
+//				_leftRing.setColor( i, 0, 0, 0);
 				usleep(10 * 1000);
 			}
  		}
@@ -404,8 +404,8 @@ bool DisplayMgr::setBrightness(double level) {
 		//
 		//		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
 		//		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
-		_rightRing.SetGlobalCurrent(ledCurrent);
-		_leftRing.SetGlobalCurrent(ledCurrent);
+//		_rightRing.SetGlobalCurrent(ledCurrent);
+//		_leftRing.SetGlobalCurrent(ledCurrent);
 		
 		_rightKnob.setBrightness(level);
 		_leftKnob.setBrightness(level);

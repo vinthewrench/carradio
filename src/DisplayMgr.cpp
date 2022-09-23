@@ -340,13 +340,12 @@ void DisplayMgr::runLEDEventVol(){
 
 
 static uint8_t calculateRingCurrent(uint8_t level) {
-	uint8_t current = DuppaLEDRing::maxGlobalCurrent();
 	
-	level = min(static_cast<int>(level), 7);
+ 	level = min(static_cast<int>(level), 7);
 	
-	uint8_t table[] = {1, 1, 2, 4, 5,  6, 8, DuppaLEDRing::maxGlobalCurrent()};
+	uint8_t table[] = {25, 25, 30, 50, 80, 100, 128, 200, 255};
 	
-	current = table[level];
+	uint8_t current = table[level];
 	
 	return current;
 	
@@ -367,19 +366,13 @@ bool DisplayMgr::setBrightness(double level) {
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
 		
-		
-		uint8_t ringLevel =   static_cast<uint8_t>( level * 255)  ;
-	
-		printf("setBrightness %f %d\n", level, ringLevel);
+		uint8_t ledCurrent = calculateRingCurrent(vfdLevel);
 
-		_rightRing.SetScaling(ringLevel);
-		_leftRing.SetScaling(ringLevel);
+ 		printf("setBrightness %f %d\n", level, ledCurrent);
 
-//		uint8_t ledCurrent = calculateRingCurrent(vfdLevel);
-//
-//		_leftRing.SetGlobalCurrent(ledCurrent);
-//		_rightRing.SetGlobalCurrent(ledCurrent);
-
+		_rightRing.SetScaling(ledCurrent);
+		_leftRing.SetScaling(ledCurrent);
+ 
 		_rightKnob.setBrightness(level);
 		_leftKnob.setBrightness(level);
 		

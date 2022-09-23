@@ -48,7 +48,11 @@ public:
 	void LEDeventVol();
 	void LEDeventMute();
 	void LEDeventStop();
-
+	
+	void LEDeventScannerStep();
+	void LEDeventScannerHold();
+	void LEDeventScannerStop();
+	 
 // active mode
 	typedef enum  {
 		MODE_UNKNOWN = 0,
@@ -302,11 +306,20 @@ private:
 #define LED_EVENT_STARTUP				0x00000001
 #define LED_EVENT_VOL 					0x00000002
 #define LED_EVENT_MUTE					0x00000004
+	
+#define LED_EVENT_SCAN_STEP			0x00000008
+#define LED_EVENT_SCAN_HOLD			0x00000010
+#define LED_EVENT_SCAN_STOP			0x00000020
+	
 #define LED_EVENT_STOP					0x00008000
 	
 #define LED_EVENT_STARTUP_RUNNING	0x00010000
 #define LED_EVENT_VOL_RUNNING			0x00020000
 #define LED_EVENT_MUTE_RUNNING		0x00040000
+	
+#define LED_EVENT_SCAN_RUNNING		0x00080000
+
+	
 
 	uint32_t  _ledEvent  = 0;
 	void ledEventSet(uint32_t set, uint32_t reset);
@@ -314,6 +327,9 @@ private:
 	void runLEDEventStartup();
 	void runLEDEventVol();
 	void runLEDEventMute();
+	
+	void runLEDEventScanner();
+
 
 	void DisplayUpdate();		// C++ version of thread
 	// C wrappers for DisplayUpdate;

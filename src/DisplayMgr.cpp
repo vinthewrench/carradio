@@ -193,6 +193,19 @@ void DisplayMgr::LEDeventStop(){
 }
 
 
+void DisplayMgr::LEDeventScannerStep(){
+	ledEventSet(LED_EVENT_SCAN_STEP,0);
+}
+ 
+void DisplayMgr::LEDeventScannerHold(){
+	ledEventSet(LED_EVENT_SCAN_HOLD,0);
+}
+
+void DisplayMgr::LEDeventScannerStop(){
+	ledEventSet(LED_EVENT_SCAN_STOP,0);
+}
+
+
 void DisplayMgr::ledEventUpdate(){
 	
 	if( _ledEvent & (LED_EVENT_STOP)){
@@ -207,13 +220,15 @@ void DisplayMgr::ledEventUpdate(){
 	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 		runLEDEventStartup();
 	
-	
 	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 		runLEDEventVol();
 	
 	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
 		runLEDEventMute();
-}
+	
+	if( _ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
+		runLEDEventScanner();
+ }
 
 
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
@@ -250,8 +265,7 @@ void DisplayMgr::runLEDEventStartup(){
 		}
 	}
 }
-
-
+ 
 
 void DisplayMgr::runLEDEventMute(){
 	
@@ -335,6 +349,37 @@ void DisplayMgr::runLEDEventVol(){
 }
 
 
+void DisplayMgr::runLEDEventScanner(){
+	
+	static uint8_t 	ledStep = 0;
+
+	if( _ledEvent & LED_EVENT_SCAN_STEP ){
+		
+		// arew we already in a a scan sequence?
+		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
+		}
+		else {
+			ledStep = 0;
+			_rightRing.clearAll();
+		}
+		
+		DuppaLEDRing::led_block_t data = {{0,0,0}};
+		data[mod(++ledStep, 24)] = {255,0,0};
+ 		_rightRing.setLEDs(data);
+		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
+	}
+	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
+		DuppaLEDRing::led_block_t data = {{0,0,0}};
+		data[mod(ledStep, 24)] = {0,255,0};
+		_rightRing.setLEDs(data);
+		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_HOLD);
+	}
+	else 	if( _ledEvent & LED_EVENT_SCAN_STOP ){
+		ledEventSet(LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_HOLD, 0);
+		_rightRing.clearAll();
+	}
+ }
+
 
 // MARK: -  display tools
 
@@ -367,8 +412,7 @@ bool DisplayMgr::setBrightness(double level) {
 
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
-	 
- 	
+	 	
 		_rightRing.SetScaling(ledCurrent);
 		_leftRing.SetScaling(ledCurrent);
  
@@ -2448,19 +2492,16 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  
 	
 	if(transition == TRANS_LEAVING) {
-		_rightRing.clearAll();
+		LEDeventScannerStop();
  		return;
 	}
 
 	if(transition ==  TRANS_REFRESH) {
- 		_rightRing.setColor(scanOffset,RGB::Black);
- 		scanOffset =  mod(scanOffset+1, 24);
-		_rightRing.setColor(scanOffset,RGB::Red);
-		// Squelch change?
+		LEDeventScannerStep();
 	}
 	
 	if(transition ==  TRANS_IDLE) {
- 		_rightRing.setColor(scanOffset,RGB::Green);
+		LEDeventScannerHold();
  	}
 
 	RadioMgr::radio_mode_t  mode;

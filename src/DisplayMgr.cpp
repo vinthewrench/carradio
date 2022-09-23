@@ -343,7 +343,7 @@ static uint8_t calculateRingCurrent(uint8_t level) {
 	
  	level = min(static_cast<int>(level), 7);
 	
-	uint8_t table[] = {25, 25, 30, 50, 80, 100, 128, 200, 255};
+	uint8_t table[] = {10, 30, 50, 80, 100, 128, 200, 255};
 	
 	uint8_t current = table[level];
 	

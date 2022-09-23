@@ -367,16 +367,16 @@ bool DisplayMgr::setBrightness(double level) {
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
 		
-		uint8_t ledCurrent = calculateRingCurrent(vfdLevel);
-		//
-		//		uint8_t ledCurrent = DuppaLEDRing::maxGlobalCurrent() * level;
-		//		ledCurrent = min(static_cast<int>( ledCurrent), static_cast<int>(DuppaLEDRing::maxGlobalCurrent()));
-//		_rightRing.SetGlobalCurrent(ledCurrent);
- 
- 
-		printf("setBrightness %f %d\n", level, ledCurrent);
-		_leftRing.SetGlobalCurrent(ledCurrent);
 		
+		_rightRing.SetScaling(level * 255);
+		_leftRing.SetScaling(level * 255);
+
+//		uint8_t ledCurrent = calculateRingCurrent(vfdLevel);
+//
+//		printf("setBrightness %f %d\n", level, ledCurrent);
+//		_leftRing.SetGlobalCurrent(ledCurrent);
+//		_rightRing.SetGlobalCurrent(ledCurrent);
+
 		_rightKnob.setBrightness(level);
 		_leftKnob.setBrightness(level);
 		

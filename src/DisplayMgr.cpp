@@ -134,6 +134,20 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_rightRing.clearAll();
 		_leftRing.clearAll();
 		
+				// do eight cycles dimming..
+				for(int level = 0; level < 8; level ++) {
+	 
+					for (int i = 0; i < 24; i++) {
+						_leftRing.setGREEN(i, 0xff);
+						usleep(20 * 1000);
+					}
+		
+					for (int i = 0; i < 24; i++) {
+						_leftRing.setGREEN(i, 0);
+						usleep(20 * 1000);
+					}
+				}
+
 		_eventQueue = {};
 		_ledEvent = 0;
 		

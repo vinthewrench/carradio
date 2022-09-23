@@ -249,7 +249,7 @@ void DisplayMgr::runLEDEventStartup(){
 			_rightRing.setLEDs(data);
 			
 #else
-			
+			ledStep++;
 			_leftRing.setGREEN(mod(ledStep, 24), 0xff);
 			usleep(20 * 1000);
 	#endif

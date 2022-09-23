@@ -200,7 +200,7 @@ void DisplayMgr::ledEventUpdate(){
 		
 		// dim it then restore
 		//		uint8_t sav =  _leftRing.GlobalCurrent();
-//		_leftRing.clearAll();
+ 		_leftRing.clearAll();
 		//		_leftRing.SetGlobalCurrent(sav);
 	}
 	
@@ -284,16 +284,15 @@ void DisplayMgr::runLEDEventMute(){
 				float volume =  audio->mutedVolume();
 				// muted LED scales between 1 and 24
 				int ledvol = volume*23;
-//				for (int i = 0 ; i < 24; i++)
-// 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+				for (int i = 0 ; i < 24; i++)
+					_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 				
 			}
 			else {
-//				_leftRing.clearAll();
+				_leftRing.clearAll();
 			}
 		}
 	}
-	
 }
 
 
@@ -321,7 +320,6 @@ void DisplayMgr::runLEDEventVol(){
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
-			
 		}
 		else {
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);

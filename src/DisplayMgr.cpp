@@ -250,6 +250,7 @@ void DisplayMgr::runLEDEventStartup(){
 			_leftRing.setColor( mod(ledStep, 24), 0, 0, 0);
 			ledStep++;
 			_leftRing.setColor(mod(ledStep, 24), 255, 255, 255);
+			usleep(20 * 1000);
 #endif
 			
 		}

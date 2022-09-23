@@ -2507,16 +2507,16 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  
 	
 	if(transition == TRANS_LEAVING) {
-//	 	LEDeventScannerStop();
+ 	 	LEDeventScannerStop();
  		return;
 	}
 
 	if(transition ==  TRANS_REFRESH) {
- //		LEDeventScannerStep();
+ 		LEDeventScannerStep();
  	}
 	
 	if(transition ==  TRANS_IDLE) {
-	//	LEDeventScannerHold();
+ 		LEDeventScannerHold();
 	}
 
 	RadioMgr::radio_mode_t  mode;

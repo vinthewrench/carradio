@@ -244,9 +244,12 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
-	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-	display->LEDeventScannerStop();
-
+	
+	if(_scannerMode){
+		DisplayMgr*		display 	= PiCarMgr::shared()->display();
+		display->LEDeventScannerStop();
+	}
+	
 	_scannerMode = false;
 	_scannerChannels	= {};
 	queueSetFrequencyandMode(newMode, newFreq, force);

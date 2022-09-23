@@ -276,7 +276,7 @@ void DisplayMgr::runLEDEventMute(){
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
 		blinkOn = false;
-		ledEventSet(LED_EVENT_MUTE_RUNNING, LED_EVENT_ALL);
+		ledEventSet(LED_EVENT_MUTE_RUNNING, LED_EVENT_MUTE);
 	}
 	
 	// do the first cycle right away
@@ -317,7 +317,7 @@ void DisplayMgr::runLEDEventVol(){
 	
 	if( _ledEvent & LED_EVENT_VOL ){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-		ledEventSet(LED_EVENT_VOL_RUNNING,LED_EVENT_ALL );
+		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL );
 	}
 	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		

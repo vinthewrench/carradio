@@ -353,8 +353,11 @@ void DisplayMgr::runLEDEventScanner(){
 	
 	static uint8_t 	ledStep = 0;
 
+	
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
+		printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
+
 		// arew we already in a a scan sequence?
 		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
 		}
@@ -368,13 +371,20 @@ void DisplayMgr::runLEDEventScanner(){
  		_rightRing.setLEDs(data);
 		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
 	}
+	
 	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
+		
+		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
+
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[mod(ledStep, 24)] = {0,255,0};
 		_rightRing.setLEDs(data);
 		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_HOLD);
 	}
 	else 	if( _ledEvent & LED_EVENT_SCAN_STOP ){
+		
+		printf("SCAN STOP:%08x\n", _ledEvent);
+
 		ledEventSet(LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_HOLD, 0);
 		_rightRing.clearAll();
 	}

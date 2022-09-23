@@ -232,51 +232,22 @@ void DisplayMgr::runLEDEventStartup(){
 		ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_ALL );
 		
 		ledStep = 0;
-	 		printf("\nLED STARTUP\n");
-		
-	//	 run one cycle of LEDS  on and off
-		
-
 		_leftRing.clearAll();
 		_rightRing.clearAll();
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
-		
-//		for (int i = 0; i < 24; i++) {
-//			_leftRing.setGREEN(i, 0xff);
-//			usleep(20 * 1000);
-//		}
-//
-//		for (int i = 0; i < 24; i++) {
-//			_leftRing.setGREEN(i, 0);
-//			usleep(20 * 1000);
-//		}
-//		_leftRing.clearAll();
-//		ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
- 
- 		if(ledStep < 24 * 4 ){
-//
-//			printf("\nLED RUN (%d)\n",ledStep);
-//
-//#if 0
+		if(ledStep < 24 * 4){
+			
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};
 			_leftRing.setLEDs(data);
 			_rightRing.setLEDs(data);
-
-//#else
-//			ledStep++;
-//			_leftRing.setGREEN(mod(ledStep, 24), 0xff);
-//			usleep(20 * 1000);
-//	#endif
-//
 		}
 		else {
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
 			_rightRing.clearAll();
-//		 			printf("\nLED RUN DONE\n");
-
+			
 		}
 	}
 }

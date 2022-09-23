@@ -133,21 +133,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		// clear all values
 		_rightRing.clearAll();
 		_leftRing.clearAll();
-		
-				// do eight cycles dimming..
-				for(int level = 0; level < 8; level ++) {
 	 
-					for (int i = 0; i < 24; i++) {
-						_leftRing.setGREEN(i, 0xff);
-						usleep(20 * 1000);
-					}
-		
-					for (int i = 0; i < 24; i++) {
-						_leftRing.setGREEN(i, 0);
-						usleep(20 * 1000);
-					}
-				}
-
 		_eventQueue = {};
 		_ledEvent = 0;
 		
@@ -246,7 +232,7 @@ void DisplayMgr::runLEDEventStartup(){
 		ledEventSet(LED_EVENT_STARTUP_RUNNING,LED_EVENT_ALL );
 		
 		ledStep = 0;
-		//		printf("\nLED STARTUP\n");
+	 		printf("\nLED STARTUP\n");
 		_leftRing.clearAll();
 		_rightRing.clearAll();
 	}
@@ -254,7 +240,7 @@ void DisplayMgr::runLEDEventStartup(){
 		
 		if(ledStep < 24 * 4){
 	
-#if 1
+#if 0
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};
 			_leftRing.setLEDs(data);
@@ -271,7 +257,7 @@ void DisplayMgr::runLEDEventStartup(){
 			ledEventSet(0, LED_EVENT_STARTUP_RUNNING);
 			_leftRing.clearAll();
 			_rightRing.clearAll();
-			//			printf("\nLED RUN DONE\n");
+		 			printf("\nLED RUN DONE\n");
 			
 		}
 	}

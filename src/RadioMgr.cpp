@@ -244,6 +244,9 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
  
 bool RadioMgr::setFrequencyandMode( radio_mode_t newMode, uint32_t newFreq, bool force){
 	
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+	display->LEDeventScannerStop();
+
 	_scannerMode = false;
 	_scannerChannels	= {};
 	queueSetFrequencyandMode(newMode, newFreq, force);
@@ -676,9 +679,11 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 
 
 bool RadioMgr::tuneNextScannerChannel(){
+
+
 	if(!_scannerMode )
 		return false;
-	
+ 
 	uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
 	
 	channel_t channel = _scannerChannels[nextOffset];
@@ -686,8 +691,10 @@ bool RadioMgr::tuneNextScannerChannel(){
 	
 	RadioMgr::radio_mode_t   mode = channel.first;;
 	uint32_t  					  freq = channel.second;
-	
+ 
 	queueSetFrequencyandMode(mode, freq, true);
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+ 	display->LEDeventScannerStep();
 	return true;
 	
 };

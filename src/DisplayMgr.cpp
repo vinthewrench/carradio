@@ -2487,13 +2487,9 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 // 	printf("drawScannerScreen(%d)\n", transition);
 //	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
-
-	static uint8_t scanOffset = 0;
-	
+ 
 	if(transition == TRANS_ENTERING){
-		_rightRing.clearAll();
-		scanOffset = 0;
- 		_vfd.clearScreen();
+		_vfd.clearScreen();
 		
 		_vfd.setCursor(0, 60);
 		if(mgr->isPresetChannel(RadioMgr::SCANNER, 0)){
@@ -2516,7 +2512,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  	}
 	
 	if(transition ==  TRANS_IDLE) {
- 		LEDeventScannerHold();
+ //		LEDeventScannerHold();
 	}
 
 	RadioMgr::radio_mode_t  mode;

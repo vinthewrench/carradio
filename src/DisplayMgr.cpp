@@ -357,8 +357,7 @@ void DisplayMgr::runLEDEventVol(){
 void DisplayMgr::runLEDEventScanner(){
 	
 	static uint8_t 	ledStep = 0;
-
-	
+ 
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
 		printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);

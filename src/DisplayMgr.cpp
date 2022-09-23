@@ -233,6 +233,19 @@ void DisplayMgr::runLEDEventStartup(){
 		
 		ledStep = 0;
 	 		printf("\nLED STARTUP\n");
+		
+	//	 run one cycle of LEDS  on and off
+		
+		for (int i = 0; i < 24; i++) {
+			_leftRing.setGREEN(i, 0xff);
+			usleep(20 * 1000);
+		}
+		
+		for (int i = 0; i < 24; i++) {
+			_leftRing.setGREEN(i, 0);
+			usleep(20 * 1000);
+		}
+
 		_leftRing.clearAll();
 		_rightRing.clearAll();
 	}

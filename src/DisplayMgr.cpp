@@ -1096,10 +1096,9 @@ void DisplayMgr::DisplayUpdateLoop(){
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
-		ts.tv_sec += 1;
-		ts.tv_nsec += 0;		// 1 second
+		ts.tv_sec += 0;
+		ts.tv_nsec += 50000000000;		// 5/10 second
 
-		
 		// wait for event.
 		pthread_mutex_lock (&_mutex);
 		while(_eventQueue.size() == 0){

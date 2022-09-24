@@ -289,25 +289,26 @@ void DisplayMgr::runLEDEventVol(){
 	static timespec		startedEvent = {0,0};
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
-
+	bool setVolume = false;
+	
 	if( _ledEvent & LED_EVENT_VOL ){
 		
- 	//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
-
+		//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
+		
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL );
+		setVolume = true;
 	}
-
+	
 	if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
-	//	printf("LED_EVENT_VOL:  %lld\n" ,diff);
- 
-		if(diff <  1000){
-			
+		//	printf("LED_EVENT_VOL:  %lld\n" ,diff);
+		
+		if(setVolume){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
 			int ledvol = volume*23;
@@ -315,18 +316,19 @@ void DisplayMgr::runLEDEventVol(){
 			for (int i = 0 ; i < 24; i++) {
 				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
 			}
+			
 		}
-		else {
+		else if(diff > 1000){
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);
 			
 			// scan the LEDS off
 			for (int i = 0; i < 24; i++) {
 				_leftRing.setColor( i, 0, 0, 0);
-				usleep(10 * 1000);
 			}
+			
 		}
+		
 	}
-	
 }
 
 

@@ -399,12 +399,10 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			usleep(1000000);
+			usleep(10000);
 			continue;
 		}
-		
-		usleep(1000000);
-		
+	 
 		// delay for half second
 //		struct timespec ts = {0, 0};
 //		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -414,17 +412,14 @@ void DisplayMgr::LEDUpdateLoop(){
 		pthread_mutex_lock (&_led_mutex);
 //		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
 		bool shouldWait =  _ledEvent;
-		pthread_mutex_unlock (&_led_mutex);
 		
 		// dont wait if there is an LED event already
 		if (shouldWait)
 			pthread_cond_wait(&_led_cond, &_led_mutex);
 			
+		
 //			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
-		
-		if(!_isRunning || !_isSetup)
-			continue;
-		
+		 
 		// run the LED effects
 		
 		if( _ledEvent & (LED_EVENT_STOP)){
@@ -447,6 +442,9 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( _ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
+		
+		pthread_mutex_unlock (&_led_mutex);
+
 	}
 	
 }

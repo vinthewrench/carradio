@@ -304,8 +304,7 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
- 
- 		if(diff <  500){
+		if(diff <  500){
 			
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
@@ -405,18 +404,21 @@ void DisplayMgr::LEDUpdateLoop(){
 		}
 		
 		// delay for half second
-		struct timespec ts = {0, 0};
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		ts.tv_sec += 0;
-		ts.tv_nsec += 500000000;		// half second
+//		struct timespec ts = {0, 0};
+//		clock_gettime(CLOCK_MONOTONIC, &ts);
+//		ts.tv_sec += 0;
+//		ts.tv_nsec += 500000000;		// half second
 		
 		pthread_mutex_lock (&_led_mutex);
-		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
+//		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
+		bool shouldWait =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 		
 		// dont wait if there is an LED event already
 		if (shouldWait)
-			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+			pthread_cond_wait(&_led_cond, &_led_mutex);
+			
+//			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
 		
 		if(!_isRunning || !_isSetup)
 			continue;

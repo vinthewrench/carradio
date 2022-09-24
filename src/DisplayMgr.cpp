@@ -418,10 +418,14 @@ void DisplayMgr::LEDUpdateLoop(){
 			// wait for _led_cond or time delay == ETIMEDOUT
 			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
 		}
-		
+	
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-		
+	 
+		// if it was a ongoing event - pause a bit
+		if((theLedEvent & 0x0000ffff) == 0)
+			usleep(10000);
+
 		if(theLedEvent) printf("_ledEvent %08x\n", theLedEvent);
 		
 		// run the LED effects
@@ -443,8 +447,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
 	 
-		if(theLedEvent == 0)
-			usleep(100000);
+
 	}
 }
  

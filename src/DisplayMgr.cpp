@@ -409,7 +409,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		ts.tv_sec += 0;
-		ts.tv_nsec += 100000000000;		// 1/10 second
+		ts.tv_nsec += 1000000000000;		// 1/10 second
 		
 		pthread_mutex_lock (&_led_mutex);
 		
@@ -422,6 +422,8 @@ void DisplayMgr::LEDUpdateLoop(){
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 
+		printf("_ledEvent %08x\n", _ledEvent);
+		
 		// run the LED effects
 		
 		if( theLedEvent & (LED_EVENT_STOP)){

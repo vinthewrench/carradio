@@ -300,11 +300,12 @@ void DisplayMgr::runLEDEventVol(){
 
 	if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
-		struct timespec now, diff;
+		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
-		timespec_sub( &diff, &now, &startedEvent);
 		
-		if(diff.tv_sec <  1){
+		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
+ 
+ 		if(diff <  500){
 			
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24

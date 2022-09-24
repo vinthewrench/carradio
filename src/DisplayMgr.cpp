@@ -415,7 +415,6 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
-			
 			// wait for _led_cond or time delay == ETIMEDOUT
 			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
  		}
@@ -441,8 +440,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
-	 
-	}
+	 }
 	
 }
 
@@ -454,7 +452,7 @@ void* DisplayMgr::LEDUpdateThread(void *context){
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::LEDUpdateThreadCleanup ,context);
 	
-//	d->LEDUpdateLoop();
+ 	d->LEDUpdateLoop();
 	
 	pthread_exit(NULL);
 	

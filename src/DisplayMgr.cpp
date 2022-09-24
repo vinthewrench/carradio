@@ -1096,17 +1096,16 @@ void DisplayMgr::DisplayUpdateLoop(){
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
-		ts.tv_sec += 0;
-		ts.tv_nsec += 50000000000;		// 5/10 second
+		ts.tv_sec += 1;
+		ts.tv_nsec += 0;		// 1 second
 
-		// wait for event.
 		pthread_mutex_lock (&_mutex);
-		while(_eventQueue.size() == 0){
-	 			// wait for _cond or time delay == ETIMEDOUT
-			if( pthread_cond_timedwait(&_cond, &_mutex, &ts) ) break;
-		}
+	 	bool shouldWait =  _eventQueue.size() == 0;
+		pthread_mutex_unlock (&_led_mutex);
  
-		// consume event
+		if (shouldWait)
+			pthread_cond_timedwait(&_cond, &_mutex, &ts);
+ 
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
@@ -1115,7 +1114,10 @@ void DisplayMgr::DisplayUpdateLoop(){
 		
 		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
-  
+		
+//		if(!_isRunning || !_isSetup)
+//			continue;
+ 
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
 		string eventArg = "";
@@ -1251,7 +1253,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
- 
+				
 				else if(_current_mode == MODE_DIMMER) {
 					
 					// check for {EVT_NONE,MODE_DIMMER}  which is a dimmer change
@@ -1276,7 +1278,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
-	 			else if(_current_mode == MODE_MENU) {
+				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
 					if(item.mode == MODE_MENU) {
@@ -1333,7 +1335,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 				}
 				
 				// check for ay other timeout delay 1.3 secs
-								else if(diff.tv_sec >=  1){
+				else if(diff.tv_sec >=  1){
 					// should we pop the mode?
 					if(!isStickyMode(_current_mode)){
 						popMode();

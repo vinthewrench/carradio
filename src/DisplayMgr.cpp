@@ -306,8 +306,6 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
-		//	printf("LED_EVENT_VOL:  %lld\n" ,diff);
-		
 		if(setVolume){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
@@ -411,12 +409,14 @@ void DisplayMgr::LEDUpdateLoop(){
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		ts.tv_sec += 0;
-		ts.tv_nsec += 50000000;		// half second
+		ts.tv_nsec += 10000000000;		// 1/10 second
 		
 		pthread_mutex_lock (&_led_mutex);
 		
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
+			
+			// wait for _led_cond or time delay == ETIMEDOUT
 			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
  		}
 		
@@ -427,11 +427,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( theLedEvent & (LED_EVENT_STOP)){
 			ledEventSet(0, LED_EVENT_STOP);
-			
-			// dim it then restore
-			//		uint8_t sav =  _leftRing.GlobalCurrent();
 			_leftRing.clearAll();
-			//		_leftRing.SetGlobalCurrent(sav);
 		}
 		
 		if( theLedEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))

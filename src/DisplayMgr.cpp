@@ -212,41 +212,6 @@ void DisplayMgr::LEDeventScannerStop(){
 }
 
 
-void DisplayMgr::ledEventUpdate(){
-	
-	if( _ledEvent & (LED_EVENT_STOP)){
-		ledEventSet(0, LED_EVENT_STOP);
-		
-		// dim it then restore
-		//		uint8_t sav =  _leftRing.GlobalCurrent();
- 		_leftRing.clearAll();
-		//		_leftRing.SetGlobalCurrent(sav);
-	}
-	
-	if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
-		runLEDEventStartup();
-	
-	if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
-		runLEDEventVol();
-	
-	if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
-		runLEDEventMute();
-	
-	if( _ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
-		runLEDEventScanner();
- }
-
-
-void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
-	
-//	printf("ledEventSet %08x %08x\n",set,reset);
-	
-	pthread_mutex_lock (&_led_mutex);
-	_ledEvent &= ~reset;
-	_ledEvent |= set;
-	pthread_mutex_unlock (&_led_mutex);
-	pthread_cond_signal(&_led_cond);
-}
 
 void DisplayMgr::runLEDEventStartup(){
 	
@@ -402,6 +367,17 @@ void DisplayMgr::runLEDEventScanner(){
  }
 
 
+ 
+void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
+	
+//	printf("ledEventSet %08x %08x\n",set,reset);
+	
+	pthread_mutex_lock (&_led_mutex);
+	_ledEvent &= ~reset;
+	_ledEvent |= set;
+	pthread_mutex_unlock (&_led_mutex);
+	pthread_cond_signal(&_led_cond);
+}
 void DisplayMgr::LEDUpdateLoop(){
 	
 	//	printf("start LEDUpdateLoop\n");
@@ -442,7 +418,27 @@ void DisplayMgr::LEDUpdateLoop(){
 			continue;
 		
 		// run the LED effects
-		ledEventUpdate();
+		
+		if( _ledEvent & (LED_EVENT_STOP)){
+			ledEventSet(0, LED_EVENT_STOP);
+			
+			// dim it then restore
+			//		uint8_t sav =  _leftRing.GlobalCurrent();
+			_leftRing.clearAll();
+			//		_leftRing.SetGlobalCurrent(sav);
+		}
+		
+		if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
+			runLEDEventStartup();
+		
+		if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
+			runLEDEventVol();
+		
+		if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
+			runLEDEventMute();
+		
+		if( _ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
+			runLEDEventScanner();
 	}
 	
 }
@@ -2561,19 +2557,17 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  
 	
 	if(transition == TRANS_LEAVING) {
- 	 	LEDeventScannerStop();
-//		ledEventUpdate();
+ //	 	LEDeventScannerStop();
  		return;
 	}
 
 	if(transition ==  TRANS_REFRESH) {
  		LEDeventScannerStep();
-		runLEDEventScanner();
+//		runLEDEventScanner();
  	}
 	
 	if(transition ==  TRANS_IDLE) {
 //  		LEDeventScannerHold();
-//		ledEventUpdate();
 	}
 
 	RadioMgr::radio_mode_t  mode;

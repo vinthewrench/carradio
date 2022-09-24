@@ -324,8 +324,7 @@ private:
  
 	uint32_t  _ledEvent  = 0;
 	void ledEventSet(uint32_t set, uint32_t reset);
-	void ledEventUpdate();
-	void runLEDEventStartup();
+ 	void runLEDEventStartup();
 	void runLEDEventVol();
 	void runLEDEventMute();
 	void runLEDEventScanner();

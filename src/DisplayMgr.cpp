@@ -425,8 +425,6 @@ void DisplayMgr::LEDUpdateLoop(){
 		// if it was a ongoing event - pause a bit
 		if((theLedEvent & 0x0000ffff) == 0)
 			usleep(10000);
-
-		if(theLedEvent) printf("_ledEvent %08x\n", theLedEvent);
 		
 		// run the LED effects
 		
@@ -446,8 +444,6 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
-	 
-
 	}
 }
  

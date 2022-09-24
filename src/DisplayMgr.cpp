@@ -1099,13 +1099,15 @@ void DisplayMgr::DisplayUpdateLoop(){
 		ts.tv_sec += 1;
 		ts.tv_nsec += 0;		// 1 second
 
+		
+		// wait for event.
 		pthread_mutex_lock (&_mutex);
-	 	bool shouldWait =  _eventQueue.size() == 0;
-		pthread_mutex_unlock (&_led_mutex);
+		while(_eventQueue.size() == 0){
+	 			// wait for _cond or time delay == ETIMEDOUT
+			if( pthread_cond_timedwait(&_cond, &_mutex, &ts) ) break;
+		}
  
-		if (shouldWait)
-			pthread_cond_timedwait(&_cond, &_mutex, &ts);
- 
+		// consume event
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
@@ -1114,10 +1116,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 		
 		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
-		
-		if(!_isRunning || !_isSetup)
-			continue;
- 
+  
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
 		string eventArg = "";

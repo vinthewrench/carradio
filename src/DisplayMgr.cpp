@@ -399,9 +399,11 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			usleep(10000);
+			usleep(1000000);
 			continue;
 		}
+		
+		usleep(1000000);
 		
 		// delay for half second
 //		struct timespec ts = {0, 0};

@@ -85,7 +85,7 @@ bool DuppaEncoder::begin(uint8_t deviceAddress, uint16_t conf, uint8_t intConf, 
 		) {
 		
 		// wait for reset to stablize
-		usleep(400);
+		usleep(20000);
 		
 		if( _i2cPort.writeByte(REG_GCONF,  (uint8_t)( conf & 0xFF))
 			&& _i2cPort.writeByte(REG_GCONF2,   (uint8_t)((conf >> 8) & 0xFF))
@@ -130,7 +130,7 @@ bool DuppaEncoder::reset(void) {
 	if(_i2cPort.isAvailable()){
 		
 		if(_i2cPort.writeByte(REG_GCONF,  (uint8_t) 0x80)){
-			usleep(400);
+			usleep(20000);
 			
 			success = true;
 		}

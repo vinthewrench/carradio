@@ -225,7 +225,7 @@ void DisplayMgr::runLEDEventStartup(){
 		_rightRing.clearAll();
 	}
 	else if( _ledEvent & LED_EVENT_STARTUP_RUNNING ){
-		if(ledStep < 24 * 4){
+		if(ledStep < 24 ){
 			
 			DuppaLEDRing::led_block_t data = {{0,0,0}};
 			data[mod(++ledStep, 24)] = {255,255,255};
@@ -292,7 +292,7 @@ void DisplayMgr::runLEDEventVol(){
 
 	if( _ledEvent & LED_EVENT_VOL ){
 		
-	//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
+ 	//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
 
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL );
@@ -304,6 +304,8 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
+		printf("LED_EVENT_VOL:  %lld\n" ,diff);
+ 
 		if(diff <  500){
 			
 			float volume =  audio->volume();

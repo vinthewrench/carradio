@@ -1043,7 +1043,17 @@ void DisplayMgr::DisplayUpdate(){
 		//
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
-		
+ 
+		// run the LED effects
+		if(_ledEvent){
+			ledEventUpdate();
+			
+			if(_eventQueue.size() == 0){
+				pthread_mutex_unlock (&_mutex);
+				continue;
+ 			}
+		}
+
 		//		pthread_mutex_lock (&_mutex);
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
@@ -1056,10 +1066,6 @@ void DisplayMgr::DisplayUpdate(){
 		
 		if(!_isRunning || !_isSetup)
 			continue;
-		
-		// run the LED effects
-		if(_ledEvent)
-			ledEventUpdate();
 		
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data

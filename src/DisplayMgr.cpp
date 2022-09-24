@@ -422,7 +422,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 
-		printf("_ledEvent %08x\n", _ledEvent);
+		if(_ledEvent) printf("_ledEvent %08x\n", _ledEvent);
 		
 		// run the LED effects
 		

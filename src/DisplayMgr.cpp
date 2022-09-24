@@ -289,13 +289,16 @@ void DisplayMgr::runLEDEventVol(){
 	static timespec		startedEvent = {0,0};
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
-//	printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
 
 	if( _ledEvent & LED_EVENT_VOL ){
+		
+	//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
+
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL );
 	}
-	else if( _ledEvent & LED_EVENT_VOL_RUNNING ){
+
+	if( _ledEvent & LED_EVENT_VOL_RUNNING ){
 		
 		struct timespec now, diff;
 		clock_gettime(CLOCK_MONOTONIC, &now);

@@ -289,7 +289,7 @@ void DisplayMgr::runLEDEventVol(){
 	static timespec		startedEvent = {0,0};
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
-	printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
+//	printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
 
 	if( _ledEvent & LED_EVENT_VOL ){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
@@ -2563,7 +2563,6 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 
 	if(transition ==  TRANS_REFRESH) {
  		LEDeventScannerStep();
-//		runLEDEventScanner();
  	}
 	
 	if(transition ==  TRANS_IDLE) {

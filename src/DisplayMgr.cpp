@@ -409,7 +409,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		ts.tv_sec += 0;
-		ts.tv_nsec += 50000000000;		// 1/10 second
+		ts.tv_nsec += 100000000000;		// 1/10 second
 		
 		pthread_mutex_lock (&_led_mutex);
 		
@@ -454,7 +454,7 @@ void* DisplayMgr::LEDUpdateThread(void *context){
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::LEDUpdateThreadCleanup ,context);
 	
-	d->LEDUpdateLoop();
+//	d->LEDUpdateLoop();
 	
 	pthread_exit(NULL);
 	

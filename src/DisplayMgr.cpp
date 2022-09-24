@@ -360,7 +360,7 @@ void DisplayMgr::runLEDEventScanner(){
  
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
-		printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
+	//	printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
 
 		// arew we already in a a scan sequence?
 		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
@@ -2512,7 +2512,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  	}
 	
 	if(transition ==  TRANS_IDLE) {
- //		LEDeventScannerHold();
+  		LEDeventScannerHold();
 	}
 
 	RadioMgr::radio_mode_t  mode;

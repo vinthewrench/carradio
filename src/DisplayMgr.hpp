@@ -297,6 +297,8 @@ private:
 	bool pushMode(mode_state_t);
 	void popMode();
 	
+	
+// MARK: - LED EFFECTS
 	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN, string arg = "");
  
 	// LED effects Bit map
@@ -319,19 +321,26 @@ private:
 	
 #define LED_EVENT_SCAN_RUNNING		0x00080000
 
-	
-
+ 
 	uint32_t  _ledEvent  = 0;
 	void ledEventSet(uint32_t set, uint32_t reset);
 	void ledEventUpdate();
 	void runLEDEventStartup();
 	void runLEDEventVol();
 	void runLEDEventMute();
-	
 	void runLEDEventScanner();
 
+	void LEDUpdateLoop();
+ 	static void* LEDUpdateThread(void *context);
+	static void LEDUpdateThreadCleanup(void *context);
+	pthread_cond_t 	_led_cond = PTHREAD_COND_INITIALIZER;
+	pthread_mutex_t 	_led_mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_t			_ledUpdateTID;
+ 
 
-	void DisplayUpdate();		// C++ version of thread
+	// MARK: -  Display Loop
+	
+	void DisplayUpdateLoop();		// C++ version of thread
 	// C wrappers for DisplayUpdate;
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);

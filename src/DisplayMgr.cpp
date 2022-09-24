@@ -63,7 +63,11 @@ DisplayMgr::DisplayMgr(){
 	
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
+
 	
+	pthread_create(&_ledUpdateTID, NULL,
+						(THREADFUNCPTR) &DisplayMgr::LEDUpdateThread, (void*)this);
+
 }
 
 DisplayMgr::~DisplayMgr(){
@@ -72,6 +76,9 @@ DisplayMgr::~DisplayMgr(){
 	pthread_cond_signal(&_cond);
 	pthread_join(_updateTID, NULL);
 	
+	pthread_cond_signal(&_led_cond);
+	pthread_join(_ledUpdateTID, NULL);
+
 }
 
 
@@ -153,8 +160,7 @@ void DisplayMgr::stop(){
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
-		
-		
+	 
 		// shut down the display loop
 		_isSetup = false;
 		pthread_cond_signal(&_cond);
@@ -235,11 +241,11 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	
 //	printf("ledEventSet %08x %08x\n",set,reset);
 	
-	pthread_mutex_lock (&_mutex);
+	pthread_mutex_lock (&_led_mutex);
 	_ledEvent &= ~reset;
 	_ledEvent |= set;
-	pthread_mutex_unlock (&_mutex);
-	pthread_cond_signal(&_cond);
+	pthread_mutex_unlock (&_led_mutex);
+	pthread_cond_signal(&_led_cond);
 }
 
 void DisplayMgr::runLEDEventStartup(){
@@ -393,6 +399,72 @@ void DisplayMgr::runLEDEventScanner(){
 		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
 		_rightRing.clearAll();
 	}
+ }
+
+
+void DisplayMgr::LEDUpdateLoop(){
+	
+	//	printf("start LEDUpdateLoop\n");
+	PRINT_CLASS_TID;
+	
+	pthread_condattr_t attr;
+	pthread_condattr_init( &attr);
+	
+#if !defined(__APPLE__)
+	//pthread_condattr_setclock is not supported on macOS
+	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
+#endif
+	pthread_cond_init( &_led_cond, &attr);
+	
+	while(_isRunning){
+		
+		// if not setup // check back later
+		if(!_isSetup){
+			usleep(10000);
+			continue;
+		}
+		
+		// delay for half second
+		struct timespec ts = {0, 0};
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		ts.tv_sec += 0;
+		ts.tv_nsec += 500000000;		// half second
+		
+		pthread_mutex_lock (&_led_mutex);
+		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
+		pthread_mutex_unlock (&_led_mutex);
+		
+		// dont wait if there is an LED event already
+		if (shouldWait)
+			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+		
+		if(!_isRunning || !_isSetup)
+			continue;
+		
+		// run the LED effects
+		ledEventUpdate();
+	}
+	
+}
+
+ 
+
+void* DisplayMgr::LEDUpdateThread(void *context){
+	DisplayMgr* d = (DisplayMgr*)context;
+	
+	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
+	pthread_cleanup_push(   &DisplayMgr::LEDUpdateThreadCleanup ,context);
+	
+	d->LEDUpdateLoop();
+	
+	pthread_exit(NULL);
+	
+	pthread_cleanup_pop(0);
+	return((void *)1);
+}
+
+
+void DisplayMgr::LEDUpdateThreadCleanup(void *context){
  }
 
 
@@ -1000,7 +1072,7 @@ void  DisplayMgr::popMode(){
 
 // MARK: -  DisplayUpdate thread
 
-void DisplayMgr::DisplayUpdate(){
+void DisplayMgr::DisplayUpdateLoop(){
 	
 	//	printf("start DisplayUpdate\n");
 	PRINT_CLASS_TID;
@@ -1025,26 +1097,16 @@ void DisplayMgr::DisplayUpdate(){
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
-		
+		ts.tv_sec += 1;
+		ts.tv_nsec += 0;		// 1 second
+
 		pthread_mutex_lock (&_mutex);
-		// if there are LED events, run the update every half second
-		// elese wait a whole second
-		if(_ledEvent){
-			ts.tv_sec += 0;
- 			ts.tv_nsec += 10.0e8;		// half second
-		}
-		else {
-			ts.tv_sec += 1;
-			ts.tv_nsec += 0;
-		}
-		bool shouldWait = ((_eventQueue.size() == 0)
-								 && ((_ledEvent & 0x0000ffff) == 0));
-		
-		//
+	 	bool shouldWait =  _eventQueue.size() == 0;
+		pthread_mutex_unlock (&_led_mutex);
+ 
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
-		
-		//		pthread_mutex_lock (&_mutex);
+ 
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
@@ -1056,12 +1118,7 @@ void DisplayMgr::DisplayUpdate(){
 		
 		if(!_isRunning || !_isSetup)
 			continue;
-		
-		// run the LED effects
-		if(_ledEvent){
-			ledEventUpdate();
-		}
-		
+ 
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
 		string eventArg = "";
@@ -1350,7 +1407,7 @@ void* DisplayMgr::DisplayUpdateThread(void *context){
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::DisplayUpdateThreadCleanup ,context);
 	
-	d->DisplayUpdate();
+	d->DisplayUpdateLoop();
 	
 	pthread_exit(NULL);
 	

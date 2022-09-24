@@ -304,9 +304,9 @@ void DisplayMgr::runLEDEventVol(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
-		printf("LED_EVENT_VOL:  %lld\n" ,diff);
+	//	printf("LED_EVENT_VOL:  %lld\n" ,diff);
  
-		if(diff <  5000){
+		if(diff <  1000){
 			
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24

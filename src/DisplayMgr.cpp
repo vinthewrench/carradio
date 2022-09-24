@@ -404,21 +404,18 @@ void DisplayMgr::LEDUpdateLoop(){
 		}
 	 
 		// delay for half second
-//		struct timespec ts = {0, 0};
-//		clock_gettime(CLOCK_MONOTONIC, &ts);
-//		ts.tv_sec += 0;
-//		ts.tv_nsec += 500000000;		// half second
+		struct timespec ts = {0, 0};
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		ts.tv_sec += 0;
+		ts.tv_nsec += 500000000;		// half second
 		
 		pthread_mutex_lock (&_led_mutex);
-//		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
-		bool shouldWait =  _ledEvent;
+ 		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
+//		bool shouldWait =  _ledEvent;
 		
 		// dont wait if there is an LED event already
 		if (shouldWait)
-			pthread_cond_wait(&_led_cond, &_led_mutex);
-			
-		
-//			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
 		 
 		// run the LED effects
 		

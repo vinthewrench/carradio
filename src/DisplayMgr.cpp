@@ -409,7 +409,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		ts.tv_sec += 0;
-		ts.tv_nsec += 500000000;		// half second
+		ts.tv_nsec += 100000000;		// half second
 		
 		pthread_mutex_lock (&_led_mutex);
  		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;

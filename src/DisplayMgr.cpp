@@ -404,7 +404,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			usleep(10000);
 			continue;
 		}
-	 
+		
 		// delay for half second
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -417,12 +417,12 @@ void DisplayMgr::LEDUpdateLoop(){
 		while((_ledEvent & 0x0000ffff) == 0){
 			// wait for _led_cond or time delay == ETIMEDOUT
 			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
- 		}
+		}
 		
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-
-		if(_ledEvent) printf("_ledEvent %08x\n", _ledEvent);
+		
+		if(theLedEvent) printf("_ledEvent %08x\n", theLedEvent);
 		
 		// run the LED effects
 		
@@ -442,10 +442,11 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
-	 }
-	
+	 
+		if(theLedEvent == 0)
+			usleep(100000);
+	}
 }
-
  
 
 void* DisplayMgr::LEDUpdateThread(void *context){

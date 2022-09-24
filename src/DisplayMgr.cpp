@@ -412,16 +412,18 @@ void DisplayMgr::LEDUpdateLoop(){
 		ts.tv_nsec += 100000000;		// half second
 		
 		pthread_mutex_lock (&_led_mutex);
- 		bool shouldWait =  (_ledEvent & 0x0000ffff) == 0 ;
-//		bool shouldWait =  _ledEvent;
 		
-		// dont wait if there is an LED event already
-		if (shouldWait)
-			pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
-		 
+		// wait for event.
+		while((_ledEvent & 0x0000ffff) == 0){
+			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
+ 		}
+		
+		uint32_t theLedEvent =  _ledEvent;
+		pthread_mutex_unlock (&_led_mutex);
+
 		// run the LED effects
 		
-		if( _ledEvent & (LED_EVENT_STOP)){
+		if( theLedEvent & (LED_EVENT_STOP)){
 			ledEventSet(0, LED_EVENT_STOP);
 			
 			// dim it then restore
@@ -430,20 +432,18 @@ void DisplayMgr::LEDUpdateLoop(){
 			//		_leftRing.SetGlobalCurrent(sav);
 		}
 		
-		if( _ledEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
+		if( theLedEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))
 			runLEDEventStartup();
 		
-		if( _ledEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
+		if( theLedEvent & (LED_EVENT_VOL | LED_EVENT_VOL_RUNNING))
 			runLEDEventVol();
 		
-		if( _ledEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
+		if( theLedEvent & (LED_EVENT_MUTE | LED_EVENT_MUTE_RUNNING))
 			runLEDEventMute();
 		
-		if( _ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
+		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
-		
-		pthread_mutex_unlock (&_led_mutex);
-
+	 
 	}
 	
 }

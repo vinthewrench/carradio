@@ -2511,7 +2511,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 
 	if(transition ==  TRANS_REFRESH) {
  		LEDeventScannerStep();
-		ledEventUpdate();
+		runLEDEventScanner();
  	}
 	
 	if(transition ==  TRANS_IDLE) {

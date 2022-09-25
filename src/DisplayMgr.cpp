@@ -414,7 +414,7 @@ void DisplayMgr::LEDUpdateLoop(){
 	pthread_condattr_init( &attr);
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
-	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
+//	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
 #endif
 	pthread_cond_init( &_led_cond, &attr);
 	
@@ -426,27 +426,38 @@ void DisplayMgr::LEDUpdateLoop(){
 			continue;
 		}
 		
-		// delay for half second
-		struct timespec ts = {0, 0};
-		clock_gettime(TIMEDWAIT_CLOCK, &ts);
- 		ts.tv_nsec += 50000000000;		// 1/10 second
-		
 		pthread_mutex_lock (&_led_mutex);
+	
+		
+//		clock_gettime(CLOCK_REALTIME, &ts);
+//		ts.tv_sec += 2;
+////		ts.tv_nsec += 50000000000;		// 1/10 second
+		
 		
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
-			// wait for _led_cond or time delay == ETIMEDOUT
-			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ){
+	 
+			// delay for half second
+	 		struct timespec ts = {0, 0};
+			clock_gettime(CLOCK_REALTIME, &ts);
+			ts.tv_nsec += 80000000000;		// 1/10 second
+   
+			//			// wait for _led_cond or time delay == ETIMEDOUT
+			
+			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+			if(result){
 				
+	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
+	//			ETIMEDOUT
 				struct timespec ts1 = {0, 0};
- 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
- 
-				// Return-value check is non-essential here:
-				printf("timedwait delay = %lld msec \n", timespec_sub_to_msec( &ts, &ts1 ));
- 				break;
+				clock_gettime(CLOCK_REALTIME, &ts1);
+	 
+				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &ts, &ts1) );
+				break;
 			}
 		}
-
+	
+		
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 

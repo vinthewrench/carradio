@@ -78,10 +78,17 @@ DisplayMgr::DisplayMgr(){
 	_isRunning = true;
 	_dimLevel = 1.0;
 	
+	pthread_condattr_t attr;
+	pthread_condattr_init( &attr);
+#if !defined(__APPLE__)
+	//pthread_condattr_setclock is not supported on macOS
+//	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
+#endif
+	pthread_cond_init( &_led_cond, &attr);
+
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
-
-	
+ 
 	pthread_create(&_ledUpdateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::LEDUpdateThread, (void*)this);
 
@@ -410,13 +417,6 @@ void DisplayMgr::LEDUpdateLoop(){
 	//	printf("start LEDUpdateLoop\n");
 	PRINT_CLASS_TID;
 	
-	pthread_condattr_t attr;
-	pthread_condattr_init( &attr);
-#if !defined(__APPLE__)
-	//pthread_condattr_setclock is not supported on macOS
-//	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
-#endif
-	pthread_cond_init( &_led_cond, &attr);
 	
 	while(_isRunning){
 		
@@ -426,7 +426,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			continue;
 		}
 		
-		pthread_mutex_lock (&_led_mutex);
+ 	pthread_mutex_lock (&_led_mutex);
 	
 		
 //		clock_gettime(CLOCK_REALTIME, &ts);
@@ -440,14 +440,21 @@ void DisplayMgr::LEDUpdateLoop(){
 			// delay for half second
 	 		struct timespec ts = {0, 0};
 			clock_gettime(CLOCK_REALTIME, &ts);
-			ts.tv_nsec += 80000000000;		// 1/10 second
-   
+//			ts.tv_nsec += 50000000;		// 1/10 second
+ 			ts.tv_sec += 1;		// 1/10 second//
+
 			//			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+			
+			if(result != ETIMEDOUT){
+				perror("pthread_cond_timedwait");
+				
+			}
+			
 			if(result){
 				
-	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
+ 	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
 	//			ETIMEDOUT
 				struct timespec ts1 = {0, 0};
 				clock_gettime(CLOCK_REALTIME, &ts1);
@@ -1136,7 +1143,8 @@ void DisplayMgr::DisplayUpdateLoop(){
 
 		pthread_mutex_lock (&_mutex);
 	 	bool shouldWait =  _eventQueue.size() == 0;
-
+		pthread_mutex_unlock (&_led_mutex);
+ 
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
  

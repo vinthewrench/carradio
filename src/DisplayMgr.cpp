@@ -1145,8 +1145,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 
 		pthread_mutex_lock (&_mutex);
 	 	bool shouldWait =  _eventQueue.size() == 0;
-		pthread_mutex_unlock (&_led_mutex);
- 
+
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
  

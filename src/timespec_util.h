@@ -107,7 +107,7 @@ timespec_sub_to_nsec(const struct timespec *a, const struct timespec *b)
 static inline int64_t
 timespec_to_msec(const struct timespec *a)
 {
-	return (int64_t)a->tv_sec * 1000 + a->tv_nsec / 1000000;
+	return (int64_t)a->tv_sec * 10000 + a->tv_nsec / 10000000;
 }
 /* Subtract timespecs and return result in milliseconds
  *
@@ -118,7 +118,7 @@ timespec_to_msec(const struct timespec *a)
 static inline int64_t
 timespec_sub_to_msec(const struct timespec *a, const struct timespec *b)
 {
-	return timespec_sub_to_nsec(a, b) / 1000000;
+	return timespec_sub_to_nsec(a, b) / 100000000;
 }
 /* Convert milli-Hertz to nanoseconds
  *

@@ -54,6 +54,21 @@ static  const string moreDown = "\x1b\x98\x04\xf9\x1d";
 static  const string moreNext = "\x1b\x98\x04\xfa\x1d";
 static  const string morePrev = "\x1b\x98\x04\xfc\x1d";
 
+
+//  MACOS doesnt support pthread_condattr_setclock
+
+#if defined(__APPLE__)
+#define TIMEDWAIT_CLOCK CLOCK_REALTIME
+#else
+
+/*
+ looks like there is a bug in Raspberry PI that causes pthread_cond_timedwait to
+ never timeout when using CLOCK_MONOTONIC_RAW  - so fuck them use CLOCK_REALTIME
+*/
+#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
+#endif
+
+ 
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -395,10 +410,9 @@ void DisplayMgr::LEDUpdateLoop(){
 	
 	pthread_condattr_t attr;
 	pthread_condattr_init( &attr);
-	
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
-//	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
+	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
 #endif
 	pthread_cond_init( &_led_cond, &attr);
 	
@@ -410,66 +424,30 @@ void DisplayMgr::LEDUpdateLoop(){
 			continue;
 		}
 		
+		// delay for half second
+		struct timespec ts = {0, 0};
+		clock_gettime(TIMEDWAIT_CLOCK, &ts);
+ 		ts.tv_nsec += 50000000000;		// 1/10 second
+		
 		pthread_mutex_lock (&_led_mutex);
-	
-		
-//		clock_gettime(CLOCK_REALTIME, &ts);
-//		ts.tv_sec += 2;
-////		ts.tv_nsec += 50000000000;		// 1/10 second
-		
 		
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
-	 
-			// delay for half second
-			struct timeval tv;
-			struct timespec ts;
-
-			int result = clock_gettime(CLOCK_REALTIME, &ts);
-			if (result == -1) {
-				perror("clock_gettime");
-				exit(EXIT_FAILURE);
-		}
- 
-			printf("starting timedwait at %s", ctime(&ts.tv_sec));
-			
-			int timeInMs = 500;
-			
-			 ts.tv_sec = time(NULL) + timeInMs / 1000;
-			 ts.tv_nsec = tv.tv_usec * 1000 + 1000 * 1000 * (timeInMs % 1000);
-			 ts.tv_sec += ts.tv_nsec / (1000 * 1000 * 1000);
-			 ts.tv_nsec %= (1000 * 1000 * 1000);
-
-			
-// 			ts.tv_sec += 2;
-//			ts.tv_nsec = 0;;
-//			// wait for _led_cond or time delay == ETIMEDOUT
-			
-			result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
-			printf("pthread_cond_timedwait = %d\n", result);
-			if(result){
-	 
-	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
+			// wait for _led_cond or time delay == ETIMEDOUT
+			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ){
 				
 				struct timespec ts1 = {0, 0};
-				clock_gettime(CLOCK_REALTIME, &ts1);
-		 
+ 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
+ 
 				// Return-value check is non-essential here:
-				  printf("timedwait over at %s ", ctime(&ts1.tv_sec));
-
-				printf("delay = %lld\n", timespec_sub_to_msec(&ts1, &ts) );
-				break;
+				printf("timedwait delay = %lld msec \n", timespec_sub_to_msec( &ts, &ts1 ));
+ 				break;
 			}
 		}
 	
-		
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-//
-//		// if it was only an ongoing event - pause a bit
-//		if((theLedEvent & 0x0000ffff) == 0)
-//			usleep(10000);
-		
+
 		// run the LED effects
 		
 		if( theLedEvent & (LED_EVENT_STOP)){

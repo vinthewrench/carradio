@@ -413,8 +413,8 @@ void DisplayMgr::LEDUpdateLoop(){
 		// delay for half second
 		struct timespec ts = {0, 0};
 		clock_gettime(CLOCK_REALTIME, &ts);
-		ts.tv_sec += 0;
-		ts.tv_nsec += 50000000000;		// 1/10 second
+		ts.tv_sec += 1;
+	//	ts.tv_nsec += 50000000000;		// 1/10 second
 		
 		pthread_mutex_lock (&_led_mutex);
 		

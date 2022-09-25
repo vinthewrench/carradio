@@ -439,11 +439,11 @@ void DisplayMgr::LEDUpdateLoop(){
 	 
 			// delay for half second
 	 		struct timespec ts = {0, 0};
-			clock_gettime(CLOCK_REALTIME, &ts);
-			ts.tv_nsec += 50000000000;		// 1/10 second
-//			ts.tv_sec += 1;		// 1/10 second//
+			struct timespec now = {0, 0};
+			clock_gettime(CLOCK_REALTIME, &now);
+			timespec_add_msec(&ts, &now, 500);
 
-			//			// wait for _led_cond or time delay == ETIMEDOUT
+				//			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
 			

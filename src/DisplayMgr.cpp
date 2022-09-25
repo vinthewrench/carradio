@@ -441,6 +441,14 @@ void DisplayMgr::LEDUpdateLoop(){
 				if(result != ETIMEDOUT){
 					 printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
+				
+#if 1
+ 				 struct timespec ts1 = {0, 0};
+				 clock_gettime(TIMEDWAIT_CLOCK, &ts1);
+				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &ts, &ts1) );
+
+#endif
+				
 				break;
 			}
 		}

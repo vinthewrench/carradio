@@ -432,6 +432,7 @@ void DisplayMgr::LEDUpdateLoop(){
  
 			printf("starting timedwait at %s", ctime(&ts.tv_sec));
  			ts.tv_sec += 2;
+			ts.tv_nsec = 0;;
 			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);

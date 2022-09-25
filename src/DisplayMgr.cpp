@@ -433,7 +433,12 @@ void DisplayMgr::LEDUpdateLoop(){
 			printf("starting timedwait at %s", ctime(&ts.tv_sec));
  			ts.tv_sec += 2;
 			// wait for _led_cond or time delay == ETIMEDOUT
-			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) {
+			
+			result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
+			printf("pthread_cond_timedwait = %d\n", result);
+			if(result){
+	 
+	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
 				
 				struct timespec ts1 = {0, 0};
 				clock_gettime(CLOCK_REALTIME, &ts1);

@@ -65,9 +65,7 @@ static  const string morePrev = "\x1b\x98\x04\xfc\x1d";
  looks like there is a bug in Raspberry PI that causes pthread_cond_timedwait to
  never timeout when using CLOCK_MONOTONIC_RAW  - so fuck them use CLOCK_REALTIME
 */
-#define TIMEDWAIT_CLOCK CLOCK_REALTIME
-
-//#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
+#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
 #endif
 
  
@@ -429,34 +427,24 @@ void DisplayMgr::LEDUpdateLoop(){
  
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
-	 
+			
 			// delay for half second
-	 		struct timespec ts = {0, 0};
+			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
 			timespec_add_msec(&ts, &now, 500);
-
-				//			// wait for _led_cond or time delay == ETIMEDOUT
+			
+			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
-	 		if(result){
-				
+			if(result){
 				if(result != ETIMEDOUT){
-					perror("pthread_cond_timedwait");
+					 printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
-		
- 	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
-	//			ETIMEDOUT
-				struct timespec ts1 = {0, 0};
-				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
-	 
-				printf("pthread_cond_timedwait = %d delay = %lld\n", result,
-						 timespec_sub_to_msec( &ts1,  &now) );
 				break;
 			}
 		}
-	
-		
+ 
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 

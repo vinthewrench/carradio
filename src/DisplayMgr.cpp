@@ -440,8 +440,8 @@ void DisplayMgr::LEDUpdateLoop(){
 			// delay for half second
 	 		struct timespec ts = {0, 0};
 			clock_gettime(CLOCK_REALTIME, &ts);
-//			ts.tv_nsec += 50000000;		// 1/10 second
- 			ts.tv_sec += 1;		// 1/10 second//
+			ts.tv_nsec += 50000000000;		// 1/10 second
+//			ts.tv_sec += 1;		// 1/10 second//
 
 			//			// wait for _led_cond or time delay == ETIMEDOUT
 			

@@ -424,10 +424,10 @@ void DisplayMgr::LEDUpdateLoop(){
 	
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-	 
-		// if it was only an ongoing event - pause a bit
-		if((theLedEvent & 0x0000ffff) == 0)
-			usleep(10000);
+//	 
+//		// if it was only an ongoing event - pause a bit
+//		if((theLedEvent & 0x0000ffff) == 0)
+//			usleep(10000);
 		
 		// run the LED effects
 		

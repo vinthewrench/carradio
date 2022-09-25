@@ -459,7 +459,7 @@ void DisplayMgr::LEDUpdateLoop(){
 				struct timespec ts1 = {0, 0};
 				clock_gettime(CLOCK_REALTIME, &ts1);
 	 
-				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &ts, &ts1) );
+				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &now, &ts1) );
 				break;
 			}
 		}

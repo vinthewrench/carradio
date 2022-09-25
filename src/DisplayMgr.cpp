@@ -383,7 +383,7 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	pthread_mutex_unlock (&_led_mutex);
 	
 	// only signal if you are setting a flag
-	if((set & 0x0000ffff0) != 0)
+	if((set & 0x0000ffff) != 0)
 		pthread_cond_signal(&_led_cond);
 }
 void DisplayMgr::LEDUpdateLoop(){
@@ -424,7 +424,7 @@ void DisplayMgr::LEDUpdateLoop(){
 	
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-//	 
+//
 //		// if it was only an ongoing event - pause a bit
 //		if((theLedEvent & 0x0000ffff) == 0)
 //			usleep(10000);

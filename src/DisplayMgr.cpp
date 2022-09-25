@@ -422,8 +422,9 @@ void DisplayMgr::LEDUpdateLoop(){
 		while((_ledEvent & 0x0000ffff) == 0){
 	 
 			// delay for half second
-			struct timespec ts = {0};
-		 
+			struct timeval tv;
+			struct timespec ts;
+
 			int result = clock_gettime(CLOCK_REALTIME, &ts);
 			if (result == -1) {
 				perror("clock_gettime");
@@ -431,9 +432,18 @@ void DisplayMgr::LEDUpdateLoop(){
 		}
  
 			printf("starting timedwait at %s", ctime(&ts.tv_sec));
- 			ts.tv_sec += 2;
-			ts.tv_nsec = 0;;
-			// wait for _led_cond or time delay == ETIMEDOUT
+			
+			int timeInMs = 500;
+			
+			 ts.tv_sec = time(NULL) + timeInMs / 1000;
+			 ts.tv_nsec = tv.tv_usec * 1000 + 1000 * 1000 * (timeInMs % 1000);
+			 ts.tv_sec += ts.tv_nsec / (1000 * 1000 * 1000);
+			 ts.tv_nsec %= (1000 * 1000 * 1000);
+
+			
+// 			ts.tv_sec += 2;
+//			ts.tv_nsec = 0;;
+//			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
 			printf("pthread_cond_timedwait = %d\n", result);

@@ -77,15 +77,7 @@ DisplayMgr::DisplayMgr(){
 	_isSetup = false;
 	_isRunning = true;
 	_dimLevel = 1.0;
-	
-	pthread_condattr_t attr;
-	pthread_condattr_init( &attr);
-#if !defined(__APPLE__)
-	//pthread_condattr_setclock is not supported on macOS
-//	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
-#endif
-	pthread_cond_init( &_led_cond, &attr);
-
+ 
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
  
@@ -417,6 +409,13 @@ void DisplayMgr::LEDUpdateLoop(){
 	//	printf("start LEDUpdateLoop\n");
 	PRINT_CLASS_TID;
 	
+	pthread_condattr_t attr;
+	pthread_condattr_init( &attr);
+#if !defined(__APPLE__)
+	//pthread_condattr_setclock is not supported on macOS
+	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
+#endif
+	pthread_cond_init( &_led_cond, &attr);
 	
 	while(_isRunning){
 		
@@ -427,39 +426,32 @@ void DisplayMgr::LEDUpdateLoop(){
 		}
 		
  	pthread_mutex_lock (&_led_mutex);
-	
-		
-//		clock_gettime(CLOCK_REALTIME, &ts);
-//		ts.tv_sec += 2;
-////		ts.tv_nsec += 50000000000;		// 1/10 second
-		
-		
+ 
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
 	 
 			// delay for half second
 	 		struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
-			clock_gettime(CLOCK_REALTIME, &now);
+			clock_gettime(TIMEDWAIT_CLOCK, &now);
 			timespec_add_msec(&ts, &now, 500);
 
 				//			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
-			
-			if(result != ETIMEDOUT){
-				perror("pthread_cond_timedwait");
+	 		if(result){
 				
-			}
-			
-			if(result){
-				
+				if(result != ETIMEDOUT){
+					perror("pthread_cond_timedwait");
+				}
+		
  	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
 	//			ETIMEDOUT
 				struct timespec ts1 = {0, 0};
-				clock_gettime(CLOCK_REALTIME, &ts1);
+				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
 	 
-				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &now, &ts1) );
+				printf("pthread_cond_timedwait = %d delay = %lld\n", result,
+						 timespec_sub_to_msec( &ts1,  &now) );
 				break;
 			}
 		}

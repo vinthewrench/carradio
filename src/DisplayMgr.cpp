@@ -65,7 +65,9 @@ static  const string morePrev = "\x1b\x98\x04\xfc\x1d";
  looks like there is a bug in Raspberry PI that causes pthread_cond_timedwait to
  never timeout when using CLOCK_MONOTONIC_RAW  - so fuck them use CLOCK_REALTIME
 */
-#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
+#define TIMEDWAIT_CLOCK CLOCK_REALTIME
+
+//#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
 #endif
 
  

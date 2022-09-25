@@ -398,7 +398,7 @@ void DisplayMgr::LEDUpdateLoop(){
 	
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
-	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
+//	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
 #endif
 	pthread_cond_init( &_led_cond, &attr);
 	
@@ -425,7 +425,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			struct timeval tv;
 			struct timespec ts;
 
-			int result = clock_gettime(CLOCK_MONOTONIC, &ts);
+			int result = clock_gettime(CLOCK_REALTIME, &ts);
 			if (result == -1) {
 				perror("clock_gettime");
 				exit(EXIT_FAILURE);
@@ -452,7 +452,7 @@ void DisplayMgr::LEDUpdateLoop(){
 	//		if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts)  == ETIMEDOUT ) {
 				
 				struct timespec ts1 = {0, 0};
-				clock_gettime(CLOCK_MONOTONIC, &ts1);
+				clock_gettime(CLOCK_REALTIME, &ts1);
 		 
 				// Return-value check is non-essential here:
 				  printf("timedwait over at %s ", ctime(&ts1.tv_sec));

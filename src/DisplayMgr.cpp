@@ -412,7 +412,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// delay for half second
 		struct timespec ts = {0, 0};
-		clock_gettime(CLOCK_MONOTONIC, &ts);
+		clock_gettime(CLOCK_REALTIME, &ts);
 		ts.tv_sec += 0;
 		ts.tv_nsec += 50000000000;		// 1/10 second
 		
@@ -421,9 +421,17 @@ void DisplayMgr::LEDUpdateLoop(){
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
 			// wait for _led_cond or time delay == ETIMEDOUT
-			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) break;
+			if( pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts) ) {
+				
+				struct timespec ts1 = {0, 0};
+				clock_gettime(CLOCK_REALTIME, &ts1);
+		 
+				printf("delay = %lld\n", timespec_sub_to_msec(&ts1, &ts) );
+				break;
+			}
 		}
 	
+		
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 //

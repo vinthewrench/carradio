@@ -444,7 +444,7 @@ void DisplayMgr::LEDUpdateLoop(){
  				break;
 			}
 		}
-	
+
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 

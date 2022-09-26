@@ -916,8 +916,8 @@ void RadioMgr::SDRProcessor(){
 				if(!isSQLD != !wasSquelched){
 					if(isSQLD)
 						display->LEDeventScannerStep();
-					else
-						display->LEDeventScannerHold();
+//					else
+//						display->LEDeventScannerHold();
 
 					wasSquelched = isSQLD;
 				}

@@ -437,7 +437,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
-			timespec_add_msec(&ts, &now, 500);
+			timespec_add_msec(&ts, &now, 1000);
 			
 			// wait for _led_cond or time delay == ETIMEDOUT
 			

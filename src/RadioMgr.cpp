@@ -831,15 +831,15 @@ void RadioMgr::SDRProcessor(){
 	
 	PRINT_CLASS_TID;
 	
-	DisplayMgr*		display 	= PiCarMgr::shared()->display();
-
 	bool inbuf_length_warning = false;
 	SampleVector audiosamples;
 	double audio_level = 0;
 	bool got_stereo = false;
 	
 	for (unsigned int block = 0; !_shouldQuit;  block++) {
- 
+		
+		bool shouldTuneToNextChannel = false;
+		
 		if(!_isSetup){
 			usleep(200000);
 			continue;
@@ -891,36 +891,12 @@ void RadioMgr::SDRProcessor(){
 			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
 			
-			static bool wasSquelched = false;
-			static bool wasScanning = false;
-
 			if(_scannerMode){
 				// time to change channels.
-		 
-				wasScanning = true;
 				
-				bool isSQLD = isSquelched();
-				
-				if(isSQLD){
+	 			if(isSquelched())
 					tuneNextScannerChannel();
- 				}
-				
-//				if(!isSQLD != !wasSquelched){
-//					if(isSQLD)
-//						display->LEDeventScannerStep();
-//					else
-//						display->LEDeventScannerHold();
-//
-//					wasSquelched = isSQLD;
-//				}
-			}
-			else {
-//				if(wasScanning){
-//					display->LEDeventScannerStop();
-//				}
-//				wasScanning = false;
-//				wasSquelched = false;
-			}
+ 			}
 			
 
 			// Throw away first block. It is noisy because IF filters

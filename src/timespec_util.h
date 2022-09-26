@@ -28,7 +28,7 @@
  *
  * For more information, please refer to <http://unlicense.org/>
  *
- * from https://github.com/solemnwarning/timespec/blob/master/timespec.h
+ * from https://github.com/solemnwarning/timespec
 */
 
 
@@ -86,6 +86,19 @@ static inline struct timespec timespec_normalise(struct timespec ts)
 static inline long timespec_to_ms(struct timespec ts)
 {
 	return (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
+}
+
+/** \fn struct timespec timespec_from_ms(long milliseconds)
+ *  \brief Converts an integer number of milliseconds to a timespec.
+*/
+static inline struct timespec timespec_from_ms(long milliseconds)
+{
+	struct timespec ts = {
+		.tv_sec  = (milliseconds / 1000),
+		.tv_nsec = (milliseconds % 1000) * 1000000,
+	};
+	
+	return timespec_normalise(ts);
 }
 
 

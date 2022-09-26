@@ -890,14 +890,44 @@ void RadioMgr::SDRProcessor(){
 			
 			_IF_Level = 20*log10(_sdrDecoder->get_if_level());
 			_baseband_level =  20*log10(_sdrDecoder->get_baseband_level()) + 3.01;
+//
+//			if(_scannerMode){
+//				// time to change channels.
+//
+//	 			if(isSquelched())
+//					tuneNextScannerChannel();
+// 			}
 			
+			static bool wasSquelched = false;
+			static bool wasScanning = false;
+
 			if(_scannerMode){
 				// time to change channels.
+		 
+				wasScanning = true;
 				
-	 			if(isSquelched())
+				bool isSQLD = isSquelched();
+				
+				if(isSQLD){
 					tuneNextScannerChannel();
- 			}
-			
+				}
+				
+				if(!isSQLD != !wasSquelched){
+//					if(isSQLD)
+//						display->LEDeventScannerStep();
+//					else
+//						display->LEDeventScannerHold();
+
+					wasSquelched = isSQLD;
+				}
+			}
+			else {
+				if(wasScanning){
+//					display->LEDeventScannerStop();
+				}
+				wasScanning = false;
+				wasSquelched = false;
+			}
 
 			// Throw away first block. It is noisy because IF filters
 			// are still starting up.

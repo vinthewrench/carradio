@@ -914,11 +914,15 @@ void RadioMgr::SDRProcessor(){
 				}
 				
 				if(!isSQLD != !wasSquelched){
+					
+					if(wasSquelched)
+						display->LEDeventScannerHold();
+
 					if(isSQLD)
 						display->LEDeventScannerStep();
 //					else
 //						display->LEDeventScannerHold();
-
+#warning FIX LEDeventScannerHold
 					wasSquelched = isSQLD;
 				}
 			}

@@ -423,12 +423,13 @@ void DisplayMgr::LEDUpdateLoop(){
 			continue;
 		}
 		
- 	pthread_mutex_lock (&_led_mutex);
- 
+		pthread_mutex_lock (&_led_mutex);
+		
 		// wait for event.
 		while((_ledEvent & 0x0000ffff) == 0){
 			
 			// delay for half second
+			
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
@@ -439,23 +440,24 @@ void DisplayMgr::LEDUpdateLoop(){
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
 			if(result){
 				if(result != ETIMEDOUT){
-					 printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
+					printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 1
- 				 struct timespec ts1 = {0, 0};
-				 clock_gettime(TIMEDWAIT_CLOCK, &ts1);
-				printf("pthread_cond_timedwait = %d delay = %lld\n", result, timespec_sub_to_msec( &ts, &ts1) );
-
+#if 0
+				// debugging how pthread_cond_timedwait works
+				struct timespec ts1 = {0, 0};
+				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
+				printf("pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
+				
 #endif
 				
 				break;
 			}
 		}
- 
+		
 		uint32_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
-
+		
 		// run the LED effects
 		
 		if( theLedEvent & (LED_EVENT_STOP)){
@@ -1111,7 +1113,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 	
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
-	pthread_condattr_setclock( &attr, CLOCK_MONOTONIC);
+	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
 #endif
 	pthread_cond_init( &_cond, &attr);
 	
@@ -1123,31 +1125,51 @@ void DisplayMgr::DisplayUpdateLoop(){
 			continue;
 		}
 		
-		// --check if any events need processing else wait for a timeout
-		struct timespec ts = {0, 0};
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		ts.tv_sec += 1;
-		ts.tv_nsec += 0;		// 1 second
-
+		//		// --check if any events need processing else wait for a timeout
 		pthread_mutex_lock (&_mutex);
-	 	bool shouldWait =  _eventQueue.size() == 0;
-		pthread_mutex_unlock (&_led_mutex);
- 
-		if (shouldWait)
-			pthread_cond_timedwait(&_cond, &_mutex, &ts);
- 
+		
+		// wait for event.
+		while(_eventQueue.size() == 0){
+			
+			// delay for a bit
+			
+			struct timespec ts = {0, 0};
+			struct timespec now = {0, 0};
+			clock_gettime(TIMEDWAIT_CLOCK, &now);
+			timespec_add_msec(&ts, &now, 1000);
+			
+			// wait for _eventQueue or time delay == ETIMEDOUT
+			
+			int result = pthread_cond_timedwait(&_cond, &_mutex, &ts);
+			if(result){
+				if(result != ETIMEDOUT){
+					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
+				}
+				
+#if 1
+				// debugging how pthread_cond_timedwait works
+				struct timespec ts1 = {0, 0};
+				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
+				printf("DisplayUpdateLoop:: pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
+				
+#endif
+				
+				break;
+			}
+		}
+		
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
 			_eventQueue.pop();
 		}
-		
 		mode_state_t lastMode = _current_mode;
+
 		pthread_mutex_unlock (&_mutex);
 		
-//		if(!_isRunning || !_isSetup)
-//			continue;
- 
+		//		if(!_isRunning || !_isSetup)
+		//			continue;
+		
 		bool shouldRedraw = false;			// needs complete redraw
 		bool shouldUpdate = false;			// needs update of data
 		string eventArg = "";

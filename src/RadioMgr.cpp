@@ -918,7 +918,7 @@ void RadioMgr::SDRProcessor(){
 				else
 					sqlCount++;
 				
-				if(sqlCount == 2){
+				if(sqlCount == 3){
 					display->LEDeventScannerHold();
 				}
 			}

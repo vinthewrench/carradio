@@ -428,25 +428,24 @@ void DisplayMgr::LEDUpdateLoop(){
 		pthread_mutex_lock (&_led_mutex);
 		
 		// wait for event.
-		
-		if((_ledEvent & 0x0000ffff) != 0){
-			printf("ledEvent  = %08x\n",_ledEvent);
- 		}
-		
+	 
 		while((_ledEvent & 0x0000ffff) == 0){
 			
 			// delay for half second
 			
+	
+#if 1
 			struct timespec ts = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &ts);
 			ts.tv_sec += 1;
 			ts.tv_nsec += 0;		// 1 second
+#else
+			struct timespec ts = {0, 0};
+			struct timespec now = {0, 0};
+			clock_gettime(TIMEDWAIT_CLOCK, &now);
+			timespec_add_msec(&ts, &now, 1000);
+#endif
 //
-//			struct timespec ts = {0, 0};
-//			struct timespec now = {0, 0};
-//			clock_gettime(TIMEDWAIT_CLOCK, &now);
-//			timespec_add_msec(&ts, &now, 1000);
-//			
 			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
@@ -1135,19 +1134,70 @@ void DisplayMgr::DisplayUpdateLoop(){
 			continue;
 		}
 		
+#if 1
+		//		// --check if any events need processing else wait for a timeout
+		pthread_mutex_lock (&_mutex);
+		
+		// wait for event.
+		while(_eventQueue.size() == 0){
+			
+			// delay for a bit
+			
+#if 1
+			struct timespec ts = {0, 0};
+			clock_gettime(TIMEDWAIT_CLOCK, &ts);
+			ts.tv_sec += 1;
+			ts.tv_nsec += 0;		// 1 second
+#else
+			struct timespec ts = {0, 0};
+			struct timespec now = {0, 0};
+			clock_gettime(TIMEDWAIT_CLOCK, &now);
+			timespec_add_msec(&ts, &now, 1000);
+#endif
+			
+			
+			// wait for _eventQueue or time delay == ETIMEDOUT
+			int result = pthread_cond_timedwait(&_cond, &_mutex, &ts);
+			if(result){
+				if(result != ETIMEDOUT){
+					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
+				}
+				
+#if 0
+				// debugging how pthread_cond_timedwait works
+				struct timespec ts1 = {0, 0};
+				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
+				printf("DisplayUpdateLoop:: pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
+				
+#endif
+				
+				break;
+			}
+		}
+		
+		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
+		if(_eventQueue.size()){
+			item = _eventQueue.front();
+			_eventQueue.pop();
+		}
+		mode_state_t lastMode = _current_mode;
+		
+		pthread_mutex_unlock (&_mutex);
+		
+#else
 		// --check if any events need processing else wait for a timeout
 		struct timespec ts = {0, 0};
 		clock_gettime(TIMEDWAIT_CLOCK, &ts);
 		ts.tv_sec += 1;
 		ts.tv_nsec += 0;		// 1 second
-
+		
 		pthread_mutex_lock (&_mutex);
 		bool shouldWait =  _eventQueue.size() == 0;
 		pthread_mutex_unlock (&_led_mutex);
- 
+		
 		if (shouldWait)
 			pthread_cond_timedwait(&_cond, &_mutex, &ts);
- 
+		
 		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
 		if(_eventQueue.size()){
 			item = _eventQueue.front();
@@ -1156,7 +1206,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 		
 		mode_state_t lastMode = _current_mode;
 		pthread_mutex_unlock (&_mutex);
-		
+#endif
 		//		if(!_isRunning || !_isSetup)
 		//			continue;
 		

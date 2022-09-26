@@ -898,32 +898,28 @@ void RadioMgr::SDRProcessor(){
 //					tuneNextScannerChannel();
 // 			}
 			
-			static bool wasSquelched = false;
-			static bool wasScanning = false;
+ 			static bool wasScanning = false;
+ 			static int sqlCount = 0;
+		
 			DisplayMgr*		display 	= PiCarMgr::shared()->display();
 
 			if(_scannerMode){
 				// time to change channels.
-		 
+				
 				wasScanning = true;
 				
 				bool isSQLD = isSquelched();
 				
 				if(isSQLD){
 					tuneNextScannerChannel();
+					sqlCount = 0;
+					display->LEDeventScannerStep();
 				}
+				else
+					sqlCount++;
 				
-				if(!isSQLD != !wasSquelched){
-					
-					if(wasSquelched)
-						display->LEDeventScannerHold();
-
-					if(isSQLD)
-						display->LEDeventScannerStep();
-//					else
-//						display->LEDeventScannerHold();
-#warning FIX LEDeventScannerHold
-					wasSquelched = isSQLD;
+				if(sqlCount == 2){
+					display->LEDeventScannerHold();
 				}
 			}
 			else {
@@ -931,7 +927,7 @@ void RadioMgr::SDRProcessor(){
  					display->LEDeventScannerStop();
 				}
 				wasScanning = false;
-				wasSquelched = false;
+				sqlCount = 0;
 			}
 
 			// Throw away first block. It is noisy because IF filters

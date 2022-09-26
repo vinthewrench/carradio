@@ -394,7 +394,7 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 	_ledEvent &= ~reset;
 	_ledEvent |= set;
 	
-//	printf("ledEventSet %08x %08x = %08x\n",set,reset,_ledEvent);
+ 	printf("ledEventSet %08x %08x = %08x\n",set,reset,_ledEvent);
 
 	pthread_mutex_unlock (&_led_mutex);
 	// only signal if you are setting a flag
@@ -425,6 +425,11 @@ void DisplayMgr::LEDUpdateLoop(){
 		pthread_mutex_lock (&_led_mutex);
 		
 		// wait for event.
+		
+		if((_ledEvent & 0x0000ffff) != 0){
+			printf("ledEvent  = %08x\n",_ledEvent);
+ 		}
+		
 		while((_ledEvent & 0x0000ffff) == 0){
 			
 			// delay for half second
@@ -442,14 +447,13 @@ void DisplayMgr::LEDUpdateLoop(){
 					printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 0
+#if 1
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
 				printf("pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
 				
 #endif
-				
 				break;
 			}
 		}

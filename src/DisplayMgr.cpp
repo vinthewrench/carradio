@@ -333,7 +333,7 @@ void DisplayMgr::runLEDEventVol(){
 			}
 			
 		}
-		else if(diff > 1000){
+		else if(diff > 500){
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);
 			
 			// scan the LEDS off
@@ -440,7 +440,13 @@ void DisplayMgr::LEDUpdateLoop(){
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
- 			ts = timespec_add(now, timespec_from_ms(400));
+			
+			long delay = 1000;
+			
+			if( _ledEvent & 0xffff0000)
+				delay = 100;
+			
+ 			ts = timespec_add(now, timespec_from_ms(delay));
 #endif
 //
 			// wait for _led_cond or time delay == ETIMEDOUT

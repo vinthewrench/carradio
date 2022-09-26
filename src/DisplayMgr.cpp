@@ -451,7 +451,7 @@ void DisplayMgr::LEDUpdateLoop(){
 					printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 1
+#if 10
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
@@ -1160,7 +1160,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 1
+#if 0
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);

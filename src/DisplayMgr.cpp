@@ -455,8 +455,8 @@ void DisplayMgr::LEDUpdateLoop(){
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
-				printf("pthread_cond_timedwait delay = %ld\n",
-								 timespec_to_ms(timespec_sub(ts,ts1)));
+				printf("LEDUpdateLoop:  pthread_cond_timedwait delay = %ld\n",
+								 timespec_to_ms(timespec_sub(ts1, now)));
 #endif
 				break;
 			}
@@ -1140,7 +1140,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 			
 			// delay for a bit
 			
-#if 1
+#if 0
 			struct timespec ts = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &ts);
 			ts.tv_sec += 1;
@@ -1149,7 +1149,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
-			timespec_add_msec(&ts, &now, 1000);
+			ts = timespec_add(now, timespec_from_ms(1000));
 #endif
 			
 			
@@ -1160,12 +1160,12 @@ void DisplayMgr::DisplayUpdateLoop(){
 					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 0
+#if 1
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
 				printf("DisplayUpdateLoop:: pthread_cond_timedwait delay = %ld\n",
-						 timespec_to_ms(timespec_sub(ts,ts1)));
+						 timespec_to_ms(timespec_sub(ts1, now)));
 				
 #endif
 				

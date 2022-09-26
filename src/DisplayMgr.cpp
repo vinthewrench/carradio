@@ -1135,17 +1135,16 @@ void DisplayMgr::DisplayUpdateLoop(){
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
-			timespec_add_msec(&ts, &now, 10000);
+			timespec_add_msec(&ts, &now, 1000);
 			
 			// wait for _eventQueue or time delay == ETIMEDOUT
-			
 			int result = pthread_cond_timedwait(&_cond, &_mutex, &ts);
 			if(result){
 				if(result != ETIMEDOUT){
 					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 1
+#if 0
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);

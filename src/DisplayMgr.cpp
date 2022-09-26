@@ -1110,7 +1110,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 	
 	pthread_condattr_t attr;
 	pthread_condattr_init( &attr);
-	
 #if !defined(__APPLE__)
 	//pthread_condattr_setclock is not supported on macOS
 	pthread_condattr_setclock( &attr, TIMEDWAIT_CLOCK);
@@ -1133,10 +1132,14 @@ void DisplayMgr::DisplayUpdateLoop(){
 			
 			// delay for a bit
 			struct timespec ts = {0, 0};
-			struct timespec now = {0, 0};
-			clock_gettime(TIMEDWAIT_CLOCK, &now);
-			timespec_add_msec(&ts, &now, 1000);
-			
+//			struct timespec now = {0, 0};
+//			clock_gettime(TIMEDWAIT_CLOCK, &now);
+//			timespec_add_msec(&ts, &now, 1000);
+//
+			clock_gettime(TIMEDWAIT_CLOCK, &ts);
+			ts.tv_sec += 1;
+			ts.tv_nsec += 0;		// 1 second
+ 
 			// wait for _eventQueue or time delay == ETIMEDOUT
 			int result = pthread_cond_timedwait(&_cond, &_mutex, &ts);
 			if(result){

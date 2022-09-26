@@ -1570,7 +1570,7 @@ void PiCarMgr::idle(){
 
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
-		int64_t nowSecs = timespec_to_msec(&now) / 1000;
+		int64_t nowSecs = timespec_to_ms(now) / 1000;
 
 		time_t diff = 0;
 		
@@ -1581,7 +1581,7 @@ void PiCarMgr::idle(){
 		}
 		else {
 			// we never saw CAN - so use startup time.
-			int64_t lastSecs = timespec_to_msec(&_lastActivityTime) / 1000;
+			int64_t lastSecs = timespec_to_ms(_lastActivityTime) / 1000;
 			diff = nowSecs - lastSecs;
 		}
 		

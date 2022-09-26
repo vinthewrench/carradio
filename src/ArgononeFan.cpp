@@ -145,7 +145,7 @@ void ArgononeFan::idle(){
 			
 			struct timespec now, diff;
 			clock_gettime(CLOCK_MONOTONIC, &now);
-			timespec_sub( &diff, &now, &_lastQueryTime);
+		   diff = timespec_sub(now, _lastQueryTime);
 			
 			if(diff.tv_sec >=  _queryDelay  ) {
 				shouldQuery = true;

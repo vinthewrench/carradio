@@ -1,134 +1,125 @@
-/*
- * Copyright © 2014 - 2015 Collabora, Ltd.
+/* Functions for working with timespec structures
+ * Written by Daniel Collins (2017-2021)
+ * timespec_mod by Alex Forencich (2019)
+ * Various contributions by Ingo Albrecht (2021)
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
+ * This is free and unencumbered software released into the public domain.
  *
- * The above copyright notice and this permission notice (including the
- * next paragraph) shall be included in all copies or substantial
- * portions of the Software.
+ * Anyone is free to copy, modify, publish, use, compile, sell, or
+ * distribute this software, either in source code form or as a compiled
+ * binary, for any purpose, commercial or non-commercial, and by any
+ * means.
+ *
+ * In jurisdictions that recognize copyright laws, the author or authors
+ * of this software dedicate any and all copyright interest in the
+ * software to the public domain. We make this dedication for the benefit
+ * of the public at large and to the detriment of our heirs and
+ * successors. We intend this dedication to be an overt act of
+ * relinquishment in perpetuity of all present and future rights to this
+ * software under copyright law.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <http://unlicense.org/>
+ *
+ * from https://github.com/solemnwarning/timespec/blob/master/timespec.h
+*/
+
+
+
 #ifndef TIMESPEC_UTIL_H
 #define TIMESPEC_UTIL_H
 #include <stdint.h>
 #include <assert.h>
+ 
 #define NSEC_PER_SEC 1000000000
-/* Subtract timespecs
+
+/** \fn struct timespec timespec_normalise(struct timespec ts)
+ *  \brief Normalises a timespec structure.
  *
- * \param r[out] result: a - b
- * \param a[in] operand
- * \param b[in] operand
- */
-static inline void
-timespec_sub(struct timespec *r,
-		  const struct timespec *a, const struct timespec *b)
+ * Returns a normalised version of a timespec structure, according to the
+ * following rules:
+ *
+ * 1) If tv_nsec is >=1,000,000,00 or <=-1,000,000,000, flatten the surplus
+ *    nanoseconds into the tv_sec field.
+ *
+ * 2) If tv_nsec is negative, decrement tv_sec and roll tv_nsec up to represent
+ *    the same value attainable by ADDING nanoseconds to tv_sec.
+*/
+static inline struct timespec timespec_normalise(struct timespec ts)
 {
-	r->tv_sec = a->tv_sec - b->tv_sec;
-	r->tv_nsec = a->tv_nsec - b->tv_nsec;
-	if (r->tv_nsec < 0) {
-		r->tv_sec--;
-		r->tv_nsec += NSEC_PER_SEC;
+	while(ts.tv_nsec >= NSEC_PER_SEC)
+	{
+		++(ts.tv_sec);
+		ts.tv_nsec -= NSEC_PER_SEC;
 	}
-}
-/* Add a nanosecond value to a timespec
- *
- * \param r[out] result: a + b
- * \param a[in] base operand as timespec
- * \param b[in] operand in nanoseconds
- */
-static inline void
-timespec_add_nsec(struct timespec *r, const struct timespec *a, int64_t b)
-{
-	r->tv_sec = a->tv_sec + (b / NSEC_PER_SEC);
-	r->tv_nsec = a->tv_nsec + (b % NSEC_PER_SEC);
-	if (r->tv_nsec >= NSEC_PER_SEC) {
-		r->tv_sec++;
-		r->tv_nsec -= NSEC_PER_SEC;
-	} else if (r->tv_nsec < 0) {
-		r->tv_sec--;
-		r->tv_nsec += NSEC_PER_SEC;
+	
+	while(ts.tv_nsec <= -NSEC_PER_SEC)
+	{
+		--(ts.tv_sec);
+		ts.tv_nsec += NSEC_PER_SEC;
 	}
+	
+	if(ts.tv_nsec < 0)
+	{
+		/* Negative nanoseconds isn't valid according to POSIX.
+		 * Decrement tv_sec and roll tv_nsec over.
+		*/
+		
+		--(ts.tv_sec);
+		ts.tv_nsec = (NSEC_PER_SEC + ts.tv_nsec);
+	}
+	
+	return ts;
 }
-/* Add a millisecond value to a timespec
- *
- * \param r[out] result: a + b
- * \param a[in] base operand as timespec
- * \param b[in] operand in milliseconds
- */
-static inline void
-timespec_add_msec(struct timespec *r, const struct timespec *a, int64_t b)
+
+
+		/** \fn long timespec_to_ms(struct timespec ts)
+ *  \brief Converts a timespec to an integer number of milliseconds.
+*/
+static inline long timespec_to_ms(struct timespec ts)
 {
-	return timespec_add_nsec(r, a, b * 1000000);
+	return (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 }
-/* Convert timespec to nanoseconds
- *
- * \param a timespec
- * \return nanoseconds
- */
-static inline int64_t
-timespec_to_nsec(const struct timespec *a)
+
+
+/** \fn struct timespec timespec_add(struct timespec ts1, struct timespec ts2)
+ *  \brief Returns the result of adding two timespec structures.
+*/
+static inline struct timespec timespec_add(struct timespec ts1, struct timespec ts2)
 {
-	return (int64_t)a->tv_sec * NSEC_PER_SEC + a->tv_nsec;
+	/* Normalise inputs to prevent tv_nsec rollover if whole-second values
+	 * are packed in it.
+	*/
+	ts1 = timespec_normalise(ts1);
+	ts2 = timespec_normalise(ts2);
+	
+	ts1.tv_sec  += ts2.tv_sec;
+	ts1.tv_nsec += ts2.tv_nsec;
+	
+	return timespec_normalise(ts1);
 }
-/* Subtract timespecs and return result in nanoseconds
- *
- * \param a[in] operand
- * \param b[in] operand
- * \return to_nanoseconds(a - b)
- */
-static inline int64_t
-timespec_sub_to_nsec(const struct timespec *a, const struct timespec *b)
+
+/** \fn struct timespec timespec_sub(struct timespec ts1, struct timespec ts2)
+ *  \brief Returns the result of subtracting ts2 from ts1.
+*/
+static inline struct timespec timespec_sub(struct timespec ts1, struct timespec ts2)
 {
-	struct timespec r;
-	timespec_sub(&r, a, b);
-	return timespec_to_nsec(&r);
-}
-/* Convert timespec to milliseconds
- *
- * \param a timespec
- * \return milliseconds
- *
- * Rounding to integer milliseconds happens always down (floor()).
- */
-static inline int64_t
-timespec_to_msec(const struct timespec *a)
-{
-	return (int64_t)a->tv_sec * 1000 + a->tv_nsec / 1000000;
-}
-/* Subtract timespecs and return result in milliseconds
- *
- * \param a[in] operand
- * \param b[in] operand
- * \return to_milliseconds(a - b)
- */
-static inline int64_t
-timespec_sub_to_msec(const struct timespec *a, const struct timespec *b)
-{
-	return timespec_sub_to_nsec(a, b) / 1000000;
-}
-/* Convert milli-Hertz to nanoseconds
- *
- * \param mhz frequency in mHz, not zero
- * \return period in nanoseconds
- */
-static inline int64_t
-millihz_to_nsec(uint32_t mhz)
-{
-	assert(mhz > 0);
-	return 1000000000000LL / mhz;
+	/* Normalise inputs to prevent tv_nsec rollover if whole-second values
+	 * are packed in it.
+	*/
+	ts1 = timespec_normalise(ts1);
+	ts2 = timespec_normalise(ts2);
+	
+	ts1.tv_sec  -= ts2.tv_sec;
+	ts1.tv_nsec -= ts2.tv_nsec;
+	
+	return timespec_normalise(ts1);
 }
 #endif /* TIMESPEC_UTIL_H */

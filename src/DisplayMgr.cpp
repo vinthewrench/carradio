@@ -275,9 +275,9 @@ void DisplayMgr::runLEDEventMute(){
 		
 		struct timespec now, diff;
 		clock_gettime(CLOCK_MONOTONIC, &now);
-		timespec_sub( &diff, &now, &lastEvent);
+		diff = timespec_sub(now, lastEvent);
 		
-		uint64_t diff_millis = timespec_to_msec(&diff);
+		uint64_t diff_millis = timespec_to_ms(diff);
 		
 		if(diff_millis >= 500 ){ // 2Hz
 			clock_gettime(CLOCK_MONOTONIC, &lastEvent);
@@ -321,8 +321,8 @@ void DisplayMgr::runLEDEventVol(){
 		
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
-		
-		int64_t diff = timespec_sub_to_msec(&now, &startedEvent);
+			
+		int64_t diff = timespec_to_ms(timespec_sub(now,startedEvent));
 		if(setVolume){
 			float volume =  audio->volume();
 			// volume LED scales between 1 and 24
@@ -451,12 +451,12 @@ void DisplayMgr::LEDUpdateLoop(){
 					printf( "LEDUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 0
+#if 1
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
-				printf("pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
-				
+				printf("pthread_cond_timedwait delay = %ld\n",
+								 timespec_to_ms(timespec_sub(ts,ts1)));
 #endif
 				break;
 			}
@@ -1160,11 +1160,12 @@ void DisplayMgr::DisplayUpdateLoop(){
 					printf( "DisplayUpdateLoop: pthread_cond_timedwait : %s\n", strerror(result));
 				}
 				
-#if 0
+#if 1
 				// debugging how pthread_cond_timedwait works
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
-				printf("DisplayUpdateLoop:: pthread_cond_timedwait delay = %lld\n",  timespec_sub_to_msec( &ts, &ts1) );
+				printf("DisplayUpdateLoop:: pthread_cond_timedwait delay = %ld\n",
+						 timespec_to_ms(timespec_sub(ts,ts1)));
 				
 #endif
 				
@@ -1217,8 +1218,8 @@ void DisplayMgr::DisplayUpdateLoop(){
 			case EVT_NONE:
 				struct timespec now, diff;
 				clock_gettime(CLOCK_MONOTONIC, &now);
-				timespec_sub( &diff, &now, &_lastEventTime);
-				
+				diff = timespec_sub(now, _lastEventTime);
+		
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
 					
@@ -2164,7 +2165,7 @@ void DisplayMgr::drawCANBusScreen(modeTransition_t transition){
 	
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	int64_t nowSecs = timespec_to_msec(&now) / 1000;
+	int64_t nowSecs = timespec_to_ms(now) / 1000;
 	
 	constexpr int busTimeout = 5;
 	

@@ -900,6 +900,7 @@ void RadioMgr::SDRProcessor(){
 			
 			static bool wasSquelched = false;
 			static bool wasScanning = false;
+			DisplayMgr*		display 	= PiCarMgr::shared()->display();
 
 			if(_scannerMode){
 				// time to change channels.
@@ -913,17 +914,17 @@ void RadioMgr::SDRProcessor(){
 				}
 				
 				if(!isSQLD != !wasSquelched){
-//					if(isSQLD)
-//						display->LEDeventScannerStep();
-//					else
-//						display->LEDeventScannerHold();
+					if(isSQLD)
+						display->LEDeventScannerStep();
+					else
+						display->LEDeventScannerHold();
 
 					wasSquelched = isSQLD;
 				}
 			}
 			else {
 				if(wasScanning){
-//					display->LEDeventScannerStop();
+ 					display->LEDeventScannerStop();
 				}
 				wasScanning = false;
 				wasSquelched = false;

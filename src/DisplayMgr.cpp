@@ -391,8 +391,7 @@ void DisplayMgr::runLEDEventScanner(){
 
  
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
-	
-	
+
 	pthread_mutex_lock (&_led_mutex);
 	_ledEvent &= ~reset;
 	_ledEvent |= set;

@@ -455,7 +455,8 @@ void GPSmgr::processNMEA(const char *sentence){
 
 void GPSmgr::GPSReader(){
 	
-	
+	PRINT_CLASS_TID;
+
 	char	 buffer[82] = {0};
 	char	 *p = buffer;
 	

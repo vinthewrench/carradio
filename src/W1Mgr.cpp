@@ -213,6 +213,8 @@ bool W1Mgr::processDS18B20(string deviceName){
 
 void W1Mgr::W1Reader(){
 	
+	PRINT_CLASS_TID;
+
 	while(_isRunning){
 		// if not setup // check back later
 		if(!_isSetup){

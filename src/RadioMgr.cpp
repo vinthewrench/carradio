@@ -905,21 +905,21 @@ void RadioMgr::SDRProcessor(){
 					tuneNextScannerChannel();
  				}
 				
-				if(!isSQLD != !wasSquelched){
-					if(isSQLD)
-						display->LEDeventScannerStep();
-					else
-						display->LEDeventScannerHold();
-						
-					wasSquelched = isSQLD;
-				}
+//				if(!isSQLD != !wasSquelched){
+//					if(isSQLD)
+//						display->LEDeventScannerStep();
+//					else
+//						display->LEDeventScannerHold();
+//
+//					wasSquelched = isSQLD;
+//				}
 			}
 			else {
-				if(wasScanning){
-					display->LEDeventScannerStop();
-				}
-				wasScanning = false;
-				wasSquelched = false;
+//				if(wasScanning){
+//					display->LEDeventScannerStop();
+//				}
+//				wasScanning = false;
+//				wasSquelched = false;
 			}
 			
 

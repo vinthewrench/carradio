@@ -19,7 +19,7 @@
 
 #include "Utils.hpp"
 
-#define DEBUG_THREADS 0
+#define DEBUG_THREADS 1
 #define USE_COMPASS 0
 
 typedef uint64_t eTag_t;

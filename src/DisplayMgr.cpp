@@ -372,7 +372,7 @@ void DisplayMgr::runLEDEventScanner(){
 	
 	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
 		
-		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
+//		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
 
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[ledStep] = {0,255,0};
@@ -381,7 +381,7 @@ void DisplayMgr::runLEDEventScanner(){
 	}
 	else 	if( _ledEvent & LED_EVENT_SCAN_STOP ){
 		
-		printf("SCAN STOP:%08x\n", _ledEvent);
+//		printf("SCAN STOP:%08x\n", _ledEvent);
 
 		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
 		_rightRing.clearAll();
@@ -2656,7 +2656,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  
 	
 	if(transition == TRANS_LEAVING) {
- //	 	LEDeventScannerStop();
+  	 	LEDeventScannerStop();
  		return;
 	}
 
@@ -2665,7 +2665,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
  	}
 	
 	if(transition ==  TRANS_IDLE) {
-//  		LEDeventScannerHold();
+   		LEDeventScannerHold();
 	}
 
 	RadioMgr::radio_mode_t  mode;

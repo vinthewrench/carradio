@@ -226,11 +226,19 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
 	// dont keep pushing the same thing
 	bool shouldPush = true;
 	if(!_channelEventQueue.empty()){
-		auto item = _channelEventQueue.back();
-		if(item.mode == mode &&  item.freq == freq ){
-			shouldPush = false;
+		
+		if(force){
+			// clear the queue
+			_channelEventQueue= {};
+			shouldPush = true;
 		}
-	}
+		else {
+			auto item = _channelEventQueue.back();
+			if(item.mode == mode &&  item.freq == freq  ){
+				shouldPush = false;
+			}
+ 		}
+ 	}
 	
 	if(shouldPush)
 		_channelEventQueue.push({mode,freq, force});

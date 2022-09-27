@@ -76,12 +76,11 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_baseband_mean(0)
 	 , m_baseband_level(0)
 	 , m_squelch_level(squelch_level)
-	 , m_is_squelched(false)
-    , m_had_signal(false)
-	 , m_squelch_hits(0)
-	 , m_signal_hits(0)
 	 , m_squelch_dwell(25)
- 
+	 , m_is_squelched(false)
+	 , m_signal_hits(0)
+	 , m_squelch_hits(0)
+
 	 // Construct FineTuner
 	 , m_finetuner(m_tuning_table_size, m_tuning_shift)
 

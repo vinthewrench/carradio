@@ -409,7 +409,7 @@ void DisplayMgr::runLEDEventTuner(){
 		
 		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
+		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN  );
 	}
 	
 	

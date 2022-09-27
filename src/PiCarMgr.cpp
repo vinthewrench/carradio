@@ -1449,7 +1449,8 @@ void PiCarMgr::PiCarLoop(){
 					
 					// special case ,, we are scanning and click tuner knob
 					// go right to squelch
-					if(_radio.isOn() &&	_radio.isScannerMode()){
+					if(_radio.isOn() &&	_radio.isScannerMode()
+						&& ( _tuner_mode == TUNE_PRESETS)) {
 						_display.showSquelchChange();
 						continue;
 					}

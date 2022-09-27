@@ -214,7 +214,6 @@ bool AudioOutput::writeIQ(const SampleVector& samples)
 	
 	if( _isQuiet || _isMuted )
 	{
-		printf("Muted %zu samples\n", samples.size());
 		return true;
  	}
 	
@@ -726,9 +725,7 @@ bool 	AudioOutput::setVolume(double volIn){
 	set_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
-	
-	printf("setVolume %f (%f,%f,%f,%f) \n", volIn,  front, back, right, left ) ;
-	
+		
 	if(volIn == 0.0 ){
 		_isQuiet = true;
 	}
@@ -791,9 +788,6 @@ double AudioOutput::balance() {
 bool AudioOutput::setMute(bool shouldMute){
 	
 	bool success = false;
-	
-	
-	printf("setMute %d \n", shouldMute) ;
 	
 	if(shouldMute ){
 		if(!isMuted()){

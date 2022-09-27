@@ -269,8 +269,6 @@ void DisplayMgr::runLEDEventMute(){
 	static timespec		lastEvent = {0,0};
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
-	
-	printf("runLEDEventMute:  %08x\n" ,_ledEvent);
 
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
@@ -315,9 +313,6 @@ void DisplayMgr::runLEDEventVol(){
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
 	bool setVolume = false;
-	
-	printf("runLEDEventVol:  %08x\n" ,_ledEvent);
-
 	if( _ledEvent & LED_EVENT_VOL ){
 		
  		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
@@ -401,14 +396,17 @@ void DisplayMgr::runLEDEventTuner(){
 	
 	static timespec		startedEvent = {0,0};
 	
+	static uint8_t 		offset =  0;
 	
 	if( _ledEvent & LED_EVENT_TUNE_UP ){
 		printf("LED_EVENT_TUNE_UP:  %08x\n" ,_ledEvent);
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		
+		offset = mod(++offset, 24);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
 	}
 	else if( _ledEvent & LED_EVENT_TUNE_DOWN ){
-		
+		offset = mod(--offset, 24);
 		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN  );
@@ -421,25 +419,36 @@ void DisplayMgr::runLEDEventTuner(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		
 		int64_t diff = timespec_to_ms(timespec_sub(now,startedEvent));
-		//		if(setVolume){
-		//			float volume =  audio->volume();
-		//			// volume LED scales between 1 and 24
-		//			int ledvol = volume*23;
-		//
-		//			for (int i = 0 ; i < 24; i++) {
-		//				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
-		//			}
-		//
-		//		}
+		
 		if(diff > 800){
 			ledEventSet(0, LED_EVENT_TUNE_RUNNING);
 			
 			printf("LED_EVENT_TUNE_OFF  %08x\n" ,_ledEvent);
-
-//			// scan the LEDS off
-//			for (int i = 0; i < 24; i++) {
-//				_rightRing.setColor( i, 0, 0, 0);
-//			}
+			
+			// scan the LEDS off
+			for (int i = 0; i < 24; i++) {
+				_rightRing.setColor( i, 0, 0, 0);
+			}
+		}
+		else {
+			for (int i = 0 ; i < 24; i++) {
+				uint8_t off1 =  mod(offset-1, 24);
+				uint8_t off2 =  mod(offset+1, 24);
+				
+				if( i == offset){
+					_rightRing.setColor(i, 0, 0, 255);
+				}
+				else if(i == off1) {
+					_rightRing.setColor(i, 16, 16, 16);
+				}
+				else if(i == off2) {
+					_rightRing.setColor(i, 16, 16, 16);
+				}
+				else {
+					_rightRing.setColor(i, 0, 0, 0);
+				}
+			}
+			
 		}
 		
 	}
@@ -2041,33 +2050,35 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				TRY(_vfd.write(str));
 			}
 			else {
+		
 				
-				uint32_t 	maxFreq, minFreq;
-				bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
-				
-				if(hasRange){
-					uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
-					uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
-					
-					for (int i = 0 ; i < 24; i++) {
-						uint8_t off1 =  mod(offset-1, 24);
-						uint8_t off2 =  mod(offset+1, 24);
-						
-						if( i == offset){
-							_rightRing.setColor(i, 0, 0, 255);
-						}
-						else if(i == off1) {
-							_rightRing.setColor(i, 16, 16, 16);
-						}
-						else if(i == off2) {
-							_rightRing.setColor(i, 16, 16, 16);
-						}
-						else {
-							_rightRing.setColor(i, 0, 0, 0);
-						}
-					}
-				}
-				
+#warning  MOVE THIS TO LED EVENT
+//				uint32_t 	maxFreq, minFreq;
+//				bool hasRange =  RadioMgr::freqRangeOfMode(mode, minFreq, maxFreq);
+//
+//				if(hasRange){
+//					uint32_t newfreq = fmax(minFreq, fmin(maxFreq, freq));  //  pin freq
+//					uint8_t offset =   ( float(newfreq-minFreq)  / float( maxFreq-minFreq)) * 23 ;
+//
+//					for (int i = 0 ; i < 24; i++) {
+//						uint8_t off1 =  mod(offset-1, 24);
+//						uint8_t off2 =  mod(offset+1, 24);
+//
+//						if( i == offset){
+//							_rightRing.setColor(i, 0, 0, 255);
+//						}
+//						else if(i == off1) {
+//							_rightRing.setColor(i, 16, 16, 16);
+//						}
+//						else if(i == off2) {
+//							_rightRing.setColor(i, 16, 16, 16);
+//						}
+//						else {
+//							_rightRing.setColor(i, 0, 0, 0);
+//						}
+//					}
+//				}
+//
 				int precision = 0;
 				
 				switch (mode) {

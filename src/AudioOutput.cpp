@@ -786,6 +786,9 @@ bool AudioOutput::setMute(bool shouldMute){
 	
 	bool success = false;
 	
+	
+	printf("setMute %d \n", shouldMute) ;
+	
 	if(shouldMute ){
 		if(!isMuted()){
 			_savedVolume = volume();

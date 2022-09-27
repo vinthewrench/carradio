@@ -1313,15 +1313,14 @@ void PiCarMgr::PiCarLoop(){
 			// MARK:   Volume button moved
 			if(volWasMoved && _radio.isOn() ){
 				
+				//quit mute
+				if(_audio.isMuted())
+					_audio.setMute(false);
+				
 				// change  volume
 				auto volume = _audio.volume();
 				
 				if(volMovedCW){
-					
-					//quit mute
-					if(_audio.isMuted())
-						_audio.setMute(false);
-
 					if(volume < 1) {						// twist up
 						volume +=.02;
 						if(volume > 1) volume = 1.0;	// pin volume
@@ -1334,8 +1333,6 @@ void PiCarMgr::PiCarLoop(){
 						volume -=.02;
 						if(volume < 0) volume = 0.0;		// twist down
 						_audio.setVolume(volume);
-						if(volume == 0) _audio.setMute(true);
-						
 						_db.updateValue(VAL_AUDIO_VOLUME, volume);
 					}
 				}

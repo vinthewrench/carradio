@@ -1280,7 +1280,7 @@ void PiCarMgr::PiCarLoop(){
 							_radio.scanChannels(_scanner_freqs);
 						}
 						else {
-							_radio.setFrequencyandMode(mode, freq);
+							_radio.setFrequencyandMode(mode, freq, true);
 						}
 						
 						_radio.setON(true);

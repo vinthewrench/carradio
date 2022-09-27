@@ -214,7 +214,7 @@ bool AudioOutput::writeIQ(const SampleVector& samples)
 	
 	if( _isQuiet || _isMuted )
 	{
-		printf("Muted %ld samples\n", samples.size());
+		printf("Muted %zu samples\n", samples.size());
 		return true;
  	}
 	

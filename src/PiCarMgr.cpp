@@ -1373,8 +1373,10 @@ void PiCarMgr::PiCarLoop(){
 							if(isScanning) {
 								// if you are scanning an roll tuner - do nothing
 							}
-							else
+							else {
 								nextFreq = _radio.nextFrequency(tunerMovedCW);
+								didChangeChannel = true;
+							}
 							break;
 							
 						case TUNE_KNOWN:
@@ -1386,8 +1388,8 @@ void PiCarMgr::PiCarLoop(){
 								PiCarMgr::station_info_t info;
 								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
 									nextFreq = info.frequency;
-									didChangeChannel = true;
 								}
+								didChangeChannel = true;
 							}
 						}
 							break;
@@ -1399,8 +1401,9 @@ void PiCarMgr::PiCarLoop(){
 								nextFreq = info.frequency;
 								mode = info.band;
 								isScanning =( mode == RadioMgr::SCANNER);
-								didChangeChannel = true;
 							}
+							didChangeChannel = true;
+							
 							break;
 					}
 					

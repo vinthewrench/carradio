@@ -565,15 +565,6 @@ bool 	AudioOutput::setVolume(double volIn){
 	}else if( _fader < 0) {
 		front = adjustedFade;
 	}
-
- 
-//
-//	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
-//	set_normalized_volume(_elem, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
-//	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
-//	set_normalized_volume(_elem, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
-
-	
 	return true;
 }
 
@@ -730,7 +721,7 @@ bool 	AudioOutput::setVolume(double volIn){
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
  
-	printf("setVolume %f\n", volIn);
+	printf("setVolume % (%f,%f,%f,%f) \n", volIn,  front, back, right, left ) ;
 	
 	if(volIn == 0.0 ){
 		 _isMuted = true;

@@ -233,7 +233,7 @@ void DisplayMgr::LEDTunerUp (){
 }
 
 void DisplayMgr::LEDTunerDown (){
-	ledEventSet(LED_EVENT_TUNE_UP,0);
+	ledEventSet(LED_EVENT_TUNE_DOWN,0);
 }
 
 void DisplayMgr::runLEDEventStartup(){
@@ -429,7 +429,7 @@ void DisplayMgr::runLEDEventTuner(){
 		//			}
 		//
 		//		}
-		if(diff > 500){
+		if(diff > 800){
 			ledEventSet(0, LED_EVENT_TUNE_RUNNING);
 			
 			printf("LED_EVENT_TUNE_OFF  %08x\n" ,_ledEvent);

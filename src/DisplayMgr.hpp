@@ -48,7 +48,9 @@ public:
 	void LEDeventVol();
 	void LEDeventMute();
 	void LEDeventStop();
-	
+	void LEDTunerUp();
+	void LEDTunerDown();
+ 
 	void LEDeventScannerStep();
 	void LEDeventScannerHold();
 	void LEDeventScannerStop();
@@ -304,7 +306,9 @@ private:
 	// LED effects Bit map
 	
 #define LED_EVENT_ALL					0xFFFFFFFF
-	
+#define LED_EVENT_MASK					0x0000FFFF
+#define LED_STATUS_MASK					0xFFFF0000
+
 #define LED_EVENT_STARTUP				0x00000001
 #define LED_EVENT_VOL 					0x00000002
 #define LED_EVENT_MUTE					0x00000004
@@ -312,12 +316,18 @@ private:
 #define LED_EVENT_SCAN_STEP			0x00000008
 #define LED_EVENT_SCAN_HOLD			0x00000010
 #define LED_EVENT_SCAN_STOP			0x00000020
+	
+#define LED_EVENT_TUNE_UP				0x00000040
+#define LED_EVENT_TUNE_DOWN			0x00000080
+
+	
 #define LED_EVENT_STOP					0x00008000
 	
 #define LED_EVENT_STARTUP_RUNNING	0x00100000
 #define LED_EVENT_VOL_RUNNING			0x00200000
 #define LED_EVENT_MUTE_RUNNING		0x00400000
 #define LED_EVENT_SCAN_RUNNING		0x00800000
+#define LED_EVENT_TUNE_RUNNING		0x01000000
 
  
 	uint32_t  _ledEvent  = 0;
@@ -326,6 +336,7 @@ private:
 	void runLEDEventVol();
 	void runLEDEventMute();
 	void runLEDEventScanner();
+	void runLEDEventTuner();
 
 	void LEDUpdateLoop();
  	static void* LEDUpdateThread(void *context);

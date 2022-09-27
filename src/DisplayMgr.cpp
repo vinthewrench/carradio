@@ -227,8 +227,14 @@ void DisplayMgr::LEDeventScannerHold(){
 void DisplayMgr::LEDeventScannerStop(){
 	ledEventSet(LED_EVENT_SCAN_STOP,0);
 }
+ 
+void DisplayMgr::LEDTunerUp (){
+	ledEventSet(LED_EVENT_TUNE_UP,0);
+}
 
-
+void DisplayMgr::LEDTunerDown (){
+	ledEventSet(LED_EVENT_TUNE_UP,0);
+}
 
 void DisplayMgr::runLEDEventStartup(){
 	
@@ -389,6 +395,54 @@ void DisplayMgr::runLEDEventScanner(){
  }
 
 
+void DisplayMgr::runLEDEventTuner(){
+	
+	static timespec		startedEvent = {0,0};
+	
+	
+	if( _ledEvent & LED_EVENT_TUNE_UP ){
+		printf("LED_EVENT_TUNE_UP:  %08x\n" ,_ledEvent);
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
+	}
+	else if( _ledEvent & LED_EVENT_TUNE_DOWN ){
+		
+		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
+	}
+	
+	
+	if( _ledEvent & LED_EVENT_TUNE_RUNNING ){
+		
+		struct timespec now;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		
+		int64_t diff = timespec_to_ms(timespec_sub(now,startedEvent));
+		//		if(setVolume){
+		//			float volume =  audio->volume();
+		//			// volume LED scales between 1 and 24
+		//			int ledvol = volume*23;
+		//
+		//			for (int i = 0 ; i < 24; i++) {
+		//				_leftRing.setGREEN(i, i <= ledvol?0xff:0 );
+		//			}
+		//
+		//		}
+		if(diff > 500){
+			ledEventSet(0, LED_EVENT_TUNE_RUNNING);
+			
+			printf("LED_EVENT_TUNE_OFF  %08x\n" ,_ledEvent);
+
+//			// scan the LEDS off
+//			for (int i = 0; i < 24; i++) {
+//				_rightRing.setColor( i, 0, 0, 0);
+//			}
+		}
+		
+	}
+}
+
  
 void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 
@@ -400,7 +454,7 @@ void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
 
 	pthread_mutex_unlock (&_led_mutex);
 	// only signal if you are setting a flag
-	if((set & 0x0000ffff) != 0)
+	if((set & LED_EVENT_MASK) != 0)
 		pthread_cond_signal(&_led_cond);
 }
 void DisplayMgr::LEDUpdateLoop(){
@@ -428,7 +482,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// wait for event.
 		
-		while((_ledEvent & 0x0000ffff) == 0){
+		while((_ledEvent & LED_EVENT_MASK) == 0){
 			
 			// delay for half second
 			struct timespec ts = {0, 0};
@@ -437,7 +491,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			
 			long delay = 1000;
 			
-			if( _ledEvent & 0xffff0000)
+			if( _ledEvent & LED_STATUS_MASK)
 				delay = 100;
 			
 			ts = timespec_add(now, timespec_from_ms(delay));
@@ -481,6 +535,10 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
+		
+		if( theLedEvent & (LED_EVENT_TUNE_UP | LED_EVENT_TUNE_DOWN | LED_EVENT_TUNE_RUNNING))
+			runLEDEventTuner();
+ 
 	}
 }
  

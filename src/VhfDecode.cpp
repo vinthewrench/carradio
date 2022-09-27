@@ -159,37 +159,8 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 		}
 	}
  
-//
-//
-//	if(!hasSignal ){
-//
-//		m_squelch_hits++;
-//
-//		if(!m_had_signal){
-//				// if we never got a signal  then it indicates squelches after 3 tries
-//			if(m_squelch_hits > 2){
-//				m_is_squelched	 = true;
-//	 			}
-//		}
-//		// if we did get a signal before - then count it out before announcing no signal
-//		else if( m_squelch_hits > m_squelch_dwell){
-//			m_is_squelched	 = true;
-//			m_had_signal = false;
-//
-////			printf("SQ rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
-////	 				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
-// 		}
-//
-//		// squelch output
-//		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
-//			m_buf_mono[i] =  0.0;
-//		}
-//	}
 	else
 	{
-//		m_had_signal = true;
-//		m_is_squelched = false;
-//		m_squelch_hits = 0;
 		
  //		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
 		// Extract carrier frequency.

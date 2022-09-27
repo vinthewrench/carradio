@@ -1354,6 +1354,8 @@ void PiCarMgr::PiCarLoop(){
 			// MARK:   Tuner button moved
 			if(tunerWasMoved) {
 				
+				bool didChangeChannel = false;
+				
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN)){
 					// was handled - do nothing
@@ -1384,8 +1386,8 @@ void PiCarMgr::PiCarLoop(){
 								PiCarMgr::station_info_t info;
 								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
 									nextFreq = info.frequency;
+									didChangeChannel = true;
 								}
-								
 							}
 						}
 							break;
@@ -1397,7 +1399,7 @@ void PiCarMgr::PiCarLoop(){
 								nextFreq = info.frequency;
 								mode = info.band;
 								isScanning =( mode == RadioMgr::SCANNER);
-								
+								didChangeChannel = true;
 							}
 							break;
 					}
@@ -1409,6 +1411,14 @@ void PiCarMgr::PiCarLoop(){
 					else {
 						_radio.setFrequencyandMode(mode, nextFreq);
 						_display.showRadioChange();
+						
+						if(didChangeChannel){
+							if(tunerMovedCW)
+								_display.LEDTunerUp();
+							else
+								_display.LEDTunerDown();
+
+						}
 					}
 				}
 			}

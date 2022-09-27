@@ -270,6 +270,8 @@ void DisplayMgr::runLEDEventMute(){
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
 	
+	printf("runLEDEventMute:  %08x\n" ,_ledEvent);
+
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
 		blinkOn = false;
@@ -314,12 +316,12 @@ void DisplayMgr::runLEDEventVol(){
 	
 	bool setVolume = false;
 	
+	printf("runLEDEventVol:  %08x\n" ,_ledEvent);
+
 	if( _ledEvent & LED_EVENT_VOL ){
 		
-		//	 printf("LED_EVENT_VOL:  %08x\n" ,_ledEvent);
-		
-		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL );
+ 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL | LED_EVENT_MUTE_RUNNING );
 		setVolume = true;
 	}
 	

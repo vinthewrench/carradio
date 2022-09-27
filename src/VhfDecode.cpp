@@ -79,6 +79,7 @@ VhfDecoder::VhfDecoder(double sample_rate_if,
 	 , m_is_squelched(false)
     , m_had_signal(false)
 	 , m_squelch_hits(0)
+	 , m_signal_hits(0)
 	 , m_squelch_dwell(25)
  
 	 // Construct FineTuner
@@ -129,36 +130,67 @@ void VhfDecoder::process(const IQSampleVector& samples_in,
 	int current_level  = int (20*log10(if_rms));
 	
 	bool hasSignal =  m_squelch_level == 0 || current_level >   m_squelch_level;
- 
-	if(!hasSignal ){
- 
+	
+	if(hasSignal){
+		m_signal_hits++;
+		m_squelch_hits = 0;
+		m_is_squelched	 = false;
+	}
+	else {
 		m_squelch_hits++;
 		
-		if(!m_had_signal){
-				// if we never got a signal  then it indicates squelches after 3 tries
-			if(m_squelch_hits > 2){
+		if(m_signal_hits){
+			// if we already had a signal we wait m_squelch_dwell before marking as squelched
+			if (m_squelch_hits > m_squelch_dwell){
+				m_signal_hits = 0;
 				m_is_squelched	 = true;
-	 			}
+			}
 		}
-		// if we did get a signal before - then count it out before announcing no signal
-		else if( m_squelch_hits > m_squelch_dwell){
+		
+		// if we havnt had a signal yet. then wait a few tries before marking as squelched
+		else 	if(m_squelch_hits > 2){
 			m_is_squelched	 = true;
-			m_had_signal = false;
-			
-//			printf("SQ rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
-//	 				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
- 		}
- 
+		}
+ 	}
+
+	if(!hasSignal){
 		// squelch output
 		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
 			m_buf_mono[i] =  0.0;
 		}
 	}
+ 
+//
+//
+//	if(!hasSignal ){
+//
+//		m_squelch_hits++;
+//
+//		if(!m_had_signal){
+//				// if we never got a signal  then it indicates squelches after 3 tries
+//			if(m_squelch_hits > 2){
+//				m_is_squelched	 = true;
+//	 			}
+//		}
+//		// if we did get a signal before - then count it out before announcing no signal
+//		else if( m_squelch_hits > m_squelch_dwell){
+//			m_is_squelched	 = true;
+//			m_had_signal = false;
+//
+////			printf("SQ rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\t %3d\n",
+////	 				 if_rms, m_if_level, current_level ,m_squelch_level, m_squelch_hits);
+// 		}
+//
+//		// squelch output
+//		for (unsigned int i = 0; i < m_buf_mono.size(); i++) {
+//			m_buf_mono[i] =  0.0;
+//		}
+//	}
 	else
 	{
-		m_had_signal = true;
-		m_is_squelched = false;
-		m_squelch_hits = 0;
+//		m_had_signal = true;
+//		m_is_squelched = false;
+//		m_squelch_hits = 0;
 		
  //		printf("ON rms: %.5f\t if: %.5f\t squelch: %3d <  %3d\n", if_rms, m_if_level, current_level ,m_squelch_level);
 		// Extract carrier frequency.

@@ -131,10 +131,12 @@ private:
 	 double          m_baseband_mean;
 	 double          m_baseband_level;
 	 int	           m_squelch_level;
+	 uint 			  m_squelch_dwell;
 	 bool      	     m_is_squelched;
+ 	 uint 			  m_signal_hits;
+
 	 bool				  m_had_signal;
 	 uint 			  m_squelch_hits;
-	 uint 			  m_squelch_dwell;
 
 	 IQSampleVector  m_buf_iftuned;
 	 IQSampleVector  m_buf_iffiltered;

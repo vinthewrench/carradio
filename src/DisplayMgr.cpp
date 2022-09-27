@@ -427,16 +427,10 @@ void DisplayMgr::LEDUpdateLoop(){
 		pthread_mutex_lock (&_led_mutex);
 		
 		// wait for event.
-	 
+		
 		while((_ledEvent & 0x0000ffff) == 0){
 			
 			// delay for half second
-#if 0
-			struct timespec ts = {0, 0};
-			clock_gettime(TIMEDWAIT_CLOCK, &ts);
-			ts.tv_sec += 1;
-			ts.tv_nsec += 0;		// 1 second
-#else
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
@@ -446,9 +440,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			if( _ledEvent & 0xffff0000)
 				delay = 100;
 			
- 			ts = timespec_add(now, timespec_from_ms(delay));
-#endif
-//
+			ts = timespec_add(now, timespec_from_ms(delay));
 			// wait for _led_cond or time delay == ETIMEDOUT
 			
 			int result = pthread_cond_timedwait(&_led_cond, &_led_mutex, &ts);
@@ -462,7 +454,7 @@ void DisplayMgr::LEDUpdateLoop(){
 				struct timespec ts1 = {0, 0};
 				clock_gettime(TIMEDWAIT_CLOCK, &ts1);
 				printf("LEDUpdateLoop:  pthread_cond_timedwait delay = %ld\n",
-								 timespec_to_ms(timespec_sub(ts1, now)));
+						 timespec_to_ms(timespec_sub(ts1, now)));
 #endif
 				break;
 			}
@@ -1137,7 +1129,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 			continue;
 		}
 		
-#if 1
 		//		// --check if any events need processing else wait for a timeout
 		pthread_mutex_lock (&_mutex);
 		
@@ -1145,19 +1136,10 @@ void DisplayMgr::DisplayUpdateLoop(){
 		while(_eventQueue.size() == 0){
 			
 			// delay for a bit
-			
-#if 0
-			struct timespec ts = {0, 0};
-			clock_gettime(TIMEDWAIT_CLOCK, &ts);
-			ts.tv_sec += 1;
-			ts.tv_nsec += 0;		// 1 second
-#else
 			struct timespec ts = {0, 0};
 			struct timespec now = {0, 0};
 			clock_gettime(TIMEDWAIT_CLOCK, &now);
 			ts = timespec_add(now, timespec_from_ms(1000));
-#endif
-			
 			
 			// wait for _eventQueue or time delay == ETIMEDOUT
 			int result = pthread_cond_timedwait(&_cond, &_mutex, &ts);
@@ -1188,29 +1170,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 		
 		pthread_mutex_unlock (&_mutex);
 		
-#else
-		// --check if any events need processing else wait for a timeout
-		struct timespec ts = {0, 0};
-		clock_gettime(TIMEDWAIT_CLOCK, &ts);
-		ts.tv_sec += 1;
-		ts.tv_nsec += 0;		// 1 second
-		
-		pthread_mutex_lock (&_mutex);
-		bool shouldWait =  _eventQueue.size() == 0;
-		pthread_mutex_unlock (&_led_mutex);
-		
-		if (shouldWait)
-			pthread_cond_timedwait(&_cond, &_mutex, &ts);
-		
-		eventQueueItem_t item = {EVT_NONE,MODE_UNKNOWN};
-		if(_eventQueue.size()){
-			item = _eventQueue.front();
-			_eventQueue.pop();
-		}
-		
-		mode_state_t lastMode = _current_mode;
-		pthread_mutex_unlock (&_mutex);
-#endif
 		//		if(!_isRunning || !_isSetup)
 		//			continue;
 		
@@ -1225,7 +1184,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 				struct timespec now, diff;
 				clock_gettime(CLOCK_MONOTONIC, &now);
 				diff = timespec_sub(now, _lastEventTime);
-		
+				
 				// check for startup timeout delay
 				if(_current_mode == MODE_STARTUP) {
 					

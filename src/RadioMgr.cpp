@@ -837,9 +837,7 @@ void RadioMgr::SDRProcessor(){
 	bool got_stereo = false;
 	
 	for (unsigned int block = 0; !_shouldQuit;  block++) {
-		
-		bool shouldTuneToNextChannel = false;
-		
+			
 		if(!_isSetup){
 			usleep(200000);
 			continue;

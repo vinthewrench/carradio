@@ -109,7 +109,7 @@ std::string GetClassName(const T* _this = NULL)
   return ClassName<T>::Get();
 }
 
-#if DEBUG_THREADS
+#if DEBUG_THREADS & !defined(__APPLE__)
 #include <sys/syscall.h>
 #define  PRINT_CLASS_TID  printf("%s tid: %ld\n",__FUNCTION__,  (long) syscall(SYS_gettid))
 #else

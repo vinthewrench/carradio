@@ -47,8 +47,8 @@ public:
 	double volume();
 	
 	bool setMute(bool shouldMute);
-//	bool isMuted() {return (_isMuted && (_savedVolume > 0));};
-	bool isMuted() {return (_isMuted);};
+	bool isMuted() {return (_isMuted && (_savedVolume > 0));};
+	
 	double mutedVolume() { return _savedVolume; };
 	
 	
@@ -75,7 +75,8 @@ private:
 	
 	double					_savedVolume;
 	bool						_isMuted = false;
-	
+	bool						_isQuiet= false;
+
 	vector<uint8_t>  		_bytebuf;
 	
 	void  samplesToInt16(const SampleVector& samples, vector<uint8_t>& bytes);

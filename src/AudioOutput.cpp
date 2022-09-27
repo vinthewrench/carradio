@@ -64,6 +64,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	_pcm = NULL;
 	_nchannels = stereo ? 2 : 1;
 	_isMuted = false;
+	_isQuiet = false;
 	
 #if defined(__APPLE__)
 	_isSetup = true;
@@ -192,7 +193,7 @@ void AudioOutput::samplesToInt16(const SampleVector& samples,
 bool AudioOutput::writeAudio(const SampleVector& samples)
 {
 	
-	if(!_isMuted){
+	if(!(_isQuiet || _isMuted) ){
 		
 #if defined(__APPLE__)
 		
@@ -211,7 +212,7 @@ bool AudioOutput::writeAudio(const SampleVector& samples)
 bool AudioOutput::writeIQ(const SampleVector& samples)
 {
 	
-	if(!_isMuted){
+	if( !(_isQuiet || _isMuted) ){
 		
 		// Convert samples to bytes.
 		samplesToInt16(samples, _bytebuf);
@@ -724,10 +725,10 @@ bool 	AudioOutput::setVolume(double volIn){
 	printf("setVolume %f (%f,%f,%f,%f) \n", volIn,  front, back, right, left ) ;
 	
 	if(volIn == 0.0 ){
-		 _isMuted = true;
+		_isQuiet = true;
 	 }
 	 else {
-		 _isMuted = false;
+		 _isQuiet = false;
 	 }
 		
 	return true;

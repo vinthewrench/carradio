@@ -212,38 +212,43 @@ bool AudioOutput::writeAudio(const SampleVector& samples)
 bool AudioOutput::writeIQ(const SampleVector& samples)
 {
 	
-	if( !(_isQuiet || _isMuted) ){
-		
-		// Convert samples to bytes.
-		samplesToInt16(samples, _bytebuf);
-		
-		
+	if( _isQuiet || _isMuted )
+	{
+		printf("Muted %ld samples\n", samples.size());
+		return true;
+ 	}
+	
+	
+	// Convert samples to bytes.
+	samplesToInt16(samples, _bytebuf);
+	
+	
 #if defined(__APPLE__)
-		
-		fprintf(stderr,"Output %ld samples\n", samples.size());
+	
+	fprintf(stderr,"Output %ld samples\n", samples.size());
 #else
-		// Write data.
-		unsigned int p = 0;
-		unsigned int n =  (unsigned int) samples.size() / _nchannels;
-		unsigned int framesize = 2 * _nchannels;
+	// Write data.
+	unsigned int p = 0;
+	unsigned int n =  (unsigned int) samples.size() / _nchannels;
+	unsigned int framesize = 2 * _nchannels;
+	
+	while (p < n) {
+		int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
 		
-		while (p < n) {
-			int k = snd_pcm_writei(_pcm, _bytebuf.data() + p * framesize, n - p);
+		if (k < 0) {
+			//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
+			// After an underrun, ALSA keeps returning error codes until we
+			// explicitly fix the stream.
+			snd_pcm_recover(_pcm, k, 0);
+			return false;
 			
-			if (k < 0) {
-				//		ELOG_ERROR(ErrorMgr::FAC_AUDIO, 0, errno, "write failed");
-				// After an underrun, ALSA keeps returning error codes until we
-				// explicitly fix the stream.
-				snd_pcm_recover(_pcm, k, 0);
-				return false;
-				
-			} else {
-				p += k;
-			}
+		} else {
+			p += k;
 		}
-#endif
-		
 	}
+#endif
+	
+	
 	return true;
 }
 
@@ -693,16 +698,16 @@ bool 	AudioOutput::setVolume(double volIn){
 	
 	if(!_isSetup)
 		return false;
- 
+	
 	volIn = fmax(0, fmin(1, volIn));  // pin volume
 	
 	double left =  volIn;
 	double right  =  volIn;
- 	double front =  volIn;
+	double front =  volIn;
 	double back  =  volIn;
- 
+	
 	double adjustedBalance =  volIn * (1 - fabs(_balance));
-
+	
 	if( _balance > 0) {
 		left = adjustedBalance;
 	}else if( _balance < 0) {
@@ -710,27 +715,27 @@ bool 	AudioOutput::setVolume(double volIn){
 	}
 	
 	double adjustedFade =  volIn * (1 - fabs(_fader));
-
+	
 	if( _fader > 0) {
 		back = adjustedFade;
 	}else if( _fader < 0) {
 		front = adjustedFade;
 	}
-				
+	
 	set_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_RIGHT, (right + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_FRONT_LEFT, (left + front) / 2.0 ,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_RIGHT, (right + back) / 2.0,0, PLAYBACK);
 	set_normalized_volume(_volume, SND_MIXER_SCHN_SIDE_LEFT, (left + back) / 2.0 ,0, PLAYBACK);
- 
+	
 	printf("setVolume %f (%f,%f,%f,%f) \n", volIn,  front, back, right, left ) ;
 	
 	if(volIn == 0.0 ){
 		_isQuiet = true;
-	 }
-	 else {
-		 _isQuiet = false;
-	 }
-		
+	}
+	else {
+		_isQuiet = false;
+	}
+	
 	return true;
 }
 

@@ -534,6 +534,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		if( theLedEvent & (LED_EVENT_STOP)){
 			ledEventSet(0, LED_EVENT_STOP);
 			_leftRing.clearAll();
+			_rightRing.clearAll();
 		}
 		
 		if( theLedEvent & (LED_EVENT_STARTUP | LED_EVENT_STARTUP_RUNNING))

@@ -397,21 +397,42 @@ void DisplayMgr::runLEDEventTuner(){
 	static timespec		startedEvent = {0,0};
 	
 	static uint8_t 		offset =  0;
+	bool didChange = false;
 	
 	if( _ledEvent & LED_EVENT_TUNE_UP ){
+		offset = mod(++offset, 24);
+		didChange = true;
 		printf("LED_EVENT_TUNE_UP:  %08x\n" ,_ledEvent);
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-		
-		offset = mod(++offset, 24);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
 	}
 	else if( _ledEvent & LED_EVENT_TUNE_DOWN ){
 		offset = mod(--offset, 24);
-		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
+		didChange = true;
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN  );
 	}
 	
+	if(didChange){
+		for (int i = 0 ; i < 24; i++) {
+			uint8_t off1 =  mod(offset-1, 24);
+			uint8_t off2 =  mod(offset+1, 24);
+			
+			if( i == offset){
+				_rightRing.setColor(i, 0, 0, 255);
+			}
+			else if(i == off1) {
+				_rightRing.setColor(i, 16, 16, 16);
+			}
+			else if(i == off2) {
+				_rightRing.setColor(i, 16, 16, 16);
+			}
+			else {
+				_rightRing.setColor(i, 0, 0, 0);
+			}
+		}
+	}
 	
 	if( _ledEvent & LED_EVENT_TUNE_RUNNING ){
 		
@@ -429,26 +450,6 @@ void DisplayMgr::runLEDEventTuner(){
 			for (int i = 0; i < 24; i++) {
 				_rightRing.setColor( i, 0, 0, 0);
 			}
-		}
-		else {
-			for (int i = 0 ; i < 24; i++) {
-				uint8_t off1 =  mod(offset-1, 24);
-				uint8_t off2 =  mod(offset+1, 24);
-				
-				if( i == offset){
-					_rightRing.setColor(i, 0, 0, 255);
-				}
-				else if(i == off1) {
-					_rightRing.setColor(i, 16, 16, 16);
-				}
-				else if(i == off2) {
-					_rightRing.setColor(i, 16, 16, 16);
-				}
-				else {
-					_rightRing.setColor(i, 0, 0, 0);
-				}
-			}
-			
 		}
 		
 	}

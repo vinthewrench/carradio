@@ -621,7 +621,7 @@ bool DisplayMgr::setBrightness(double level) {
 bool DisplayMgr::setKnobBackLight(bool isOn){
 	_backlightKnobs = isOn;
  
-	printf("setKnobBackLight %d\n", isOn);
+//	printf("setKnobBackLight %d\n", isOn);
 	
 	switch (_current_mode) {
 			
@@ -647,7 +647,7 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 	bool success = false;
 	
-	printf("setKnobColor %d  (%3d,%3d,%3d)\n", knob, color.r, color.b, color.g);
+//	printf("setKnobColor %d  (%3d,%3d,%3d)\n", knob, color.r, color.b, color.g);
 	
 
 	if(_isSetup){

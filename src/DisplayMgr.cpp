@@ -407,7 +407,7 @@ void DisplayMgr::runLEDEventScanner(){
 		inScannerMode = false;
 		
 		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
-		_rightRing.clearAll();
+//		_rightRing.clearAll();
 	}
  }
 

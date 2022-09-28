@@ -62,6 +62,8 @@ bool VFD::begin(const char* path, speed_t speed,  int &error){
 	options.c_cflag |= CS8; // 8 bits per byte (most common)
 	// options.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control 	options.c_cflag |=  CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
 	options.c_cflag |=  CRTSCTS; // DCTS flow control of output
+	
+	options.c_cflag |= CNEW_RTSCTS;   
 	options.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 	
 	options.c_lflag &= ~ICANON;

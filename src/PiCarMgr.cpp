@@ -181,7 +181,7 @@ bool PiCarMgr::begin(){
 		
 
 		// setup display device
-		if(!_display.begin(path_display,B38400))
+		if(!_display.begin(path_display,B19200))
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?

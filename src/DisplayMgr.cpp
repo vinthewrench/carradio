@@ -336,7 +336,7 @@ void DisplayMgr::runLEDEventVol(){
 			}
 			
 		}
-		else if(diff > 500){
+		else if(diff > 800){
 			ledEventSet(0, LED_EVENT_VOL_RUNNING);
 			
 			// scan the LEDS off

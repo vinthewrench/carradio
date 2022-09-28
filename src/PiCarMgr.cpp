@@ -1367,6 +1367,8 @@ void PiCarMgr::PiCarLoop(){
 								 || _display.active_mode() == DisplayMgr::MODE_SCANNER)){
 					
 					auto nextFreq = _radio.frequency();
+					uint32_t newFreq = 0;
+					
 					auto mode 	   = _radio.radioMode();
 					bool isScanning = _radio.isScannerMode();
 					switch(_tuner_mode){
@@ -1390,12 +1392,18 @@ void PiCarMgr::PiCarLoop(){
 								// if you are scanning an roll tuner - do nothing
 							}
 							else {
-								PiCarMgr::station_info_t info;
-								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
-									nextFreq = info.frequency;
-								}
-								else tunnerPinned = true;
 								
+								PiCarMgr::station_info_t info;
+								if(nextKnownStation(mode, newFreq, tunerMovedCW, info)){
+									
+									if(info.frequency == nextFreq && info.band == mode)
+										tunnerPinned = true;
+		
+									newFreq = info.frequency;
+								}
+								else
+									tunnerPinned = true;
+									
 								didChangeChannel = true;
 							}
 						}
@@ -1405,6 +1413,10 @@ void PiCarMgr::PiCarLoop(){
 							// if you are scanning an roll tuner - move to next preset
 							PiCarMgr::station_info_t info;
 							if(nextPresetStation(mode, nextFreq, tunerMovedCW, info)){
+								
+								if(info.frequency == nextFreq && info.band == mode)
+									tunnerPinned = true;
+	
 								nextFreq = info.frequency;
 								mode = info.band;
 								isScanning =( mode == RadioMgr::SCANNER);

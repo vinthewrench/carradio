@@ -654,10 +654,15 @@ vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 void RadioMgr::pauseScan(bool shouldPause){
 	_scanningPaused = shouldPause;
 	
+	DisplayMgr*		display 	= PiCarMgr::shared()->display();
+
 	if(!_scanningPaused){
 		channel_t channel = _scannerChannels[_currentScanOffset];
 		queueSetFrequencyandMode(channel.first, channel.second, true);
  	}
+	else {
+		display->LEDeventScannerStop();
+	}
 }
 
 
@@ -917,9 +922,11 @@ void RadioMgr::SDRProcessor(){
 				bool isSQLD = isSquelched();
 				
 				if(isSQLD){
-					tuneNextScannerChannel();
-					sqlCount = 0;
-					display->LEDeventScannerStep();
+					if(!_scanningPaused) {
+						tuneNextScannerChannel();
+						sqlCount = 0;
+						display->LEDeventScannerStep();
+ 					}
 				}
 				else
 					sqlCount++;

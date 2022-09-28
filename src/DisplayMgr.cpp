@@ -367,6 +367,7 @@ void DisplayMgr::runLEDEventScanner(){
 			usleep(5000);
 			_rightRing.setColor( i, 0, 0, 0);
 		}
+		usleep(10000);
 		inScannerMode = true;
 	}
 

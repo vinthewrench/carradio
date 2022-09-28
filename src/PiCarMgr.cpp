@@ -2358,31 +2358,33 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 												DisplayMgr::knob_action_t action ){
 		
 		printf("showScannerChannels return didSucceed:%d action:%d\n", didSucceed, action);
-		
-		if(action == DisplayMgr::KNOB_CLICK) {
-	 
-			_display.showChannel(selectedChannel, [=](bool didSucceed,
-																	RadioMgr::channel_t channel,
-																	DisplayMgr::knob_action_t action ){
+		if(didSucceed) {
+			if(action == DisplayMgr::KNOB_CLICK) {
+		 
+				_display.showChannel(selectedChannel, [=](bool didSucceed,
+																		RadioMgr::channel_t channel,
+																		DisplayMgr::knob_action_t action ){
+					
+					if(action == DisplayMgr::KNOB_CLICK) {
+						displayScannerChannels(channel);
+					}
+					else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
+						scannerChannelMenu(channel);
+					}
+					else
+					{
+						_radio.pauseScan(false);
+					}
+				});
 				
-				if(action == DisplayMgr::KNOB_CLICK) {
-					displayScannerChannels(channel);
- 				}
- 				else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
-					scannerChannelMenu(channel);
- 				}
- 				else
-				{
-					_radio.pauseScan(false);
-				}
-			});
-			
-			return;
+				return;
+			}
+			else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
+				scannerChannelMenu(selectedChannel);
+				return;
+			}
 		}
-		else if(action == DisplayMgr::KNOB_DOUBLE_CLICK){
-			scannerChannelMenu(selectedChannel);
-			return;
- 		}
+	
  		_radio.pauseScan(false);
 		
 	});

@@ -1273,6 +1273,9 @@ void PiCarMgr::PiCarLoop(){
 						RadioMgr::radio_mode_t mode ;
 						uint32_t freq;
 						
+						// stop any animation
+						_display.LEDeventStop();
+						
 						_audio.setMute(false);
 						getSavedFrequencyandMode(mode,freq);
 						

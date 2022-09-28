@@ -92,7 +92,8 @@ public:
 		KNOB_UP,
 		KNOB_DOWN,
 		KNOB_CLICK,
-		KNOB_DOUBLE_CLICK
+		KNOB_DOUBLE_CLICK,
+ 		KNOB_SELECTING 	// special callback for things like scanner channels
 	}knob_action_t;
  
 	typedef enum  {

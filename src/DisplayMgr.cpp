@@ -1108,6 +1108,7 @@ bool DisplayMgr::menuSelectAction(knob_action_t action){
 			}
 				break;
 				
+			default: break;
 		}
 		
 	}
@@ -3788,9 +3789,8 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 		}
 			break;
 			
-		case KNOB_DOUBLE_CLICK:
-			
-			break;
+	 		default: break;
+
 	}
 	
 	return wasHandled;
@@ -4244,6 +4244,20 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			
 		}
 			break;
+			
+		default: break;
+
+	}
+	
+	if(action ==  KNOB_UP || action == KNOB_DOWN){
+		PiCarMgr*	mgr 	= PiCarMgr::shared();
+		auto channels = mgr->getScannerChannels();
+	 
+		if(_lineOffset < channels.size()) {
+			RadioMgr::channel_t channel = channels[_lineOffset];
+ 			if(_scannnerChannelsCB) (_scannnerChannelsCB)(true, channel, KNOB_SELECTING);
+		}
+
 	}
 	
 	return wasHandled;

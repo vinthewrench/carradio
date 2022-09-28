@@ -2383,6 +2383,10 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 				scannerChannelMenu(selectedChannel);
 				return;
 			}
+			else if(action ==  DisplayMgr::KNOB_SELECTING){
+				printf("showScannerChannels KNOB_SELECTING %u\n", selectedChannel.second);
+				return;
+			}
 		}
 	
  		_radio.pauseScan(false);

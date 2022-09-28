@@ -1355,6 +1355,16 @@ void DisplayMgr::DisplayUpdateLoop(){
 					// check for  timeout delay
 					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
 						// timeout pop mode?
+						
+						auto savedCB = _scannnerChannelsCB;
+						_scannnerChannelsCB = NULL;
+						shouldRedraw = false;
+						shouldUpdate = false;
+						//
+						if(savedCB) {
+							savedCB(false, {RadioMgr::MODE_UNKNOWN, 0}, KNOB_EXIT);
+						}
+ 
 						popMode();
 						shouldRedraw = true;
 						shouldUpdate = true;
@@ -4183,7 +4193,7 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 				_scannnerChannelsCB(false, {RadioMgr::MODE_UNKNOWN, 0}, action);
 			}
 			setEvent(EVT_POP, MODE_UNKNOWN);
-			_wayPointCB = NULL;
+			_scannnerChannelsCB = NULL;
 			_lineOffset = 0;
 			break;
 			

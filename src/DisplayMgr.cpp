@@ -355,25 +355,25 @@ void DisplayMgr::runLEDEventScanner(){
 	static uint8_t 	ledStep = 0;
 	static bool			inScannerMode = false;
 	
+	// did we enter scanner mode?
+	if((_ledEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD)) &&  !inScannerMode){
+		// run scannerMode intro animation
+		_rightRing.clearAll();
+		
+		// scan the LEDS off
+		for (int i = 0; i < 24; i++) {
+			
+			_rightRing.setColor( i, 255, 0, 0);
+			usleep(5000);
+			_rightRing.setColor( i, 0, 0, 0);
+		}
+		inScannerMode = true;
+	}
+
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
 	//	printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
-
-		if(!inScannerMode){
-			// run scannerMode intro animation
-			_rightRing.clearAll();
-			
-			// scan the LEDS off
-			for (int i = 0; i < 24; i++) {
-				
-				_rightRing.setColor( i, 255, 0, 0);
-				usleep(5000);
-				_rightRing.setColor( i, 0, 0, 0);
- 			}
-			inScannerMode = true;
- 		}
-	
-		
+ 
 		// arew we already in a a scan sequence?
 		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
 		}

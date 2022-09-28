@@ -652,6 +652,9 @@ vector < RadioMgr::channel_t >  RadioMgr::scannerChannels() {
 
 
 void RadioMgr::pauseScan(bool shouldPause){
+	
+	printf("pauseScan = %d\n", shouldPause);
+	
 	_scanningPaused = shouldPause;
 	
 	DisplayMgr*		display 	= PiCarMgr::shared()->display();

@@ -2381,8 +2381,7 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 			scannerChannelMenu(selectedChannel);
 			return;
  		}
-		
-		_radio.pauseScan(false);
+ 		_radio.pauseScan(false);
 		
 	});
 	

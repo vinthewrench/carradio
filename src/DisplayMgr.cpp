@@ -228,12 +228,12 @@ void DisplayMgr::LEDeventScannerStop(){
 	ledEventSet(LED_EVENT_SCAN_STOP,0);
 }
  
-void DisplayMgr::LEDTunerUp (){
-	ledEventSet(LED_EVENT_TUNE_UP,0);
+void DisplayMgr::LEDTunerUp (bool pinned){
+	ledEventSet(pinned?LED_EVENT_TUNE_UP_PIN: LED_EVENT_TUNE_UP ,0);
 }
 
-void DisplayMgr::LEDTunerDown (){
-	ledEventSet(LED_EVENT_TUNE_DOWN,0);
+void DisplayMgr::LEDTunerDown (bool pinned){
+	ledEventSet(pinned?LED_EVENT_TUNE_DOWN_PIN: LED_EVENT_TUNE_DOWN,0);
 }
 
 void DisplayMgr::runLEDEventStartup(){
@@ -398,6 +398,8 @@ void DisplayMgr::runLEDEventTuner(){
 	
 	static uint8_t 		offset =  0;
 	bool didChange = false;
+	bool didPin = false;
+	
 	
 	if( _ledEvent & LED_EVENT_TUNE_UP ){
 		offset = mod(++offset, 24);
@@ -413,8 +415,32 @@ void DisplayMgr::runLEDEventTuner(){
 //		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN  );
 	}
-	
-	if(didChange){
+	else if( _ledEvent & LED_EVENT_TUNE_UP_PIN ){
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+
+		didPin = true;
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP_PIN  );
+
+	}
+	else if( _ledEvent & LED_EVENT_TUNE_DOWN_PIN ){
+		
+		didPin = true;
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN_PIN  );
+	}
+ 
+	if(didPin) {
+		for (int i = 0 ; i < 24; i++) {
+			if( i == offset){
+				_rightRing.setColor(i, 16, 16, 16);
+			}
+			else {
+				_rightRing.setColor(i, 0, 0, 0);
+			}
+		}
+	}
+ 	else if(didChange){
 		for (int i = 0 ; i < 24; i++) {
 			uint8_t off1 =  mod(offset-1, 24);
 			uint8_t off2 =  mod(offset+1, 24);
@@ -456,7 +482,7 @@ void DisplayMgr::runLEDEventTuner(){
 }
 
  
-void DisplayMgr::ledEventSet(uint32_t set, uint32_t reset){
+void DisplayMgr::ledEventSet(uint64_t set, uint64_t reset){
 
 	pthread_mutex_lock (&_led_mutex);
 	_ledEvent &= ~reset;
@@ -526,7 +552,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			}
 		}
 		
-		uint32_t theLedEvent =  _ledEvent;
+		uint64_t theLedEvent =  _ledEvent;
 		pthread_mutex_unlock (&_led_mutex);
 		
 		// run the LED effects
@@ -549,9 +575,10 @@ void DisplayMgr::LEDUpdateLoop(){
 		if( theLedEvent & (LED_EVENT_SCAN_STEP | LED_EVENT_SCAN_HOLD | LED_EVENT_SCAN_STOP))
 			runLEDEventScanner();
 		
-		if( theLedEvent & (LED_EVENT_TUNE_UP | LED_EVENT_TUNE_DOWN | LED_EVENT_TUNE_RUNNING))
+		if( theLedEvent & (LED_EVENT_TUNE_UP | LED_EVENT_TUNE_DOWN
+								 | LED_EVENT_TUNE_UP_PIN | LED_EVENT_TUNE_DOWN_PIN
+								 | LED_EVENT_TUNE_RUNNING))
 			runLEDEventTuner();
- 
 	}
 }
  
@@ -2034,7 +2061,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			TRY(_vfd.write(str));
 		}
 		else {
-				uint32_t 					freq =  radio->frequency();
+				uint32_t  freq =  radio->frequency();
 			// we might need an extra refresh if switching modes
 			if(lastMode != mode){
 				_vfd.clearScreen();

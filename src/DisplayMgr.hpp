@@ -48,8 +48,8 @@ public:
 	void LEDeventVol();
 	void LEDeventMute();
 	void LEDeventStop();
-	void LEDTunerUp();
-	void LEDTunerDown();
+	void LEDTunerUp(bool pinned = false);
+	void LEDTunerDown(bool pinned = false);
  
 	void LEDeventScannerStep();
 	void LEDeventScannerHold();
@@ -300,37 +300,40 @@ private:
 	void popMode();
 	
 	
-// MARK: - LED EFFECTS
 	void setEvent(event_t event, mode_state_t mode = MODE_UNKNOWN, string arg = "");
  
+	// MARK: - LED EFFECTS
 	// LED effects Bit map
 	
-#define LED_EVENT_ALL					0xFFFFFFFF
-#define LED_EVENT_MASK					0x0000FFFF
-#define LED_STATUS_MASK					0xFFFF0000
+#define LED_EVENT_ALL					0xFFFFFFFFFFFFFFFF
+#define LED_EVENT_MASK					0x00000000FFFFFFFF
+#define LED_STATUS_MASK					0xFFFFFFFF00000000
 
-#define LED_EVENT_STARTUP				0x00000001
-#define LED_EVENT_VOL 					0x00000002
-#define LED_EVENT_MUTE					0x00000004
+#define LED_EVENT_STARTUP				0x0000000000000001
+#define LED_EVENT_VOL 					0x0000000000000002
+#define LED_EVENT_MUTE					0x0000000000000004
 	
-#define LED_EVENT_SCAN_STEP			0x00000008
-#define LED_EVENT_SCAN_HOLD			0x00000010
-#define LED_EVENT_SCAN_STOP			0x00000020
+#define LED_EVENT_SCAN_STEP			0x0000000000000008
+#define LED_EVENT_SCAN_HOLD			0x0000000000000010
+#define LED_EVENT_SCAN_STOP			0x0000000000000020
 	
-#define LED_EVENT_TUNE_UP				0x00000040
-#define LED_EVENT_TUNE_DOWN			0x00000080
+#define LED_EVENT_TUNE_UP				0x0000000000000040
+#define LED_EVENT_TUNE_DOWN			0x0000000000000080
+#define LED_EVENT_TUNE_UP_PIN			0x0000000000000100
+#define LED_EVENT_TUNE_DOWN_PIN		0x0000000000000200
+
 	
-#define LED_EVENT_STOP					0x00008000
+#define LED_EVENT_STOP					0x0000000080000000
 	
-#define LED_EVENT_STARTUP_RUNNING	0x00010000
-#define LED_EVENT_VOL_RUNNING			0x00020000
-#define LED_EVENT_MUTE_RUNNING		0x00040000
-#define LED_EVENT_SCAN_RUNNING		0x00080000
-#define LED_EVENT_TUNE_RUNNING		0x00100000
+#define LED_EVENT_STARTUP_RUNNING	0x0000000100000000
+#define LED_EVENT_VOL_RUNNING			0x0000000200000000
+#define LED_EVENT_MUTE_RUNNING		0x0000000400000000
+#define LED_EVENT_SCAN_RUNNING		0x0000000800000000
+#define LED_EVENT_TUNE_RUNNING		0x0000001000000000
 
  
-	uint32_t  _ledEvent  = 0;
-	void ledEventSet(uint32_t set, uint32_t reset);
+	uint64_t  _ledEvent  = 0;
+	void ledEventSet(uint64_t set, uint64_t reset);
  	void runLEDEventStartup();
 	void runLEDEventVol();
 	void runLEDEventMute();

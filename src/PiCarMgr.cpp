@@ -1355,6 +1355,7 @@ void PiCarMgr::PiCarLoop(){
 			if(tunerWasMoved) {
 				
 				bool didChangeChannel = false;
+				bool tunnerPinned = false;
 				
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(tunerMovedCW?DisplayMgr::KNOB_UP:DisplayMgr::KNOB_DOWN)){
@@ -1374,7 +1375,11 @@ void PiCarMgr::PiCarLoop(){
 								// if you are scanning an roll tuner - do nothing
 							}
 							else {
-								nextFreq = _radio.nextFrequency(tunerMovedCW);
+								auto newFreq = _radio.nextFrequency(tunerMovedCW);
+								if(newFreq == nextFreq)
+									tunnerPinned = true;
+								nextFreq = newFreq;
+								
 								didChangeChannel = true;
 							}
 							break;
@@ -1389,6 +1394,8 @@ void PiCarMgr::PiCarLoop(){
 								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
 									nextFreq = info.frequency;
 								}
+								else tunnerPinned = true;
+								
 								didChangeChannel = true;
 							}
 						}
@@ -1402,7 +1409,8 @@ void PiCarMgr::PiCarLoop(){
 								mode = info.band;
 								isScanning =( mode == RadioMgr::SCANNER);
 							}
-							didChangeChannel = true;
+							else tunnerPinned = true;
+ 							didChangeChannel = true;
 							
 							break;
 					}
@@ -1417,9 +1425,9 @@ void PiCarMgr::PiCarLoop(){
 						
 						if(didChangeChannel){
 							if(tunerMovedCW)
-								_display.LEDTunerUp();
+								_display.LEDTunerUp(tunnerPinned);
 							else
-								_display.LEDTunerDown();
+								_display.LEDTunerDown(tunnerPinned);
 
 						}
 					}

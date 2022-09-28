@@ -353,11 +353,27 @@ void DisplayMgr::runLEDEventVol(){
 void DisplayMgr::runLEDEventScanner(){
 	
 	static uint8_t 	ledStep = 0;
- 
+	static bool			inScannerMode = false;
+	
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
 	//	printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
 
+		if(!inScannerMode){
+			// run scannerMode intro animation
+			_rightRing.clearAll();
+			
+			// scan the LEDS off
+			for (int i = 0; i < 24; i++) {
+				
+				_leftRing.setColor( i, 255, 0, 0);
+				usleep(50);
+				_leftRing.setColor( i, 0, 0, 0);
+ 			}
+			inScannerMode = true;
+ 		}
+	
+		
 		// arew we already in a a scan sequence?
 		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
 		}
@@ -366,16 +382,18 @@ void DisplayMgr::runLEDEventScanner(){
 			_rightRing.clearAll();
 		}
 		
+
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[ledStep] = {255,0,0};
  		_rightRing.setLEDs(data);
 		ledStep = mod(ledStep+1, 24);
  		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
-	}
+		}
 	
 	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
 		
 //		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
+		inScannerMode = true;
 
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[ledStep] = {0,255,0};
@@ -385,7 +403,8 @@ void DisplayMgr::runLEDEventScanner(){
 	else 	if( _ledEvent & LED_EVENT_SCAN_STOP ){
 		
 //		printf("SCAN STOP:%08x\n", _ledEvent);
-
+		inScannerMode = false;
+		
 		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
 		_rightRing.clearAll();
 	}

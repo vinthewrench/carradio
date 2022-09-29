@@ -2356,9 +2356,7 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 										  [=](bool didSucceed,
 												RadioMgr::channel_t selectedChannel,
 												DisplayMgr::knob_action_t action ){
-		
-		printf("showScannerChannels return didSucceed:%d action:%d\n", didSucceed, action);
-		if(didSucceed) {
+			if(didSucceed) {
 			if(action == DisplayMgr::KNOB_CLICK) {
 		 
 				_display.showChannel(selectedChannel, [=](bool didSucceed,
@@ -2384,7 +2382,6 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 				return;
 			}
 			else if(action ==  DisplayMgr::KNOB_SELECTING){
-				printf("showScannerChannels KNOB_SELECTING %u\n", selectedChannel.second);
 				_radio.tuneScannerToChannel(selectedChannel);
 				return;
 			}

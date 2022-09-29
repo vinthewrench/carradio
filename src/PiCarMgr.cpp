@@ -2385,6 +2385,7 @@ void PiCarMgr::displayScannerChannels(RadioMgr::channel_t selectedChannel ){
 			}
 			else if(action ==  DisplayMgr::KNOB_SELECTING){
 				printf("showScannerChannels KNOB_SELECTING %u\n", selectedChannel.second);
+				_radio.tuneScannerToChannel(selectedChannel);
 				return;
 			}
 		}

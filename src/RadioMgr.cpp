@@ -690,14 +690,41 @@ bool RadioMgr::getCurrentScannerChannel(RadioMgr::radio_mode_t &mode, uint32_t &
 	return true;
 }
 
-
-bool RadioMgr::tuneNextScannerChannel(){
-
-
+bool RadioMgr::tuneScannerToChannel(RadioMgr::channel_t channel) {
+	
 	if(!_scannerMode )
 		return false;
 
+	pauseScan(true);
+	
+	RadioMgr::radio_mode_t   mode = channel.first;;
+	uint32_t  					  freq = channel.second;
 
+	bool foundIt = false;
+	
+	uint offset = 0;
+	for(auto it = _scannerChannels.begin(); it != _scannerChannels.end(); it++, offset++){
+		if(it->first == mode && it->second == freq){
+			foundIt = true;
+			break;
+		}
+	}
+		
+	if(!foundIt)
+		return false;
+	
+	_currentScanOffset = offset;
+	queueSetFrequencyandMode(mode, freq, true);
+	return true;
+
+}
+
+
+bool RadioMgr::tuneNextScannerChannel(){
+
+	if(!_scannerMode )
+		return false;
+ 
 	uint  nextOffset =  (_currentScanOffset + 1) % _scannerChannels.size();
 	
 	channel_t channel = _scannerChannels[nextOffset];
@@ -705,7 +732,6 @@ bool RadioMgr::tuneNextScannerChannel(){
 	
 	RadioMgr::radio_mode_t   mode = channel.first;;
 	uint32_t  					  freq = channel.second;
-	
 	
 	queueSetFrequencyandMode(mode, freq, true);
 	return true;

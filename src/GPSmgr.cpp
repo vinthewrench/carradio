@@ -738,9 +738,7 @@ void GPSmgr::GPSReader(){
 	
 	uint8_t			ubx_chk[2] = {0,0};
 	UBX_checksum	checksum;
-	
-	uint16_t		ubx_payload_offset = 0;
- 
+
 	PRINT_CLASS_TID;
 	
 	while(_isRunning){
@@ -789,7 +787,6 @@ void GPSmgr::GPSReader(){
 							ubx_class = 0;
 							ubx_id	 = 0;
 							ubx_length = 0;
-							ubx_payload_offset = 0;
 							checksum.reset();
 							ubx_state = STATE_SYNC;
 						}

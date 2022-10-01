@@ -403,7 +403,7 @@ pair<double,double>  GPSmgr::dist_bearing(GPSLocation_t p1, GPSLocation_t p2){
 
 // MARK: -  UBX decode
  
-#define DEBUG_UBX 1
+#define DEBUG_UBX 0
 
 // little endian copy
 #define TO_U32(_buf_,_offset_)  *((uint32_t*) &((u_int8_t*)_buf_)[_offset_])
@@ -741,7 +741,7 @@ void GPSmgr::GPSReader(){
 	
 	uint16_t		ubx_payload_offset = 0;
  
-	DEBUG_THREADS;
+	PRINT_CLASS_TID;
 	
 	while(_isRunning){
 		

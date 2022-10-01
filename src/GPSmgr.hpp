@@ -148,7 +148,7 @@ private:
 	static void* GPSReaderThread(void *context);
 	static void GPSReaderThreadCleanup(void *context);
 	bool 			_isRunning = false;
- 
+	
   pthread_cond_t 		_cond = PTHREAD_COND_INITIALIZER;
   pthread_mutex_t 	_mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_t				_TID;

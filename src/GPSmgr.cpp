@@ -479,14 +479,14 @@ void GPSmgr::GPSReader(){
 		}
 		
 		/* wait for something to happen on the socket */
-		struct timeval selTimeout;
-		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 100;            /* 100 microseconds */
+//		struct timeval selTimeout;
+//		selTimeout.tv_sec = 0;       /* timeout (secs.) */
+//		selTimeout.tv_usec = 1000;            /* 100 microseconds */
 		
 		/* back up master */
 		fd_set dup = _master_fds;
 		
-		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
+		int numReady = select(_max_fds+1, &dup, NULL, NULL, NULL); // &selTimeout);
 		if( numReady == -1 ) {
 			perror("select");
 		}

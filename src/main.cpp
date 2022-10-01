@@ -42,6 +42,7 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	// run the main loop.
+	PRINT_CLASS_TID;
 	
 	bool firstrun = true;
 	while(true) {

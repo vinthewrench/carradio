@@ -741,7 +741,8 @@ void GPSmgr::GPSReader(){
 	
 	uint16_t		ubx_payload_offset = 0;
  
- 
+	DEBUG_THREADS;
+	
 	while(_isRunning){
 		
 		// if not setup // check back later

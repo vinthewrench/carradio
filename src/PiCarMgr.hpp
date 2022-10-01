@@ -143,9 +143,9 @@ class PiCarMgr {
 	
 	bool  hasWifi(stringvector *ifnames = NULL);
 	
-	bool 	shouldSyncClockToGPS(uint16_t &deviation);
+	bool 	shouldSyncClockToGPS(time_t &deviation);
 	
-	bool clockNeedsSync(uint16_t deviation,  struct timespec gpsTime );
+	bool clockNeedsSync(time_t deviation,  struct timespec gpsTime );
  
 	bool setRelay1(bool state);
 	
@@ -296,7 +296,7 @@ private:
 	bool					_isDayTime;			// for backlights
 		
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
-	uint16_t 			_clocksync_gps_secs;  // how many seconds of error allowed before sync
+	time_t 				_clocksync_gps_secs;  // how many seconds of error allowed before sync
 	
 	struct timespec 	_startTime;
 	struct timespec 	_lastActivityTime;

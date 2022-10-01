@@ -208,6 +208,10 @@ bool PiCarMgr::begin(){
 				 throw Exception("failed to setup GPS.  error: %d", error);
 	
 	
+		_gps.setTimeSyncCallback([=](time_t deviation, struct timespec gpsTime){
+			clockNeedsSync(deviation, gpsTime);
+		} );
+	
 //		_display.showStartup();  // show startup
 
 		// setup audio out
@@ -1008,7 +1012,7 @@ void PiCarMgr::getWaypointProps(){
 					.location.latitude = latitude,
 					.location.longitude = longitude,
 					.location.timestamp = {0,0},
-					.location.HDOP = 255,
+					.location.DOP = 255,
 					.location.isValid = true
 				};
 				
@@ -1017,8 +1021,8 @@ void PiCarMgr::getWaypointProps(){
 					wp.location.altitudeIsValid = true;
 				}
 				
-				if(item.contains(PROP_HDOP)   &&  item[(PROP_HDOP)].is_number_unsigned()){
-					wp.location.HDOP  =  item[PROP_HDOP];
+				if(item.contains(PROP_DOP)   &&  item[(PROP_DOP)].is_number_unsigned()){
+					wp.location.DOP  =  item[PROP_DOP];
  				}
 	 
 				if(item.contains(PROP_TIMESTAMP)   &&  item[(PROP_TIMESTAMP)].is_string()){
@@ -1043,7 +1047,7 @@ void PiCarMgr::updateWaypointProps(){
 		item[PROP_TITLE] = wp.name;
 		item[PROP_LONGITUDE] = wp.location.longitude;
 		item[PROP_LATITUDE] = wp.location.latitude;
-		item[PROP_HDOP] = wp.location.HDOP;
+		item[PROP_DOP] = wp.location.DOP;
 		item[PROP_TIMESTAMP] = TimeStamp(wp.location.timestamp.tv_sec).RFC1123String();
 		 
 		if(wp.location.altitudeIsValid ){
@@ -2791,7 +2795,7 @@ bool  PiCarMgr::hasWifi(stringvector *ifnames){
 // MARK: - realtime clock sync
 
 
-bool 	PiCarMgr::shouldSyncClockToGPS(uint16_t &deviation){
+bool 	PiCarMgr::shouldSyncClockToGPS(time_t &deviation){
 	if( _clocksync_gps ){
 		deviation = _clocksync_gps_secs;
 		return true;
@@ -2800,7 +2804,7 @@ bool 	PiCarMgr::shouldSyncClockToGPS(uint16_t &deviation){
 	return false;
 }
  
-bool PiCarMgr::clockNeedsSync(uint16_t deviation,  struct timespec gpsTime ){
+bool PiCarMgr::clockNeedsSync(time_t deviation,  struct timespec gpsTime ){
 	
 	bool success = false;
 	 

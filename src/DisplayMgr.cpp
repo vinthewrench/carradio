@@ -2469,10 +2469,10 @@ void DisplayMgr::drawGPSScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(0,60)	;
-		_vfd.printPacket( "%s: %2d ", GPSmgr::NavString(location.navSystem).c_str(), location.numSat);
+		_vfd.printPacket( "SATS: %2d ",  location.numSat);
 		
 		_vfd.setCursor(midX +20,60)	;
-		_vfd.printPacket( "HDOP: %-2.1f ",  location.HDOP/10.);
+		_vfd.printPacket( "DOP: %-2.1f ",  location.DOP/10.);
 		
 	}
 	

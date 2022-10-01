@@ -70,7 +70,7 @@ inline static const string  PROP_UUID							= "uuid";
 inline static const string  PROP_LATITUDE						= "latitude";
 inline static const string  PROP_LONGITUDE					= "longitude";
 inline static const string  PROP_ALTITUDE						= "altitude";
-inline static const string  PROP_HDOP							= "hdop";  // Horiz dilution of precision
+inline static const string  PROP_DOP							= "dop";  //  dilution of precision
 inline static const string  PROP_TIMESTAMP					= "timestamp";   
 
 inline static const string  PROP_WAYPOINTS					= "waypoints";

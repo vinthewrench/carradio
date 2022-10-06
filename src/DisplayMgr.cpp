@@ -4523,9 +4523,12 @@ void DisplayMgr::MetaDataReaderLoop(){
 			continue;
 		}
 		
-		if(reader_socket == -1){
+		if(reader_socket == -1 &&  _vfd._fd != -1 ){
 			reader_socket = _vfd._fd;
 			FD_SET(reader_socket,&fds); // s is a socket descriptor
+			
+			printf("start reader on socket %d\n",reader_socket );
+			
  		}
  
 		// we use a timeout so we can end this thread when _isSetup is false
@@ -4546,6 +4549,8 @@ void DisplayMgr::MetaDataReaderLoop(){
 			u_int8_t c;
 			size_t nbytes =  (size_t)::read( reader_socket, &c, 1 );
 
+			printf("%02x |%c|\n", c,c);
+			
 			if(nbytes == 1){
 				switch (reader_state) {
 						

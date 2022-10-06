@@ -10,7 +10,7 @@
 
 
 //#define _PCM_   "default"
-#define _PCM_   "hw:ICUSBAUDIO7D=Mic,0"
+#define _PCM_   "hw:1:1"
 
 
 

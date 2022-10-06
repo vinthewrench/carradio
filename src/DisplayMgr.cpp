@@ -4514,7 +4514,8 @@ void DisplayMgr::MetaDataReaderLoop(){
 	 
 	int reader_socket  = -1;
 	
-		
+	printf("MetaDataReaderLoop\n" );
+
 	while(_isRunning){
 		
 		// if not setup // check back later

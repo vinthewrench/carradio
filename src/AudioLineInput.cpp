@@ -9,10 +9,7 @@
 
 
 
-//#define _PCM_   "default"
-#define _PCM_   "default:1"  // line IN
-#define _PCM_   "hw:1:1"  // mic IN
-
+ #define _PCM_   "default"
 
 AudioLineInput::AudioLineInput(){
   _isSetup = false;

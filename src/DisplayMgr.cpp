@@ -4577,6 +4577,9 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			printf("META play status %02x \n", status) ;
 			
 		}
+		else  {
+			printf("META %s,%s %ld  \n",type.c_str(),  code.c_str(), payload.size());
+ 		}
 	}
  
 }

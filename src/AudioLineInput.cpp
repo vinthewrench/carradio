@@ -10,7 +10,8 @@
 
 
 //#define _PCM_   "default"
-#define _PCM_   "default:1"
+#define _PCM_   "default:1"  // line IN
+#define _PCM_   "default:0"  // mic IN
 
 
 

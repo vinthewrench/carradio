@@ -362,8 +362,8 @@ private:
 	static void MetaDataReaderThreadCleanup(void *context);
 	pthread_t	 _metaReaderTID;
  
-	void processMetaDataBytes( u_int8_t *buffer, size_t length);
-	void processAirplayMetaData(u_int32_t type, u_int32_t code, u_int8_t *payload, size_t length);
+	void processMetaDataString(string);
+	void processAirplayMetaData(string type, string code, vector<uint8_t> payload);
  
 	typedef struct {
 		event_t			evt :8;

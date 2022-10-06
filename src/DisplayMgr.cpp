@@ -4492,31 +4492,102 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 }
 
 // MARK: -  MetaData reader
+inline static const char kEncodeLookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+inline static const char kPadCharacter = '=';
 
-void DisplayMgr::processAirplayMetaData(u_int32_t type, u_int32_t code, u_int8_t *payload, size_t length){
+ 
+vector<uint8_t> decode(const std::string& input) {
+	if(input.length() % 4)
+		throw std::runtime_error("Invalid base64 length!");
 	
+	std::size_t padding{};
+	
+	if(input.length())
+	{
+		if(input[input.length() - 1] == kPadCharacter) padding++;
+		if(input[input.length() - 2] == kPadCharacter) padding++;
+	}
+	
+	std::vector<uint8_t> decoded;
+	decoded.reserve(((input.length() / 4) * 3) - padding);
+	
+	std::uint32_t temp{};
+	auto it = input.begin();
+	
+	while(it < input.end())
+	{
+		for(std::size_t i = 0; i < 4; ++i)
+		{
+			temp <<= 6;
+			if     (*it >= 0x41 && *it <= 0x5A) temp |= *it - 0x41;
+			else if(*it >= 0x61 && *it <= 0x7A) temp |= *it - 0x47;
+			else if(*it >= 0x30 && *it <= 0x39) temp |= *it + 0x04;
+			else if(*it == 0x2B)                temp |= 0x3E;
+			else if(*it == 0x2F)                temp |= 0x3F;
+			else if(*it == kPadCharacter)
+			{
+				switch(input.end() - it)
+				{
+					case 1:
+						decoded.push_back((temp >> 16) & 0x000000FF);
+						decoded.push_back((temp >> 8 ) & 0x000000FF);
+						return decoded;
+					case 2:
+						decoded.push_back((temp >> 10) & 0x000000FF);
+						return decoded;
+					default:
+						throw std::runtime_error("Invalid padding in base64!");
+				}
+			}
+			else throw std::runtime_error("Invalid character in base64!");
+			
+			++it;
+		}
+		
+		decoded.push_back((temp >> 16) & 0x000000FF);
+		decoded.push_back((temp >> 8 ) & 0x000000FF);
+		decoded.push_back((temp      ) & 0x000000FF);
+	}
+	
+	return decoded;
 }
-
-void DisplayMgr::processMetaDataBytes( u_int8_t *buffer, size_t length){
+ 
+void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	uint32_t type, code;
-	uint  	input_length;
-	uint  	offset;
-
-	printf("META %2zu: %s\n", length, buffer);
-
-	int ret = sscanf((char*) buffer,"%8x,%8x,%u,%n", &type,&code, &input_length, &offset);
-
-	char typestring[5];
-	*(uint32_t*)typestring = htonl(type);
-	typestring[4]=0;
-	char codestring[5];
-	*(uint32_t*)codestring = htonl(code);
-	codestring[4]=0;
-
-	printf("%d |%s|%s|%2u|%s|\n\n",ret, typestring,codestring,input_length, buffer+offset  );
+	if(type == "core"){
+		if(code ==  "asal" ) {
+			// daap.songalbum
+			string album =  string(payload.begin(), payload.end());
+			printf("Album: %s\n",album.c_str());
+		}
+		else if(code ==  "asar" ) {
+			// daap.songartist
+			string artist =  string(payload.begin(), payload.end());
+			printf("artist: %s\n",artist.c_str());
+		}
+		else if(code ==  "minm" ) {
+			// daap.itemname
+			
+			string item =  string(payload.begin(), payload.end());
+			printf("item: %s\n",item.c_str());
+		}
+		else if(code ==  "caps" ) {
+			// play status
+			printf("play status %d %02x \n", payload.size(), payload[0]) ;
+			
+		}
+	}
  
 }
+
+void DisplayMgr::processMetaDataString(string str){
+	
+	stringvector v = split<string>(str, ",");
+	if(v.size() == 3){
+ 		auto payload = decode(v[2]);
+ 		processAirplayMetaData(v[0],v[1],payload);
+	}
+ }
 
 
 void DisplayMgr::MetaDataReaderLoop(){
@@ -4588,7 +4659,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 					case  STATE_READING:
 						if(c == '\n'){
  							buff.append_char(0);
- 							processMetaDataBytes(buff.data(), buff.size());
+							processMetaDataString(string((char*)buff.data(), buff.size()));
 							buff.reset();
 							reader_state = STATE_INIT;
  						}

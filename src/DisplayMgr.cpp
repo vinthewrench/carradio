@@ -4578,7 +4578,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			
 		}
 		else  {
-			printf("META %s,%s %ld  \n",type.c_str(),  code.c_str(), payload.size());
+			printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
  		}
 	}
  

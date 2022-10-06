@@ -356,12 +356,15 @@ private:
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);
  
+	// MARK: - Metadata Loop
 	void MetaDataReaderLoop();		// C++ version of thread
  	static void* MetaDataReaderThread(void *context);
 	static void MetaDataReaderThreadCleanup(void *context);
 	pthread_t	 _metaReaderTID;
  
-	
+	void processMetaDataBytes( u_int8_t *buffer, size_t length);
+	void processAirplayMetaData(u_int32_t type, u_int32_t code, u_int8_t *payload, size_t length);
+ 
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;

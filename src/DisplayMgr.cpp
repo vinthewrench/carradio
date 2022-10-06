@@ -4491,7 +4491,32 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 }
 
 // MARK: -  MetaData reader
+
+void DisplayMgr::processAirplayMetaData(u_int32_t type, u_int32_t code, u_int8_t *payload, size_t length){
+	
+}
+
+void DisplayMgr::processMetaDataBytes( u_int8_t *buffer, size_t length){
+	
+	uint32_t type, code;
+	uint  	input_length;
+	uint  	offset;
+
+	printf("META %2zu: %s\n", length, buffer);
+
+	int ret = sscanf((char*) buffer,"%8x,%8x,%u,%n", &type,&code, &input_length, &offset);
+
+	char typestring[5];
+	*(uint32_t*)typestring = htonl(type);
+	typestring[4]=0;
+	char codestring[5];
+	*(uint32_t*)codestring = htonl(code);
+	codestring[4]=0;
+
+	printf("%d |%s|%s|%2u|%s|\n\n",ret, typestring,codestring,input_length, buffer+offset  );
  
+}
+
 
 void DisplayMgr::MetaDataReaderLoop(){
 	 
@@ -4512,7 +4537,6 @@ void DisplayMgr::MetaDataReaderLoop(){
 
 	FD_ZERO(&fds);
  	FD_SET(0,&fds);
-	
 	 
 	int reader_socket  = -1;
 	 
@@ -4563,8 +4587,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 					case  STATE_READING:
 						if(c == '\n'){
  							buff.append_char(0);
- 
-							printf("META %2zu: %s\n", buff.size(), buff.data());
+ 							processMetaDataBytes(buff.data(), buff.size());
 							buff.reset();
 							reader_state = STATE_INIT;
  						}
@@ -4575,7 +4598,6 @@ void DisplayMgr::MetaDataReaderLoop(){
 						
 					default:
 						reader_state = STATE_INIT;
-
 						break;
 				}
 				

@@ -10,7 +10,7 @@
 
 
 //#define _PCM_   "default"
-#define _PCM_   "hw:1:1"
+#define _PCM_   "default:1"
 
 
 

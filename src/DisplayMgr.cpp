@@ -4659,6 +4659,8 @@ void DisplayMgr::MetaDataReaderLoop(){
 			size_t nbytes =  (size_t)::read( reader_socket, &c, 1 );
 
  			if(nbytes == 1){
+				
+				printf("%02x |%c|\n",c , c>31?c: '.');
 				switch (reader_state) {
 						
 					case  STATE_INIT:

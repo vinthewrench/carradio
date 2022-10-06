@@ -4492,9 +4492,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 }
 
 // MARK: -  MetaData reader
-inline static const char kEncodeLookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 inline static const char kPadCharacter = '=';
-
  
 vector<uint8_t> decode(const std::string& input) {
 	if(input.length() % 4)
@@ -4554,7 +4552,9 @@ vector<uint8_t> decode(const std::string& input) {
  
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	if(type == "core"){
+	printf("processAirplayMetaData( %s %s %d)\n",type.c_str(),code.c_str(),payload.size());
+
+ 	if(type == "core"){
 		if(code ==  "asal" ) {
 			// daap.songalbum
 			string album =  string(payload.begin(), payload.end());
@@ -4573,7 +4573,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 		}
 		else if(code ==  "caps" ) {
 			// play status
-			printf("play status %d %02x \n", payload.size(), payload[0]) ;
+			printf("play status %lu %02x \n", payload.size(), payload[0]) ;
 			
 		}
 	}
@@ -4584,6 +4584,8 @@ void DisplayMgr::processMetaDataString(string str){
 	
 	stringvector v = split<string>(str, ",");
 	if(v.size() == 3){
+		printf("processMetaDataString( %s %s %s )\n",v[0].c_str(),v[1].c_str(),v[2].c_str());
+		
  		auto payload = decode(v[2]);
  		processAirplayMetaData(v[0],v[1],payload);
 	}

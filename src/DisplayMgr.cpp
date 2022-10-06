@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <sys/utsname.h>
+#include <arpa/inet.h>
 
 #include "Utils.hpp"
 #include "XXHash32.h"

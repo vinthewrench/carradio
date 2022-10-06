@@ -4495,6 +4495,9 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 inline static const char kPadCharacter = '=';
  
 vector<uint8_t> decode(const std::string& input) {
+	
+	printf("decode(%s)\n",input.c_str());
+
 	if(input.length() % 4)
 		throw std::runtime_error("Invalid base64 length!");
 	
@@ -4552,7 +4555,7 @@ vector<uint8_t> decode(const std::string& input) {
  
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	printf("processAirplayMetaData( %s %s %d)\n",type.c_str(),code.c_str(),payload.size());
+	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 
  	if(type == "core"){
 		if(code ==  "asal" ) {
@@ -4586,10 +4589,17 @@ void DisplayMgr::processMetaDataString(string str){
 	if(v.size() == 3){
 		printf("processMetaDataString( %s %s %s )\n",v[0].c_str(),v[1].c_str(),v[2].c_str());
 		
- 		auto payload = decode(v[2]);
- 		processAirplayMetaData(v[0],v[1],payload);
+		try{
+			auto payload = decode(v[2]);
+			processAirplayMetaData(v[0],v[1],payload);
+		}
+		catch (std::runtime_error& e)
+		{
+			printf("EXCEPTION: %s ",e.what() );
+			
+		}
 	}
- }
+}
 
 
 void DisplayMgr::MetaDataReaderLoop(){
@@ -4665,7 +4675,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 							buff.reset();
 							reader_state = STATE_INIT;
  						}
-						else {
+ 						else {
 							buff.append_char(c);
 						}
 						break;

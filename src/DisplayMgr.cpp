@@ -4496,7 +4496,7 @@ inline static const char kPadCharacter = '=';
  
 vector<uint8_t> decode(const std::string& input) {
 	
-	printf("decode(%s)\n",input.c_str());
+	printf("decode(%ld, |%s|)\n",input.length(), input.c_str());
 
 	if(input.length() % 4)
 		throw std::runtime_error("Invalid base64 length!");

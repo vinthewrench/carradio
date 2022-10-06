@@ -4671,6 +4671,8 @@ void DisplayMgr::MetaDataReaderLoop(){
 	 					break;
 						
 					case  STATE_READING:
+						if(c == '\r') break;  // filter out
+ 
 						if(c == '\n'){
  							buff.append_char(0);
 							processMetaDataString(string((char*)buff.data(), buff.size()));

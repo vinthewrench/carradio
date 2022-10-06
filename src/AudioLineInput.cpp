@@ -46,7 +46,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	r = snd_pcm_open(&_pcm, _PCM_,
 						  SND_PCM_STREAM_CAPTURE, SND_PCM_NONBLOCK);
 	if( r < 0){
-		fprintf(stderr,  "input snd_pcm_open(%s) failed - %s \n", _PCM_, snd_strerror(r));
+		fprintf(stdout,  "input snd_pcm_open(%s) failed - %s \n", _PCM_, snd_strerror(r));
 		error = r;
 		return false;
 	}
@@ -61,21 +61,21 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 								  1,               // allow soft resampling
 								  500000);         // latency in us
 	if( r < 0){
-		fprintf(stderr,  "input snd_pcm_set_params failed - %s \n",  snd_strerror(r));
+		fprintf(stdout,  "input snd_pcm_set_params failed - %s \n",  snd_strerror(r));
 		error = r;
 		return false;
 	}
 	
 	r =  snd_pcm_prepare(_pcm);
 	if( r < 0){
-		fprintf(stderr,  "cannot prepare audio interface for use - %s \n",  snd_strerror(r));
+		fprintf(stdout,  "cannot prepare audio interface for use - %s \n",  snd_strerror(r));
 		error = r;
 		return false;
 	}
 
 	r =  snd_pcm_start(_pcm);
 	if( r < 0){
-		fprintf(stderr,  "cannot start audio interface - %s \n",  snd_strerror(r));
+		fprintf(stdout,  "cannot start audio interface - %s \n",  snd_strerror(r));
 		error = r;
 		return false;
 	}

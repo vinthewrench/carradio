@@ -24,6 +24,9 @@
 using namespace std;
 
 class VFD {
+	
+	friend class DisplayMgr;
+	
 public:
 
 	typedef enum  {
@@ -74,8 +77,7 @@ public:
 	};
 
 private:
-	
-
+ 
 	int	 	_fd;
 	bool		_isSetup;
 

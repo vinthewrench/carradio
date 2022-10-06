@@ -47,6 +47,7 @@
 		2EC772912854FFE30083DA3B /* DTC.db in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EC772902854FFD60083DA3B /* DTC.db */; };
 		2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC772922855002C0083DA3B /* DTCcodes.cpp */; };
 		2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EC77298285501CB0083DA3B /* libsqlite3.tbd */; };
+		2EE8AF9D28EF3296004CC59C /* dbuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EE8AF9B28EF3296004CC59C /* dbuf.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -172,6 +173,8 @@
 		2EC77298285501CB0083DA3B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		2EC7729A2855644C0083DA3B /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		2ECE4C6628591882005E067D /* XXHash32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXHash32.h; sourceTree = "<group>"; };
+		2EE8AF9B28EF3296004CC59C /* dbuf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbuf.cpp; sourceTree = "<group>"; };
+		2EE8AF9C28EF3296004CC59C /* dbuf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dbuf.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,6 +332,8 @@
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,
 				2E8210B22835A53B003D074C /* json.hpp */,
 				2E8210B32835A53B003D074C /* Utils.hpp */,
+				2EE8AF9B28EF3296004CC59C /* dbuf.cpp */,
+				2EE8AF9C28EF3296004CC59C /* dbuf.hpp */,
 				2E8D3728287F7A6E000182E5 /* timespec_util.h */,
 			);
 			name = Utilities;
@@ -528,6 +533,7 @@
 				2E62A8EB2817025B00F5066B /* DisplayMgr.cpp in Sources */,
 				2E5F7FCC28AF1081008E5C89 /* minmea.c in Sources */,
 				2E8210A32835A36D003D074C /* tranmerc.cpp in Sources */,
+				2EE8AF9D28EF3296004CC59C /* dbuf.cpp in Sources */,
 				2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -356,6 +356,12 @@ private:
 	static void* DisplayUpdateThread(void *context);
 	static void DisplayUpdateThreadCleanup(void *context);
  
+	void MetaDataReaderLoop();		// C++ version of thread
+ 	static void* MetaDataReaderThread(void *context);
+	static void MetaDataReaderThreadCleanup(void *context);
+	pthread_t	 _metaReaderTID;
+ 
+	
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;

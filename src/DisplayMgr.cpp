@@ -21,6 +21,7 @@
 #include "Utils.hpp"
 #include "XXHash32.h"
 #include "timespec_util.h"
+#include "dbuf.hpp"
 
 #include "PiCarMgr.hpp"
 #include "PropValKeys.hpp"
@@ -85,6 +86,10 @@ DisplayMgr::DisplayMgr(){
 	pthread_create(&_ledUpdateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::LEDUpdateThread, (void*)this);
 
+	pthread_create(&_metaReaderTID, NULL,
+						(THREADFUNCPTR) &DisplayMgr::MetaDataReaderThread, (void*)this);
+
+	
 }
 
 DisplayMgr::~DisplayMgr(){
@@ -95,6 +100,8 @@ DisplayMgr::~DisplayMgr(){
 	
 	pthread_cond_signal(&_led_cond);
 	pthread_join(_ledUpdateTID, NULL);
+
+	pthread_join(_metaReaderTID, NULL);
 
 }
 
@@ -532,7 +539,7 @@ void DisplayMgr::LEDUpdateLoop(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			usleep(10000);
+			sleep(1);
 			continue;
 		}
 		
@@ -1244,7 +1251,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 		
 		// if not setup // check back later
 		if(!_isSetup){
-			usleep(10000);
+			sleep(1);
 			continue;
 		}
 		
@@ -4483,3 +4490,128 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 	
 }
 
+// MARK: -  MetaData reader
+ 
+
+void DisplayMgr::MetaDataReaderLoop(){
+	
+	dbuf   buff;
+
+	typedef enum  {
+		STATE_INIT = 0,
+		STATE_READING,
+ 	 	STATE_ERROR
+	}reader_state_t;
+
+	
+	reader_state_t reader_state = STATE_INIT;
+
+ 	fd_set  fds;
+
+	FD_ZERO(&fds);
+ 	FD_SET(0,&fds);
+	
+	 
+	int reader_socket  = -1;
+	
+		
+	while(_isRunning){
+		
+		// if not setup // check back later
+		if(!_isSetup || _vfd._isSetup){
+			sleep(2);
+			continue;
+		}
+		
+		if(reader_socket == -1){
+			reader_socket = _vfd._fd;
+			FD_SET(reader_socket,&fds); // s is a socket descriptor
+ 		}
+ 
+		// we use a timeout so we can end this thread when _isSetup is false
+		struct timeval selTimeout;
+		selTimeout.tv_sec = 0;       /* timeout (secs.) */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+ 
+		/* back up master */
+		fd_set dup = fds;
+ 
+		int numReady = select(reader_socket +1, &dup, NULL, NULL, &selTimeout);
+		if( numReady == -1 ) {
+			perror("select");
+		}
+		
+		if( FD_ISSET(reader_socket, &dup)) {
+			
+			u_int8_t c;
+			size_t nbytes =  (size_t)::read( reader_socket, &c, 1 );
+
+			if(nbytes == 1){
+				switch (reader_state) {
+						
+					case  STATE_INIT:
+						if(c == '$'){
+							buff.reset();
+ 				 			reader_state = STATE_READING;
+						}
+	 					break;
+						
+					case  STATE_READING:
+						if(c == '\n'){
+ 							buff.append_char(0);
+ 
+							printf("META %2zu: %s\n", buff.size(), buff.data());
+							buff.reset();
+ 						}
+						else {
+							buff.append_char(c);
+						}
+						
+					default:
+						break;
+				}
+				
+			}
+			else if( nbytes == 0) {
+				continue;
+			}
+			else if( nbytes == -1) {
+				int lastError = errno;
+				
+				// no data try later
+				if(lastError == EAGAIN)
+					continue;
+				
+				if(lastError == ENXIO){  // device disconnected..
+					reader_socket = -1;
+ 				}
+					else {
+					perror("read");
+				}
+			}
+		}
+ 	}
+}
+ 
+
+void* DisplayMgr::MetaDataReaderThread(void *context){
+	DisplayMgr* d = (DisplayMgr*)context;
+
+	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
+	pthread_cleanup_push(   &DisplayMgr::MetaDataReaderThreadCleanup ,context);
+ 
+	d->MetaDataReaderLoop();
+	
+	pthread_exit(NULL);
+	
+	pthread_cleanup_pop(0);
+	return((void *)1);
+}
+
+ 
+void DisplayMgr::MetaDataReaderThreadCleanup(void *context){
+	//GPSmgr* d = (GPSmgr*)context;
+ 
+	printf("cleanup GPSReader\n");
+}
+ 

@@ -458,15 +458,15 @@ void CANBusMgr::CANReader(){
 			continue;
 		}
 		
-		/* wait for something to happen on the socket */
-//		struct timeval selTimeout;
-//		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-//		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
-//
+		// we use a timeout so we can end this thread when _isSetup is false
+		struct timeval selTimeout;
+		selTimeout.tv_sec = 0;       /* timeout (secs.) */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+
 		/* back up master */
 		fd_set dup = _master_fds;
 		
-		int numReady = select(_max_fds+1, &dup, NULL, NULL, NULL);// &selTimeout);
+		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
 		if( numReady == -1 ) {
 			perror("select");
 	//		_running = false;

@@ -29,6 +29,7 @@
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 #include "minmea.h"
+#include "dbuf.hpp"
 
 using namespace std;
 
@@ -47,32 +48,6 @@ private:
 	uint8_t  	_CK_B;
 };
  
-
-class dbuf{
-	
-public:
-	dbuf();
-	~dbuf();
-
-	bool append_data(void* data, size_t len);
-	
-	inline bool   append_char(uint8_t c){
-	  return append_data(&c, 1);
-	}
-	
-	inline  void reset(){ _pos = 0; _used = 0; };
-
-	size_t size() { return _used;};
-	uint8_t *data () { return _data;};
-	
-private:
-	
-	size_t  	_pos;			// cursor pos
-	size_t  	_used;			// actual end of buffer
-	size_t  	_alloc;
-	uint8_t*  _data;
-
-};
 
 
 typedef double GPSLocationDegrees;    //   degrees

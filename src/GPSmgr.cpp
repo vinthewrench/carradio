@@ -41,52 +41,6 @@ bool UBX_checksum::validate(uint8_t A, uint8_t B){
   }
 
  
-// MARK: -  Dbuf
-
-#define ALLOC_QUANTUM 16
-
-
-dbuf::dbuf(){
-	_used = 0;
-	_pos = 0;
-	_alloc = ALLOC_QUANTUM;
-	_data =  (uint8_t*) malloc(ALLOC_QUANTUM);
- }
-
-dbuf::~dbuf(){
-	if(_data)
-		free(_data);
-	_data = NULL;
-	_used = 0;
-	_pos = 0;
-	_alloc = 0;
- }
-bool dbuf::append_data(void* data, size_t len){
-	
-	if(len + _pos  >  _alloc){
-		size_t newSize = len + _used + ALLOC_QUANTUM;
-		
-		if( (_data = (uint8_t*) realloc(_data,newSize)) == NULL)
-			return false;
-		
-		_alloc = newSize;
-	}
-	
-	 if(_pos < _used) {
-		 memmove((void*) (_data + _pos + len) ,
-					(_data + _pos),
-					_used -_pos);
-	 }
-	 
-	memcpy((void*) (_data + _pos), data, len);
-	 
-	 _pos += len;
-	 _used += len;
- //	if(_pos > _used)
- //		_used = _pos;
-	 
-	return true;
-}
 
 
 // MARK: -  SERIAL GPS
@@ -739,6 +693,7 @@ void GPSmgr::GPSReader(){
 	uint8_t			ubx_chk[2] = {0,0};
 	UBX_checksum	checksum;
 
+	
 	PRINT_CLASS_TID;
 	
 	while(_isRunning){
@@ -759,15 +714,17 @@ void GPSmgr::GPSReader(){
 			}
 		}
 		
-//		// wait for something to happen on the socket
-//		struct timeval selTimeout;
-//		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-//		selTimeout.tv_usec = 100;            /* 100 microseconds */
-//
+		/* wait for something to happen on the socket */
+		
+		// we use a timeout so we can end this thread when _isSetup is false
+		struct timeval selTimeout;
+		selTimeout.tv_sec = 0;       /* timeout (secs.) */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+
 		/* back up master */
 		fd_set dup = _master_fds;
 		
-		int numReady = select(_max_fds+1, &dup, NULL, NULL, NULL); // &selTimeout);
+		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
 		if( numReady == -1 ) {
 			perror("select");
 		}

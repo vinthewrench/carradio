@@ -4494,7 +4494,9 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
  
 
 void DisplayMgr::MetaDataReaderLoop(){
-	
+	 
+	PRINT_CLASS_TID;
+
 	dbuf   buff;
 
 	typedef enum  {
@@ -4513,13 +4515,11 @@ void DisplayMgr::MetaDataReaderLoop(){
 	
 	 
 	int reader_socket  = -1;
-	
-	printf("MetaDataReaderLoop\n" );
-
+	 
 	while(_isRunning){
 		
 		// if not setup // check back later
-		if(!_isSetup || _vfd._isSetup){
+		if(!_isSetup || !_vfd._isSetup){
 			sleep(2);
 			continue;
 		}

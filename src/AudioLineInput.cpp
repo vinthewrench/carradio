@@ -14,7 +14,6 @@
 #define _PCM_   "hw:1:0"  // mic IN
 
 
-
 AudioLineInput::AudioLineInput(){
   _isSetup = false;
    _pcm = NULL;

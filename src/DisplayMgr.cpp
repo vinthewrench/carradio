@@ -4495,10 +4495,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 inline static const char kPadCharacter = '=';
  
 vector<uint8_t> decode(const std::string& input) {
-	
-	printf("decode(%ld, |%s|)\n",input.length(), input.c_str());
-
-	if(input.length() % 4)
+ 	if(input.length() % 4)
 		throw std::runtime_error("Invalid base64 length!");
 	
 	std::size_t padding{};
@@ -4555,28 +4552,29 @@ vector<uint8_t> decode(const std::string& input) {
  
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+//	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 
  	if(type == "core"){
 		if(code ==  "asal" ) {
 			// daap.songalbum
 			string album =  string(payload.begin(), payload.end());
-			printf("Album: %s\n",album.c_str());
+			printf("META Album: %s\n",album.c_str());
 		}
 		else if(code ==  "asar" ) {
 			// daap.songartist
 			string artist =  string(payload.begin(), payload.end());
-			printf("artist: %s\n",artist.c_str());
+			printf("META artist: %s\n",artist.c_str());
 		}
 		else if(code ==  "minm" ) {
 			// daap.itemname
 			
 			string item =  string(payload.begin(), payload.end());
-			printf("item: %s\n",item.c_str());
+			printf("META item: %s\n",item.c_str());
 		}
 		else if(code ==  "caps" ) {
+			uint8_t status = payload[0];
 			// play status
-			printf("play status %lu %02x \n", payload.size(), payload[0]) ;
+			printf("META play status %02x \n", status) ;
 			
 		}
 	}
@@ -4587,17 +4585,14 @@ void DisplayMgr::processMetaDataString(string str){
 	
   	stringvector v = split<string>(str, ",");
 	if(v.size() == 3){
-		printf("processMetaDataString( %s %s %s )\n",v[0].c_str(),v[1].c_str(),v[2].c_str());
-		
-		try{
+ 		try{
 			auto payload = decode(v[2]);
 			processAirplayMetaData(v[0],v[1],payload);
 		}
 		catch (std::runtime_error& e)
 		{
-			printf("EXCEPTION: %s ",e.what() );
-			
-		}
+			printf("processMetaDataString EXCEPTION: %s ",e.what() );
+ 		}
 	}
 }
 
@@ -4660,7 +4655,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 
  			if(nbytes == 1){
 				
-				printf("%02x |%c|\n",c , c>31?c: '.');
+//				printf("%02x |%c|\n",c , c>31?c: '.');
 				switch (reader_state) {
 						
 					case  STATE_INIT:

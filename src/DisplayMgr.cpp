@@ -4571,6 +4571,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 						else {
 							buff.append_char(c);
 						}
+						break;
 						
 					default:
 						reader_state = STATE_INIT;

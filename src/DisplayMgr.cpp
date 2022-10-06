@@ -4585,8 +4585,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 
 void DisplayMgr::processMetaDataString(string str){
 	
-	str = Utils::trim(str);
- 	stringvector v = split<string>(str, ",");
+  	stringvector v = split<string>(str, ",");
 	if(v.size() == 3){
 		printf("processMetaDataString( %s %s %s )\n",v[0].c_str(),v[1].c_str(),v[2].c_str());
 		
@@ -4675,8 +4674,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 						if(c == '\r') break;  // filter out
  
 						if(c == '\n'){
- 							buff.append_char(0);
-							processMetaDataString(string((char*)buff.data(), buff.size()));
+ 							processMetaDataString(string((char*)buff.data(), buff.size()));
 							buff.reset();
 							reader_state = STATE_INIT;
  						}

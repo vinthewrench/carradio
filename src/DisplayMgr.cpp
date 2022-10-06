@@ -4550,9 +4550,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 			u_int8_t c;
 			size_t nbytes =  (size_t)::read( reader_socket, &c, 1 );
 
-			printf("%02x |%c|\n", c,c);
-			
-			if(nbytes == 1){
+ 			if(nbytes == 1){
 				switch (reader_state) {
 						
 					case  STATE_INIT:
@@ -4568,12 +4566,15 @@ void DisplayMgr::MetaDataReaderLoop(){
  
 							printf("META %2zu: %s\n", buff.size(), buff.data());
 							buff.reset();
+							reader_state = STATE_INIT;
  						}
 						else {
 							buff.append_char(c);
 						}
 						
 					default:
+						reader_state = STATE_INIT;
+
 						break;
 				}
 				

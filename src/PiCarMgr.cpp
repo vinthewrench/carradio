@@ -389,12 +389,12 @@ bool PiCarMgr::updateRadioPrefs() {
 		didUpdate = true;
 	}
 	else if(_radio.radioMode() == RadioMgr::AIRPLAY){
-		_lastFreqForMode[RadioMgr::AIRPLAY] = 0;
+		_lastFreqForMode[RadioMgr::AIRPLAY] = 1;
 		_lastRadioMode = RadioMgr::AIRPLAY;
 		didUpdate = true;
 	}
  	else if(_radio.isScannerMode()){
-			_lastFreqForMode[RadioMgr::SCANNER] = 1;
+			_lastFreqForMode[RadioMgr::SCANNER] =21;
 			_lastRadioMode = RadioMgr::SCANNER;
 			didUpdate = true;
 	}

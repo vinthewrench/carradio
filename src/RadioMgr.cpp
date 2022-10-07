@@ -1105,6 +1105,9 @@ void RadioMgr::OutputProcessor(){
 		if(_mode	== AUX ){
 			audio->writeAudio(samples);
 		}
+		else if(_mode	== AIRPLAY ){
+			audio->writeAudio(samples);
+		}
 		else {
 			audio->writeIQ(samples);
 		}

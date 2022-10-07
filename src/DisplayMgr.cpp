@@ -2153,7 +2153,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
 				// correct UTF8 single comma quotation mark apostrophe
-				titleStr = replaceAll(titleStr, "\xE2\x80\x99", "\x60");
+				titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
 	 
 				// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");

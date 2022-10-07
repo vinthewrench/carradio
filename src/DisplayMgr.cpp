@@ -2137,8 +2137,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 
 				constexpr int maxLen = 21;
 				string spaces(maxLen, ' ');
-				
-				
+		 
 				string titleStr = "";
 				string artistStr = "";
 	
@@ -2808,7 +2807,7 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	if(foundSignal){
 		_vfd.setFont(VFD::FONT_5x7);
 		
-		constexpr int maxLen = 20;
+		constexpr int maxLen = 21;
 		string spaces(maxLen, ' ');
 		
 		string titleStr = "";

@@ -166,7 +166,6 @@ public:
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 
-	void showAirplayChange();
 
 	void showCANbus(uint8_t page = 0);
 	 
@@ -368,7 +367,8 @@ private:
  
 	void processMetaDataString(string);
 	void processAirplayMetaData(string type, string code, vector<uint8_t> payload);
- 
+	void showAirplayChange();
+
 	pthread_mutex_t 	_apmetadata_mutex = PTHREAD_MUTEX_INITIALIZER;
 	map<string, string> _airplayMetaData = {};
 

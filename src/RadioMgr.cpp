@@ -306,16 +306,14 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_shouldReadSDR = false;
 	 		_shouldReadAux = true;
 			_shouldReadAirplay = false;
-
 			didUpdate = true;
 		}
 		else if(_mode == AIRPLAY) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
 			_shouldReadSDR = false;
-			_shouldReadAux = false;
-			_shouldReadAirplay = true;
- 			didUpdate = true;
+			_shouldReadAux = true;
+			_shouldReadAirplay = false;
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
@@ -449,7 +447,7 @@ int 	RadioMgr::getMaxSquelchRange(){
 
 uint32_t RadioMgr::frequency(){
 	if(_scannerMode){
-		return 1.;
+		return 2.;
 	}
 	return _frequency;
  }

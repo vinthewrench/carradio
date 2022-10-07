@@ -51,7 +51,6 @@ public:
 	
 	double mutedVolume() { return _savedVolume; };
 	
-	
 	bool 	setBalance(double );		// -1.0  - 1.0
 	double balance();
 	

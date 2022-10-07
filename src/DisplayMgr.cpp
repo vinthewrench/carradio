@@ -2169,10 +2169,10 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.setFont(VFD::FONT_5x7);
 			
 				_vfd.setCursor(0,centerY-7);
-				_vfd.printPacket("%-20s",artistStr.c_str() );
+				_vfd.printPacket("%-21s",artistStr.c_str() );
 
 				_vfd.setCursor(0,centerY+3);
-				_vfd.printPacket("%-20s",titleStr.c_str() );
+				_vfd.printPacket("%-21s",titleStr.c_str() );
 
 				_vfd.setFont(VFD::FONT_MINI);
 				_vfd.setCursor(0, centerY+16);
@@ -4199,7 +4199,7 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 			}
 
 		_vfd.setCursor(0,centerY-5);
-		_vfd.printPacket("%-20s",titleStr.c_str() );
+		_vfd.printPacket("%-21s",titleStr.c_str() );
 
 		string channelStr = RadioMgr::modeString(mode) + " "
 		+ RadioMgr::hertz_to_string(freq, 3) + " "
@@ -4208,7 +4208,7 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 		string portionOfSpaces = spaces.substr(0, (maxLen - channelStr.size()) / 2);
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
-		_vfd.printPacket("%-20s",channelStr.c_str() );
+		_vfd.printPacket("%-21s",channelStr.c_str() );
   
 		_vfd.setCursor(0, 60);
  		_vfd.printPacket("           ");

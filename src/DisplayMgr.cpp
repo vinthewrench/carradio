@@ -56,10 +56,9 @@ static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 static  const string moreUp = "\x1b\x98\x04\xfb\x1d";
 static  const string moreDown = "\x1b\x98\x04\xf9\x1d";
 static  const string moreNext = "\x1b\x98\x04\xfa\x1d";
-static  const string morePrev = "\x1b\x98\x04\xfc\x1d";
+static  const string morePrev = "\x1b\x98\x04\x60\x1d";
 
-
-//  MACOS doesnt support pthread_condattr_setclock
+ //  MACOS doesnt support pthread_condattr_setclock
 
 #if defined(__APPLE__)
 #define TIMEDWAIT_CLOCK CLOCK_REALTIME
@@ -2154,21 +2153,20 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
 				// correct UTF8 single comma quotation mark apostrophe
-				titleStr = replaceAll(titleStr, "\xE2\x80\x99","'");
-				
+				titleStr = replaceAll(titleStr, "\xE2\x80\x99", "\x60");
+	 
 				// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
  
 				// center it
-				titleStr = truncate(titleStr, maxLen,true);
+				titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 				titleStr = portionOfSpaces + titleStr;
 				
 				// correct UTF8 single comma quotation mark apostrophe
 				artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
-		
 	
-				artistStr = truncate(artistStr, maxLen, true);
+				artistStr = truncate(artistStr, maxLen);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
 				artistStr = portionOfSpaces1 + artistStr;
 

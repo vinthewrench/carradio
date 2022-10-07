@@ -2111,6 +2111,20 @@ static void dumpHex(uint8_t* buffer, size_t length, int offset)
 }
 
 
+void replaceString(std::string & data, std::string toSearch, std::string replaceStr)
+{
+	 // Get the first occurrence
+	 size_t pos = data.find(toSearch);
+	 // Repeat till end is reached
+	 while( pos != std::string::npos)
+	 {
+		  // Replace this occurrence of Sub String
+		  data.replace(pos, toSearch.size(), replaceStr);
+		  // Get the next occurrence from the current position
+		  pos =data.find(toSearch, pos + replaceStr.size());
+	 }
+}
+
 void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
@@ -2203,6 +2217,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 				titleStr = portionOfSpaces + titleStr;
+				
+				replaceString(titleStr, "\xE2\x80\x99","'");
 				
 				artistStr = truncate(artistStr, maxLen);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);

@@ -2153,21 +2153,22 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
  			 		}
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
-			// correct UTF8 single comma quotation mark apostrophe
+				// correct UTF8 single comma quotation mark apostrophe
 				titleStr = replaceAll(titleStr, "\xE2\x80\x99","'");
 				
-				// remove parentehical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
+				// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
  
 				// center it
-				titleStr = truncate(titleStr, maxLen);
+				titleStr = truncate(titleStr, maxLen,true);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 				titleStr = portionOfSpaces + titleStr;
 				
 				// correct UTF8 single comma quotation mark apostrophe
 				artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
 		
-				artistStr = truncate(artistStr, maxLen);
+	
+				artistStr = truncate(artistStr, maxLen, true);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
 				artistStr = portionOfSpaces1 + artistStr;
 

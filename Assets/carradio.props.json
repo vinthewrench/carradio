@@ -105,14 +105,15 @@
 			"freq": 0,
 			"mode": "AUX"
 		},
-		{
-			"freq": 2,
-			"mode": "AIRPLAY"
-		},
  		{
 			"freq": 1,
 			"mode": "SCANNER"
 		},
+		{
+			"freq": 2,
+			"mode": "AIRPLAY"
+		},
+
 		{
 			"freq": 102700000,
 			"mode": "FM"

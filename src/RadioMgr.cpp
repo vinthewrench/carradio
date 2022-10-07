@@ -577,14 +577,14 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			break;
 
 		case AIRPLAY:
-			minFreq = 2;
-			maxFreq = 2;
+			minFreq = 1;
+			maxFreq = 1;
 			success = true;
 			break;
  
 		case SCANNER:
-			minFreq = 1;
-			maxFreq = 1;
+			minFreq = 2;
+			maxFreq = 2;
 			success = true;
 			break;
 
@@ -604,11 +604,11 @@ uint32_t RadioMgr::nextFrequency(bool up){
 			break;
 
 		case AIRPLAY:
-			newfreq = 2;
+			newfreq = 1;
 			break;
 	 
 		case SCANNER:
-			newfreq = 1;
+			newfreq = 2;
 			break;
 
 		case BROADCAST_AM:

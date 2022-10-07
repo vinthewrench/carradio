@@ -16,6 +16,8 @@
 #include <cmath>
 #include <algorithm>
 #include <limits.h>
+#include <regex>
+
 #include <sys/utsname.h>
 #include <arpa/inet.h>
 
@@ -2154,6 +2156,9 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			// correct UTF8 single comma quotation mark apostrophe
 				titleStr = replaceAll(titleStr, "\xE2\x80\x99","'");
 				
+				// remove parentehical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
+				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
+ 
 				// center it
 				titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);

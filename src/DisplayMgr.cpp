@@ -2214,11 +2214,12 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
 				// center it
+				replaceString(titleStr, "\xE2\x80\x99","'");
+	
 				titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 				titleStr = portionOfSpaces + titleStr;
 				
-				replaceString(titleStr, "\xE2\x80\x99","'");
 				
 				artistStr = truncate(artistStr, maxLen);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);

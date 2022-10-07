@@ -2204,22 +2204,19 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				pthread_mutex_lock (&_apmetadata_mutex);
 				if(_airplayMetaData.count("asar")){
 					artistStr = Utils::trim(_airplayMetaData["asar"]);
- 				}
+					dumpHex((uint8_t*)artistStr.c_str(), artistStr.size(), 0);
+				}
 				if(_airplayMetaData.count("minm")){
 					titleStr = Utils::trim(_airplayMetaData["minm"]);
-				
-					dumpHex((uint8_t*)titleStr.c_str(), titleStr.size(), 0);
-					
-	 			}
+ 					dumpHex((uint8_t*)titleStr.c_str(), titleStr.size(), 0);
+ 	 			}
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
 				// center it
 				replaceString(titleStr, "\xE2\x80\x99","'");
-	
-				titleStr = truncate(titleStr, maxLen);
+	 			titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 				titleStr = portionOfSpaces + titleStr;
-				
 				
 				artistStr = truncate(artistStr, maxLen);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);

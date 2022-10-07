@@ -789,7 +789,6 @@ void DisplayMgr::showScannerChange(bool force){
 	else {
 		setEvent(EVT_NONE, MODE_SCANNER );
 	}
-	
 }
  
 void DisplayMgr::showDTC(){
@@ -1403,7 +1402,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 						if(savedCB) {
 							savedCB();
 						}
-						
 					}
 				}
 				else if(_current_mode == MODE_BALANCE) {
@@ -1476,6 +1474,16 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
+				
+				else if(_current_mode == MODE_RADIO) {
+					
+					// check for {EVT_NONE,MODE_RADIO}  which is a airplay change
+					if(item.mode == MODE_RADIO) {
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+				}
+
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change

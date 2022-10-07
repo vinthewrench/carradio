@@ -2145,11 +2145,11 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				// get artist and title
 				pthread_mutex_lock (&_apmetadata_mutex);
 				if(_airplayMetaData.count("asar")){
-					artistStr = _airplayMetaData["asar"];
-				}
+					artistStr = Utils::trim(_airplayMetaData["asar"]);
+ 				}
 				if(_airplayMetaData.count("minm")){
-					titleStr = _airplayMetaData["minm"];
-				}
+					titleStr = Utils::trim(_airplayMetaData["minm"]);
+	 			}
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
 				// center it
@@ -2170,7 +2170,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.printPacket("%-20s",titleStr.c_str() );
 
 				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(10, centerY+19);
+				_vfd.setCursor(0, centerY+16);
 				_vfd.printPacket("AIRPLAY");
 			}
  			else {

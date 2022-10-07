@@ -317,7 +317,6 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_shouldReadAirplay = true;
  			didUpdate = true;
 		}
-  
 		else if(_mode == VHF || _mode == GMRS) {
 	
 	 		_sdr.resetBuffer();
@@ -483,7 +482,6 @@ string RadioMgr::modeString(radio_mode_t mode){
 		case AIRPLAY:
 			str = "AIRPLAY";
 			break;
- 
 			
 		case SCANNER:
 			str = "SCANNER";

@@ -4627,42 +4627,74 @@ void  DisplayMgr::clearAPMetaData() {
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-//	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
-
+	//	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	
+	static map<string, string>  airplaycache = {};
+	static bool session_started = false;
 	
 	if(radio->isOn()){
 		
-		  if(type == "core"){
+		if(type == "core"){
+			
+			//			  {'core', 'asal'}, // daap.songalbum
+			//			  {'core', 'asar'},	// daap.songartist
+			//			  {'core', 'minm'}, // dmap.itemname
+			//		  //	{'core', 'asgn'}, //  daap.songgenre
+			//		  //	{'core', 'ascp'}, //  daap.daap.songcomposer
+			//		  //	{'core', 'asdk'}, //  daap.daap.songdatakind
+			//			  {'core', 'caps'}, // play status  ( 01/ 02 )
+			
+			static stringvector filter_table = {
+				"asal" , // daap.songalbum
+				"asar",	// daap.songartist
+				"minm"  // dmap.itemname
+			};
+			
+			if(session_started){
+				if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
+					string str =  string(payload.begin(), payload.end());
+					airplaycache[code] = str;
+					printf("META %s: %s\n",code.c_str(), str.c_str());
+					return;
+				}
+			}
+			
+			if(code ==  "caps" ) {
+				uint8_t status = payload[0];
+				// play status
+				printf("META play status %02x \n", status) ;
+				showAirplayChange();
+			}
+			else  {
+				printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
+			}
+		}
+		else if(type == "ssnc"){
+			//		{'ssnc', 'mden'}, //  Metadata stream processing end
+			//		{'ssnc', 'mdst'}, //  Metadata stream processing start
+			
+			if(code ==  "mdst" ) {
+				airplaycache.clear();
+				session_started = true;
+				
+			}
+			else 	if(code ==  "mden" ) {
+				
+				pthread_mutex_lock (&_apmetadata_mutex);
+				_airplayMetaData.clear();
+				_airplayMetaData = airplaycache;
+				pthread_mutex_unlock(&_apmetadata_mutex);
+				
+				showAirplayChange();
+				airplaycache.clear();
+				session_started = false;
+			}
+		}
 		
-			  static stringvector filter_table = {
-				  "asal" , // daap.songalbum
-				  "asar",	// daap.songartist
-				  "minm"  // dmap.itemname
-			  };
-			  
-			  
-			  if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
-				  pthread_mutex_lock (&_apmetadata_mutex);
-				  string str =  string(payload.begin(), payload.end());
-				  _airplayMetaData[code] = str;
-				  pthread_mutex_unlock(&_apmetadata_mutex);
-					  
-				  showAirplayChange();
-//				  printf("META %s: %s\n",code.c_str(), str.c_str());
-			  }
-			  else if(code ==  "caps" ) {
-				  uint8_t status = payload[0];
-				  // play status
-				  printf("META play status %02x \n", status) ;
-				  showAirplayChange();
- 			  }
-			  else  {
-				  printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
-			  }
-		  }
 	}
- }
+}
 
 void DisplayMgr::processMetaDataString(string str){
 	

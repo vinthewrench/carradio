@@ -4550,39 +4550,53 @@ vector<uint8_t> decode(const std::string& input) {
 	return decoded;
 }
  
+
+void  DisplayMgr::clearAPMetaData() {
+	pthread_mutex_lock (&_apmetadata_mutex);
+	_airplayMetaData.clear();
+	pthread_mutex_unlock(&_apmetadata_mutex);
+	
+	printf("META cleared\n");
+
+};
+
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
 //	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 
- 	if(type == "core"){
-		if(code ==  "asal" ) {
-			// daap.songalbum
-			string album =  string(payload.begin(), payload.end());
-			printf("META Album: %s\n",album.c_str());
-		}
-		else if(code ==  "asar" ) {
-			// daap.songartist
-			string artist =  string(payload.begin(), payload.end());
-			printf("META artist: %s\n",artist.c_str());
-		}
-		else if(code ==  "minm" ) {
-			// daap.itemname
-			
-			string item =  string(payload.begin(), payload.end());
-			printf("META item: %s\n",item.c_str());
-		}
-		else if(code ==  "caps" ) {
-			uint8_t status = payload[0];
-			// play status
-			printf("META play status %02x \n", status) ;
-			
-		}
-		else  {
-			printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
- 		}
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	
+	if(radio->isOn()){
+		
+		  if(type == "core"){
+		
+			  static stringvector filter_table = {
+				  "asal" , // daap.songalbum
+				  "asar",	// daap.songartist
+				  "minm"  // dmap.itemname
+			  };
+			  
+			  
+			  if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
+				  pthread_mutex_lock (&_apmetadata_mutex);
+				  string str =  string(payload.begin(), payload.end());
+				  _airplayMetaData[code] = str;
+				  pthread_mutex_unlock(&_apmetadata_mutex);
+					  
+				  printf("META %s: %s\n",code.c_str(), str.c_str());
+			  }
+			  else if(code ==  "caps" ) {
+				  uint8_t status = payload[0];
+				  // play status
+				  printf("META play status %02x \n", status) ;
+				  
+			  }
+			  else  {
+				  printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
+			  }
+		  }
 	}
- 
-}
+ }
 
 void DisplayMgr::processMetaDataString(string str){
 	
@@ -4598,6 +4612,7 @@ void DisplayMgr::processMetaDataString(string str){
  		}
 	}
 }
+
 
 
 void DisplayMgr::MetaDataReaderLoop(){
@@ -4635,6 +4650,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 			FD_SET(reader_socket,&fds); // s is a socket descriptor
 			
 			printf("start reader on socket %d\n",reader_socket );
+			clearAPMetaData();
 			
  		}
  

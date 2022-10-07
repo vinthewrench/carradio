@@ -182,6 +182,8 @@ public:
 	
 	void updateMenuItems(vector<menuItem_t> items);   // can be called from menuSelectedCallBack_t
 	
+	void clearAPMetaData();
+
 private:
 	
 	typedef enum  {
@@ -365,6 +367,13 @@ private:
 	void processMetaDataString(string);
 	void processAirplayMetaData(string type, string code, vector<uint8_t> payload);
  
+	pthread_mutex_t 	_apmetadata_mutex = PTHREAD_MUTEX_INITIALIZER;
+	map<string, string> _airplayMetaData = {};
+
+	
+	
+	// MARK: -
+	
 	typedef struct {
 		event_t			evt :8;
 		mode_state_t	mode:8;

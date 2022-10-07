@@ -10,6 +10,8 @@
 
 
  #define _PCM_   "default"
+ 
+
 
 AudioLineInput::AudioLineInput(){
   _isSetup = false;
@@ -26,7 +28,6 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo){
 	int error = 0;
 	return begin(samplerate,stereo, error);
 }
-
 
 
 bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){

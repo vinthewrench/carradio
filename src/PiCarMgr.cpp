@@ -1269,6 +1269,9 @@ void PiCarMgr::PiCarLoop(){
 						// stop any Mute blinking
 						_display.LEDeventStop();
 						
+						// clear any Airplay metadata
+						_display.clearAPMetaData();
+						
 						// turn it off forces save of stations.
 						saveRadioSettings();
 						_db.savePropertiesToFile();

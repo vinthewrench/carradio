@@ -775,6 +775,12 @@ void DisplayMgr::showRadioChange(){
 	setEvent(EVT_PUSH, MODE_RADIO );
 }
 
+void DisplayMgr::showAirplayChange(){
+	if(_current_mode == MODE_RADIO)
+		setEvent(EVT_NONE, MODE_RADIO );
+}
+
+
 void DisplayMgr::showScannerChange(bool force){
 	
 	if(force){
@@ -2130,7 +2136,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 				// get artist and title
 				pthread_mutex_lock (&_apmetadata_mutex);
-			
 				if(_airplayMetaData.count("asar")){
 					artistStr = _airplayMetaData["asar"];
 				}
@@ -4626,14 +4631,15 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				  _airplayMetaData[code] = str;
 				  pthread_mutex_unlock(&_apmetadata_mutex);
 					  
-				  printf("META %s: %s\n",code.c_str(), str.c_str());
+				  showAirplayChange();
+//				  printf("META %s: %s\n",code.c_str(), str.c_str());
 			  }
 			  else if(code ==  "caps" ) {
 				  uint8_t status = payload[0];
 				  // play status
 				  printf("META play status %02x \n", status) ;
-				  
-			  }
+				  showAirplayChange();
+ 			  }
 			  else  {
 				  printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
 			  }

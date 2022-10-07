@@ -166,6 +166,8 @@ public:
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 
+	void showAirplayChange();
+
 	void showCANbus(uint8_t page = 0);
 	 
 	void showDevStatus();

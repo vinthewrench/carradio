@@ -106,6 +106,10 @@
 			"mode": "AUX"
 		},
 		{
+			"freq": 2,
+			"mode": "AIRPLAY"
+		},
+ 		{
 			"freq": 1,
 			"mode": "SCANNER"
 		},

@@ -579,8 +579,8 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			break;
 
 		case AIRPLAY:
-			minFreq = 0;
-			maxFreq = 0;
+			minFreq = 2;
+			maxFreq = 2;
 			success = true;
 			break;
  

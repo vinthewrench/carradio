@@ -2135,7 +2135,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				
 				_vfd.setFont(VFD::FONT_5x7);
 
-				constexpr int maxLen = 20;
+				constexpr int maxLen = 21;
 				string spaces(maxLen, ' ');
 				
 				

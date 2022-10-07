@@ -9,7 +9,10 @@
 
 
 
- #define _PCM_   "default"
+ //#define _PCM_   "default"
+
+#define _PCM_   "plughw:0"
+
 
 AudioLineInput::AudioLineInput(){
   _isSetup = false;

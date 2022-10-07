@@ -2169,11 +2169,11 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				_vfd.setFont(VFD::FONT_5x7);
 			
 				_vfd.setCursor(0,centerY-7);
-				_vfd.printPacket("%-21s",artistStr.c_str() );
-
-				_vfd.setCursor(0,centerY+3);
 				_vfd.printPacket("%-21s",titleStr.c_str() );
 
+				_vfd.setCursor(0,centerY+3);
+				_vfd.printPacket("%-21s",artistStr.c_str() );
+ 
 				_vfd.setFont(VFD::FONT_MINI);
 				_vfd.setCursor(0, centerY+16);
 				_vfd.printPacket("AIRPLAY");

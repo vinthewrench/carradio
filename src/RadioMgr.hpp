@@ -37,8 +37,9 @@ public:
 		BROADCAST_FM,
 		VHF,
 		GMRS,
-		SCANNER,		// not really a radio option.
-		AUX,  		// not really a radio option.
+		SCANNER,
+		AUX,
+		AIRPLAY
 	}radio_mode_t;
 	
 	typedef enum  {
@@ -144,6 +145,8 @@ private:
 	bool					 _shouldQuit;
 	bool					 _shouldReadSDR;
 	bool					 _shouldReadAux;
+	bool					 _shouldReadAirplay;
+ 
 	
 	pthread_t			_auxReaderTID;
 	pthread_t			_sdrReaderTID;

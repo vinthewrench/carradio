@@ -39,6 +39,7 @@ RadioMgr::RadioMgr(){
 	_shouldQuit = false;
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
+	_shouldReadAirplay = false;
 	
 	_squelchLevel = 0;
   
@@ -85,6 +86,7 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	_pcmrate = pcmrate;
 	_shouldReadSDR = false;
 	_shouldReadAux = false;
+	_shouldReadAirplay = false;
 
 	if(! _sdr.begin(deviceIndex,error ) )
 		return false;
@@ -114,6 +116,7 @@ void RadioMgr::stop(){
 	if(_isSetup  ){
 		_shouldReadSDR = false;
 		_shouldReadAux = false;
+		_shouldReadAirplay = false;
 		_shouldQuit = true;
 		
 		_lineInput.stop();
@@ -157,6 +160,7 @@ bool RadioMgr::setON(bool isOn) {
 		
 		_shouldReadSDR = false;
 		_shouldReadAux = false;
+		_shouldReadAirplay = false;
 
 		_sdr.resetBuffer();
 		_output_buffer.flush();
@@ -301,9 +305,19 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_output_buffer.flush();
 			_shouldReadSDR = false;
 	 		_shouldReadAux = true;
+			_shouldReadAirplay = false;
 
 			didUpdate = true;
 		}
+		else if(_mode == AIRPLAY) {
+			_sdr.resetBuffer();
+			_output_buffer.flush();
+			_shouldReadSDR = false;
+			_shouldReadAux = false;
+			_shouldReadAirplay = true;
+ 			didUpdate = true;
+		}
+  
 		else if(_mode == VHF || _mode == GMRS) {
 	
 	 		_sdr.resetBuffer();
@@ -345,6 +359,8 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 												);
 			
 			_shouldReadAux = false;
+			_shouldReadAirplay = false;
+
 			_shouldReadSDR = true;
 		}
 		else if(_mode == BROADCAST_FM) {
@@ -388,6 +404,8 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 												);
 			
 			_shouldReadAux = false;
+			_shouldReadAirplay = false;
+
 			_shouldReadSDR = true;
 		}
 		
@@ -462,6 +480,11 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "AUX";
 			break;
 
+		case AIRPLAY:
+			str = "AIRPLAY";
+			break;
+ 
+			
 		case SCANNER:
 			str = "SCANNER";
 			break;
@@ -482,6 +505,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 else if(str == "VHF") mode = VHF;
 	 else if(str == "GMRS") mode = GMRS;
 	 else if(str == "AUX") mode = AUX;
+	 else if(str == "AIRPLAY") mode = AIRPLAY;
 	 else if(str == "SCANNER") mode = SCANNER;
 		return mode;
 		
@@ -554,6 +578,12 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			success = true;
 			break;
 
+		case AIRPLAY:
+			minFreq = 0;
+			maxFreq = 0;
+			success = true;
+			break;
+ 
 		case SCANNER:
 			minFreq = 1;
 			maxFreq = 1;
@@ -575,6 +605,10 @@ uint32_t RadioMgr::nextFrequency(bool up){
 			newfreq = 0;
 			break;
 
+		case AIRPLAY:
+			newfreq = 2;
+			break;
+	 
 		case SCANNER:
 			newfreq = 1;
 			break;
@@ -756,7 +790,7 @@ void RadioMgr::AuxReader(){
 	while(!_shouldQuit){
 		
 			// aux is off sleep for awhile.
-		if(!_isSetup || !_shouldReadAux){
+		if(!_isSetup ||  ! (_shouldReadAux || _shouldReadAirplay)  ){
 			
 			if(aux_setup){
  				_lineInput.stop();

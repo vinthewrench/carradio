@@ -388,7 +388,12 @@ bool PiCarMgr::updateRadioPrefs() {
 		_lastRadioMode = RadioMgr::AUX;
 		didUpdate = true;
 	}
-	else if(_radio.isScannerMode()){
+	else if(_radio.radioMode() == RadioMgr::AIRPLAY){
+		_lastFreqForMode[RadioMgr::AIRPLAY] = 0;
+		_lastRadioMode = RadioMgr::AIRPLAY;
+		didUpdate = true;
+	}
+ 	else if(_radio.isScannerMode()){
 			_lastFreqForMode[RadioMgr::SCANNER] = 1;
 			_lastRadioMode = RadioMgr::SCANNER;
 			didUpdate = true;
@@ -1988,6 +1993,7 @@ void PiCarMgr::displayRadioMenu(){
 		"VHF",
 		"GMRS",
 		"AUX",
+		"AirPlay",
 		"Scanner",
 		"-",
 		"Exit"
@@ -2013,13 +2019,17 @@ void PiCarMgr::displayRadioMenu(){
 		case RadioMgr::AUX:
 			selectedItem = 4;
 			break;
-
-		case RadioMgr::SCANNER:
+			
+		case RadioMgr::AIRPLAY:
 			selectedItem = 5;
 			break;
 
-		default:
+		case RadioMgr::SCANNER:
 			selectedItem = 6;
+			break;
+
+		default:
+			selectedItem = 7;
 			break;
 	}
 	
@@ -2059,7 +2069,11 @@ void PiCarMgr::displayRadioMenu(){
 					radioMode  = RadioMgr::AUX;
 					break;
 					
-				case 5: // SCANNER
+				case 5: // AIRPLAY
+					radioMode  = RadioMgr::AIRPLAY;
+					break;
+					
+				case 6: // SCANNER
 					useScanner = true;
 					break;
 					

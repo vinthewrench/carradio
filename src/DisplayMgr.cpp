@@ -2119,12 +2119,46 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			}
 			else if(mode == RadioMgr::AIRPLAY){
 				
-				string str = "AirPlay";
-				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
+				_vfd.setFont(VFD::FONT_5x7);
+
+				constexpr int maxLen = 20;
+				string spaces(maxLen, ' ');
 				
-				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+10));
-				TRY(_vfd.write(str));
+				
+				string titleStr = "";
+				string artistStr = "";
+	
+				// get artist and title
+				pthread_mutex_lock (&_apmetadata_mutex);
+			
+				if(_airplayMetaData.count("asar")){
+					artistStr = _airplayMetaData["asar"];
+				}
+				if(_airplayMetaData.count("minm")){
+					titleStr = _airplayMetaData["minm"];
+				}
+	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
+ 
+				// center it
+				titleStr = truncate(titleStr, maxLen);
+				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+				titleStr = portionOfSpaces + titleStr;
+				
+				artistStr = truncate(artistStr, maxLen);
+				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
+				artistStr = portionOfSpaces1 + artistStr;
+
+				_vfd.setFont(VFD::FONT_5x7);
+			
+				_vfd.setCursor(0,centerY-5);
+				_vfd.printPacket("%-20s",artistStr.c_str() );
+
+				_vfd.setCursor(0,centerY+5);
+				_vfd.printPacket("%-20s",titleStr.c_str() );
+
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.setCursor(10, centerY+19);
+				_vfd.printPacket("AIRPLAY");
 			}
  			else {
  

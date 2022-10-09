@@ -157,23 +157,20 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 				
 				audioData_t * p = (audioData_t*) audio.data();
 				 
-				long int square_sum1 = 0.0;
-				long int square_sum2 = 0.0;
+				int16_t max_ch1 = 0;
+				int16_t max_ch2 = 0;
+	
 	
  				for (auto i = 0; i < cnt; i++) {
 					
 					int16_t ch1 =  p[i].ch1 ;
 					int16_t ch2 =   p[i].ch2 ;
 	 
-		 			square_sum1 += (ch1 * ch1);
-					square_sum2 += (ch2 * ch2);
+					if(ch1 > max_ch1) max_ch1 = ch1;
+					if(ch2 > max_ch1) max_ch2 = ch2;
+
 					}
-				
-				double rmsl = sqrt(square_sum1/cnt);
-				double rmsr = sqrt(square_sum2/cnt);
-				int dBl = (int)20*log10(rmsl);
-				int dBr = (int)20*log10(rmsr);
-				printf("db: %d, %d \n" , dBl, dBr);
+					printf("db: %d, %d \n" , max_ch1, ch2);
 
 			}
 	 	 

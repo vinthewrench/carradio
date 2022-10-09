@@ -139,11 +139,11 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
 		if(cnt > 0){
 			
-			printf("frames: %ld\n", cnt/2);
-//			double  mean,  rms;
-//			samples_mean_rms(audio,  mean,  rms);
+	 		double  mean,  rms;
+ 			samples_mean_rms(audio,  mean,  rms);
+			int dB = (int)20*log10(rms);
 
-//			printf("m: %f rms: %f \n" , mean, rms);
+ 		printf("db: %d \n" , dB);
 	 		return true;
 		}
 		

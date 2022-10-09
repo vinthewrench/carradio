@@ -118,6 +118,11 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	if(!_isSetup || !_pcm)
 		return  false;
  
+	
+	audio.data();
+
+	
+	
 #if defined(__APPLE__)
 #else
 	
@@ -140,21 +145,27 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 		if(cnt > 0){
 			
 			{
+				typedef  struct {
+					int16_t ch1;
+					int16_t ch2;
+				} audioData_t;
 				
-				long int square_suml = 0.0;
-				long int square_sumr = 0.0;
+				audioData_t * p = (audioData_t*) audio.data();
+				 
+				long int square_sum1 = 0.0;
+				long int square_sum2 = 0.0;
 	
-				size_t n = audio.size();
-				for (auto i = 0; i < n; i++) {
+ 				for (auto i = 0; i < cnt; i++) {
 					
-					square_suml += (real(audio[i]) * real(audio[i]));
-					square_sumr += (imag(audio[i]) * imag(audio[i]));
-				}
-				double rmsl = sqrt(square_suml/n);
-				double rmsr = sqrt(square_sumr/n);
+					square_sum1 += (p[i].ch1  * p[i].ch1);
+					square_sum2 += (p[i].ch2  * p[i].ch2);
+					}
+				
+				double rmsl = sqrt(square_sum1/cnt);
+				double rmsr = sqrt(square_sum2/cnt);
 				int dBl = (int)20*log10(rmsl);
 				int dBr = (int)20*log10(rmsr);
-				printf("db: %d  %d \n" , dBl, dBr);
+				printf("db: %d, %d \n" , dBl, dBr);
 
 			}
 	 	 

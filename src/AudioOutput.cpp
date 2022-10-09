@@ -190,6 +190,25 @@ void AudioOutput::samplesToInt16(const SampleVector& samples,
 	 }
 }
 
+
+bool AudioOutput::writeAudioBuffer(const AudioVector& samples){
+	if(!(_isQuiet || _isMuted) ){
+		
+#if defined(__APPLE__)
+		
+		fprintf(stderr,"Output %ld samples\n", samples.size());
+#else
+		// Write data.
+		
+		snd_pcm_writei(_pcm, samples.data(),  samples.size());
+		 
+#endif
+	}
+	
+	return true;
+
+}
+
 bool AudioOutput::writeAudio(const SampleVector& samples)
 {
 	

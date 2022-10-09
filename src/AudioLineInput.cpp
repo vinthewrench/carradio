@@ -117,17 +117,12 @@ int16_t swap_int16( int16_t val )
 	 return (val << 8) | ((val >> 8) & 0xFF);
 }
 
-
-bool AudioLineInput::getSamples(SampleVector& audio){
+bool AudioLineInput::getAudio(AudioVector& audio){
 	
 	if(!_isSetup || !_pcm)
 		return  false;
  
-	
-	audio.data();
-
-	
-	
+ 
 #if defined(__APPLE__)
 #else
 	
@@ -148,34 +143,100 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 
 		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
 		if(cnt > 0){
-			
-			{
-				typedef  struct {
-					int16_t ch1;
-					int16_t ch2;
-				} audioData_t;
-				
-				audioData_t * p = (audioData_t*) audio.data();
-				 
-				int16_t max_ch1 = 0;
-				int16_t max_ch2 = 0;
+//
+//			{
+//				typedef  struct {
+//					int16_t ch1;
+//					int16_t ch2;
+//				} audioData_t;
+//
+//				audioData_t * p = (audioData_t*) audio.data();
+//
+//				int16_t max_ch1 = 0;
+//				int16_t max_ch2 = 0;
+//
+//				int16_t mask = snd_pcm_format_silence_16(SND_PCM_FORMAT_S16_LE);
+//
+//
+// 				for (auto i = 0; i < cnt; i++) {
+//
+//					int16_t ch1 =  p[i].ch1 ;
+//					int16_t ch2 =   p[i].ch2 ;
+//
+//					if(ch1 > max_ch1) max_ch1 = ch1;
+//					if(ch2 > max_ch2) max_ch2 = ch2;
+//
+//					}
+//					printf("silence %d db: %d, %d \n" ,mask,  max_ch1, max_ch2);
+//
+//			}
+//
 	
-				int16_t mask = snd_pcm_format_silence_16(SND_PCM_FORMAT_S16_LE);
+			return true;
+		}
 		
+	}
+		
+#endif
+ 
+	return false;
+}
+
+
+bool AudioLineInput::getSamples(SampleVector& audio){
 	
- 				for (auto i = 0; i < cnt; i++) {
-					
-					int16_t ch1 =  p[i].ch1 ;
-					int16_t ch2 =   p[i].ch2 ;
-	  
-					if(ch1 > max_ch1) max_ch1 = ch1;
-					if(ch2 > max_ch2) max_ch2 = ch2;
+	if(!_isSetup || !_pcm)
+		return  false;
+ 
+ 
+#if defined(__APPLE__)
+#else
+	
+	int avail;
+	int r;
+	
+	r =  snd_pcm_wait(_pcm, 500);
+	if( r < 0){
+		return false;
+	}
+	
+	avail = snd_pcm_avail_update(_pcm);
+	if (avail > 0) {
+		if (avail > _blockLength)
+			avail = _blockLength;
+		
+		audio.resize(avail);
 
-					}
-					printf("silence %d db: %d, %d \n" ,mask,  max_ch1, max_ch2);
-
-			}
-	 	 
+		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
+		if(cnt > 0){
+//
+//			{
+//				typedef  struct {
+//					int16_t ch1;
+//					int16_t ch2;
+//				} audioData_t;
+//
+//				audioData_t * p = (audioData_t*) audio.data();
+//
+//				int16_t max_ch1 = 0;
+//				int16_t max_ch2 = 0;
+//
+//				int16_t mask = snd_pcm_format_silence_16(SND_PCM_FORMAT_S16_LE);
+//
+//
+// 				for (auto i = 0; i < cnt; i++) {
+//
+//					int16_t ch1 =  p[i].ch1 ;
+//					int16_t ch2 =   p[i].ch2 ;
+//
+//					if(ch1 > max_ch1) max_ch1 = ch1;
+//					if(ch2 > max_ch2) max_ch2 = ch2;
+//
+//					}
+//					printf("silence %d db: %d, %d \n" ,mask,  max_ch1, max_ch2);
+//
+//			}
+//
 	
  	 		return true;
 		}

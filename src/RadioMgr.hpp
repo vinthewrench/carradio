@@ -128,7 +128,10 @@ private:
 	// output data queue
 	DataBuffer<Sample>   _output_buffer;
 
-	mutable std::mutex _mutex;		// when changing frequencies and modes.
+	// audio data queue
+	DataBuffer<audioData_t>   _audio_buffer;
+
+ 	mutable std::mutex _mutex;		// when changing frequencies and modes.
 	SDRDecoder*			_sdrDecoder;
 	AudioLineInput		_lineInput;
 	

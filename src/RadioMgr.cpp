@@ -164,6 +164,7 @@ bool RadioMgr::setON(bool isOn) {
 
 		_sdr.resetBuffer();
 		_output_buffer.flush();
+		_audio_buffer.flush();
 		
 		// delete decoders
 		if(_sdrDecoder) {
@@ -303,6 +304,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 		if(_mode == AUX) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
+			_audio_buffer.flush();
 			_shouldReadSDR = false;
 	 		_shouldReadAux = true;
 			_shouldReadAirplay = false;
@@ -311,6 +313,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 		else if(_mode == AIRPLAY) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
+			_audio_buffer.flush();
 			_shouldReadSDR = false;
 			_shouldReadAux = true;
 			_shouldReadAirplay = false;
@@ -319,7 +322,8 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	
 	 		_sdr.resetBuffer();
 			_output_buffer.flush();
-			
+			_audio_buffer.flush();
+
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
@@ -364,7 +368,8 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-			
+			_audio_buffer.flush();
+
 			if(! _sdr.setOffsetTuning(false))
 				return false;
 	 
@@ -1084,6 +1089,31 @@ void RadioMgr::OutputProcessor(){
 			usleep(200000);
 			continue;
  		}
+		
+		
+		if(_mode	== AUX ){
+			
+			if (_audio_buffer.queued_samples() == 0) {
+				 // The buffer is empty. Perhaps the output stream is consuming
+				 // samples faster than we can produce them. Wait until the buffer
+				 // is back at its nominal level to make sure this does not happen
+				 // too often.
+				
+				
+				// revisit this..  the 2 is for stereo..
+				
+				_audio_buffer.wait_buffer_fill(_pcmrate * 2);
+				
+				
+			}
+			// Get samples from buffer and write to output.
+			AudioVector samples =_audio_buffer.pull();
+			AudioOutput*	 audio  = PiCarMgr::shared()->audio();
+
+			audio->writeAudioBuffer(samples);
+			continue;
+		}
+	
 		
 		if (_output_buffer.queued_samples() == 0) {
 			 // The buffer is empty. Perhaps the output stream is consuming

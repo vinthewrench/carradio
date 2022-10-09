@@ -162,8 +162,8 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	
  				for (auto i = 0; i < cnt; i++) {
 					
-					int16_t ch1 =   swap_int16(p[i].ch1);
-					int16_t ch2 =   swap_int16(p[i].ch2);
+					int16_t ch1 =  p[i].ch1 ;
+					int16_t ch2 =   p[i].ch2 ;
 	 
 		 			square_sum1 += (ch1 * ch1);
 					square_sum2 += (ch2 * ch2);

@@ -139,12 +139,27 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 		int cnt =  snd_pcm_readi(_pcm,  audio.data(), avail);
 		if(cnt > 0){
 			
-	 		double  mean,  rms;
- 			samples_mean_rms(audio,  mean,  rms);
-			int dB = (int)20*log10(rms);
+			{
+				
+				long int square_suml = 0.0;
+				long int square_sumr = 0.0;
+	
+				size_t n = audio.size();
+				for (auto i = 0; i < n; i++) {
+					
+					square_suml += (real(audio[i]) * real(audio[i]));
+					square_sumr += (imag(audio[i]) * imag(audio[i]));
+				}
+				double rmsl = sqrt(square_suml/n);
+				double rmsr = sqrt(square_sumr/n);
+				int dBl = (int)20*log10(rmsl);
+				int dBr = (int)20*log10(rmsr);
+				printf("db: %d  %d \n" , dBl, dBr);
 
- 		printf("db: %d \n" , dB);
-	 		return true;
+			}
+	 	 
+	
+ 	 		return true;
 		}
 		
 	}

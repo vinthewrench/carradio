@@ -160,17 +160,19 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 				int16_t max_ch1 = 0;
 				int16_t max_ch2 = 0;
 	
+				int16_t mask = snd_pcm_format_silence_16(SND_PCM_FORMAT_S16_LE);
+		
 	
  				for (auto i = 0; i < cnt; i++) {
 					
 					int16_t ch1 =  p[i].ch1 ;
 					int16_t ch2 =   p[i].ch2 ;
-	 
+	  
 					if(ch1 > max_ch1) max_ch1 = ch1;
-					if(ch2 > max_ch1) max_ch2 = ch2;
+					if(ch2 > max_ch2) max_ch2 = ch2;
 
 					}
-					printf("db: %d, %d \n" , max_ch1, ch2);
+					printf("silence %d db: %d, %d \n" ,mask,  max_ch1, max_ch2);
 
 			}
 	 	 

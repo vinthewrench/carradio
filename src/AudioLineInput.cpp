@@ -134,7 +134,7 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	int avail;
 	int r;
 	
-	r =  snd_pcm_wait(_pcm, 1000);
+	r =  snd_pcm_wait(_pcm, 500);
 	if( r < 0){
 		return false;
 	}

@@ -6,8 +6,7 @@
 //
 
 #include "AudioLineInput.hpp"
-
-
+#include <stdint.h>
 
  #define _PCM_   "default"
  
@@ -112,6 +111,12 @@ void AudioLineInput::stop(){
 	_isSetup = false;
 }
 
+//! Byte swap short
+int16_t swap_int16( int16_t val )
+{
+	 return (val << 8) | ((val >> 8) & 0xFF);
+}
+
 
 bool AudioLineInput::getSamples(SampleVector& audio){
 	
@@ -157,8 +162,11 @@ bool AudioLineInput::getSamples(SampleVector& audio){
 	
  				for (auto i = 0; i < cnt; i++) {
 					
-					square_sum1 += (p[i].ch1  * p[i].ch1);
-					square_sum2 += (p[i].ch2  * p[i].ch2);
+					int16_t ch1 =   swap_int16(p[i].ch1);
+					int16_t ch2 =   swap_int16(p[i].ch2);
+	 
+		 			square_sum1 += (ch1 * ch1);
+					square_sum2 += (ch2 * ch2);
 					}
 				
 				double rmsl = sqrt(square_sum1/cnt);

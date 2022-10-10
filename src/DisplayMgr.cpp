@@ -2150,14 +2150,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		 
 				string titleStr = "";
 				string artistStr = "";
-	
-				// get artist and title
-				pthread_mutex_lock (&_apmetadata_mutex);
-				
+	 
 				if(_airplayStatus != 1 && diff_secs > 10){
 					clearAPMetaData();
 				}
 
+				// get artist and title
+				pthread_mutex_lock (&_apmetadata_mutex);
+	
 				if(_airplayMetaData.count("asar")){
 					artistStr = Utils::trim(_airplayMetaData["asar"]);
 		 			}

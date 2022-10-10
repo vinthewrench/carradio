@@ -2077,8 +2077,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
-	
-	
+ 
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 		
@@ -2090,6 +2089,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
 	string muxstring = RadioMgr::muxstring(mux);
 
+	bool forceRefresh = false;
+	
 	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
 	//			 radio->radioMuxMode(),
 	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
@@ -2107,21 +2108,22 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_IDLE) {
 		_rightRing.clearAll();
+		
+		struct timespec now, diff;
+		
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		diff = timespec_sub(now, _lastAirplayStatusTime);
+		int64_t diff_secs = timespec_to_ms(diff) /1000;
+		
+		if(_airplayStatus != 1 && diff_secs > 10  && mode == RadioMgr::AIRPLAY){
+			clearAPMetaData();
+			forceRefresh = true;
+		}
 	}
-	
-	
-	struct timespec now, diff;
-	
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	diff = timespec_sub(now, _lastAirplayStatusTime);
-	int64_t diff_secs = timespec_to_ms(diff) /1000;
-	
-	if(_airplayStatus != 1 && diff_secs > 10){
-		clearAPMetaData();
-	}
+ 	
 
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH) || forceRefresh) {
 		
 		if(! radio->isOn()){
 			string str = "OFF";

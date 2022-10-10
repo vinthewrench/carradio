@@ -28,12 +28,6 @@ using namespace std;
  
 #endif
   
-typedef  struct {
-	int16_t ch1;
-	int16_t ch2;
-} audioData_t;
- 
- typedef std::vector<audioData_t> AudioVector;
 
 class AudioLineInput {
 	 
@@ -50,10 +44,7 @@ public:
 	bool iConnected() { return _isSetup; }
  
 	bool getSamples(SampleVector& audio);
-	
-	bool getAudio(AudioVector& audio);
-
-	
+ 
 	private:
  
 	bool						_isSetup;

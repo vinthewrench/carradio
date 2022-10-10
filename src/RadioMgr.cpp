@@ -108,7 +108,7 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
   
 	_isSetup = true;
  
- 	return true;
+	return true;
 }
 
 void RadioMgr::stop(){
@@ -123,7 +123,7 @@ void RadioMgr::stop(){
 		_sdr.stop();
 	}
 	
- 	_isSetup = false;
+	_isSetup = false;
  
  }
 
@@ -164,7 +164,6 @@ bool RadioMgr::setON(bool isOn) {
 
 		_sdr.resetBuffer();
 		_output_buffer.flush();
-		_audio_buffer.flush();
 		
 		// delete decoders
 		if(_sdrDecoder) {
@@ -242,8 +241,8 @@ void RadioMgr::queueSetFrequencyandMode(radio_mode_t mode, uint32_t freq, bool f
 			if(item.mode == mode &&  item.freq == freq  ){
 				shouldPush = false;
 			}
- 		}
- 	}
+		}
+	}
 	
 	if(shouldPush)
 		_channelEventQueue.push({mode,freq, force});
@@ -281,11 +280,11 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	if(!isOn()){
 		_frequency = newFreq;
 		_mode = newMode;
- 	}
+	}
 	else if(force ||  (newFreq != _frequency) || newMode != _mode){
 	
 		std::lock_guard<std::mutex> lock(_mutex);
-		 	
+			
 //		printf("setFrequencyandModeInternal(%s %u) %d \n", modeString(newMode).c_str(), newFreq, force);
 
 		audio->setMute(true);
@@ -304,26 +303,23 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 		if(_mode == AUX) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-			_audio_buffer.flush();
 			_shouldReadSDR = false;
-	 		_shouldReadAux = true;
+			_shouldReadAux = true;
 			_shouldReadAirplay = false;
 			didUpdate = true;
 		}
 		else if(_mode == AIRPLAY) {
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-			_audio_buffer.flush();
 			_shouldReadSDR = false;
 			_shouldReadAux = true;
 			_shouldReadAirplay = false;
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
-	 		_sdr.resetBuffer();
+			_sdr.resetBuffer();
 			_output_buffer.flush();
-			_audio_buffer.flush();
-
+			
 			// Intentionally tune at a higher frequency to avoid DC offset.
 			double tuner_freq = newFreq + 0.25 * _sdr.getSampleRate();
 			
@@ -368,8 +364,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			
 			_sdr.resetBuffer();
 			_output_buffer.flush();
-			_audio_buffer.flush();
-
+			
 			if(! _sdr.setOffsetTuning(false))
 				return false;
 	 
@@ -559,7 +554,7 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			minFreq = 87.9e6;
 			maxFreq = 107.9e6;
 			success = true;
-  			break;
+			break;
 
 		case GMRS:
 			minFreq = 462550000;
@@ -697,7 +692,7 @@ void RadioMgr::pauseScan(bool shouldPause){
 	if(!_scanningPaused){
 		channel_t channel = _scannerChannels[_currentScanOffset];
 		queueSetFrequencyandMode(channel.first, channel.second, true);
- 	}
+	}
 	else {
 		display->LEDeventScannerStop();
 	}
@@ -794,7 +789,7 @@ void RadioMgr::AuxReader(){
 		if(!_isSetup ||  ! (_shouldReadAux || _shouldReadAirplay)  ){
 			
 			if(aux_setup){
- 				_lineInput.stop();
+				_lineInput.stop();
 				aux_setup = false;
 			}
 				usleep(200000);
@@ -941,7 +936,7 @@ void RadioMgr::SDRProcessor(){
 			if(!_shouldReadSDR)
 				continue;
 			
-	 			// Decode FM signal.
+				// Decode FM signal.
 			_sdrDecoder->process(iqsamples, audiosamples);
 			
 			// Measure audio level.
@@ -973,8 +968,8 @@ void RadioMgr::SDRProcessor(){
 //					tuneNextScannerChannel();
 // 			}
 			
- 			static bool wasScanning = false;
- 			static int sqlCount = 0;
+			static bool wasScanning = false;
+			static int sqlCount = 0;
 		
 			DisplayMgr*		display 	= PiCarMgr::shared()->display();
 
@@ -990,7 +985,7 @@ void RadioMgr::SDRProcessor(){
 						tuneNextScannerChannel();
 						sqlCount = 0;
 						display->LEDeventScannerStep();
- 					}
+					}
 				}
 				else
 					sqlCount++;
@@ -1001,7 +996,7 @@ void RadioMgr::SDRProcessor(){
 			}
 			else {
 				if(wasScanning){
- 					display->LEDeventScannerStop();
+					display->LEDeventScannerStop();
 				}
 				wasScanning = false;
 				sqlCount = 0;
@@ -1088,32 +1083,7 @@ void RadioMgr::OutputProcessor(){
 		if(!_isSetup){
 			usleep(200000);
 			continue;
- 		}
-		
-		
-		if(_mode	== AUX ){
-			
-			if (_audio_buffer.queued_samples() == 0) {
-				 // The buffer is empty. Perhaps the output stream is consuming
-				 // samples faster than we can produce them. Wait until the buffer
-				 // is back at its nominal level to make sure this does not happen
-				 // too often.
-				
-				
-				// revisit this..  the 2 is for stereo..
-				
-				_audio_buffer.wait_buffer_fill(_pcmrate * 2);
-				
-				
-			}
-			// Get samples from buffer and write to output.
-			AudioVector samples =_audio_buffer.pull();
-			AudioOutput*	 audio  = PiCarMgr::shared()->audio();
-
-			audio->writeAudioBuffer(samples);
-			continue;
 		}
-	
 		
 		if (_output_buffer.queued_samples() == 0) {
 			 // The buffer is empty. Perhaps the output stream is consuming
@@ -1205,7 +1175,7 @@ void RadioMgr::ChannelManager(){
 	 
 		// change channel
 		setFrequencyandModeInternal(item.mode, item.freq, item.force);
- 	}
+	}
 	
 }
 

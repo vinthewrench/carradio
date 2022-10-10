@@ -42,8 +42,6 @@ public:
 	bool begin(unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
 	
-	bool writeAudioBuffer(const AudioVector& samples);
-
 	bool writeAudio(const SampleVector& samples);
 	bool writeIQ(const SampleVector& samples);
 	

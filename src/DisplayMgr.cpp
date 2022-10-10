@@ -2109,6 +2109,17 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		_rightRing.clearAll();
 	}
 	
+	
+	struct timespec now, diff;
+	
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	diff = timespec_sub(now, _lastAirplayStatusTime);
+	int64_t diff_secs = timespec_to_ms(diff) /1000;
+	
+	if(_airplayStatus != 1 && diff_secs > 10){
+		clearAPMetaData();
+	}
+
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
@@ -2139,13 +2150,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				TRY(_vfd.write(str));
 			}
 			else if(mode == RadioMgr::AIRPLAY){
-				
-				struct timespec now, diff;
-				
-				clock_gettime(CLOCK_MONOTONIC, &now);
-				diff = timespec_sub(now, _lastAirplayStatusTime);
-				int64_t diff_secs = timespec_to_ms(diff) /1000;
-	 
+		
 				_vfd.setFont(VFD::FONT_5x7);
 
 				constexpr int maxLen = 21;
@@ -2154,10 +2159,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				string titleStr = "";
 				string artistStr = "";
 	 
-				if(_airplayStatus != 1 && diff_secs > 10){
-					clearAPMetaData();
-				}
-
+	
 				// get artist and title
 				pthread_mutex_lock (&_apmetadata_mutex);
 	

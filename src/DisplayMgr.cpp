@@ -2072,6 +2072,9 @@ void DisplayMgr::drawEngineCheck(){
 
 void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
+ 	printf("drawRadioScreen  %d\n",transition);
+	
+
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	

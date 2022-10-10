@@ -2123,7 +2123,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
  	
 
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH) || forceRefresh) {
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH || forceRefresh) {
 		
 		if(! radio->isOn()){
 			string str = "OFF";

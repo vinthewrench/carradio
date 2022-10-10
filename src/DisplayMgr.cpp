@@ -4627,7 +4627,7 @@ void  DisplayMgr::clearAPMetaData() {
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	//	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+	 	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	

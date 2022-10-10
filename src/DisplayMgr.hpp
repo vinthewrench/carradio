@@ -369,10 +369,11 @@ private:
 	void processAirplayMetaData(string type, string code, vector<uint8_t> payload);
 	void showAirplayChange();
 
-	pthread_mutex_t 	_apmetadata_mutex = PTHREAD_MUTEX_INITIALIZER;
-	map<string, string> _airplayMetaData = {};
+	pthread_mutex_t 		_apmetadata_mutex = PTHREAD_MUTEX_INITIALIZER;
+	map<string, string> 	_airplayMetaData = {};
+	uint8_t	  				_airplayStatus;
+	struct timespec		_lastAirplayStatusTime;
 
-	
 	
 	// MARK: -
 	

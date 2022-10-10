@@ -81,7 +81,9 @@ DisplayMgr::DisplayMgr(){
 	_isSetup = false;
 	_isRunning = true;
 	_dimLevel = 1.0;
- 
+	_lastAirplayStatusTime = {0,0};
+	_airplayStatus = 0;
+
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
  
@@ -2073,6 +2075,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
+	
 	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
 		
@@ -2134,6 +2137,12 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			}
 			else if(mode == RadioMgr::AIRPLAY){
 				
+				struct timespec now, diff;
+				
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				diff = timespec_sub(now, _lastAirplayStatusTime);
+				int64_t diff_secs = timespec_to_ms(diff) /1000;
+	 
 				_vfd.setFont(VFD::FONT_5x7);
 
 				constexpr int maxLen = 21;
@@ -2144,6 +2153,11 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 				// get artist and title
 				pthread_mutex_lock (&_apmetadata_mutex);
+				
+				if(_airplayStatus != 1 && diff_secs > 10){
+					clearAPMetaData();
+				}
+
 				if(_airplayMetaData.count("asar")){
 					artistStr = Utils::trim(_airplayMetaData["asar"]);
 		 			}
@@ -4662,9 +4676,11 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			}
 			
 			if(code ==  "caps" ) {
-				uint8_t status = payload[0];
+				_airplayStatus = payload[0];
+	 			clock_gettime(CLOCK_MONOTONIC, &_lastAirplayStatusTime);
+ 
 				// play status
-				printf("META play status %02x \n", status) ;
+				printf("META play status %02x \n", _airplayStatus) ;
 				showAirplayChange();
 			}
 			else  {

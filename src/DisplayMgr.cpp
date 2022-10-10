@@ -2072,7 +2072,7 @@ void DisplayMgr::drawEngineCheck(){
 
 void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
- 	printf("drawRadioScreen  %d\n",transition);
+ //	printf("drawRadioScreen  %d\n",transition);
 	
 
 	PiCarMgr* mgr	= PiCarMgr::shared();
@@ -2115,7 +2115,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		diff = timespec_sub(now, _lastAirplayStatusTime);
 		int64_t diff_secs = timespec_to_ms(diff) /1000;
 		
-		if(_airplayStatus != 1 && diff_secs > 10  && mode == RadioMgr::AIRPLAY){
+		if(_airplayStatus != 1 && diff_secs > 5  && mode == RadioMgr::AIRPLAY){
 			clearAPMetaData();
 			forceRefresh = true;
 		}

@@ -15,7 +15,7 @@
 #include <map>
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
+#pragma clang diagnostic ignored "-Wall  -Warray-bounds"
  #include "tinyutf8.h"
 #pragma clang diagnostic push
 

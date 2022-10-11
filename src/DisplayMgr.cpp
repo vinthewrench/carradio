@@ -1756,7 +1756,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 }
 
 
-#if 1
+#if 0
 // for debugging
 static void dumpHex(uint8_t* buffer, size_t length, int offset)
 {
@@ -1903,13 +1903,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
 	
 			  // correct UTF8 Ö
-			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
+			  titleStr = replaceAll(titleStr, "\xc3\x96","O");
   
 			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
 		  
 			  
-			  dumpHex( (uint8_t*) titleStr.c_str(), titleStr.size(), 1);
+		//	  dumpHex( (uint8_t*) titleStr.c_str(), titleStr.size(), 1);
 
 			  // center it
 			  titleStr = truncate(titleStr, maxLen);
@@ -4699,7 +4699,7 @@ void  DisplayMgr::clearAPMetaData() {
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	 	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+	// 	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	

@@ -2156,17 +2156,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 	if(transition == TRANS_IDLE) {
 		_rightRing.clearAll();
-		
-		struct timespec now, diff;
-		
-		clock_gettime(CLOCK_MONOTONIC, &now);
-		diff = timespec_sub(now, _lastAirplayStatusTime);
-		int64_t diff_secs = timespec_to_ms(diff) /1000;
-		
-		if(_airplayStatus != 1 && diff_secs > 5  && mode == RadioMgr::AIRPLAY){
-			clearAPMetaData();
-			forceRefresh = true;
-		}
 	}
  	
 
@@ -2208,7 +2197,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		 
 				string titleStr = "";
 				string artistStr = "";
-	 
 	
 				// get artist and title
 				pthread_mutex_lock (&_apmetadata_mutex);
@@ -2228,9 +2216,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	
 				// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
- 
-			 
-				
+ 			
 				// center it
 				titleStr = truncate(titleStr, maxLen);
 				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
@@ -4835,7 +4821,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 		// we use a timeout so we can end this thread when _isSetup is false
 		struct timeval selTimeout;
 		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+		selTimeout.tv_usec = 2000000;            /* 2 secs */
  
 		/* back up master */
 		fd_set dup = fds;
@@ -4843,6 +4829,10 @@ void DisplayMgr::MetaDataReaderLoop(){
 		int numReady = select(reader_socket +1, &dup, NULL, NULL, &selTimeout);
 		if( numReady == -1 ) {
 			perror("select");
+		}
+		
+		if(numReady == 0){
+			
 		}
 		
 		if( FD_ISSET(reader_socket, &dup)) {
@@ -4899,11 +4889,36 @@ void DisplayMgr::MetaDataReaderLoop(){
 				}
 			}
 		}
+	
+		
+		// airplay data expiration
+		
+		{
+			struct timespec now, diff;
+			
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			diff = timespec_sub(now, _lastAirplayStatusTime);
+			int64_t diff_secs = timespec_to_ms(diff) /1000;
+			
+		//	if the _airplayStatus hasnt been updated for a while and we are not playing music
+			if(_airplayStatus != 1 && diff_secs > 5){
+				
+				bool didUpdate = false;
+				// if there is metadata - Time it out
+				pthread_mutex_lock (&_apmetadata_mutex);
+				if(_airplayMetaData.size() > 0){
+					_airplayMetaData.clear();
+					didUpdate = true;
+				}
+				pthread_mutex_unlock(&_apmetadata_mutex);
+			}
+			if(didUpdate)
+				showAirplayChange();
+		}
  	}
 }
  
-
-void* DisplayMgr::MetaDataReaderThread(void *context){
+ void* DisplayMgr::MetaDataReaderThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;
 
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop

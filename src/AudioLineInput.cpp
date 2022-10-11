@@ -33,7 +33,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	
 	bool success = false;
 	
-	printf("AudioLineInput::begin\n");
+//	printf("AudioLineInput::begin\n");
 	
 	_pcm = NULL;
 	_nchannels = stereo ? 2 : 1;
@@ -92,7 +92,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 void AudioLineInput::stop(){
 	if(_isSetup){
 	 
-		printf("AudioLineInput::stop\n");
+//		printf("AudioLineInput::stop\n");
 		
 #if defined(__APPLE__)
 #else

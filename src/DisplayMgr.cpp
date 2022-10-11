@@ -1899,11 +1899,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 
 				// correct UTF8 single comma quotation mark apostrophe
 			  titleStr = Utils:: removeDiacritics(titleStr);
-//			  titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
-//
-//			  // correct UTF8 Ö
-//			  titleStr = replaceAll(titleStr, "\xc3\x96","O");
-//
 			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
 	 
@@ -1913,13 +1908,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  titleStr = portionOfSpaces + titleStr;
 			  
 			  artistStr = Utils:: removeDiacritics(artistStr);
-//			  // correct UTF8 single comma quotation mark apostrophe
-//			  artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
-//
-//			  // correct UTF8 Ö
-//			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
-//
-//
+
 			  artistStr = truncate(artistStr, maxLen);
 			  string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
 			  artistStr = portionOfSpaces1 + artistStr;
@@ -4690,7 +4679,7 @@ void  DisplayMgr::clearAPMetaData() {
 	_airplayMetaData.clear();
 	pthread_mutex_unlock(&_apmetadata_mutex);
 	
-	printf("META cleared\n");
+//	printf("META cleared\n");
 
 };
 

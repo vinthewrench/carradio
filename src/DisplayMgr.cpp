@@ -2219,8 +2219,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
  			 		}
 	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
  
-				dumpHex( (uint8_t*) titleStr.c_str(), titleStr.size(), 1);
-				
 				// correct UTF8 single comma quotation mark apostrophe
 				titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
 	 
@@ -2237,6 +2235,9 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				// correct UTF8 single comma quotation mark apostrophe
 				artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
 	
+				dumpHex( (uint8_t*) artistStr.c_str(), artistStr.size(), 1);
+				
+
 				artistStr = truncate(artistStr, maxLen);
 				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
 				artistStr = portionOfSpaces1 + artistStr;

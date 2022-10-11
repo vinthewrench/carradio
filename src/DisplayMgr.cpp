@@ -1908,6 +1908,9 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
 		  
+			  
+			  dumpHex( (uint8_t*) titleStr.c_str(), titleStr.size(), 1);
+
 			  // center it
 			  titleStr = truncate(titleStr, maxLen);
 			  string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);

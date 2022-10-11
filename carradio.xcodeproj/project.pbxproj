@@ -175,6 +175,7 @@
 		2ECE4C6628591882005E067D /* XXHash32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXHash32.h; sourceTree = "<group>"; };
 		2EE8AF9B28EF3296004CC59C /* dbuf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbuf.cpp; sourceTree = "<group>"; };
 		2EE8AF9C28EF3296004CC59C /* dbuf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dbuf.hpp; sourceTree = "<group>"; };
+		2EF844F028F609BE003E9547 /* tinyutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyutf8.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -332,6 +333,7 @@
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,
 				2E8210B22835A53B003D074C /* json.hpp */,
 				2E8210B32835A53B003D074C /* Utils.hpp */,
+				2EF844F028F609BE003E9547 /* tinyutf8.h */,
 				2EE8AF9B28EF3296004CC59C /* dbuf.cpp */,
 				2EE8AF9C28EF3296004CC59C /* dbuf.hpp */,
 				2E8D3728287F7A6E000182E5 /* timespec_util.h */,

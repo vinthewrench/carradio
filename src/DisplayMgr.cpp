@@ -1898,11 +1898,12 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  pthread_mutex_unlock(&_apmetadata_mutex);
 
 				// correct UTF8 single comma quotation mark apostrophe
-			  titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
-	
-			  // correct UTF8 Ö
-			  titleStr = replaceAll(titleStr, "\xc3\x96","O");
-  
+			  titleStr = Utils:: removeDiacritics(titleStr);
+//			  titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
+//
+//			  // correct UTF8 Ö
+//			  titleStr = replaceAll(titleStr, "\xc3\x96","O");
+//
 			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
 			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
 	 
@@ -1911,13 +1912,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 			  titleStr = portionOfSpaces + titleStr;
 			  
-			  // correct UTF8 single comma quotation mark apostrophe
-			  artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
-			  
-			  // correct UTF8 Ö
-			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
-  
- 
+			  artistStr = Utils:: removeDiacritics(artistStr);
+//			  // correct UTF8 single comma quotation mark apostrophe
+//			  artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
+//
+//			  // correct UTF8 Ö
+//			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
+//
+//
 			  artistStr = truncate(artistStr, maxLen);
 			  string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
 			  artistStr = portionOfSpaces1 + artistStr;

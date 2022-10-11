@@ -13,7 +13,11 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
-#include "tinyutf8.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+ #include "tinyutf8.h"
+#pragma clang diagnostic push
 
 namespace Utils {
 

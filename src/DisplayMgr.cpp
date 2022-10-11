@@ -1756,6 +1756,272 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 }
 
 
+#if 1
+// for debugging
+static void dumpHex(uint8_t* buffer, size_t length, int offset)
+{
+  char hexDigit[] = "0123456789ABCDEF";
+  size_t			i;
+  size_t						lineStart;
+  size_t						lineLength;
+  short					c;
+  const unsigned char	  *bufferPtr = buffer;
+  
+  char                    lineBuf[1024];
+  char                    *p;
+	
+#define kLineSize	8
+  for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
+  {
+		lineLength = kLineSize;
+		if (lineStart + lineLength > length)
+			 lineLength = length - lineStart;
+		
+	  p += sprintf(p, "%6lu: ", lineStart+offset);
+		for (i = 0; i < lineLength; i++){
+			 *p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
+			 *p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
+			 if((lineStart+i) &0x01)  *p++ = ' ';  ;
+		}
+		for (; i < kLineSize; i++)
+			 p += sprintf(p, "   ");
+		
+		p += sprintf(p,"  ");
+		for (i = 0; i < lineLength; i++) {
+			 c = bufferPtr[lineStart + i] & 0xFF;
+			 if (c > ' ' && c < '~')
+				  *p++ = c ;
+			 else {
+				  *p++ = '.';
+			 }
+		}
+		*p++ = 0;
+		
+ 
+	  printf("%s\n",lineBuf);
+  }
+#undef kLineSize
+}
+
+#endif
+// MARK: -  drawRadioScreen
+
+void DisplayMgr::drawRadioScreen(modeTransition_t transition){
+  
+//	printf("drawRadioScreen  %d\n",transition);
+  
+
+  PiCarMgr* mgr	= PiCarMgr::shared();
+  RadioMgr* radio 	= PiCarMgr::shared()->radio();
+
+  int centerX = _vfd.width() /2;
+  int centerY = _vfd.height() /2;
+	  
+  static int  modeStart = 5;
+  
+  static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
+  
+  RadioMgr::radio_mode_t  mode  = radio->radioMode();
+  RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+  string muxstring = RadioMgr::muxstring(mux);
+
+  bool forceRefresh = false;
+  
+  //	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
+  //			 radio->radioMuxMode(),
+  //			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
+  
+  if(transition == TRANS_LEAVING) {
+	  _rightRing.clearAll();
+	  return;
+  }
+  
+  if(transition == TRANS_ENTERING) {
+	  _vfd.clearScreen();
+	  _rightRing.clearAll();
+			  
+  }
+  
+  if(transition == TRANS_IDLE) {
+	  _rightRing.clearAll();
+  }
+  
+
+  // avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+  if(transition == TRANS_ENTERING || transition == TRANS_REFRESH || forceRefresh) {
+	  
+	  if(! radio->isOn()){
+		  string str = "OFF";
+		  auto textCenter =  centerX - (str.size() * 11);
+		  
+		  TRY(_vfd.setFont(VFD::FONT_10x14));
+		  TRY(_vfd.setCursor( textCenter ,centerY+10));
+		  TRY(_vfd.write(str));
+	  }
+	  else {
+			  uint32_t  freq =  radio->frequency();
+		  // we might need an extra refresh if switching modes
+		  if(lastMode != mode){
+			  _vfd.clearScreen();
+			  _rightRing.clearAll();
+			  lastMode = mode;
+		  }
+		  
+		  if(mode == RadioMgr::AUX){
+			  
+			  string str = "AUX";
+			  auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
+			  
+			  TRY(_vfd.setFont(VFD::FONT_10x14));
+			  TRY(_vfd.setCursor( freqCenter ,centerY+10));
+			  TRY(_vfd.write(str));
+		  }
+		  else if(mode == RadioMgr::AIRPLAY){
+	  
+			  _vfd.setFont(VFD::FONT_5x7);
+
+			  constexpr int maxLen = 21;
+			  string spaces(maxLen, ' ');
+		
+			  string titleStr = "";
+			  string artistStr = "";
+  
+			  // get artist and title
+			  pthread_mutex_lock (&_apmetadata_mutex);
+  
+			  if(_airplayMetaData.count("asar")){
+				  artistStr = Utils::trim(_airplayMetaData["asar"]);
+				  }
+			  if(_airplayMetaData.count("minm")){
+				  titleStr = Utils::trim(_airplayMetaData["minm"]);
+				  }
+			  pthread_mutex_unlock(&_apmetadata_mutex);
+
+				dumpHex( (uint8_t*) titleStr.c_str(), titleStr.size(), 1);
+
+			  // correct UTF8 single comma quotation mark apostrophe
+			  titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
+	
+			  // correct UTF8 Ö
+			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
+  
+			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
+			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
+		  
+			  // center it
+			  titleStr = truncate(titleStr, maxLen);
+			  string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+			  titleStr = portionOfSpaces + titleStr;
+			  
+			  // correct UTF8 single comma quotation mark apostrophe
+			  artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
+			  
+			  // correct UTF8 Ö
+			  artistStr = replaceAll(artistStr, "\xc3\x96","O");
+  
+ 
+			  artistStr = truncate(artistStr, maxLen);
+			  string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
+			  artistStr = portionOfSpaces1 + artistStr;
+
+			  _vfd.setFont(VFD::FONT_5x7);
+		  
+			  _vfd.setCursor(0,centerY-7);
+			  _vfd.printPacket("%-21s",titleStr.c_str() );
+
+			  _vfd.setCursor(0,centerY+3);
+			  _vfd.printPacket("%-21s",artistStr.c_str() );
+
+			  _vfd.setFont(VFD::FONT_MINI);
+			  _vfd.setCursor(0, centerY+16);
+			  _vfd.printPacket("AIRPLAY");
+		  }
+		  else {
+
+			  int precision = 0;
+			  
+			  switch (mode) {
+				  case RadioMgr::BROADCAST_AM: precision = 0;break;
+				  case RadioMgr::BROADCAST_FM: precision = 1;break;
+				  default :
+					  precision = 3; break;
+			  }
+			  
+			  string str = 	RadioMgr::hertz_to_string(freq, precision);
+			  string hzstr =	RadioMgr::freqSuffixString(freq);
+			  string modStr = RadioMgr::modeString(mode);
+  
+			  auto freqCenter =  centerX - (str.size() * 11) + 18;
+			  if(precision > 1)  freqCenter += 10*2;
+			  
+			  modeStart = 5;
+			  if(precision == 0)
+				  modeStart += 15;
+			  else if  (precision == 1)
+				  modeStart += 5;
+			  
+			  _vfd.setFont(VFD::FONT_MINI);
+			  _vfd.setCursor(modeStart, centerY+0) ;
+			  _vfd.write(modStr);
+  
+			  _vfd.setFont(VFD::FONT_10x14);
+			  _vfd.setCursor( freqCenter ,centerY+10);
+			  _vfd.write(str);
+
+			  _vfd.setFont(VFD::FONT_MINI); _vfd.write( " ");
+			  _vfd.setFont(VFD::FONT_5x7); _vfd.write( hzstr);
+		  
+			  // Draw title centered inb char buffer
+			  constexpr int  titleMaxSize = 20;
+			  char titlebuff[titleMaxSize + 1];
+			  memset(titlebuff,' ', titleMaxSize);
+			  titlebuff[titleMaxSize] = '\0';
+			  int titleStart =  centerX - ((titleMaxSize * 6)/2);
+			  int titleBottom = centerY -10;
+			  PiCarMgr::station_info_t info;
+			  if(mgr->getStationInfo(mode, freq, info)){
+				  string title = truncate(info.title, titleMaxSize);
+				  int titleLen = (int)title.size();
+				  int offset  = (titleMaxSize /2) - (titleLen/2);
+				  memcpy( titlebuff+offset , title.c_str(), titleLen );
+			  };
+			  TRY(_vfd.setCursor( titleStart ,titleBottom ));
+			  TRY(_vfd.write( titlebuff));
+			  
+		  }
+		  _vfd.setCursor(0, 60);
+		  if(mgr->isPresetChannel(mode, freq)){
+			  _vfd.setFont(VFD::FONT_MINI);
+			  _vfd.printPacket("PRESET");
+		  }
+		  else {
+			  _vfd.printPacket("      ");
+		  }
+	  }
+  }
+  
+  if(radio->isOn()
+	  && ( mode == RadioMgr::BROADCAST_FM
+			  ||  mode == RadioMgr::VHF
+			  ||  mode == RadioMgr::GMRS	))
+  {
+	  _vfd.setFont(VFD::FONT_MINI);
+	  _vfd.setCursor(modeStart, centerY+9);
+	  _vfd.write(muxstring);
+	  
+	  _vfd.setCursor(10, centerY+19);
+	  _vfd.printPacket("\x1c%3d %-8s", int(radio->get_if_level()),
+							 radio->isSquelched()?"SQLCH":"" );
+  }
+
+  drawEngineCheck();
+  drawTemperature();
+  drawTimeBox();
+}
+
+// MARK: -  other draws Screens
+
+
 
 void DisplayMgr::drawMessageScreen(modeTransition_t transition){
 	
@@ -2068,267 +2334,6 @@ void DisplayMgr::drawEngineCheck(){
 	
 	
 }
- 
-#if 0
-// for debugging
-static void dumpHex(uint8_t* buffer, size_t length, int offset)
-{
-	char hexDigit[] = "0123456789ABCDEF";
-	size_t			i;
-	size_t						lineStart;
-	size_t						lineLength;
-	short					c;
-	const unsigned char	  *bufferPtr = buffer;
-	
-	char                    lineBuf[1024];
-	char                    *p;
-	 
-#define kLineSize	8
-	for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
-	{
-		 lineLength = kLineSize;
-		 if (lineStart + lineLength > length)
-			  lineLength = length - lineStart;
-		 
-		p += sprintf(p, "%6lu: ", lineStart+offset);
-		 for (i = 0; i < lineLength; i++){
-			  *p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
-			  *p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
-			  if((lineStart+i) &0x01)  *p++ = ' ';  ;
-		 }
-		 for (; i < kLineSize; i++)
-			  p += sprintf(p, "   ");
-		 
-		 p += sprintf(p,"  ");
-		 for (i = 0; i < lineLength; i++) {
-			  c = bufferPtr[lineStart + i] & 0xFF;
-			  if (c > ' ' && c < '~')
-					*p++ = c ;
-			  else {
-					*p++ = '.';
-			  }
-		 }
-		 *p++ = 0;
-		 
-  
-		printf("%s\n",lineBuf);
-	}
-#undef kLineSize
-}
-
-#endif
-
-void DisplayMgr::drawRadioScreen(modeTransition_t transition){
-	
- //	printf("drawRadioScreen  %d\n",transition);
-	
-
-	PiCarMgr* mgr	= PiCarMgr::shared();
-	RadioMgr* radio 	= PiCarMgr::shared()->radio();
- 
-	int centerX = _vfd.width() /2;
-	int centerY = _vfd.height() /2;
-		
-	static int  modeStart = 5;
-	
-	static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
-	
-	RadioMgr::radio_mode_t  mode  = radio->radioMode();
-	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
-	string muxstring = RadioMgr::muxstring(mux);
-
-	bool forceRefresh = false;
-	
-	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
-	//			 radio->radioMuxMode(),
-	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
-	
-	if(transition == TRANS_LEAVING) {
-		_rightRing.clearAll();
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING) {
-		_vfd.clearScreen();
-		_rightRing.clearAll();
-				
-	}
-	
-	if(transition == TRANS_IDLE) {
-		_rightRing.clearAll();
-	}
- 	
-
-	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH || forceRefresh) {
-		
-		if(! radio->isOn()){
-			string str = "OFF";
-			auto textCenter =  centerX - (str.size() * 11);
-			
-			TRY(_vfd.setFont(VFD::FONT_10x14));
-			TRY(_vfd.setCursor( textCenter ,centerY+10));
-			TRY(_vfd.write(str));
-		}
-		else {
-				uint32_t  freq =  radio->frequency();
-			// we might need an extra refresh if switching modes
-			if(lastMode != mode){
-				_vfd.clearScreen();
-				_rightRing.clearAll();
-				lastMode = mode;
-			}
-			
-			if(mode == RadioMgr::AUX){
-				
-				string str = "AUX";
-				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
-				
-				TRY(_vfd.setFont(VFD::FONT_10x14));
-				TRY(_vfd.setCursor( freqCenter ,centerY+10));
-				TRY(_vfd.write(str));
-			}
-			else if(mode == RadioMgr::AIRPLAY){
-		
-				_vfd.setFont(VFD::FONT_5x7);
-
-				constexpr int maxLen = 21;
-				string spaces(maxLen, ' ');
-		 
-				string titleStr = "";
-				string artistStr = "";
-	
-				// get artist and title
-				pthread_mutex_lock (&_apmetadata_mutex);
-	
-				if(_airplayMetaData.count("asar")){
-					artistStr = Utils::trim(_airplayMetaData["asar"]);
-		 			}
-				if(_airplayMetaData.count("minm")){
-					titleStr = Utils::trim(_airplayMetaData["minm"]);
- 			 		}
-	 		 	pthread_mutex_unlock(&_apmetadata_mutex);
- 
-				// correct UTF8 single comma quotation mark apostrophe
-				titleStr = replaceAll(titleStr, "\xE2\x80\x99", "'");
-				// correct UTF8 Ö
-				artistStr = replaceAll(artistStr, "\xc3\x96","O");
-	
-				// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
-				titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
- 			
-				// center it
-				titleStr = truncate(titleStr, maxLen);
-				string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
-				titleStr = portionOfSpaces + titleStr;
-				
-				// correct UTF8 single comma quotation mark apostrophe
-				artistStr = replaceAll(artistStr, "\xE2\x80\x99","'");
-				
-				// correct UTF8 Ö
-				artistStr = replaceAll(artistStr, "\xc3\x96","O");
-	
-	// 			dumpHex( (uint8_t*) artistStr.c_str(), artistStr.size(), 1);
- 
-				artistStr = truncate(artistStr, maxLen);
-				string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
-				artistStr = portionOfSpaces1 + artistStr;
-
-				_vfd.setFont(VFD::FONT_5x7);
-			
-				_vfd.setCursor(0,centerY-7);
-				_vfd.printPacket("%-21s",titleStr.c_str() );
-
-				_vfd.setCursor(0,centerY+3);
-				_vfd.printPacket("%-21s",artistStr.c_str() );
- 
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(0, centerY+16);
-				_vfd.printPacket("AIRPLAY");
-			}
- 			else {
- 
-				int precision = 0;
-				
-				switch (mode) {
-					case RadioMgr::BROADCAST_AM: precision = 0;break;
-					case RadioMgr::BROADCAST_FM: precision = 1;break;
-					default :
-						precision = 3; break;
-				}
-				
-				string str = 	RadioMgr::hertz_to_string(freq, precision);
-				string hzstr =	RadioMgr::freqSuffixString(freq);
-				string modStr = RadioMgr::modeString(mode);
-	
-				auto freqCenter =  centerX - (str.size() * 11) + 18;
-				if(precision > 1)  freqCenter += 10*2;
-				
-				modeStart = 5;
-				if(precision == 0)
-					modeStart += 15;
-				else if  (precision == 1)
-					modeStart += 5;
-				
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.setCursor(modeStart, centerY+0) ;
-				_vfd.write(modStr);
-   
-				_vfd.setFont(VFD::FONT_10x14);
-				_vfd.setCursor( freqCenter ,centerY+10);
-				_vfd.write(str);
-
-				_vfd.setFont(VFD::FONT_MINI); _vfd.write( " ");
-				_vfd.setFont(VFD::FONT_5x7); _vfd.write( hzstr);
-			
-				// Draw title centered inb char buffer
-				constexpr int  titleMaxSize = 20;
-				char titlebuff[titleMaxSize + 1];
-				memset(titlebuff,' ', titleMaxSize);
-				titlebuff[titleMaxSize] = '\0';
-				int titleStart =  centerX - ((titleMaxSize * 6)/2);
-				int titleBottom = centerY -10;
-				PiCarMgr::station_info_t info;
-				if(mgr->getStationInfo(mode, freq, info)){
-					string title = truncate(info.title, titleMaxSize);
-					int titleLen = (int)title.size();
-					int offset  = (titleMaxSize /2) - (titleLen/2);
-					memcpy( titlebuff+offset , title.c_str(), titleLen );
-				};
-				TRY(_vfd.setCursor( titleStart ,titleBottom ));
-				TRY(_vfd.write( titlebuff));
-				
-			}
-			_vfd.setCursor(0, 60);
-			if(mgr->isPresetChannel(mode, freq)){
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.printPacket("PRESET");
-			}
-			else {
-				_vfd.printPacket("      ");
-			}
-		}
-	}
-	
-	if(radio->isOn()
-		&& ( mode == RadioMgr::BROADCAST_FM
-				||  mode == RadioMgr::VHF
-				||  mode == RadioMgr::GMRS	))
-	{
-		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.setCursor(modeStart, centerY+9);
-		_vfd.write(muxstring);
-		
-	 	_vfd.setCursor(10, centerY+19);
-		_vfd.printPacket("\x1c%3d %-8s", int(radio->get_if_level()),
-							  radio->isSquelched()?"SQLCH":"" );
-	}
-
-	drawEngineCheck();
-	drawTemperature();
-	drawTimeBox();
-}
-
 
 
 void DisplayMgr::drawInternalError(modeTransition_t transition){

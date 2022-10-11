@@ -4911,9 +4911,10 @@ void DisplayMgr::MetaDataReaderLoop(){
 					didUpdate = true;
 				}
 				pthread_mutex_unlock(&_apmetadata_mutex);
+				
+				if(didUpdate)
+					showAirplayChange();
 			}
-			if(didUpdate)
-				showAirplayChange();
 		}
  	}
 }

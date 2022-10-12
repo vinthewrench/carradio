@@ -4770,60 +4770,57 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 
 void DisplayMgr::processMetaDataString(string str){
 	
-	if(str[0] == '$'){
+	try{
 		
-		stringvector v = split<string>(str.substr(1) ,  ",");
+		if(str[0] == '$'){
 			
-	 	string checkStr;
-		size_t checksum_loc = Utils::find_nth(str, 0, ",",  2);
-		vector<uint8_t> payload = {};
-
-		printf("1 STR: %lu |%s|\n", v.size(), str.c_str());
-		
-		if(v.size() > 2) {
- 
-			if(v.size() > 3) {
- 				checkStr = v[3];
- 				try{
-	//				printf("2 decode: %lu |%s|\n",v[2].length(),  v[2].c_str() );
-	 				payload = decode(v[2]);
-				}
-				catch (std::runtime_error& e)
-				{
-					printf("processMetaDataString EXCEPTION: %s ",e.what() );
-				}
-			}
-			else {
-				checkStr = v[2];
-	  		}
+			stringvector v = split<string>(str.substr(1) ,  ",");
 			
-			printf("2  checkStr = %s  %zu \n", checkStr.c_str(), checksum_loc);
+			string checkStr;
+			size_t checksum_loc = Utils::find_nth(str, 0, ",",  2);
+			vector<uint8_t> payload = {};
 			
-			uint16_t checksum = 0;
-			if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+			if(v.size() > 2) {
 				
-				if(checksum_loc != string::npos){
-					uint8_t 	CK_A = 0;
-					uint8_t 	CK_B = 0;
-					
-					string testStr = str.substr(0, checksum_loc);
-					
-					for(char c : testStr){
-						CK_A += c;
-						CK_B += CK_A;
-					}
-					uint16_t checksum1 = (CK_A << 8 ) | CK_B;
-					
-					printf("3 CHK  |%s| %u == %u  %s \n", testStr.c_str(),
-							 checksum, checksum1, checksum == checksum1? "OK":"FAIL");
+				if(v.size() < 3) {
+					checkStr = v[2];
 				}
+				else {
+					checkStr = v[3];
+					payload = decode(v[2]);
+	 			}
+	 
+				uint16_t checksum = 0;
+				if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+					
+					if(checksum_loc != string::npos){
+						uint8_t 	CK_A = 1;
+						uint8_t 	CK_B = 0;
+						
+						string testStr = str.substr(0, checksum_loc);
+						
+						for(char c : testStr){
+							CK_A += c;
+							CK_B += CK_A;
+						}
+						uint16_t checksum1 = (CK_A << 8 ) | CK_B;
+						
+						if(checksum == checksum1){
+							throw std::runtime_error("Checksum Error");
+						}
+					}
+				}
+				
+				processAirplayMetaData(v[0],v[1],payload);
 			}
 			
-			processAirplayMetaData(v[0],v[1],payload);
 		}
-		
 	}
-
+	catch (std::runtime_error& e)
+	{
+		printf("processMetaDataString EXCEPTION: %s ",e.what() );
+	}
+	
 }
  
 

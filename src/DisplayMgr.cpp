@@ -4773,20 +4773,18 @@ void DisplayMgr::processMetaDataString(string str){
 	if(str[0] == '$'){
 		
 		stringvector v = split<string>(str.substr(1) ,  ",");
+			
+	 	string checkStr;
+		size_t checksum_loc = Utils::find_nth(str, 0, ",",  2);
 		vector<uint8_t> payload = {};
-		
-		size_t checksum_loc;
-		string checkStr = "";
- 
+
 		printf("1 STR: %lu |%s|\n", v.size(), str.c_str());
 		
 		if(v.size() > 2) {
-			
+ 
 			if(v.size() > 3) {
-				
-				checksum_loc = Utils::find_nth(str, 0, ",",  3);
-				checkStr = v[3];
-				try{
+ 				checkStr = v[3];
+ 				try{
 	//				printf("2 decode: %lu |%s|\n",v[2].length(),  v[2].c_str() );
 	 				payload = decode(v[2]);
 				}
@@ -4797,8 +4795,7 @@ void DisplayMgr::processMetaDataString(string str){
 			}
 			else {
 				checkStr = v[2];
-	 			checksum_loc = Utils::find_nth(str, 0, ",",  2);
-			}
+	  		}
 			
 			printf("2  checkStr = %s  %zu \n", checkStr.c_str(), checksum_loc);
 			

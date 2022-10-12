@@ -4806,8 +4806,8 @@ void DisplayMgr::processMetaDataString(string str){
 		if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
 			
 			if(checksum_loc != string::npos){
-				uint8_t 	CK_A = 0;
-				uint8_t 	CK_B = 0;
+				uint8_t 	CK_A = '$';
+				uint8_t 	CK_B = '$';
 				
 				for(char c : str.substr(0, checksum_loc)){
 					CK_A += c;

@@ -4790,8 +4790,8 @@ void DisplayMgr::processMetaDataString(string str){
 					payload = decode(v[2]);
 	 			}
 	 
-				uint16_t checksum = 0;
-				if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+				uint16_t checksum_rcv = 0;
+				if( std::sscanf(checkStr.c_str(), "%hu", &checksum_rcv) == 1){
 					
 					if(checksum_loc != string::npos){
 						uint8_t 	CK_A = 1;
@@ -4803,17 +4803,15 @@ void DisplayMgr::processMetaDataString(string str){
 							CK_A += c;
 							CK_B += CK_A;
 						}
-						uint16_t checksum1 = (CK_A << 8 ) | CK_B;
+						uint16_t checksum_calc = (CK_A << 8 ) | CK_B;
 						
-						if(checksum == checksum1){
+						if(checksum_rcv != checksum_calc){
 							throw std::runtime_error("Checksum Error");
 						}
 					}
 				}
-				
 				processAirplayMetaData(v[0],v[1],payload);
 			}
-			
 		}
 	}
 	catch (std::runtime_error& e)

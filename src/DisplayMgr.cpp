@@ -4782,14 +4782,14 @@ void DisplayMgr::processMetaDataString(string str){
 			
 			if(v.size() > 2) {
 				
-				if(v.size() < 3) {
-					checkStr = v[2];
-				}
-				else {
+				if(v.size() > 3) {
 					checkStr = v[3];
 					payload = decode(v[2]);
-	 			}
-	 
+				}
+				else  {
+					checkStr = v[2];
+				}
+				
 				uint16_t checksum_rcv = 0;
 				if( std::sscanf(checkStr.c_str(), "%hu", &checksum_rcv) == 1){
 					

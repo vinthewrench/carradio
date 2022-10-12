@@ -4794,7 +4794,7 @@ void DisplayMgr::processMetaDataString(string str){
 				if( std::sscanf(checkStr.c_str(), "%hu", &checksum_rcv) == 1){
 					
 					if(checksum_loc != string::npos){
-						uint8_t 	CK_A = 1;
+						uint8_t 	CK_A = 0;
 						uint8_t 	CK_B = 0;
 						
 						string testStr = str.substr(0, checksum_loc);
@@ -4816,7 +4816,7 @@ void DisplayMgr::processMetaDataString(string str){
 	}
 	catch (std::runtime_error& e)
 	{
-		printf("processMetaDataString EXCEPTION: %s ",e.what() );
+		printf("processMetaDataString EXCEPTION: %s \n",e.what() );
 	}
 	
 }

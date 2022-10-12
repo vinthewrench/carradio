@@ -4777,7 +4777,7 @@ void DisplayMgr::processMetaDataString(string str){
 	string checkStr = "";
 	
 	
-	printf("STR: %lu |%s|\n", v.size(), str.c_str());
+	printf("1 STR: %lu |%s|\n", v.size(), str.c_str());
 	
 	if(v.size() > 2) {
 		
@@ -4786,7 +4786,7 @@ void DisplayMgr::processMetaDataString(string str){
 			checksum_loc = Utils::find_nth(str, 0, ",",  2);
 			checkStr = v[3];
 			try{
-				printf("decode: %lu |%s|\n",v[2].length(),  v[2].c_str() );
+				printf("2 decode: %lu |%s|  checkStr = %s\n",v[2].length(),  v[2].c_str() , checkStr.c_str());
 				
 				payload = decode(v[2]);
 			}
@@ -4797,6 +4797,8 @@ void DisplayMgr::processMetaDataString(string str){
 		}
 		else {
 			checkStr = v[2];
+			printf("2  checkStr = %s\n", checkStr.c_str());
+
 			checksum_loc = Utils::find_nth(str, 0, ",",  1);
 		}
 		
@@ -4813,7 +4815,7 @@ void DisplayMgr::processMetaDataString(string str){
 				}
 				uint16_t checksum1 = (CK_A << 8 ) | CK_B;
 				
-				printf("checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
+				printf("3 checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
 			}
 		}
 		

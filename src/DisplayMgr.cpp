@@ -4768,16 +4768,23 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 void DisplayMgr::processMetaDataString(string str){
 	
   	stringvector v = split<string>(str, ",");
-	if(v.size() == 3){
- 		try{
-			auto payload = decode(v[2]);
-			processAirplayMetaData(v[0],v[1],payload);
+  	vector<uint8_t> payload = {};
+
+	if(v.size() > 1){
+		
+		if(v.size() > 2){
+			try{
+				payload = decode(v[2]);
+			}
+			catch (std::runtime_error& e)
+			{
+				printf("processMetaDataString EXCEPTION: %s ",e.what() );
+			}
 		}
-		catch (std::runtime_error& e)
-		{
-			printf("processMetaDataString EXCEPTION: %s ",e.what() );
- 		}
+		
+		processAirplayMetaData(v[0],v[1],payload);
 	}
+	
 }
 
 

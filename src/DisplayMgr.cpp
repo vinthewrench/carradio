@@ -4770,58 +4770,62 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 
 void DisplayMgr::processMetaDataString(string str){
 	
-	stringvector v = split<string>(str, ",");
-	vector<uint8_t> payload = {};
-	
-	size_t checksum_loc;
-	string checkStr = "";
-	
-	
-	printf("1 STR: %lu |%s|\n", v.size(), str.c_str());
-	
-	if(v.size() > 2) {
+	if(str[0] == '$'){
 		
-		if(v.size() > 3) {
-			
-			checksum_loc = Utils::find_nth(str, 0, ",",  2);
-			checkStr = v[3];
-			try{
-				printf("2 decode: %lu |%s|  checkStr = %s\n",v[2].length(),  v[2].c_str() , checkStr.c_str());
-				
-				payload = decode(v[2]);
-			}
-			catch (std::runtime_error& e)
-			{
-				printf("processMetaDataString EXCEPTION: %s ",e.what() );
-			}
-		}
-		else {
-			checkStr = v[2];
-			printf("2  checkStr = %s\n", checkStr.c_str());
-
-			checksum_loc = Utils::find_nth(str, 0, ",",  1);
-		}
+		stringvector v = split<string>(str.substr(1) ,  ",");
+		vector<uint8_t> payload = {};
 		
-		uint16_t checksum = 0;
-		if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+		size_t checksum_loc;
+		string checkStr = "";
+		
+		
+		printf("1 STR: %lu |%s|\n", v.size(), str.c_str());
+		
+		if(v.size() > 2) {
 			
-			if(checksum_loc != string::npos){
-				uint8_t 	CK_A = '$';
-				uint8_t 	CK_B = '$';
+			if(v.size() > 3) {
 				
-				for(char c : str.substr(0, checksum_loc)){
-					CK_A += c;
-					CK_B += CK_A;
+				checksum_loc = Utils::find_nth(str, 0, ",",  2);
+				checkStr = v[3];
+				try{
+					printf("2 decode: %lu |%s|  checkStr = %s\n",v[2].length(),  v[2].c_str() , checkStr.c_str());
+					
+					payload = decode(v[2]);
 				}
-				uint16_t checksum1 = (CK_A << 8 ) | CK_B;
-				
-				printf("3 CHK %u == %u  %s \n", checksum, checksum1, checksum == checksum1? "OK":"FAIL");
+				catch (std::runtime_error& e)
+				{
+					printf("processMetaDataString EXCEPTION: %s ",e.what() );
+				}
 			}
+			else {
+				checkStr = v[2];
+				printf("2  checkStr = %s\n", checkStr.c_str());
+
+				checksum_loc = Utils::find_nth(str, 0, ",",  1);
+			}
+			
+			uint16_t checksum = 0;
+			if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+				
+				if(checksum_loc != string::npos){
+					uint8_t 	CK_A = 0;
+					uint8_t 	CK_B = 0;
+					
+					for(char c : str.substr(0, checksum_loc)){
+						CK_A += c;
+						CK_B += CK_A;
+					}
+					uint16_t checksum1 = (CK_A << 8 ) | CK_B;
+					
+					printf("3 CHK %u == %u  %s \n", checksum, checksum1, checksum == checksum1? "OK":"FAIL");
+				}
+			}
+			
+			processAirplayMetaData(v[0],v[1],payload);
 		}
 		
-		processAirplayMetaData(v[0],v[1],payload);
-  	}
-	
+	}
+
 }
  
 
@@ -4835,12 +4839,12 @@ void DisplayMgr::MetaDataReaderLoop(){
 	typedef enum  {
 		STATE_INIT = 0,
 		STATE_READING,
+		STATE_CHECKSUM,
  	 	STATE_ERROR
 	}reader_state_t;
-
-	
+ 
 	reader_state_t reader_state = STATE_INIT;
-
+ 
  	fd_set  fds;
 
 	FD_ZERO(&fds);
@@ -4895,8 +4899,9 @@ void DisplayMgr::MetaDataReaderLoop(){
 					case  STATE_INIT:
 						if(c == '$'){
 							buff.reset();
+							buff.append_char(c);
  				 			reader_state = STATE_READING;
-						}
+	 					}
 	 					break;
 						
 					case  STATE_READING:

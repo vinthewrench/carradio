@@ -4688,7 +4688,7 @@ void  DisplayMgr::clearAPMetaData() {
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
-	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+//	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
@@ -4745,6 +4745,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			}
 			if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
+#warning VINNIE - indicate disconnected
 				session_started = false;
 				_airplayStatus = 0;
  				clearAPMetaData();
@@ -4856,11 +4857,8 @@ void DisplayMgr::MetaDataReaderLoop(){
 		if(reader_socket == -1 &&  _vfd._fd != -1 ){
 			reader_socket = _vfd._fd;
 			FD_SET(reader_socket,&fds); // s is a socket descriptor
-			
-			printf("start reader on socket %d\n",reader_socket );
 			clearAPMetaData();
-			
- 		}
+  		}
  
 		// we use a timeout so we can end this thread when _isSetup is false
 		struct timeval selTimeout;

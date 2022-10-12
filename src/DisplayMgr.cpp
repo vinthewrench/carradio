@@ -4740,6 +4740,15 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				session_started = true;
 				
 			}
+			if(code ==  "pend" || code ==  "aend" ){
+				// airplay disconnected
+				session_started = false;
+				_airplayStatus = 0;
+ 				clearAPMetaData();
+				showAirplayChange();
+				
+				printf("META airplay diconnected\n") ;
+ 			}
 			else 	if(code ==  "mden" ) {
 				
 				pthread_mutex_lock (&_apmetadata_mutex);

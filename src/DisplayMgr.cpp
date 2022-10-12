@@ -4811,13 +4811,16 @@ void DisplayMgr::processMetaDataString(string str){
 					uint8_t 	CK_A = 0;
 					uint8_t 	CK_B = 0;
 					
-					for(char c : str.substr(0, checksum_loc)){
+					string testStr = str.substr(0, checksum_loc);
+					
+					for(char c : testStr){
 						CK_A += c;
 						CK_B += CK_A;
 					}
 					uint16_t checksum1 = (CK_A << 8 ) | CK_B;
 					
-					printf("3 CHK %u == %u  %s \n", checksum, checksum1, checksum == checksum1? "OK":"FAIL");
+					printf("3 CHK  |%s| %u == %u  %s \n", testStr.c_str(),
+							 checksum, checksum1, checksum == checksum1? "OK":"FAIL");
 				}
 			}
 			

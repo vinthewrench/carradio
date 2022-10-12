@@ -4714,7 +4714,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
 					string str =  string(payload.begin(), payload.end());
 					airplaycache[code] = str;
-					printf("META %s: %s\n",code.c_str(), str.c_str());
+//					printf("META %s: %s\n",code.c_str(), str.c_str());
 					return;
 				}
 			}
@@ -4724,7 +4724,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 	 			clock_gettime(CLOCK_MONOTONIC, &_lastAirplayStatusTime);
  
 				// play status
-				printf("META play status %02x \n", _airplayStatus) ;
+//				printf("META play status %02x \n", _airplayStatus) ;
 				showAirplayChange();
 			}
 			else  {
@@ -4747,10 +4747,10 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
  				clearAPMetaData();
 				showAirplayChange();
 				
-				printf("META airplay diconnected\n") ;
+	//			printf("META airplay diconnected\n") ;
  			}
 			else 	if(code ==  "mden" ) {
-				
+				// udate the airplay info.
 				pthread_mutex_lock (&_apmetadata_mutex);
 				_airplayMetaData.clear();
 				_airplayMetaData = airplaycache;
@@ -4781,7 +4781,29 @@ void DisplayMgr::processMetaDataString(string str){
 				printf("processMetaDataString EXCEPTION: %s ",e.what() );
 			}
 		}
+		if(v.size() > 3){
+			
+			uint16_t checksum = 0;
+			if( std::sscanf(str.c_str(), "%hu", &checksum) == 1){
+				
+				// get checksum location
 		
+				size_t loc = Utils::find_nth(str, 0, ",",  2);
+				if(loc != string::npos){
+					uint8_t 	CK_A = 0;
+					uint8_t 	CK_B = 0;
+					
+					for(char c : str.substr(0, loc)){
+						CK_A += c;
+						CK_B += CK_A;
+					}
+					uint16_t checksum1 = (CK_A << 8 ) | CK_B;
+					
+					printf("checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
+				}
+			}
+	 
+		}
 		processAirplayMetaData(v[0],v[1],payload);
 	}
 	

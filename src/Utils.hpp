@@ -144,6 +144,13 @@ inline std::string removeDiacritics(std::string strIn){
 	return std::string(s1.data(),s1.size());
 }
  
+inline size_t find_nth(const  std::string& haystack, size_t pos, const  std::string& needle, size_t nth)
+{
+	 size_t found_pos = haystack.find(needle, pos);
+	 if(0 == nth ||  std::string::npos == found_pos)  return found_pos;
+	 return find_nth(haystack, found_pos+1, needle, nth-1);
+}
+
 // invariant: line_sz > length of any single word
 inline std::vector<std::string> split( std::string str, std::size_t line_sz )
 {

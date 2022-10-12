@@ -4773,6 +4773,8 @@ void DisplayMgr::processMetaDataString(string str){
   	stringvector v = split<string>(str, ",");
   	vector<uint8_t> payload = {};
 
+	printf("STR: |%s|\n", str.c_str());
+	
 	if(v.size() > 1){
 		
 		if(v.size() > 2){

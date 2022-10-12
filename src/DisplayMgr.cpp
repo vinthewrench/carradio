@@ -4770,18 +4770,24 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 
 void DisplayMgr::processMetaDataString(string str){
 	
-  	stringvector v = split<string>(str, ",");
-  	vector<uint8_t> payload = {};
-
+	stringvector v = split<string>(str, ",");
+	vector<uint8_t> payload = {};
+	
+	size_t checksum_loc;
+	string checkStr = "";
+	
+	
 	printf("STR: %lu |%s|\n", v.size(), str.c_str());
 	
-	if(v.size() > 1){
+	if(v.size() > 2) {
 		
-		if(v.size() > 2){
+		if(v.size() > 3) {
 			
+			checksum_loc = Utils::find_nth(str, 0, ",",  2);
+			checkStr = v[3];
 			try{
 				printf("decode: %lu |%s|\n",v[2].length(),  v[2].c_str() );
-						 
+				
 				payload = decode(v[2]);
 			}
 			catch (std::runtime_error& e)
@@ -4789,34 +4795,33 @@ void DisplayMgr::processMetaDataString(string str){
 				printf("processMetaDataString EXCEPTION: %s ",e.what() );
 			}
 		}
-		if(v.size() > 3){
-			
-			uint16_t checksum = 0;
-			if( std::sscanf(str.c_str(), "%hu", &checksum) == 1){
-				
-				// get checksum location
-		
-				size_t loc = Utils::find_nth(str, 0, ",",  2);
-				if(loc != string::npos){
-					uint8_t 	CK_A = 0;
-					uint8_t 	CK_B = 0;
-					
-					for(char c : str.substr(0, loc)){
-						CK_A += c;
-						CK_B += CK_A;
-					}
-					uint16_t checksum1 = (CK_A << 8 ) | CK_B;
-					
-					printf("checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
-				}
-			}
-	 
+		else {
+			checkStr = v[2];
+			checksum_loc = Utils::find_nth(str, 0, ",",  1);
 		}
+		
+		uint16_t checksum = 0;
+		if( std::sscanf(checkStr.c_str(), "%hu", &checksum) == 1){
+			
+			if(checksum_loc != string::npos){
+				uint8_t 	CK_A = 0;
+				uint8_t 	CK_B = 0;
+				
+				for(char c : str.substr(0, checksum_loc)){
+					CK_A += c;
+					CK_B += CK_A;
+				}
+				uint16_t checksum1 = (CK_A << 8 ) | CK_B;
+				
+				printf("checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
+			}
+		}
+		
 		processAirplayMetaData(v[0],v[1],payload);
-	}
+  	}
 	
 }
-
+ 
 
 
 void DisplayMgr::MetaDataReaderLoop(){

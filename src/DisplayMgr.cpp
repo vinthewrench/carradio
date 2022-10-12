@@ -4618,7 +4618,7 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 inline static const char kPadCharacter = '=';
  
 vector<uint8_t> decode(const std::string& input) {
-	if(input.length() == 0)
+	if(input.empty())
 		return {};
 	
  	if(input.length() % 4)
@@ -4778,7 +4778,10 @@ void DisplayMgr::processMetaDataString(string str){
 	if(v.size() > 1){
 		
 		if(v.size() > 2){
+			
 			try{
+				printf("decode: %lu |%s|\n",v[2].length(),  v[2].c_str() );
+						 
 				payload = decode(v[2]);
 			}
 			catch (std::runtime_error& e)

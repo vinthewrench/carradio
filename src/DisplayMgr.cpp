@@ -4618,6 +4618,9 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 inline static const char kPadCharacter = '=';
  
 vector<uint8_t> decode(const std::string& input) {
+	if(input.length() == 0)
+		return {};
+	
  	if(input.length() % 4)
 		throw std::runtime_error("Invalid base64 length!");
 	

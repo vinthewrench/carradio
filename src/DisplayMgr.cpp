@@ -4815,7 +4815,7 @@ void DisplayMgr::processMetaDataString(string str){
 				}
 				uint16_t checksum1 = (CK_A << 8 ) | CK_B;
 				
-				printf("3 checksum = %u  %s \n", checksum1, checksum == checksum1? "OK":"FAIL");
+				printf("3 CHK %u == %u  %s \n", checksum, checksum1, checksum == checksum1? "OK":"FAIL");
 			}
 		}
 		

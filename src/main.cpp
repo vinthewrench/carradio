@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
 	PiCarMgr* pican 	= PiCarMgr::shared();
 
 	// annoying log messages in librtlsdr
- //	freopen( "/dev/null", "w", stderr );
+ 	freopen( "/dev/null", "w", stderr );
  
 	if(!pican->begin()) {
 		return 0;

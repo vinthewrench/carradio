@@ -38,7 +38,7 @@ public:
 	AudioLineInput();
 	~AudioLineInput();
 	
-	bool begin(unsigned int samplerate = 48000,  bool stereo = true);
+	bool begin(unsigned int samplerate = 44100,  bool stereo = true);
 	bool begin(unsigned int samplerate,  bool stereo,  int &error);
 	void stop();
 	bool iConnected() { return _isSetup; }

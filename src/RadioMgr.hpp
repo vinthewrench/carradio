@@ -55,7 +55,7 @@ public:
 	RadioMgr();
 	~RadioMgr();
 	
-	bool begin(uint32_t deviceIndex  = 0, int  pcmrate = 48000);
+	bool begin(uint32_t deviceIndex  = 0, int  pcmrate = 44100);
 	bool begin(uint32_t deviceIndex, int  pcmrate,  int &error);
 	void stop();
 	

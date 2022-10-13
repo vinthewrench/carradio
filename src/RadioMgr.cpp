@@ -779,7 +779,6 @@ bool RadioMgr::scannerLocked(){
 void RadioMgr::AuxReader(){
 	PRINT_CLASS_TID;
 		
-	constexpr int  pcmrate = 48000;
 	static bool aux_setup = false;
 	 
 	SampleVector samples;
@@ -797,7 +796,7 @@ void RadioMgr::AuxReader(){
 		}
 	
 		if(!aux_setup){
-			_lineInput.begin(pcmrate, true) ;
+			_lineInput.begin(_pcmrate, true) ;
 			aux_setup = true;
 		}
 

@@ -93,7 +93,7 @@ bool AudioOutput::begin(unsigned int samplerate,  bool stereo,  int &error){
 			error = r;
 		} 	else {
 			
-			printf("AudioOutput PCM at %d\n", samplerate);
+//			printf("AudioOutput PCM at %d\n", samplerate);
 			// open the mixer
 			snd_mixer_open(&_mixer , SND_MIXER_ELEM_SIMPLE);
 			snd_mixer_attach(_mixer, _MIXER_);

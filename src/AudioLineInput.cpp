@@ -38,7 +38,7 @@ bool AudioLineInput::begin(unsigned int samplerate,  bool stereo,  int &error){
 	_pcm = NULL;
 	_nchannels = stereo ? 2 : 1;
 	
-	printf("AudioLineInput PCM at %d\n", samplerate);
+//	printf("AudioLineInput PCM at %d\n", samplerate);
 
 #if defined(__APPLE__)
 #else

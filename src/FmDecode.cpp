@@ -319,7 +319,7 @@ FmDecoder::FmDecoder(double sample_rate_if,
 
 {
 	
-	printf("FmDecoder PCM at %f\n", sample_rate_pcm);
+//	printf("FmDecoder PCM at %f\n", sample_rate_pcm);
 
 	 // nothing more to do
 }

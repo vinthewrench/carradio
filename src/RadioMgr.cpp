@@ -883,6 +883,9 @@ void RadioMgr::AirplayReader(){
 			if( _airplayInput.getSamples(samples)){
 				_output_buffer.push(move(samples));
 			}
+			else{
+				usleep(200000);
+			}
 		}
 	}
  }

@@ -24,6 +24,7 @@
 #include "ErrorMgr.hpp"
 #include "CommonDefs.hpp"
 #include "AudioLineInput.hpp"
+#include "AirplayInput.hpp"
 
 using namespace std;
 
@@ -132,7 +133,8 @@ private:
  	mutable std::mutex _mutex;		// when changing frequencies and modes.
 	SDRDecoder*			_sdrDecoder;
 	AudioLineInput		_lineInput;
-	
+	AirplayInput		_airplayInput;
+ 
 	vector < RadioMgr::channel_t > _scannerChannels;
 	uint									_currentScanOffset;
 	bool									_scannerMode;
@@ -147,37 +149,35 @@ private:
 	bool					 _shouldReadSDR;
 	bool					 _shouldReadAux;
 	bool					 _shouldReadAirplay;
- 
-	
+  
 	pthread_t			_auxReaderTID;
 	pthread_t			_sdrReaderTID;
 	pthread_t			_sdrProcessorTID;
 	pthread_t			_outputProcessorTID;
-	pthread_t			_channelManagerID;
+	pthread_t			_channelManagerTID;
+	pthread_t			_airplayReaderTID;
 
 	void SDRReader();		// C++ version of thread
-	// C wrappers for SDRReader;
 	static void* SDRReaderThread(void *context);
 	static void SDRReaderThreadCleanup(void *context);
 	
 	void AuxReader();		// C++ version of thread
-	// C wrappers for AuxReader;
 	static void* AuxReaderThread(void *context);
 	static void AuxReaderThreadCleanup(void *context);
+	
+	void AirplayReader();		// C++ version of thread
+	static void* AirplayReaderThread(void *context);
+	static void AirplayReaderCleanup(void *context);
 
 	void SDRProcessor();		// C++ version of thread
-	// C wrappers for SDRReader;
 	static void* SDRProcessorThread(void *context);
 	static void SDRProcessorThreadCleanup(void *context);
-
 	
 	void OutputProcessor();		// C++ version of thread
-	// C wrappers for SDRReader;
 	static void* OutputProcessorThread(void *context);
 	static void OutputProcessorThreadCleanup(void *context);
  
 	void ChannelManager();		// C++ version of thread
-	// C wrappers for ChannelManager;
 	static void* ChannelManagerThread(void *context);
 	static void ChannelManagerThreadCleanup(void *context);
 

@@ -42,29 +42,33 @@ RadioMgr::RadioMgr(){
 	_shouldReadAirplay = false;
 	
 	_squelchLevel = 0;
-  
-	pthread_create(&_auxReaderTID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::AuxReaderThread, (void*)this);
-
-	 pthread_create(&_sdrReaderTID, NULL,
-									(THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
-
-	 pthread_create(&_sdrProcessorTID, NULL,
-									(THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
-
-	 pthread_create(&_outputProcessorTID, NULL,
-									(THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
 	
-	pthread_create(&_channelManagerID, NULL,
-								  (THREADFUNCPTR) &RadioMgr::ChannelManagerThread, (void*)this);
- }
+	pthread_create(&_auxReaderTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::AuxReaderThread, (void*)this);
+	
+	pthread_create(&_airplayReaderTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::AirplayReaderThread, (void*)this);
+
+	pthread_create(&_sdrReaderTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::SDRReaderThread, (void*)this);
+	
+	pthread_create(&_sdrProcessorTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::SDRProcessorThread, (void*)this);
+	
+	pthread_create(&_outputProcessorTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::OutputProcessorThread, (void*)this);
+	
+	pthread_create(&_channelManagerTID, NULL,
+						(THREADFUNCPTR) &RadioMgr::ChannelManagerThread, (void*)this);
+}
  
 RadioMgr::~RadioMgr(){
 	stop();
 	
 	pthread_cond_signal(&_channelCond);
 
-	pthread_join(_channelManagerID, NULL);
+	pthread_join(_channelManagerTID, NULL);
+	pthread_join(_airplayReaderTID, NULL);
 	pthread_join(_auxReaderTID, NULL);
 	pthread_join(_sdrReaderTID, NULL);
 	pthread_join(_sdrProcessorTID, NULL);
@@ -120,6 +124,7 @@ void RadioMgr::stop(){
 		_shouldQuit = true;
 		
 		_lineInput.stop();
+		_airplayInput.stop();
 		_sdr.stop();
 	}
 	
@@ -312,8 +317,8 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_sdr.resetBuffer();
 			_output_buffer.flush();
 			_shouldReadSDR = false;
-			_shouldReadAux = true;
-			_shouldReadAirplay = false;
+			_shouldReadAux = false;
+			_shouldReadAirplay = true;
 		}
 		else if(_mode == VHF || _mode == GMRS) {
 	
@@ -785,7 +790,7 @@ void RadioMgr::AuxReader(){
 	while(!_shouldQuit){
 		
 			// aux is off sleep for awhile.
-		if(!_isSetup ||  ! (_shouldReadAux || _shouldReadAirplay)  ){
+		if(!_isSetup ||  !_shouldReadAux  ){
 			
 			if(aux_setup){
 				_lineInput.stop();
@@ -800,7 +805,7 @@ void RadioMgr::AuxReader(){
 			aux_setup = true;
 		}
 
-		if(_lineInput.iConnected()){
+		if(_lineInput.isConnected()){
 			
 			// get input
 			if( _lineInput.getSamples(samples)){
@@ -833,6 +838,70 @@ void RadioMgr::AuxReaderThreadCleanup(void *context){
 //	RadioMgr* d = (RadioMgr*)context;
 
 //	printf("cleanup Aux\n");
+}
+
+// MARK: -  AirplayReader thread
+
+void RadioMgr::AirplayReader(){
+	PRINT_CLASS_TID;
+		
+	static bool airplay_setup = false;
+	 
+	SampleVector samples;
+	while(!_shouldQuit){
+		
+			// aux is off sleep for awhile.
+		if(!_isSetup ||  !_shouldReadAirplay) {
+			
+			if(airplay_setup){
+				_airplayInput.stop();
+				airplay_setup = false;
+			}
+				usleep(200000);
+				continue;
+		}
+	
+		if(!airplay_setup){
+			airplay_setup = _airplayInput.begin();
+
+			if(airplay_setup){
+				usleep(200000);
+				continue;
+			}
+		}
+		
+ 		if(_airplayInput.isConnected()){
+
+			// get input
+			if( _airplayInput.getSamples(samples)){
+				_output_buffer.push(move(samples));
+			}
+		}
+	}
+ }
+
+
+// C wrappers for AuxReader;
+
+void* RadioMgr::AirplayReaderThread(void *context){
+	RadioMgr* d = (RadioMgr*)context;
+
+	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
+	pthread_cleanup_push(   &RadioMgr::AirplayReaderCleanup ,context);
+ 
+	d->AirplayReader();
+	
+	pthread_exit(NULL);
+	
+	pthread_cleanup_pop(0);
+	return((void *)1);
+}
+
+ 
+void RadioMgr::AirplayReaderCleanup(void *context){
+//	RadioMgr* d = (RadioMgr*)context;
+
+//	printf("cleanup Airplay\n");
 }
 
  

@@ -1,8 +1,8 @@
 //
-//  AudioLineInput.hpp
+//  AirplayInput.hpp
 //  carradio
 //
-//  Created by Vincent Moscaritolo on 7/9/22.
+//  Created by Vincent Moscaritolo on 10/13/22.
 //
 
 #pragma once
@@ -22,26 +22,21 @@
 
 using namespace std;
 
-#if defined(__APPLE__)
-#else
-#include <alsa/asoundlib.h>
  
-#endif
-  
-
-class AudioLineInput {
+class AirplayInput {
 	 
 public:
  
 	static constexpr int 	default_blockLength = 4096;
 	
-	AudioLineInput();
-	~AudioLineInput();
+	AirplayInput();
+	~AirplayInput();
 	
-	bool begin(unsigned int samplerate = 44100,  bool stereo = true);
-	bool begin(unsigned int samplerate,  bool stereo,  int &error);
+	bool begin(const char* path = "/tmp/shairport-sync-audio");
+	bool begin(const char* path, int &error);
+	
 	void stop();
-	bool isConnected() { return _isSetup; }
+	bool isConnected();
  
 	bool getSamples(SampleVector& audio);
  
@@ -49,9 +44,13 @@ public:
  
 	bool						_isSetup;
 	unsigned int         _nchannels;
-	struct _snd_pcm *   	_pcm;
-	 
+ 
 	int       				_blockLength;
-
-  };
+ 
+ 	bool  openAudioPipe(const char* audioPath,  int &error);
+	void  closeAudioPipe();
+	
+	int	 	_fd;		// audio pipe fd
+	
+   };
 

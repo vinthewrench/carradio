@@ -66,6 +66,7 @@ set(SOURCES
 	src/Filter.cpp
 	src/AudioOutput.cpp
 	src/AudioLineInput.cpp
+	src/AirplayInput.cpp
 	src/RtlSdr.cpp
 	src/CPUInfo.cpp
 	src/PiCarDB.cpp

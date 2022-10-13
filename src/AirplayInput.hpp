@@ -43,8 +43,6 @@ public:
 	private:
  
 	bool						_isSetup;
-	unsigned int         _nchannels;
- 
 	int       				_blockLength;
  
  	bool  openAudioPipe(const char* audioPath,  int &error);

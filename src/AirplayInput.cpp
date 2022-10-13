@@ -80,18 +80,14 @@ bool  AirplayInput::openAudioPipe(const char* audioPath,  int &error){
 		return false;
 	}
 	
-	printf("openAudioPipe  %s\n", audioPath);
-	
 	int fd ;
 	
 	if((fd = ::open( audioPath, O_RDONLY  )) <0) {
-		printf("Error %d, %s\n", errno, strerror(errno) );
+//		printf("Error %d, %s\n", errno, strerror(errno) );
 		//	ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "OPEN %s", _ttyPath);
 		error = errno;
 		return false;
 	}
-	
-	printf("Opened  %s\n", audioPath);
 	
 	_fd = fd;
 	
@@ -138,8 +134,6 @@ bool AirplayInput::getSamples(SampleVector& audio){
 	}
 	
 	if(nbytes > 0){
-		
-		printf("%d bytes avail \n",nbytes);
 		
 		int framesize = nbytes / 4;
 		

@@ -842,9 +842,13 @@ void RadioMgr::AuxReaderThreadCleanup(void *context){
 
 // MARK: -  AirplayReader thread
 
+bool  RadioMgr::hasAirplay() {
+	return _airplayInput.isConnected();
+}
+
 void RadioMgr::AirplayReader(){
 	PRINT_CLASS_TID;
-		
+
 	static bool airplay_setup = false;
 	 
 	SampleVector samples;
@@ -864,6 +868,9 @@ void RadioMgr::AirplayReader(){
 		if(!airplay_setup){
 			airplay_setup = _airplayInput.begin();
 
+			DisplayMgr*		display 	= PiCarMgr::shared()->display();
+			display->showAirplayChange();
+ 
 			if(airplay_setup){
 				usleep(200000);
 				continue;

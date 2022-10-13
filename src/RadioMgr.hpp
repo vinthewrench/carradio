@@ -104,7 +104,8 @@ public:
 	bool tuneScannerToChannel(RadioMgr::channel_t);
 //	uint32_t nextFrequency(bool up, bool constrain = false);
 	
-
+	bool hasAirplay();
+	
 private:
 
 

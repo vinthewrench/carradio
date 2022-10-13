@@ -5066,8 +5066,9 @@ void DisplayMgr::MetaDataReaderLoop(){
 					
 					// filter out only the packets I want
 					if(shouldProcessPacket){
+						processAirplayMetaData(typestring, codestring,  decode(payload));
 						
-						printf("processed %s %s %s \n",typestring, codestring, payload.c_str());
+	//					printf("processed %s %s %s \n",typestring, codestring, payload.c_str());
 						
 						
 						//						outBuffer.reset();

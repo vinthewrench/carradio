@@ -48,7 +48,6 @@
 		2EC772942855002C0083DA3B /* DTCcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC772922855002C0083DA3B /* DTCcodes.cpp */; };
 		2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EC77298285501CB0083DA3B /* libsqlite3.tbd */; };
 		2EE8AF9D28EF3296004CC59C /* dbuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EE8AF9B28EF3296004CC59C /* dbuf.cpp */; };
-		2EF8450D28F883B3003E9547 /* dbuf copy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF8450B28F883B3003E9547 /* dbuf copy.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -177,8 +176,6 @@
 		2EE8AF9B28EF3296004CC59C /* dbuf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbuf.cpp; sourceTree = "<group>"; };
 		2EE8AF9C28EF3296004CC59C /* dbuf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dbuf.hpp; sourceTree = "<group>"; };
 		2EF844F028F609BE003E9547 /* tinyutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyutf8.h; sourceTree = "<group>"; };
-		2EF8450B28F883B3003E9547 /* dbuf copy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "dbuf copy.cpp"; sourceTree = "<group>"; };
-		2EF8450C28F883B3003E9547 /* dbuf copy.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = "dbuf copy.hpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -336,8 +333,6 @@
 				2E8210B52835A551003D074C /* TimeStamp.hpp */,
 				2E8210B22835A53B003D074C /* json.hpp */,
 				2E8210B32835A53B003D074C /* Utils.hpp */,
-				2EF8450B28F883B3003E9547 /* dbuf copy.cpp */,
-				2EF8450C28F883B3003E9547 /* dbuf copy.hpp */,
 				2EF844F028F609BE003E9547 /* tinyutf8.h */,
 				2EE8AF9B28EF3296004CC59C /* dbuf.cpp */,
 				2EE8AF9C28EF3296004CC59C /* dbuf.hpp */,
@@ -541,7 +536,6 @@
 				2E5F7FCC28AF1081008E5C89 /* minmea.c in Sources */,
 				2E8210A32835A36D003D074C /* tranmerc.cpp in Sources */,
 				2EE8AF9D28EF3296004CC59C /* dbuf.cpp in Sources */,
-				2EF8450D28F883B3003E9547 /* dbuf copy.cpp in Sources */,
 				2E8D3722287A3CD0000182E5 /* AudioLineInput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

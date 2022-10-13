@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
 	PiCarMgr* pican 	= PiCarMgr::shared();
 
 	// annoying log messages in librtlsdr
- 	freopen( "/dev/null", "w", stderr );
+ //	freopen( "/dev/null", "w", stderr );
  
 	if(!pican->begin()) {
 		return 0;
@@ -54,7 +54,9 @@ int main(int argc, const char * argv[]) {
 // 			pican->stop();
 //
 			pican->audio()->setVolume(.5);
-			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
+			
+			pican->radio()->setFrequencyandMode(RadioMgr::BROADCAST_FM, 101.900e6);
+//			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
 			pican->radio()->setON(true);
 //			pican->saveRadioSettings();
 

@@ -194,7 +194,7 @@ bool PiCarMgr::begin(){
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
 		if(devices.size() > 0) {
-			if(!_radio.begin(devices[0].index))
+			if(!_radio.begin(devices[0].index, pcmrate))
 				throw Exception("failed to setup Radio ");
 		}
 

@@ -54,7 +54,7 @@ const char*			 GPIOD_CONSUMER 		=  "gpiod-PiCar";
 #endif
 
 
-constexpr int  pcmrate = 44100;
+constexpr int  pcmrate = 48000;
 
 typedef void * (*THREADFUNCPTR)(void *);
 

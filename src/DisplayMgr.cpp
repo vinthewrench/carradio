@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <regex>
+#include <fstream>
 
 #include <sys/utsname.h>
 #include <arpa/inet.h>
@@ -4769,6 +4770,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 	}
 }
 
+#if 0
 void DisplayMgr::processMetaDataString(string str){
 	
 	try{
@@ -4961,7 +4963,143 @@ void DisplayMgr::MetaDataReaderLoop(){
 		}
  	}
 }
- 
+#else
+
+
+typedef struct {
+	uint32_t type;
+	uint32_t code;
+} filter_table_t;
+
+static filter_table_t filter_table[] = {
+	{'core', 'asal'}, // daap.songalbum
+	{'core', 'asar'},	// daap.songartist
+	{'core', 'minm'}, // dmap.itemname
+	//	{'core', 'asgn'}, //  daap.songgenre
+	//	{'core', 'ascp'}, //  daap.daap.songcomposer
+	//	{'core', 'asdk'}, //  daap.daap.songdatakind
+	{'core', 'caps'}, // play status  ( 01/ 02 )
+	
+	{'ssnc', 'mden'}, //  Metadata stream processing end
+	{'ssnc', 'mdst'}, //  Metadata stream processing start
+	
+	{'ssnc', 'aend'},	// airplay session begin
+	{'ssnc', 'abeg'},	// airplay session end
+	
+	{'ssnc', 'pbeg'},	// play stream begin.
+	{'ssnc', 'pend'}, // play stream end.
+	
+};
+static bool sInFilterTable(uint32_t type, uint32_t code){
+	
+	for( int i = 0; i <  sizeof(filter_table)/ sizeof(filter_table_t); i++){
+		if(filter_table[i].code == code && filter_table[i].type == type)
+			return true;
+	};
+	
+	return false;
+}
+
+
+void DisplayMgr::MetaDataReaderLoop(){
+	
+	PRINT_CLASS_TID;
+	
+	
+	string 				metaDataFilePath  = "/tmp/shairport-sync-metadata";
+	std::ifstream		ifs;
+	
+	while(_isRunning){
+		
+		// if not setup // check back later
+		if(!_isSetup){
+			sleep(2);
+			continue;
+		}
+		
+		try{
+			
+			if(!ifs.is_open()){
+				ifs.open(metaDataFilePath, ios::in);
+				
+				if(!ifs.is_open()) {
+					sleep(1);
+					continue;
+				}
+			}
+			
+			string line;
+			
+			while ( std::getline(ifs, line) ) {
+				
+				uint32_t type, code;
+				uint32_t length;
+				
+				int ret = sscanf(line.c_str(),"<item><type>%8x</type><code>%8x</code><length>%u</length>",&type,&code,&length);
+				if (ret==3) {
+					
+					bool shouldProcessPacket  = sInFilterTable( type, code);
+					char typestring[5] = {0};
+					char codestring[5] = {0};
+					string payload = "";
+					
+					*(uint32_t*)typestring = htonl(type);
+					*(uint32_t*)codestring = htonl(code);
+					
+					if(length && std::getline(ifs, line) ){
+						if(line == "<data encoding=\"base64\">") {
+							
+							if(std::getline(ifs, line) ){
+								
+								if(shouldProcessPacket){
+	
+									auto input_length = line.find("</data>");
+									if(input_length != std::string::npos){
+										
+										payload = line.substr(0,input_length);
+										payload = Utils::trimCNTRL(payload);
+									}
+								}
+							}
+						}
+					}
+					
+					// filter out only the packets I want
+					if(shouldProcessPacket){
+						
+						printf("processed %s %s %s \n",typestring, codestring, payload.c_str());
+						
+						
+						//						outBuffer.reset();
+						//						char header[16];
+						//						sprintf( header, "$%s,%s,",typestring,codestring);
+						//						outBuffer.append_data(header, strlen(header));
+						//						outBuffer.append_data( (void*) payload.c_str(), payload.size());
+						//
+						//						uint16_t checksum = outBuffer.calculateChecksum();
+						//						sprintf( header, ",%hu\n",checksum);
+						//						outBuffer.append_data(header, strlen(header));
+						//						writePacket(outBuffer.data(), outBuffer.size());
+					}
+					
+				}
+				if(_isSetup && _isRunning)
+					break;
+			}
+			
+		}
+		catch(std::ifstream::failure &err) {
+			printf("MetaDataReader:FAIL: %s", err.what());
+		}
+		
+		if(!ifs.is_open()) {
+			ifs.close();
+		}
+	}
+};
+
+#endif
+
  void* DisplayMgr::MetaDataReaderThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;
 

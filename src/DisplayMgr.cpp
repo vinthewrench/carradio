@@ -5052,7 +5052,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 							if(std::getline(ifs, line) ){
 								
 								if(shouldProcessPacket){
-	
+									
 									auto input_length = line.find("</data>");
 									if(input_length != std::string::npos){
 										
@@ -5068,19 +5068,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 					if(shouldProcessPacket){
 						processAirplayMetaData(typestring, codestring,  decode(payload));
 						
-	//					printf("processed %s %s %s \n",typestring, codestring, payload.c_str());
-						
-						
-						//						outBuffer.reset();
-						//						char header[16];
-						//						sprintf( header, "$%s,%s,",typestring,codestring);
-						//						outBuffer.append_data(header, strlen(header));
-						//						outBuffer.append_data( (void*) payload.c_str(), payload.size());
-						//
-						//						uint16_t checksum = outBuffer.calculateChecksum();
-						//						sprintf( header, ",%hu\n",checksum);
-						//						outBuffer.append_data(header, strlen(header));
-						//						writePacket(outBuffer.data(), outBuffer.size());
+						//					printf("processed %s %s %s \n",typestring, codestring, payload.c_str());
 					}
 					
 				}

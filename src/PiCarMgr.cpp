@@ -1412,6 +1412,9 @@ void PiCarMgr::PiCarLoop(){
 							if(isScanning) {
 								// if you are scanning an roll tuner - do nothing
 							}
+							else if(mode == RadioMgr::AIRPLAY || mode == RadioMgr::AUX){
+								break;
+							}
 							else {
 								
 								PiCarMgr::station_info_t info;

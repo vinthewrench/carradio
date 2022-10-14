@@ -1416,7 +1416,7 @@ void PiCarMgr::PiCarLoop(){
 							else {
 								
 								PiCarMgr::station_info_t info;
-								if(nextKnownStation(mode, newFreq, tunerMovedCW, info)){
+								if(nextKnownStation(mode, nextFreq, tunerMovedCW, info)){
 									
 									if(info.frequency == nextFreq && info.band == mode)
 										tunnerPinned = true;

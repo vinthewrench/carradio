@@ -951,7 +951,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 										  bool tunerMovedCW,
 										  station_info_t &info){
 	
-	printf("nextKnownStation %d %s\n", frequency, tunerMovedCW?"CW":"CCW");
+	printf("nextKnownStation %d %d %s\n",band, frequency, tunerMovedCW?"CW":"CCW");
 	if(_stations.count(band) == 0 ) {
 		// if there are no known frequencies  all then to fallback to all.
 		info.band = band;
@@ -971,7 +971,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 				continue;
  			info =  *(i);
 			
-			printf("nextKnownStation %d\n", info.frequency);
+			printf("nextKnownStation %d %d\n", info.band, info.frequency);
 
 			return true;;
 		}
@@ -982,7 +982,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 				continue;
 			info =  *(i);
 			
-			printf("nextKnownStation %d\n", info.frequency);
+			printf("nextKnownStation %d %d\n", info.band, info.frequency);
 
 			return true;;
 		}
@@ -1389,8 +1389,7 @@ void PiCarMgr::PiCarLoop(){
 								 || _display.active_mode() == DisplayMgr::MODE_SCANNER)){
 					
 					auto nextFreq = _radio.frequency();
-					uint32_t newFreq = 0;
-					
+		 
 					auto mode 	   = _radio.radioMode();
 					bool isScanning = _radio.isScannerMode();
 					switch(_tuner_mode){
@@ -1421,7 +1420,7 @@ void PiCarMgr::PiCarLoop(){
 									if(info.frequency == nextFreq && info.band == mode)
 										tunnerPinned = true;
 		
-									newFreq = info.frequency;
+									nextFreq = info.frequency;
 								}
 								else
 									tunnerPinned = true;

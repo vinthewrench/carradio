@@ -951,8 +951,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 										  bool tunerMovedCW,
 										  station_info_t &info){
 	
-	printf("nextKnownStation %d %d %s\n",band, frequency, tunerMovedCW?"CW":"CCW");
-	if(_stations.count(band) == 0 ) {
+ 	if(_stations.count(band) == 0 ) {
 		// if there are no known frequencies  all then to fallback to all.
 		info.band = band;
 		info.frequency =  _radio.nextFrequency(tunerMovedCW);
@@ -970,10 +969,7 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 			if(frequency >= i->frequency)
 				continue;
  			info =  *(i);
-			
-			printf("nextKnownStation %d %d\n", info.band, info.frequency);
-
-			return true;;
+ 			return true;;
 		}
 	}
 	else {
@@ -981,15 +977,10 @@ bool PiCarMgr::nextKnownStation(RadioMgr::radio_mode_t band,
 			if(frequency <= i->frequency)
 				continue;
 			info =  *(i);
-			
-			printf("nextKnownStation %d %d\n", info.band, info.frequency);
-
-			return true;;
+ 			return true;;
 		}
 	}
-	
-	printf("nextKnownStation fail\n");
-	return false;
+ 	return false;
 }
 
 
@@ -1397,7 +1388,10 @@ void PiCarMgr::PiCarLoop(){
 							if(isScanning) {
 								// if you are scanning an roll tuner - do nothing
 							}
-							else {
+							else if(mode == RadioMgr::AIRPLAY || mode == RadioMgr::AUX){
+								break;
+							}
+		 					else {
 								auto newFreq = _radio.nextFrequency(tunerMovedCW);
 								if(newFreq == nextFreq)
 									tunnerPinned = true;

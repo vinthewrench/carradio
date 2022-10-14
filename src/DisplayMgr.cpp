@@ -5029,7 +5029,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 			}
 			
 			string line;
-			
+
 			while ( std::getline(ifs, line) ) {
 				
 				uint32_t type, code;
@@ -5079,11 +5079,15 @@ void DisplayMgr::MetaDataReaderLoop(){
 		}
 		catch(std::ifstream::failure &err) {
 			printf("MetaDataReader:FAIL: %s", err.what());
+			if(ifs.is_open()) {
+				ifs.close();
+			}
 		}
-		
-		if(!ifs.is_open()) {
-			ifs.close();
-		}
+ 
+	}
+	
+	if(ifs.is_open()) {
+		ifs.close();
 	}
 };
 

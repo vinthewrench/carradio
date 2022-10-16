@@ -2233,7 +2233,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 
 void DisplayMgr::drawAirplayLogo(){
 	
-	_vfd.setCursor( 8, 50)	;
+	_vfd.setCursor( 8, 54)	;
 	const uint8_t airplayLogo[] = {0x18,0x08,0x1a,0x22,0x3d,0x63,0x63,0x16,0x1c,0x3e};
 	_vfd.writePacket(airplayLogo, sizeof(airplayLogo));
 	

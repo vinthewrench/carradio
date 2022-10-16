@@ -2224,10 +2224,11 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.write( (timeinfo.tm_hour > 12)?" PM":" AM");
 	}
-	drawAirplayLogo();
-	
+		
 	drawTemperature();
  	drawEngineCheck();
+	drawAirplayLogo();
+
 	
 }
 

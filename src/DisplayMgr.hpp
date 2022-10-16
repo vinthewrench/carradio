@@ -252,6 +252,7 @@ private:
 	
 	void drawEngineCheck();
 	void drawTemperature();
+	void drawAirplayLogo();
 	void drawTimeBox();
 	void drawEditStringScreen(modeTransition_t transition);
 

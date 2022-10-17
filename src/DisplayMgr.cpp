@@ -2119,31 +2119,27 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		GPSmgr*				gps 		= mgr->gps();
 		PiCarCAN*			can 		= mgr->can();
 		
-	 
+		string str = "";
+		
 		if(radio->isConnected()){
-			_vfd.setCursor( 5, 50);
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.printPacket( "RADIO");
+			str += " RADIO ";
   		}
  
 		if(mgr->isAirPlayRunning()){
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 50, 50);
-			_vfd.printPacket( "AIRPLAY");
+			str += " AIRPLAY ";
 		}
 
 		if(gps->isConnected()){
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 80, 50);
-			_vfd.printPacket( "GPS");
+			str += " GPS ";
 		}
 		
 		if(can->isConnected()){
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 100, 50);
-			_vfd.printPacket( "CANBUS");
-		}
+			str += " CANBUS ";
+ 		}
 		
+		_vfd.setCursor( 5, 50);
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.printf("%-60s", str.c_str());
 	}
 	
 	if(transition == TRANS_LEAVING){

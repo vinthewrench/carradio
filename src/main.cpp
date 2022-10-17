@@ -19,6 +19,8 @@
 #include <iostream>
 #include <filesystem> // C++17
 #include <fstream>
+#include <unistd.h>
+
 #include "CommonDefs.hpp"
 
 #include "DisplayMgr.hpp"
@@ -31,47 +33,68 @@
 
  
 int main(int argc, const char * argv[]) {
-
-	PiCarMgr* pican 	= PiCarMgr::shared();
-
-	// annoying log messages in librtlsdr
- 	freopen( "/dev/null", "w", stderr );
- 
-	if(!pican->begin()) {
-		return 0;
+	
+	
+	int childpid;
+	if((childpid = fork()) == -1 )
+	{
+		perror("can't fork");
+		exit(1);
 	}
-	
-	// run the main loop.
-	PRINT_CLASS_TID;
-	
-	bool firstrun = true;
-	while(true) {
+	else if(childpid == 0)
+	{
+		// launch shairport-sync
 		
-		if(firstrun){
-			sleep(1);
-#if defined(__APPLE__)
-			
-// 			pican->stop();
-//
-			pican->audio()->setVolume(.5);
-			
-			pican->radio()->setFrequencyandMode(RadioMgr::BROADCAST_FM, 101.900e6);
-//			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
-			pican->radio()->setON(true);
-//			pican->saveRadioSettings();
-
-//			pican->radio()->setON(false);
-
-			firstrun = false;
-#endif
-			continue;
-		}
-	 
-		sleep(1);
- 
+		char *binaryPath = (char*) "/usr/local/bin/shairport-sync";
+		char *args[] = {binaryPath, (char*)"--output=pipe", (char*)"-M", NULL};
+		
+		execv(binaryPath, args);
+		exit(0);
 	}
-
+	else
+	{
+		
+		PiCarMgr* pican 	= PiCarMgr::shared();
+		
+		// annoying log messages in librtlsdr
+		freopen( "/dev/null", "w", stderr );
+		
+		if(!pican->begin()) {
+			return 0;
+		}
+		
+		// run the main loop.
+		PRINT_CLASS_TID;
+		
+		bool firstrun = true;
+		while(true) {
+			
+			if(firstrun){
+				sleep(1);
+#if defined(__APPLE__)
+				
+				// 			pican->stop();
+				//
+				pican->audio()->setVolume(.5);
+				
+				pican->radio()->setFrequencyandMode(RadioMgr::BROADCAST_FM, 101.900e6);
+				//			pican->radio()->setFrequencyandMode(RadioMgr::VHF, 154455008);
+				pican->radio()->setON(true);
+				//			pican->saveRadioSettings();
+				
+				//			pican->radio()->setON(false);
+				
+				firstrun = false;
+#endif
+				continue;
+			}
+			
+			sleep(1);
+			
+		}
+		exit(0);
+		
+	}
 	return 0;
-
-}
+ }
 

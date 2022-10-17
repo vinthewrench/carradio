@@ -237,16 +237,7 @@ bool PiCarMgr::begin(){
 				firstRunToday = false;
 			}
 		}
-		
-		
-		// launch shairport-sync
-		{
-			char *binaryPath = (char*) "/usr/local/bin/shairport-sync";
-			char *args[] = {binaryPath, (char*)"--output=pipe", (char*)"-M", NULL};
-			
-			 execv(binaryPath, args);
- 		}
-
+	
 		if(firstRunToday){
 			LOGT_INFO("Hello Moto\n");
 	 

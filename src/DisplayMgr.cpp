@@ -2122,7 +2122,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		string str = "";
 		
 		if(radio->isConnected()){
-			str += " RADIO ";
+			str += "RADIO ";
   		}
  
 		if(mgr->isAirPlayRunning()){
@@ -2134,10 +2134,10 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		}
 		
 		if(can->isConnected()){
-			str += " CANBUS ";
+			str += " CANBUS";
  		}
 		
-		_vfd.setCursor( 10, 50);
+		_vfd.setCursor( 8, 50);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-30s", str.c_str());
 	}

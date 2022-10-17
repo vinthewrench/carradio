@@ -2139,7 +2139,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		_vfd.setCursor( 5, 50);
 		_vfd.setFont(VFD::FONT_MINI);
-		_vfd.printPacket("%-60s", str.c_str());
+		_vfd.printPacket("%-40s", str.c_str());
 	}
 	
 	if(transition == TRANS_LEAVING){

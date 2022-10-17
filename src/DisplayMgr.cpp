@@ -1924,13 +1924,14 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  _vfd.setCursor(0,centerY+3);
 			  _vfd.printPacket("%-21s",artistStr.c_str() );
 
+			  drawAirplayLogo(0, centerY+9, radio->hasAirplay()?"":" :OFF");
 			 
-			  _vfd.setCursor(0, centerY+9);
- 	 		  _vfd.writePacket(airplayLogo, sizeof(airplayLogo));
-			  _vfd.setFont(VFD::FONT_MINI);
-			  _vfd.setCursor(11, centerY+16);
-
-			  _vfd.printPacket("AIRPLAY %-15s", radio->hasAirplay()?"":" :OFF");
+//			  _vfd.setCursor(0, centerY+9);
+// 	 		  _vfd.writePacket(airplayLogo, sizeof(airplayLogo));
+//			  _vfd.setFont(VFD::FONT_MINI);
+//			  _vfd.setCursor(11, centerY+16);
+//
+//			  _vfd.printPacket("AIRPLAY %-15s", radio->hasAirplay()?"":" :OFF");
 		  }
 		  else {
 
@@ -2233,17 +2234,21 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		
 	drawTemperature();
  	drawEngineCheck();
-	drawAirplayLogo();
-
+	 
 	
 }
 
-void DisplayMgr::drawAirplayLogo(){
-	
-	_vfd.setCursor( 8, 50)	;
+void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
+
 	const uint8_t airplayLogo[] = {0x1A,0x80, 0x18,0x09, 0x1c,0x62,0x8d,0x93,0xa7,0x93,0x8d,0x22,0x1c};
+
+	_vfd.setCursor( x, y)	;
 	_vfd.writePacket(airplayLogo, sizeof(airplayLogo));
-	
+
+	_vfd.setFont(VFD::FONT_MINI);
+	_vfd.setCursor(x+11, y+5);
+ 	_vfd.printPacket("AIRPLAY %-15s",  text.c_str());
+ 
 }
 
 

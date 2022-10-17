@@ -310,6 +310,13 @@ bool PiCarMgr::begin(){
 
 void PiCarMgr::stop(){
 	
+	
+	int pid = getPidByName("shairport-sync");
+	if(pid > 0){
+		kill(pid, SIGTERM);
+	}
+	
+	
 	if(_isSetup  ){
 		_isSetup = false;
 		

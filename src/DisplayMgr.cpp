@@ -4710,7 +4710,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 	static map<string, string>  airplaycache = {};
 	static bool session_started = false;
 	
-	if(radio->isOn()){
+//	if(radio->isOn()){
 		
 		if(type == "core"){
 			
@@ -4781,7 +4781,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			}
 		}
 		
-	}
+//	}
 }
 
 typedef struct {

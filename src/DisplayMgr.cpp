@@ -1925,7 +1925,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  _vfd.printPacket("%-21s",artistStr.c_str() );
 
 			 
-			  _vfd.setCursor(0, centerY+8);
+			  _vfd.setCursor(0, centerY+9);
  	 		  _vfd.writePacket(airplayLogo, sizeof(airplayLogo));
 			  _vfd.setFont(VFD::FONT_MINI);
 			  _vfd.setCursor(11, centerY+16);

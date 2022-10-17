@@ -4712,9 +4712,7 @@ void  DisplayMgr::clearAPMetaData() {
 
 void DisplayMgr::airplayStarted(){
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-	
-	printf("airplayStarted %d %d %d \n", radio->isOn(),  _shouldAutoPlay, radio->radioMode());
-	
+		
 	if(radio->isOn() && _shouldAutoPlay){
 		if(radio->radioMode() != RadioMgr::AIRPLAY){
 			radio->setFrequencyandMode(RadioMgr::AIRPLAY, 1);
@@ -4726,7 +4724,7 @@ void DisplayMgr::airplayStarted(){
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
- 	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+ //	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
 //	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
@@ -4779,9 +4777,11 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			if(code ==  "mdst" ) {
 				airplaycache.clear();
 				session_started = true;
+				}
+			else 	if(code ==  "pbeg" ) {
 				// play stream begin.
 				airplayStarted();
-  			}
+			}
 			else if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
 #warning VINNIE - indicate disconnected

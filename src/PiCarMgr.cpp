@@ -1278,8 +1278,8 @@ void PiCarMgr::PiCarLoop(){
 						// turn it off forces save of stations.
 						saveRadioSettings();
 						_db.savePropertiesToFile();
+						_display.enableAutoPlay(false);
 						
-						_display.enableAutoPlay(true);
 					}
 					else {
 						RadioMgr::radio_mode_t mode ;
@@ -1300,7 +1300,7 @@ void PiCarMgr::PiCarLoop(){
 						
 						_radio.setON(true);
 						setRelay1(true);
-
+						
 						_display.LEDeventVol();
 						
 						if(_radio.isScannerMode())
@@ -1309,6 +1309,8 @@ void PiCarMgr::PiCarLoop(){
 							_display.showRadioChange();
 						
 						_db.setProperty(PROP_LAST_MENU_SELECTED, to_string(main_menu_map_offset(MENU_RADIO)));
+						
+						_display.enableAutoPlay(true);
 					}
 				}
 				else {

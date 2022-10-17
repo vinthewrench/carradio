@@ -59,7 +59,6 @@ static  const string moreDown = "\x1b\x98\x04\xf9\x1d";
 static  const string moreNext = "\x1b\x98\x04\xfa\x1d";
 static  const string morePrev = "\x1b\x98\x04\x60\x1d";
 
-static const uint8_t airplayLogo[] = {0x1A,0x80, 0x18,0x09, 0x1c,0x62,0x8d,0x93,0xa7,0x93,0x8d,0x22,0x1c};
 
  //  MACOS doesnt support pthread_condattr_setclock
 
@@ -1925,13 +1924,6 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  _vfd.printPacket("%-21s",artistStr.c_str() );
 
 			  drawAirplayLogo(0, centerY+9, radio->hasAirplay()?"":" :OFF");
-			 
-//			  _vfd.setCursor(0, centerY+9);
-// 	 		  _vfd.writePacket(airplayLogo, sizeof(airplayLogo));
-//			  _vfd.setFont(VFD::FONT_MINI);
-//			  _vfd.setCursor(11, centerY+16);
-//
-//			  _vfd.printPacket("AIRPLAY %-15s", radio->hasAirplay()?"":" :OFF");
 		  }
 		  else {
 
@@ -2246,7 +2238,7 @@ void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
 	_vfd.writePacket(airplayLogo, sizeof(airplayLogo));
 
 	_vfd.setFont(VFD::FONT_MINI);
-	_vfd.setCursor(x+11, y+5);
+	_vfd.setCursor(x+11, y+7);
  	_vfd.printPacket("AIRPLAY %-15s",  text.c_str());
  
 }

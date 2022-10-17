@@ -2227,6 +2227,16 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		
 	if(_airplayStatus)
 		drawAirplayLogo(0, centerY+9);
+	else
+	{
+		uint8_t buff2[] = {
+			VFD_CLEAR_AREA,
+			static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY+9),
+			static_cast<uint8_t> (0+100),static_cast<uint8_t> (centerY+19)};
+		
+		_vfd.writePacket(buff2, sizeof(buff2));
+
+	}
 
 	drawTemperature();
  	drawEngineCheck();
@@ -4705,7 +4715,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 	
 //	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
-	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+//	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
 	static map<string, string>  airplaycache = {};
 	static bool session_started = false;
@@ -4766,7 +4776,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
  				clearAPMetaData();
 				showAirplayChange();
 				
-	 		printf("META airplay diconnected\n") ;
+//	 		printf("META airplay diconnected\n") ;
  			}
 			else 	if(code ==  "mden" ) {
 				// udate the airplay info.

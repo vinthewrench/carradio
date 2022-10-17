@@ -4758,7 +4758,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				session_started = true;
 				
 			}
-			if(code ==  "pend" || code ==  "aend" ){
+			else if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
 #warning VINNIE - indicate disconnected
 				session_started = false;
@@ -4766,7 +4766,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
  				clearAPMetaData();
 				showAirplayChange();
 				
-	//			printf("META airplay diconnected\n") ;
+	 		printf("META airplay diconnected\n") ;
  			}
 			else 	if(code ==  "mden" ) {
 				// udate the airplay info.

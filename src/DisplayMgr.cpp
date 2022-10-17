@@ -2225,12 +2225,11 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.write( (timeinfo.tm_hour > 12)?" PM":" AM");
 	}
 		
-	drawAirplayLogo(0, centerY+9, _airplayStatus ? "":" :CONNECTED");
+	if(_airplayStatus)
+		drawAirplayLogo(0, centerY+9);
 
 	drawTemperature();
  	drawEngineCheck();
-	 
-	
 }
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){

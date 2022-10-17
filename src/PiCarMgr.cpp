@@ -15,6 +15,10 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <regex>
 
 #include <arpa/inet.h>
@@ -25,6 +29,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+ 
 #if defined(__APPLE__)
 #else
 #include <linux/reboot.h>
@@ -89,6 +94,43 @@ static void sigHandler (int signum) {
 	picanMgr->stop();
 	exit(0);
 }
+
+
+static int getPidByName(const char *name)
+{
+	char exe_file[] = "/proc/1000000000/exe";
+	char exe_path[256];
+	if(NULL == name)
+		return -1;
+	DIR* dir = opendir("/proc");
+	if(NULL == dir)
+		return -1;
+	struct dirent* de = 0;
+	while((de = readdir(dir)) != 0)
+	{
+		if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+			continue;
+		int pid = -1;
+		int res = sscanf(de->d_name, "%d", &pid);
+		if(res != 1)
+			continue;
+		snprintf(exe_file, sizeof(exe_file), "/proc/%d/exe", pid);
+		ssize_t n = readlink(exe_file, exe_path, sizeof(exe_path));
+		if(n == -1)
+			continue;
+		exe_path[n] = '\0';
+		// puts(exe_path);
+		if(strstr(exe_path, name) != 0)
+		{
+			closedir(dir);
+			return pid;
+		}
+	}
+	closedir(dir);
+	return -1;
+}
+
+
 
 
 PiCarMgr * PiCarMgr::shared() {
@@ -2815,6 +2857,12 @@ bool  PiCarMgr::hasWifi(stringvector *ifnames){
  
 	return has_wifi;
 }
+
+bool PiCarMgr::isAirPlayRunning(){
+	bool isRunning = (getPidByName("shairport-sync") > 0);
+	return isRunning;
+}
+
 
 // MARK: - realtime clock sync
 

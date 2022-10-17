@@ -113,6 +113,8 @@ class PiCarMgr {
 	void saveRadioSettings();
 	void restoreRadioSettings();
  
+	bool isAirPlayRunning();
+	
 	// MARK: - stations File
 	
 	typedef struct {

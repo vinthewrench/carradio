@@ -44,8 +44,7 @@ int main(int argc, const char * argv[]) {
 	else if(childpid == 0)
 	{
 		// launch shairport-sync
-		
-		char *binaryPath = (char*) "/usr/local/bin/shairport-sync";
+ 		char *binaryPath = (char*) "/usr/local/bin/shairport-sync";
 		char *args[] = {binaryPath, (char*)"--output=pipe", (char*)"-M", NULL};
 		
 		execv(binaryPath, args);

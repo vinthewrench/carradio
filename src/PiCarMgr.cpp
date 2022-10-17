@@ -1278,6 +1278,8 @@ void PiCarMgr::PiCarLoop(){
 						// turn it off forces save of stations.
 						saveRadioSettings();
 						_db.savePropertiesToFile();
+						
+						_display.enableAutoPlay(true);
 					}
 					else {
 						RadioMgr::radio_mode_t mode ;

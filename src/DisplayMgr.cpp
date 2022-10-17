@@ -2235,7 +2235,6 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 			static_cast<uint8_t> (0+100),static_cast<uint8_t> (centerY+19)};
 		
 		_vfd.writePacket(buff2, sizeof(buff2));
-
 	}
 
 	drawTemperature();
@@ -4711,6 +4710,18 @@ void  DisplayMgr::clearAPMetaData() {
 
 };
 
+void DisplayMgr::airplayStarted(){
+	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	
+	if(radio->isOn() && _shouldAutoPlay){
+		if(radio->radioMode() != RadioMgr::AIRPLAY){
+			radio->setFrequencyandMode(RadioMgr::AIRPLAY, 1);
+		}
+		
+		_shouldAutoPlay = false;
+	}
+}
+
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
 //	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
@@ -4768,6 +4779,10 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				session_started = true;
 				
 			}
+			else	if( code == "pbeg"){
+				// play stream begin.
+				airplayStarted();
+ 			}
 			else if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
 #warning VINNIE - indicate disconnected
@@ -4811,8 +4826,8 @@ static filter_table_t filter_table[] = {
 	{'ssnc', 'mden'}, //  Metadata stream processing end
 	{'ssnc', 'mdst'}, //  Metadata stream processing start
 	
-	{'ssnc', 'aend'},	// airplay session begin
-	{'ssnc', 'abeg'},	// airplay session end
+	{'ssnc', 'aend'},	// airplay session end
+	{'ssnc', 'abeg'},	// airplay session begin
 	
 	{'ssnc', 'pbeg'},	// play stream begin.
 	{'ssnc', 'pend'}, // play stream end.

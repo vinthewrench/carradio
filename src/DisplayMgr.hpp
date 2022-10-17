@@ -166,8 +166,8 @@ public:
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 	void showAirplayChange();
-
-
+	void enableAutoPlay(bool val) { _shouldAutoPlay	= val;};
+ 
 	void showCANbus(uint8_t page = 0);
 	 
 	void showDevStatus();
@@ -369,11 +369,13 @@ private:
  
 	void processMetaDataString(string);
 	void processAirplayMetaData(string type, string code, vector<uint8_t> payload);
+	void airplayStarted();
 
 	pthread_mutex_t 		_apmetadata_mutex = PTHREAD_MUTEX_INITIALIZER;
 	map<string, string> 	_airplayMetaData = {};
 	uint8_t	  				_airplayStatus;
 	struct timespec		_lastAirplayStatusTime;
+	bool						_shouldAutoPlay = false;
 
 	
 	// MARK: -

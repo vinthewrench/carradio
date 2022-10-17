@@ -2195,7 +2195,8 @@ void DisplayMgr::drawDeviceStatus(){
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
-	
+  	int centerY = _vfd.height() /2;
+
 	time_t rawtime;
 	struct tm timeinfo = {0};
 
@@ -2224,6 +2225,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.write( (timeinfo.tm_hour > 12)?" PM":" AM");
 	}
 		
+	drawAirplayLogo(0, centerY+9, _airplayStatus ? "":" :CONNECTED");
+
 	drawTemperature();
  	drawEngineCheck();
 	 
@@ -2232,7 +2235,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
 
-	const uint8_t airplayLogo[] = {0x1A,0x80, 0x18,0x09, 0x1c,0x62,0x8d,0x93,0xa7,0x93,0x8d,0x22,0x1c};
+	const uint8_t airplayLogo[] = {0x1A,0x80, 0x18,0x09, 0x1c,0x62,0x8d,0x93,0xa7,0x93,0x8d,0x62,0x1c};
 
 	_vfd.setCursor( x, y)	;
 	_vfd.writePacket(airplayLogo, sizeof(airplayLogo));
@@ -2240,8 +2243,7 @@ void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.setCursor(x+11, y+7);
  	_vfd.printPacket("AIRPLAY %-15s",  text.c_str());
- 
-}
+ }
 
 
 void  DisplayMgr::drawTemperature(){
@@ -4783,202 +4785,6 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 	}
 }
 
-#if 0
-void DisplayMgr::processMetaDataString(string str){
-	
-	try{
-		
-		if(str[0] == '$'){
-			
-			stringvector v = split<string>(str.substr(1) ,  ",");
-			
-			string checkStr;
-			size_t checksum_loc = Utils::find_nth(str, 0, ",",  2);
-			vector<uint8_t> payload = {};
-			
-			if(v.size() > 2) {
-				
-				if(v.size() > 3) {
-					checkStr = v[3];
-					payload = decode(v[2]);
-				}
-				else  {
-					checkStr = v[2];
-				}
-				
-				uint16_t checksum_rcv = 0;
-				if( std::sscanf(checkStr.c_str(), "%hu", &checksum_rcv) == 1){
-					
-					if(checksum_loc != string::npos){
-						uint8_t 	CK_A = 0;
-						uint8_t 	CK_B = 0;
-						
-						string testStr = str.substr(0, checksum_loc);
-						
-						for(char c : testStr){
-							CK_A += c;
-							CK_B += CK_A;
-						}
-						uint16_t checksum_calc = (CK_A << 8 ) | CK_B;
-						
-						if(checksum_rcv != checksum_calc){
-							throw std::runtime_error("Checksum Error");
-						}
-					}
-				}
-				processAirplayMetaData(v[0],v[1],payload);
-			}
-		}
-	}
-	catch (std::runtime_error& e)
-	{
-		printf("processMetaDataString EXCEPTION: %s \n",e.what() );
-	}
-	
-}
- 
-
-
-void DisplayMgr::MetaDataReaderLoop(){
-	 
-	PRINT_CLASS_TID;
-
-	dbuf   buff;
-
-	typedef enum  {
-		STATE_INIT = 0,
-		STATE_READING,
-		STATE_CHECKSUM,
- 	 	STATE_ERROR
-	}reader_state_t;
- 
-	reader_state_t reader_state = STATE_INIT;
- 
- 	fd_set  fds;
-
-	FD_ZERO(&fds);
- 	FD_SET(0,&fds);
-	 
-	int reader_socket  = -1;
-	 
-	while(_isRunning){
-		
-		// if not setup // check back later
-		if(!_isSetup || !_vfd._isSetup){
-			sleep(2);
-			continue;
-		}
-		
-		if(reader_socket == -1 &&  _vfd._fd != -1 ){
-			reader_socket = _vfd._fd;
-			FD_SET(reader_socket,&fds); // s is a socket descriptor
-			clearAPMetaData();
-  		}
- 
-		// we use a timeout so we can end this thread when _isSetup is false
-		struct timeval selTimeout;
-		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 2000000;            /* 2 secs */
- 
-		/* back up master */
-		fd_set dup = fds;
- 
-		int numReady = select(reader_socket +1, &dup, NULL, NULL, &selTimeout);
-		if( numReady == -1 ) {
-			perror("select");
-		}
-		
-		if(numReady == 0){
-			
-		}
-		
-		if( FD_ISSET(reader_socket, &dup)) {
-			
-			u_int8_t c;
-			size_t nbytes =  (size_t)::read( reader_socket, &c, 1 );
-
- 			if(nbytes == 1){
-				
-//				printf("%02x |%c|\n",c , c>31?c: '.');
-				switch (reader_state) {
-						
-					case  STATE_INIT:
-						if(c == '$'){
-							buff.reset();
-							buff.append_char(c);
- 				 			reader_state = STATE_READING;
-	 					}
-	 					break;
-						
-					case  STATE_READING:
-						if(c == '\r') break;  // filter out
- 
-						if(c == '\n'){
- 							processMetaDataString(string((char*)buff.data(), buff.size()));
-							buff.reset();
-							reader_state = STATE_INIT;
- 						}
- 						else {
-							buff.append_char(c);
-						}
-						break;
-						
-					default:
-						reader_state = STATE_INIT;
-						break;
-				}
-				
-			}
-			else if( nbytes == 0) {
-				continue;
-			}
-			else if( nbytes == -1) {
-				int lastError = errno;
-				
-				// no data try later
-				if(lastError == EAGAIN)
-					continue;
-				
-				if(lastError == ENXIO){  // device disconnected..
-					reader_socket = -1;
- 				}
-					else {
-					perror("read");
-				}
-			}
-		}
-	
-		
-		// airplay data expiration
-		
-		{
-			struct timespec now, diff;
-			
-			clock_gettime(CLOCK_MONOTONIC, &now);
-			diff = timespec_sub(now, _lastAirplayStatusTime);
-			int64_t diff_secs = timespec_to_ms(diff) /1000;
-			
-		//	if the _airplayStatus hasnt been updated for a while and we are not playing music
-			if(_airplayStatus != 1 && diff_secs > 5){
-				
-				bool didUpdate = false;
-				// if there is metadata - Time it out
-				pthread_mutex_lock (&_apmetadata_mutex);
-				if(_airplayMetaData.size() > 0){
-					_airplayMetaData.clear();
-					didUpdate = true;
-				}
-				pthread_mutex_unlock(&_apmetadata_mutex);
-				
-				if(didUpdate)
-					showAirplayChange();
-			}
-		}
- 	}
-}
-#else
-
-
 typedef struct {
 	uint32_t type;
 	uint32_t code;
@@ -5103,8 +4909,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 		ifs.close();
 	}
 };
-
-#endif
+ 
 
  void* DisplayMgr::MetaDataReaderThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;

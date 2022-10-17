@@ -2121,26 +2121,26 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 	 
 		if(radio->isConnected()){
-			_vfd.setCursor( 10, 50);
+			_vfd.setCursor( 5, 50);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket( "RADIO");
   		}
  
 		if(mgr->isAirPlayRunning()){
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 20, 50);
+			_vfd.setCursor( 50, 50);
 			_vfd.printPacket( "AIRPLAY");
 		}
 
 		if(gps->isConnected()){
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 60, 50);
+			_vfd.setCursor( 80, 50);
 			_vfd.printPacket( "GPS");
 		}
 		
 		if(can->isConnected()){
 			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.setCursor( 80, 50);
+			_vfd.setCursor( 100, 50);
 			_vfd.printPacket( "CANBUS");
 		}
 		

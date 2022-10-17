@@ -2137,7 +2137,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 			str += " CANBUS";
  		}
 		
-		_vfd.setCursor( 10, 50);
+		_vfd.setCursor( 15, 50);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-20s", str.c_str());
 	}

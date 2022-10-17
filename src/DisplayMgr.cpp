@@ -1888,9 +1888,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  string titleStr = "";
 			  string artistStr = "";
   
+	 			  uint8_t lastAirplayStatus = 0;
+			  
 			  // get artist and title
 			  pthread_mutex_lock (&_apmetadata_mutex);
   
+			  lastAirplayStatus = _airplayStatus;
+		
 			  if(_airplayMetaData.count("asar")){
 				  artistStr = Utils::trim(_airplayMetaData["asar"]);
 				  }
@@ -1899,30 +1903,46 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 				  }
 			  pthread_mutex_unlock(&_apmetadata_mutex);
 
-				// correct UTF8 single comma quotation mark apostrophe
-			  titleStr = Utils:: removeDiacritics(titleStr);
-			  // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
-			  titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
-	 
-			  // center it
-			  titleStr = truncate(titleStr, maxLen);
-			  string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
-			  titleStr = portionOfSpaces + titleStr;
-			  
-			  artistStr = Utils:: removeDiacritics(artistStr);
+			  if(lastAirplayStatus == 0){
+				  
+				  uint8_t buff2[] = {
+					  VFD_CLEAR_AREA,
+					  static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY-16),
+					  static_cast<uint8_t> (128),static_cast<uint8_t> (centerY+4)};
+				  
+				  _vfd.writePacket(buff2, sizeof(buff2));
+				  
+				  _vfd.setCursor(10,centerY-7);
+				  _vfd.setFont(VFD::FONT_MINI);
+				  _vfd.printPacket("- NOT PLAYING -" );
+ 			  }
+			  else {
+				  // correct UTF8 single comma quotation mark apostrophe
+				 titleStr = Utils:: removeDiacritics(titleStr);
+				 // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
+				 titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
+		
+				 // center it
+				 titleStr = truncate(titleStr, maxLen);
+				 string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+				 titleStr = portionOfSpaces + titleStr;
+				 
+				 artistStr = Utils:: removeDiacritics(artistStr);
 
-			  artistStr = truncate(artistStr, maxLen);
-			  string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
-			  artistStr = portionOfSpaces1 + artistStr;
+				 artistStr = truncate(artistStr, maxLen);
+				 string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
+				 artistStr = portionOfSpaces1 + artistStr;
 
-			  _vfd.setFont(VFD::FONT_5x7);
-		  
-			  _vfd.setCursor(0,centerY-7);
-			  _vfd.printPacket("%-21s",titleStr.c_str() );
+				 _vfd.setFont(VFD::FONT_5x7);
+			 
+				 _vfd.setCursor(0,centerY-7);
+				 _vfd.printPacket("%-21s",titleStr.c_str() );
 
-			  _vfd.setCursor(0,centerY+3);
-			  _vfd.printPacket("%-21s",artistStr.c_str() );
+				 _vfd.setCursor(0,centerY+3);
+				 _vfd.printPacket("%-21s",artistStr.c_str() );
 
+			  }
+		
 			  drawAirplayLogo(0, centerY+9, radio->hasAirplay()?"":" :OFF");
 		  }
 		  else {
@@ -4784,7 +4804,6 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			}
 			else if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
-#warning VINNIE - indicate disconnected
 				session_started = false;
 				_airplayStatus = 0;
  				clearAPMetaData();

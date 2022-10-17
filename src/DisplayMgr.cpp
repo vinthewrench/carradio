@@ -1909,13 +1909,13 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 					  VFD_CLEAR_AREA,
 					  static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY-16),
 					  static_cast<uint8_t> (128),static_cast<uint8_t> (centerY+4)};
+					_vfd.writePacket(buff2, sizeof(buff2));
 				  
-				  _vfd.writePacket(buff2, sizeof(buff2));
-				  
-				  _vfd.setCursor(10,centerY-7);
+				  string str = "- NOT PLAYING -";
+				  _vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY-7);
 				  _vfd.setFont(VFD::FONT_MINI);
-				  _vfd.printPacket("- NOT PLAYING -" );
- 			  }
+				  _vfd.printPacket(str.c_str() );
+			  }
 			  else {
 				  // correct UTF8 single comma quotation mark apostrophe
 				 titleStr = Utils:: removeDiacritics(titleStr);

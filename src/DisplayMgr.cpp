@@ -4781,7 +4781,7 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 				session_started = true;
 				
 			}
-			else	if( code == "pbeg"){
+			else	if( code == "abeg"){
 				// play stream begin.
 				airplayStarted();
  			}

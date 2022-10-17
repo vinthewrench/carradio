@@ -4779,12 +4779,9 @@ void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t
 			if(code ==  "mdst" ) {
 				airplaycache.clear();
 				session_started = true;
-				
-			}
-			else	if( code == "abeg"){
 				// play stream begin.
 				airplayStarted();
- 			}
+  			}
 			else if(code ==  "pend" || code ==  "aend" ){
 				// airplay disconnected
 #warning VINNIE - indicate disconnected

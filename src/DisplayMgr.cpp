@@ -4713,6 +4713,8 @@ void  DisplayMgr::clearAPMetaData() {
 void DisplayMgr::airplayStarted(){
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
+	printf("airplayStarted %d %d %d \n", radio->isOn(),  _shouldAutoPlay, radio->radioMode());
+	
 	if(radio->isOn() && _shouldAutoPlay){
 		if(radio->radioMode() != RadioMgr::AIRPLAY){
 			radio->setFrequencyandMode(RadioMgr::AIRPLAY, 1);

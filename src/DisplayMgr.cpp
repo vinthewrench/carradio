@@ -2109,21 +2109,16 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
 		string str = "PiCar";
-		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
+		auto start  =  centerX  -( (str.size() /2)  * 11) - 20 ;
 		_vfd.setFont(VFD::FONT_10x14);
 		_vfd.setCursor( start ,centerY+3);
 		_vfd.write(str);
 	 
 		string verstr = string(PiCarMgr::PiCarMgr_Version);
- 		start  =  centerX  - ( ( verstr.size() /2) * 6) ;
-		_vfd.setCursor( start , centerY + 13);
-		_vfd.setFont(VFD::FONT_5x7);
-//
-//		uint8_t buff2[] = {0x1b, 0x98, 0x00 };
-//		_vfd.writePacket(buff2, sizeof(buff2), 0);
-	
+		std::transform(verstr.begin(), verstr.end(),verstr.begin(), ::toupper);
+		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%s", verstr.c_str());
-
+ 
 		LEDeventStartup();
 	}
 	

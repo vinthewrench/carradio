@@ -2259,7 +2259,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	drawTemperature();
  	drawEngineCheck();
 	
-	_vfd.drawScrollBar(10, 50,20);
+	_vfd.drawScrollBar(10, 20,30);
 }
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){

@@ -314,7 +314,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
-			success = printPacket("%*s",linewidth, lines[i].c_str());
+			success = printPacket("%-*s",linewidth, lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}

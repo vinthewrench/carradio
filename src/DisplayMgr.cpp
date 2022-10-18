@@ -1172,13 +1172,13 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
-			string moreIndicator =  moreNone;
+	//		string moreIndicator =  moreNone;
 			
-			auto lastLine = _menuCursor + maxLines;
+//			auto lastLine = _menuCursor + maxLines;
 			
-			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
-			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
-			TRY(_vfd.setCursor(0,cursorV));
+//			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
+//			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
+//			TRY(_vfd.setCursor(0,cursorV));
 			//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
 			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );
 			TRY(_vfd.write(buffer ));
@@ -1189,13 +1189,9 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			
 			uint8_t scrolltop = startV-lineHeight;
 			float bar_height =  (float)maxLines / (float)_menuItems.size() ;
+			float offset =  (float)_currentMenuItem / (float)_menuItems.size() ;
+			_vfd.drawScrollBar(scrolltop, bar_height ,offset);
 	 
-			_vfd.drawScrollBar(scrolltop, bar_height ,0);
-			sleep(1);
-			_vfd.drawScrollBar(scrolltop, bar_height ,.5);
-			sleep(1);
-			_vfd.drawScrollBar(scrolltop, bar_height ,1);
-
 		}
  	}
 	

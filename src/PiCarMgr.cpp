@@ -46,7 +46,7 @@ using namespace timestamp;
 using namespace nlohmann;
 using namespace Utils;
 
-const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 13";
+const char* 	PiCarMgr::PiCarMgr_Version = "1.0.0 dev 14";
 
 
 const char* path_display  = "/dev/ttyUSB0";

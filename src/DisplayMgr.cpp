@@ -2717,12 +2717,16 @@ void DisplayMgr::drawTimeBox(){
 	
 }
 
+// MARK: -  Scanner Screen
+
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 	uint8_t col = 0;
 	uint8_t row = 7;
 	string str;
 	static uint8_t lastrow = 0;
+	
+	
 	
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
 	RadioMgr*			radio 	= mgr->radio();

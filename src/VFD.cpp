@@ -168,7 +168,7 @@ void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset
 	uint8_t  rightbox = this->width() -1;
 	uint8_t  leftbox = rightbox - 3;
 	uint8_t  bottombox = 63;
-	uint8_t  scroll_height = bottombox - topbox -1;
+	uint8_t  scroll_height = bottombox - topbox -2;
 	uint8_t  bar_size =  scroll_height * bar_height;
 	uint8_t  offset =  (scroll_height * starting_offset) + topbox +1;
 	

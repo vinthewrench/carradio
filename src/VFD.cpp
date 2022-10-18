@@ -290,7 +290,8 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 bool VFD:: printLines(uint8_t y, uint8_t step,
 							 stringvector lines,
 							 uint8_t firstLine,
-							 uint8_t maxLines){
+							 uint8_t maxLines,
+							 uint8_t linewidth){
 	bool success = false;
 	
 	auto lineCount = lines.size();
@@ -313,7 +314,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
-			success = printPacket("%-40s", lines[i].c_str());
+			success = printPacket("%-.s",linewidth, lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}

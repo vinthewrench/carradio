@@ -56,7 +56,8 @@ public:
 
 	bool printPacket(const char *fmt, ...);
 	
-	bool printLines(uint8_t y, uint8_t step, stringvector lines,  uint8_t firstLine,  uint8_t maxLines);
+	bool printLines(uint8_t y, uint8_t step, stringvector lines,  uint8_t firstLine,
+						 uint8_t maxLines, uint8_t linewidth = 40);
 		
 	bool setBrightness(uint8_t);  //  0 == off - 7 == max
 	bool setPowerOn(bool setOn);

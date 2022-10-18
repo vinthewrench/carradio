@@ -1179,7 +1179,8 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
 			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
 			TRY(_vfd.setCursor(0,cursorV));
-			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
+//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
+			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}

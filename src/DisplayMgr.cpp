@@ -1187,7 +1187,8 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		
 		{
 			uint8_t scrolltop = startV-lineHeight;
-			_vfd.drawScrollBar(scrolltop, 20,30);
+			uint8_t bar_height = (64 - scrolltop) * .5;
+			_vfd.drawScrollBar(scrolltop, bar_height,30);
 		}
  	}
 	

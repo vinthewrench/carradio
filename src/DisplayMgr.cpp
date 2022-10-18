@@ -2116,7 +2116,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	 
 		string verstr = string(PiCarMgr::PiCarMgr_Version);
 		std::transform(verstr.begin(), verstr.end(),verstr.begin(), ::toupper);
-		start  =  centerX  -( ( verstr.size() /2)  * 5) - 7 ;
+		start  =  centerX  - ( ( verstr.size() /2)  * 5) - 7 ;
 		_vfd.setCursor( start , centerY + 15);
  		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%s", verstr.c_str());
@@ -2151,6 +2151,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor( 15, 55);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-20s", str.c_str());
+		
+		sleep(1);
 	}
 	
 	if(transition == TRANS_LEAVING){

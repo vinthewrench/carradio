@@ -2120,7 +2120,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor( start , centerY + 13);
  	//	_vfd.setFont(VFD::FONT_MINI);
 		
-		uint8_t buff2[] = {0x19, 0x98, 0x00 };
+		uint8_t buff2[] = {0x1b, 0x98, 0x00 };
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 	
 		_vfd.printPacket("%s", verstr.c_str());

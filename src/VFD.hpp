@@ -63,7 +63,7 @@ public:
 	
 	bool clearScreen();
 	
-	void drawScrollBar(uint8_t top, uint8_t bar_height, uint8_t offset);
+	void drawScrollBar(uint8_t top, float bar_height,  uint8_t offset);
  
 	bool setCursor(uint8_t x, uint8_t y);
 	bool setFont(font_t font);

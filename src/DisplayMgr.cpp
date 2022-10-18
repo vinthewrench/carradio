@@ -2115,7 +2115,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.write(str);
 	 
 		string verstr = string(PiCarMgr::PiCarMgr_Version);
- 		start  =  centerX  - ( ( verstr.size() /2)  * 7) -7 ;
+ 		start  =  centerX  - ( ( verstr.size() /2) * 6) ;
 		_vfd.setCursor( start , centerY + 13);
 		_vfd.setFont(VFD::FONT_5x7);
 //

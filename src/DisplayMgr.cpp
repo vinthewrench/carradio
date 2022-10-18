@@ -2096,7 +2096,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 		
 		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
 		string str = "PiCar";

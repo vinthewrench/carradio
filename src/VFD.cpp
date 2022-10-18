@@ -165,8 +165,8 @@ bool VFD::clearScreen(){
 
 void VFD::drawScrollBar(uint8_t topbox, uint8_t bar_height, uint8_t offset){
  
-	uint8_t  rightbox = this->width();
-	uint8_t  leftbox = rightbox - 8;
+	uint8_t  rightbox = this->width() -1;
+	uint8_t  leftbox = rightbox - 6;
 	uint8_t  bottombox = 64;
   
 	uint8_t buff2[] = {

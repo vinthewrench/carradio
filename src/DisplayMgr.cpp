@@ -4549,7 +4549,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		}
 		
 		_vfd.setFont(VFD::FONT_MINI) ;
-		_vfd.printLines(20, 9, lines, firstLine, displayedLines,28);
+		_vfd.printLines(20, 9, lines, firstLine, displayedLines,36);
 		
 		if(lines.size() > displayedLines){
 			

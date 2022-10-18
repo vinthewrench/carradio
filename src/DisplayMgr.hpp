@@ -284,6 +284,7 @@ private:
 	void resetMenu();
 	bool menuSelectAction(knob_action_t action);
 	void drawMenuScreen(modeTransition_t transition);
+
 	vector<menuItem_t>	_menuItems;
 	int						_currentMenuItem;
 	int						_menuCursor;			// item at top of screen

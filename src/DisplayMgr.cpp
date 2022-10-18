@@ -48,11 +48,6 @@ constexpr uint8_t antiBounceSlow = 32;
 
 constexpr uint8_t doubleClickTime = 50;   // 50 * 10 ms
 
-static constexpr uint8_t VFD_OUTLINE = 0x14;
-static constexpr uint8_t VFD_CLEAR_AREA = 0x12;
-static constexpr uint8_t VFD_SET_AREA = 0x11;
-static constexpr uint8_t VFD_SET_CURSOR = 0x10;
-static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
 static  const string moreUp = "\x1b\x98\x04\xfb\x1d";
 static  const string moreDown = "\x1b\x98\x04\xf9\x1d";
@@ -1906,7 +1901,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 			  if(lastAirplayStatus == 0){
 				  
 				  uint8_t buff2[] = {
-					  VFD_CLEAR_AREA,
+					  VFD::VFD_CLEAR_AREA,
 					  static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY-16),
 					  static_cast<uint8_t> (128),static_cast<uint8_t> (centerY+4)};
 					_vfd.writePacket(buff2, sizeof(buff2));
@@ -2254,7 +2249,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	else
 	{
 		uint8_t buff2[] = {
-			VFD_CLEAR_AREA,
+			VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY+9),
 			static_cast<uint8_t> (0+100),static_cast<uint8_t> (centerY+19)};
 		
@@ -2263,6 +2258,8 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 
 	drawTemperature();
  	drawEngineCheck();
+	
+	_vfd.drawScrollBar(20, 100,20);
 }
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
@@ -2985,7 +2982,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		_vfd.write(str);
 		
 		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 	}
 	
@@ -3002,7 +2999,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		if(start == 96) start = 95;
 		
 		uint8_t buff2[] = {
-			VFD_CLEAR_AREA,
+			VFD::VFD_CLEAR_AREA,
 			// static_cast<uint8_t>(itemX+1),  static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(start),  static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t> (rightbox-1),static_cast<uint8_t> (bottombox-1)};
@@ -3011,7 +3008,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 	}
 	
 	// fill  area box
-	uint8_t buff3[] = {VFD_SET_AREA,
+	uint8_t buff3[] = {VFD::VFD_SET_AREA,
 		static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 		static_cast<uint8_t>(itemX),static_cast<uint8_t>(bottombox-1) };
 	_vfd.writePacket(buff3, sizeof(buff3), 1000);
@@ -3092,7 +3089,7 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		_vfd.write(str);
 		
 		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
 		_vfd.setCursor(leftbox - 10, bottombox -1 );
@@ -3112,14 +3109,14 @@ void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
 		// clear inside of box
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
+		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			VFD::VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
 			// draw marker
-			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD_SET_WRITEMODE, 0x00,};	// Normal
+			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 		
@@ -3191,7 +3188,7 @@ void DisplayMgr::drawFaderScreen(modeTransition_t transition){
 		_vfd.write(str);
 		
 		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
 		_vfd.setCursor(leftbox - 10, bottombox -1 );
@@ -3211,14 +3208,14 @@ void DisplayMgr::drawFaderScreen(modeTransition_t transition){
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
 		// clear inside of box
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
+		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			VFD::VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
 			// draw marker
-			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD_SET_WRITEMODE, 0x00,};	// Normal
+			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 		
@@ -3290,7 +3287,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		_vfd.clearScreen();
 			
 		//draw box outline
-		uint8_t buff1[] = {VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		}
 	
@@ -3311,14 +3308,14 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7);
 
 		// clear inside of box
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
+		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
 	//		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
 			// draw marker
-			VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0xBB,
-			VFD_SET_WRITEMODE, 0x00,};	// Normal
+			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0xBB,
+			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 		
@@ -3418,7 +3415,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 		lastHash = hash;
 		_lineOffset = 0;
 		
-		uint8_t buff2[] = {VFD_CLEAR_AREA,
+		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(0),  static_cast<uint8_t> (10),
 			static_cast<uint8_t> (width),static_cast<uint8_t> (height)};
 		_vfd.writePacket(buff2, sizeof(buff2), 1000);

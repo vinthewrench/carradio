@@ -163,6 +163,27 @@ bool VFD::clearScreen(){
 	return  writePacket(buffer, sizeof(buffer), 50);
 }
 
+void VFD::drawScrollBar(uint8_t topbox, uint8_t bar_height, uint8_t offset){
+ 
+	uint8_t  rightbox = this->width();
+	uint8_t  leftbox = rightbox - 8;
+	uint8_t  bottombox = 64;
+  
+	uint8_t buff2[] = {
+		VFD_OUTLINE,leftbox, topbox,rightbox, bottombox,
+		
+		VFD_CLEAR_AREA,
+		static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+		
+		VFD_SET_AREA,
+		static_cast<uint8_t>(leftbox+1),static_cast<uint8_t>(topbox +  offset),
+		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(topbox +  offset + bar_height)
+
+	};
+	writePacket(buff2, sizeof(buff2), 0);
+ }
+
 
 
 bool VFD::write(const char* str){

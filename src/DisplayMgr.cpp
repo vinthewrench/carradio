@@ -2111,13 +2111,13 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		string str = "PiCar";
 		auto start  =  centerX  -( (str.size() /2)  * 11) - 7 ;
 		_vfd.setFont(VFD::FONT_10x14);
-		_vfd.setCursor( start ,centerY);
+		_vfd.setCursor( start ,centerY+4);
 		_vfd.write(str);
 	 
 		string verstr = string(PiCarMgr::PiCarMgr_Version);
 		std::transform(verstr.begin(), verstr.end(),verstr.begin(), ::toupper);
-		start  =  centerX  -( ( verstr.size() /2)  * 7) - 7 ;
-		_vfd.setCursor( start , centerY + 9);
+		start  =  centerX  -( ( verstr.size() /2)  * 5) - 7 ;
+		_vfd.setCursor( start , centerY + 15);
  		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%s", verstr.c_str());
 
@@ -2148,7 +2148,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 			str += " CANBUS";
  		}
 		
-		_vfd.setCursor( 15, 50);
+		_vfd.setCursor( 15, 55);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-20s", str.c_str());
 	}

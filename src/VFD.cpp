@@ -173,9 +173,9 @@ void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset
 	uint8_t  bar_size =  ceil(scroll_height * bar_height);
 	uint8_t  offset =  ((scroll_height  - bar_size) * starting_offset) + topbox +1;
 	
-	if((bar_size + offset) >= bottombox)
-		bar_size = bottombox - offset;
-	
+//	if((bar_size + offset) >= bottombox)
+//		bar_size = bottombox - offset;
+//
 	printf("drawScrollBar(%d,%.2f,%.2f)  offset = %d bar_size:%d scroll_height = %d\n",
 			 topbox,bar_height, starting_offset, offset, bar_size, scroll_height);
 	

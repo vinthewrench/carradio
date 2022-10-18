@@ -170,6 +170,9 @@ void VFD::drawScrollBar(uint8_t topbox,  float bar_height, uint8_t offset){
 	uint8_t  bottombox = 63;
 	uint8_t  bar_size =  (bottombox - topbox -2) * bar_height;
  
+	
+	printf("drawScrollBar(%d,%f,%d)  bar_size:%d\n", topbox,bar_height,offset,bar_size);
+	
 	uint8_t buff2[] = {
 		VFD_OUTLINE,leftbox, topbox,rightbox, bottombox,
 		

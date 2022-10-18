@@ -1191,6 +1191,9 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			uint8_t scrolltop = startV-lineHeight;
 			float bar_height =  (float)maxLines / (float)_menuItems.size() ;
 			float offset =  (float)_currentMenuItem / (float)_menuItems.size() ;
+			
+			printf("maxLines = %d, items = %lu, bar_height = %0.2f\n",maxLines, _menuItems.size(), bar_height);
+
 			_vfd.drawScrollBar(scrolltop, bar_height ,offset);
 	 
 		}

@@ -186,8 +186,8 @@ void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset
 		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
 		
 		VFD_SET_AREA,
-		static_cast<uint8_t>(leftbox+1),static_cast<uint8_t>(topbox +  offset),
-		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(topbox +  offset + bar_size)
+		static_cast<uint8_t>(leftbox+1),static_cast<uint8_t>(offset),
+		static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(offset + bar_size)
 
 	};
 	writePacket(buff2, sizeof(buff2), 0);

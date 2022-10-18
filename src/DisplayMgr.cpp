@@ -1185,13 +1185,16 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			cursorV += lineHeight;
 		}
 		
-		{
+		if(_menuItems.size() >  maxLines) {
+			
 			uint8_t scrolltop = startV-lineHeight;
-			_vfd.drawScrollBar(scrolltop, .5 ,0);
+			float bar_height =  (float)_menuItems.size() / (float)maxLines;
+	 
+			_vfd.drawScrollBar(scrolltop, bar_height ,0);
 			sleep(1);
-			_vfd.drawScrollBar(scrolltop, .5 ,.5);
+			_vfd.drawScrollBar(scrolltop, bar_height ,.5);
 			sleep(1);
-			_vfd.drawScrollBar(scrolltop, .5 ,1);
+			_vfd.drawScrollBar(scrolltop, bar_height ,1);
 
 		}
  	}

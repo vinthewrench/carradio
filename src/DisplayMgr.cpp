@@ -1183,6 +1183,9 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}
+		
+		_vfd.drawScrollBar(startV, 20,30);
+
 	}
 	
 }
@@ -2258,8 +2261,6 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 
 	drawTemperature();
  	drawEngineCheck();
-	
-	_vfd.drawScrollBar(10, 20,30);
 }
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){

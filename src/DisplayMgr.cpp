@@ -2151,8 +2151,8 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor( 15, 55);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-20s", str.c_str());
-		
-		sleep(1);
+		sleep(2);
+
 	}
 	
 	if(transition == TRANS_LEAVING){
@@ -2163,6 +2163,7 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 	//
 	//	}
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
+	
 	
 #endif
 }

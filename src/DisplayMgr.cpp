@@ -1332,7 +1332,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 					shouldRedraw = false;
 					shouldUpdate = true;
 					
-					if(diff.tv_sec >=  3) {
+					if(diff.tv_sec >=  5) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
 						shouldUpdate = true;
@@ -2118,10 +2118,10 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		std::transform(verstr.begin(), verstr.end(),verstr.begin(), ::toupper);
 		start  =  centerX  - ( ( verstr.size() /2)  * 5) ;
 		_vfd.setCursor( start , centerY + 13);
- 	//	_vfd.setFont(VFD::FONT_MINI);
-		
-		uint8_t buff2[] = {0x1b, 0x98, 0x00 };
-		_vfd.writePacket(buff2, sizeof(buff2), 0);
+		_vfd.setFont(VFD::FONT_5x7);
+//
+//		uint8_t buff2[] = {0x1b, 0x98, 0x00 };
+//		_vfd.writePacket(buff2, sizeof(buff2), 0);
 	
 		_vfd.printPacket("%s", verstr.c_str());
 
@@ -2155,8 +2155,6 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setCursor( 15, 55);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%-20s", str.c_str());
-		sleep(2);
-
 	}
 	
 	if(transition == TRANS_LEAVING){

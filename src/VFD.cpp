@@ -167,7 +167,7 @@ bool VFD::clearScreen(){
 void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset){
  
 	uint8_t  rightbox = this->width() -1;
-	uint8_t  leftbox = rightbox - 3;
+	uint8_t  leftbox = rightbox - 2;
 	uint8_t  bottombox = 63;
 	uint8_t  scroll_height = bottombox - topbox -2;
 	uint8_t  bar_size =  ceil(scroll_height * bar_height);
@@ -176,8 +176,8 @@ void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset
 //	if((bar_size + offset) >= bottombox)
 //		bar_size = bottombox - offset;
 //
-	printf("drawScrollBar(%d,%.2f,%.2f)  offset = %d bar_size:%d scroll_height = %d\n",
-			 topbox,bar_height, starting_offset, offset, bar_size, scroll_height);
+//	printf("drawScrollBar(%d,%.2f,%.2f)  offset = %d bar_size:%d scroll_height = %d\n",
+//			 topbox,bar_height, starting_offset, offset, bar_size, scroll_height);
 	
 	uint8_t buff2[] = {
 		VFD_OUTLINE,leftbox, topbox,rightbox, bottombox,

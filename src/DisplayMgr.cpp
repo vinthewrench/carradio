@@ -4538,7 +4538,6 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 					channelStr += + " " + title;
 				}
  
- 
 				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  channelStr;
 			}
@@ -4549,7 +4548,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 			lines.push_back(line);
 		}
 		
-		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines,38);
 		
 		if(lines.size() > displayedLines){

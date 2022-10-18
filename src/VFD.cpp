@@ -8,9 +8,9 @@
 #include "VFD.hpp"
 #include <fcntl.h>
 #include <errno.h> // Error integer and strerror() function
-#include "ErrorMgr.hpp"
 #include <math.h>
-
+#include "ErrorMgr.hpp"
+#include "Utils.hpp"
 
 VFD::VFD(){
 	_isSetup = false;
@@ -314,7 +314,11 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
-			success = printPacket("%-*s",linewidth, lines[i].c_str());
+			
+			string str = lines[i].c_str();
+			str = truncate(str,  linewidth);
+
+			success = printPacket("%-*s",linewidth, str.c_str());
 			if(!success) break;
 			y += step;
 		}

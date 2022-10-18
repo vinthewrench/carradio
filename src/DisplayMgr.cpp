@@ -1187,13 +1187,12 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		}
 		
 		if(_menuItems.size() >  maxLines) {
-			
 			uint8_t scrolltop = startV-lineHeight;
 			float bar_height =  (float)(maxLines +1)/ (float)_menuItems.size() ;
 			float offset =  (float)_currentMenuItem / ((float)_menuItems.size() -1) ;
-	 		_vfd.drawScrollBar(scrolltop, bar_height ,offset);
-			}
- 	}
+			_vfd.drawScrollBar(scrolltop, bar_height ,offset);
+		}
+	}
 	
 }
 
@@ -4070,6 +4069,14 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines);
+		
+		if(lines.size() > displayedLines){
+			
+			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
+			float offset =  (float)_lineOffset / ((float)lines.size() -1) ;
+			
+			_vfd.drawScrollBar(20, bar_height ,offset);
+		}
 	}
 	
 	drawTimeBox();

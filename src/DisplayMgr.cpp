@@ -1332,7 +1332,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 					shouldRedraw = false;
 					shouldUpdate = true;
 					
-					if(diff.tv_sec >=  5) {
+					if(diff.tv_sec >=  3) {
 						pushMode(MODE_TIME);
 						shouldRedraw = true;
 						shouldUpdate = true;

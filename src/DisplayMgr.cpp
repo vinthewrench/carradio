@@ -4075,7 +4075,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
 			float offset =  (float)_lineOffset / ((float)lines.size() -1) ;
 			
-			_vfd.drawScrollBar(20, bar_height ,offset);
+			_vfd.drawScrollBar(11, bar_height ,offset);
 		}
 	}
 	

@@ -1168,26 +1168,28 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		}
 		
 		const string moreNone = " ";
-
+		
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
 			string moreIndicator =  moreNone;
-		 
+			
 			auto lastLine = _menuCursor + maxLines;
 			
 			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
 			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
 			TRY(_vfd.setCursor(0,cursorV));
-//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
+			//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
 			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );
 			TRY(_vfd.write(buffer ));
 			cursorV += lineHeight;
 		}
 		
-		_vfd.drawScrollBar(startV, 20,30);
-
-	}
+		{
+			uint8_t scrolltop = startV-lineHeight;
+			_vfd.drawScrollBar(scrolltop, 20,30);
+		}
+ 	}
 	
 }
 

@@ -1188,7 +1188,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		if(_menuItems.size() >  maxLines) {
 			
 			uint8_t scrolltop = startV-lineHeight;
-			float bar_height =  (float)_menuItems.size() / (float)maxLines;
+			float bar_height =  (float)maxLines / (float)_menuItems.size() ;
 	 
 			_vfd.drawScrollBar(scrolltop, bar_height ,0);
 			sleep(1);

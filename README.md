@@ -330,7 +330,7 @@ In addition I customize shairpoint-sync for my device
 
 `sudo nano  /usr/local/etc/shairport-sync.conf`
 
-```json
+```
 general =
 {
 name = "Vinnie's Jeep";
@@ -342,7 +342,6 @@ metadata =
 {
 include_cover_art = "no"; 
 }
-
 ```
 
 ##### The CarRadio App

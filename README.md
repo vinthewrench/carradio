@@ -1,4 +1,4 @@
-#PiCar - Raspberry Pi Car Radio Project  
+# PiCar - Raspberry Pi Car Radio Project  
 
 [PiCar](https://github.com/vinthewrench/carradio) is my attempt at building a Raspberry Pi based replacement radio for my Jeep JK.  I have (probably still are) written about this project extensively on my blog at [https://vinthewrench.substack.com ](https://vinthewrench.substack.com).
 
@@ -14,7 +14,7 @@
 * Power management (don’t drain my battery)
 * A clock that I don’t have to keep setting.
 
-#Articles
+# Articles
 Most of the story is documented under the PiCar - Raspberry Pi Car Radio Project:
 * [Part 1](https://vinthewrench.substack.com/p/picar-raspberry-pi-car-radio-project) - Why would anyone sane do this?
 * [Part 2](https://vinthewrench.substack.com/p/picar-raspberry-pi-car-radio-project-6e7) - The Hardware.
@@ -38,20 +38,20 @@ A few articles about talking to te CAN bus and Hacking your Car Network
 * [Part 4](https://vinthewrench.substack.com/p/hacking-your-car-network-part-4) - Writing code to talk to CAN
 * [Part 5](https://vinthewrench.substack.com/p/hacking-your-car-network-huh) - ODB and older cars
 
-# Status
+## Status
 PiCar is up and running on my workshop desk, I have tested it a few time in the vehicle but as of yet it hasn't been installed.
 
 #Current build notes
 I started out with a fresh of Raspberry Pi OS Lite (Buster) on a SD card. Here is a [blog post](https://vinthewrench.substack.com/p/vinnies-raspberry-pi-setup) on how I typically set up these devices.  As of recent I have taken to using the Raspberry Pi imager to setup te user account and Wifi as SSH key.
 
-#####Always run the upgrade
+##### Always run the upgrade
 
 ```bash
 $sudo apt update
 $sudo apt-get upgrade
 ```
 
-#####Install the LLVM toolchain
+##### Install the LLVM toolchain
 
 I chose to use [LLVM 14.0.6](https://github.com/llvm/llvm-project/releases/) as my last reliable build system. I had problems with version 15.
 ```bash
@@ -78,7 +78,7 @@ export LD_LIBRARY_PATH=/usr/local/clang_14.0.6/lib:$LD_LIBRARY_PATH
 clang++ --version
 ```
 
-#####Install Cmake
+##### Install Cmake
 
 I have been using the Cmake system to generate the build files in my projects. [Here are some simple instructions](https://lindevs.com/install-cmake-on-raspberry-pi/) for installing CMake on Raspberry Pi.
 
@@ -90,7 +90,7 @@ sudo apt install -y cmake
 cmake --version
 ```
 
-#####Install Git
+##### Install Git
 
 As part of the development process, you will need a version of the Git distributed version control system. Even if it’s installed it probably a good idea to update to the latest version
 
@@ -98,11 +98,11 @@ As part of the development process, you will need a version of the Git distribut
 sudo apt-get install git-core
 ```
 
-#####Expand the Filesystem
+##### Expand the Filesystem
  run the raspi-config and select  Advanced Options / Expand the Filesystem
  then it's a good time to reboot
 
-#####Update the configuration file 
+##### Update the configuration file 
 
 here is a copy of what I am using in my  /boot/config.txt  file:
 ``` 
@@ -179,7 +179,7 @@ stty -F /dev/ttyAMA1 38400 -echo
 ```
 
 
-#####Setup for CAN network
+##### Setup for CAN network
 
 here is a copy of what I am using in my  /etc/network/interfaces  file:
 ``` 
@@ -201,7 +201,7 @@ iface can1 inet manual
     down /sbin/ifconfig can1 down
 
 ```
-#####A few more libraries 
+##### A few more libraries 
 ```bash
 #GPIO development 
 sudo apt-get install gpiod libgpiod-dev
@@ -216,7 +216,7 @@ sudo apt-get install libasound2-de
 sudo apt-get install libsqlite3-dev
 ```
 
-#####Software Defined Radio Libs
+##### Software Defined Radio Libs
 you can read about it here [https://projects.osmocom.org/projects/rtl-sdr/wiki/Rtl-sdr
 ](https://projects.osmocom.org/projects/rtl-sdr/wiki/Rtl-sdr)
 ```bash
@@ -244,7 +244,7 @@ sudo reboot now
 sudo apt-get install rtl-433
 ```
 
-#####Setup ALSA for audio device
+##### Setup ALSA for audio device
 
 I am using a  [StarTech ICUSBAUDIO7D 7.1 USB Audio Adapter](https://www.amazon.com/gp/product/B075F5VYG7/ref=ppx_yo_dt_b_asin_title_o01_s01?ie=UTF8&psc=1)
 
@@ -265,7 +265,7 @@ defaults.ctl.card 1
 defaults.pcm.card 1
 ```
 
-#####Argon One FAN 
+##### Argon One FAN 
  I am using an [Argon Fan HAT](https://www.argon40.com/products/argon-fan-hat) for cooling) but for software I am  the [Argon One Daemon](https://gitlab.com/DarkElvenAngel/argononed) from DarkElvenAngel.
 
 ```bash
@@ -304,7 +304,7 @@ Check result with `timedatectl` status
 timedatectl status
 ```
 
- #####AirPlay functionality 
+ ##### AirPlay functionality 
  I wrote about this pretty extensively in (part 9](https://vinthewrench.substack.com/p/picar-raspberry-pi-car-radio-project-5da).
 
  I build shairport-sync as a pipe output only module and it gets spawned from carradio directly, so it doesn't have to be a systemd. [Mike has lots of build information on his github site.])https://github.com/mikebrady/shairport-sync)
@@ -345,7 +345,7 @@ include_cover_art = "no";
 
 ```
 
-#####The CarRadio App
+##### The CarRadio App
 
 All this is why we came here.
 

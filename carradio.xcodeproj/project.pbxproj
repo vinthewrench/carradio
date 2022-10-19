@@ -179,6 +179,7 @@
 		2EF844F028F609BE003E9547 /* tinyutf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyutf8.h; sourceTree = "<group>"; };
 		2EF8451328F8BAFF003E9547 /* AirplayInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirplayInput.cpp; sourceTree = "<group>"; };
 		2EF8451428F8BAFF003E9547 /* AirplayInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirplayInput.hpp; sourceTree = "<group>"; };
+		2EF845162900ABC7003E9547 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +265,7 @@
 			children = (
 				2E62A8592807364F00F5066B /* CMakeLists.txt */,
 				2EC7729A2855644C0083DA3B /* Makefile */,
+				2EF845162900ABC7003E9547 /* README.md */,
 				2E62A9012824597800F5066B /* macincludes */,
 			);
 			name = "Build Stuff";

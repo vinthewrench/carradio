@@ -375,7 +375,6 @@ nlohmann::json PiCarMgr::GetAudioJSON(){
 	double  vol = _audio.volume();
 	double  bal = _audio.balance();
 	double  fade = _audio.fader();
-
 	double  bass = _audio.bass();
 	double  treble = _audio.treble();
 	double  midrange = _audio.midrange();
@@ -2107,7 +2106,24 @@ void PiCarMgr::displayWaypoint(string uuid){
 }
 
 void PiCarMgr::sendCANValuesToAmplifier(){
-	
+	double  vol = _audio.volume();
+	double  bal = _audio.balance();
+	double  fade = _audio.fader();
+	double  bass = _audio.bass();
+	double  treble = _audio.treble();
+	double  midrange = _audio.midrange();
+
+	/*
+	 3D9 Radio Settings broadcast
+		 [7]  Vl Bl Fa Ba Mi Tr FF
+			 Vl - Volume  		00-26x   00 - 38
+			 Bl - Balance		0h(-9)  - 0ah (0) - 19h (+9)
+			 Fa - Fader
+			 Ba - Bass
+			 Mi - Midrange
+			 Tr - Treble
+
+	 */
 }
 
 
@@ -2119,22 +2135,22 @@ void PiCarMgr::displayAudioMenu(){
 	
 	char buffer[64] = {0};
 	
-	sprintf(buffer, "\x1c%-9s \x1d%-3d\x1c","Squelch:", _radio.getSquelchLevel());
+	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1c%-9s \x1d%2d\x1c","Balance:", int(_audio.balance() * 10));
+	sprintf(buffer, "\x1d%-9s \x1c%2d\x1d","Balance:", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-9s %2d","Fader:", int(_audio.fader() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%2d\x1d","Fader:", int(_audio.fader() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-9s %2d","Bass:",int(_audio.bass() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%2d\x1d","Bass:",int(_audio.bass() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-9s %2d","Midrange:", int(_audio.midrange() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%2d\x1d","Midrange:", int(_audio.midrange() * 10));
  	menu_items.push_back(string(buffer));
  
-	sprintf(buffer, "%-9s %2d","Treble:", int(_audio.treble() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%2d\x1d","Treble:", int(_audio.treble() * 10));
  	menu_items.push_back(string(buffer));
 
 	menu_items.push_back("Exit");

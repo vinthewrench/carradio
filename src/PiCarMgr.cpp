@@ -1955,10 +1955,77 @@ void PiCarMgr::displayWaypoints(string intitialUUID){
 			displayWaypoint(uuid);
 		}
 		else if( action == DisplayMgr::KNOB_DOUBLE_CLICK) {
-			printf("double click %s\n", uuid.c_str());
+			waypointEditMenu(uuid);
 		}
-
 	});
+}
+
+
+void PiCarMgr::waypointEditMenu(string uuid){
+	
+	vector<string> menu_items = {
+		"Edit Waypoint",
+		"Update Waypoint",
+		"Delete Waypoint",
+		"Exit",
+	};
+	
+	constexpr time_t timeout_secs = 10;
+	
+	_display.showMenuScreen(menu_items,
+									0,
+									"Waypoint",
+									timeout_secs,
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed) {
+			switch(newSelectedItem) {
+				case 0:		// edit
+				{
+					string name = "";
+					
+					for( int i = 0; i < _waypoints.size(); i++){
+						auto wp = &_waypoints[i];
+						if(wp->uuid == uuid){
+							name = wp->name;
+							break;
+						}}
+					_display.editString("Edit Waypoint", name,
+											  [=](bool didSucceed,
+													string newName) {
+						if(didSucceed){
+							for( int i = 0; i < _waypoints.size(); i++){
+								auto wp = &_waypoints[i];
+								if(wp->uuid == uuid){
+									wp->name = newName;
+									updateWaypointProps();
+									_db.savePropertiesToFile();
+									break;
+								}}
+						}
+						displayWaypoint(uuid);
+					});
+				}
+					
+					break;
+				case 1:		// update
+					updateWaypoint(uuid);
+					displayWaypoint(uuid);
+					break;
+					
+				case 2:		//delete
+					deleteWaypoint(uuid);
+					displayWaypoints();
+					break;
+					
+				default:
+					displayWaypoint(uuid);
+			}
+		}
+	});
+	
 }
 
 
@@ -1975,75 +2042,11 @@ void PiCarMgr::displayWaypoint(string uuid){
 			}
 	
 			else if(action == DisplayMgr::KNOB_DOUBLE_CLICK) {
-				
-				vector<string> menu_items = {
-					"Edit Waypoint",
-					"Update Waypoint",
-					"Delete Waypoint",
-					"Exit",
-				};
-				
-				constexpr time_t timeout_secs = 10;
-				
-				_display.showMenuScreen(menu_items,
-												0,
-												"Waypoint",
-												timeout_secs,
-												[=](bool didSucceed,
-													 uint newSelectedItem,
-													 DisplayMgr::knob_action_t action ){
-					
-					if(didSucceed) {
-						switch(newSelectedItem) {
-							case 0:		// edit
-							{
-								string name = "";
-								
-								for( int i = 0; i < _waypoints.size(); i++){
-									auto wp = &_waypoints[i];
-									if(wp->uuid == uuid){
-										name = wp->name;
-										break;
-									}}
-								_display.editString("Edit Waypoint", name,
-														  [=](bool didSucceed,
-																string newName) {
-									if(didSucceed){
-										for( int i = 0; i < _waypoints.size(); i++){
-											auto wp = &_waypoints[i];
-											if(wp->uuid == uuid){
-												wp->name = newName;
-												updateWaypointProps();
-												_db.savePropertiesToFile();
-												break;
-											}}
-									}
-									displayWaypoint(uuid);
-								});
-							}
-								 
-								break;
-							case 1:		// update
-								updateWaypoint(uuid);
-								displayWaypoint(uuid);
-								break;
-								
-							case 2:		//delete
-								deleteWaypoint(uuid);
-								displayWaypoints();
-							break;
-								
-							default:
-								displayWaypoint(uuid);
-						}
-					}
-				});
+				waypointEditMenu(uuid);
 			}
 		}
 	});
-
 }
-
 
 void PiCarMgr::displayAudioMenu(){
 	

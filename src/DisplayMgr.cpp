@@ -1136,7 +1136,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	uint8_t height = _vfd.height();
 	
 	uint8_t startV =  24;
-	uint8_t lineHeight = 8;
+	uint8_t lineHeight = 9;
 	uint8_t maxLines =  (height - startV) / lineHeight ;
 	//	uint8_t maxCol = width / 7;
 	
@@ -1167,18 +1167,18 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			_menuCursor = max(_menuCursor - 1,  0);
 		}
 		
-		const string moreNone = " ";
+//		const string moreNone = " ";
 		
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
-			string moreIndicator =  moreNone;
+//			string moreIndicator =  moreNone;
 			
 			auto lastLine = _menuCursor + maxLines;
 			
-			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
-			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
-			
+//			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
+//			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
+//
 			TRY(_vfd.setCursor(0,cursorV));
 			//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
 			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );

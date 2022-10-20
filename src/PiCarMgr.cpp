@@ -2120,17 +2120,20 @@ void PiCarMgr::displayAudioMenu(){
 		"Exit",
 	};
 	
+	static uint last_selected_item = 0;
+	
 	_display.showMenuScreen(menu_items,
-									0,
+									last_selected_item,
 									"Audio",
 									timeout_secs,
 									[=](bool didSucceed,
 										 uint newSelectedItem,
 										 DisplayMgr::knob_action_t action ){
 		
-		if(didSucceed) {
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
 			
-			if(action){
+			last_selected_item = newSelectedItem;
+			
 				switch (newSelectedItem) {
 						
 					case 0:
@@ -2138,11 +2141,7 @@ void PiCarMgr::displayAudioMenu(){
 						break;
 						
 					case 1:
-#if 0
-						_display.showBalanceChange();
-#else
-	 
-						_display.showSliderScreen("Balance","R","L", 5,
+ 						_display.showSliderScreen("Balance","R","L", 5,
 														  [=](){
 							// getter
 							return _audio.balance();},
@@ -2156,16 +2155,11 @@ void PiCarMgr::displayAudioMenu(){
 							printf("Balance Set %1.1f\n",  _audio.balance());
 							displayAudioMenu();
 						});;
-#endif
  
 						break;
 						
 					case 2:
-#if 0
-						_display.showFaderChange();
-#else
-	 
-						_display.showSliderScreen("Fader","F","R", 5,
+ 						_display.showSliderScreen("Fader","F","R", 5,
 														  [=](){
 							// getter
 							return _audio.fader();},
@@ -2180,8 +2174,7 @@ void PiCarMgr::displayAudioMenu(){
 							displayAudioMenu();
 
 						});;
-#endif
-						break;
+ 						break;
 	
 					case 3:
 					{
@@ -2255,9 +2248,7 @@ void PiCarMgr::displayAudioMenu(){
 				}
 				
 			}
-			
-		}
-	});
+ 	});
 	
 }
 

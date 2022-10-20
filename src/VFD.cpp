@@ -321,7 +321,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			for(auto c:line){
 				if(std::isspace(c)) spaces++; else nonSpace++;
 			}
-			uint length = (nonSpace*3) + (spaces*2);
+			uint length = (nonSpace*4) + (spaces*2);
 			
 			printf("\nlength :%d  = nonSpace: %d  spaces: %d\n" , length, nonSpace, spaces);
 

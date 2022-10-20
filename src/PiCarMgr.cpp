@@ -2114,22 +2114,22 @@ void PiCarMgr::displayAudioMenu(){
 	
 	char buffer[64] = {0};
 	
-	sprintf(buffer, "%-10s %-3d","Squelch:", _radio.getSquelchLevel());
+	sprintf(buffer, "%-8s %-3d","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2d","Balance:", int(_audio.balance() * 10));
+	sprintf(buffer, "%-8s %2d","Balance:", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2d","Fader:", int(_audio.fader() * 10));
+	sprintf(buffer, "%-8s %2d","Fader:", int(_audio.fader() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2d","Bass:",int(_audio.bass() * 10));
+	sprintf(buffer, "%-8s %2d","Bass:",int(_audio.bass() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2d","Midrange:", int(_audio.midrange() * 10));
+	sprintf(buffer, "%-8s %2d","Midrange:", int(_audio.midrange() * 10));
  	menu_items.push_back(string(buffer));
  
-	sprintf(buffer, "%-10s %2d","Treble:", int(_audio.treble() * 10));
+	sprintf(buffer, "%-8s %2d","Treble:", int(_audio.treble() * 10));
  	menu_items.push_back(string(buffer));
 
 	menu_items.push_back("Exit");

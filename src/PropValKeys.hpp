@@ -53,6 +53,9 @@ inline static const string  PROP_LAST_AUDIO_SETTING			= "audio_setting";
 inline static const string  PROP_LAST_AUDIO_SETTING_VOL		= "vol";
 inline static const string  PROP_LAST_AUDIO_SETTING_BAL		= "bal";
 inline static const string  PROP_LAST_AUDIO_SETTING_FADER	= "fade";
+inline static const string  PROP_LAST_AUDIO_SETTING_BASS		= "bass";
+inline static const string  PROP_LAST_AUDIO_SETTING_TREBLE	= "treble";
+inline static const string  PROP_LAST_AUDIO_SETTING_MIDRANGE = "midrange";
 
 inline static const string PROP_AUTO_DIMMER_MODE				= "auto_dimmer_mode";
 inline static const string PROP_DIMMER_LEVEL						= "dimmer_level";

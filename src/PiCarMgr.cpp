@@ -375,44 +375,76 @@ nlohmann::json PiCarMgr::GetAudioJSON(){
 	double  vol = _audio.volume();
 	double  bal = _audio.balance();
 	double  fade = _audio.fader();
-	
-	// limit the precisopn on these
-	bal = std::floor((bal * 100) + .5) / 100;
-	vol = std::floor((vol * 100) + .5) / 100;
-	fade = std::floor((fade * 100) + .5) / 100;
 
-	j[PROP_LAST_AUDIO_SETTING_VOL] =  vol;
-	j[PROP_LAST_AUDIO_SETTING_BAL] =  bal;
+	double  bass = _audio.bass();
+	double  treble = _audio.treble();
+	double  midrange = _audio.midrange();
+
+	// limit the precisopn on these
+	bass = std::floor((bass * 100) + .5) / 100;
+	treble = std::floor((treble * 100) + .5) / 100;
+	midrange = std::floor((midrange * 100) + .5) / 100;
+
+	j[PROP_LAST_AUDIO_SETTING_VOL] 	=  vol;
+	j[PROP_LAST_AUDIO_SETTING_BAL] 	=  bal;
 	j[PROP_LAST_AUDIO_SETTING_FADER] =  fade;
-	
+ 	j[PROP_LAST_AUDIO_SETTING_BASS]	 =  bass;
+	j[PROP_LAST_AUDIO_SETTING_TREBLE] 	=  treble;
+	j[PROP_LAST_AUDIO_SETTING_MIDRANGE] =  midrange;
+
 	return j;
 }
 
 bool PiCarMgr::SetAudio(nlohmann::json j){
 	bool success = false;
 	
-	if( j.is_object()
-		&&  j.contains(PROP_LAST_AUDIO_SETTING_VOL)
-		&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()
-		&&  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
-		&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number()
-		&&  j.contains(PROP_LAST_AUDIO_SETTING_FADER)
-		&&  j.at(PROP_LAST_AUDIO_SETTING_FADER).is_number()
-		){
-		double  vol = j[PROP_LAST_AUDIO_SETTING_VOL];
-		double  bal = j[PROP_LAST_AUDIO_SETTING_BAL];
-		double  fade = j[PROP_LAST_AUDIO_SETTING_FADER];
-
-		// limit the precisopn on these
-		bal = std::floor((bal * 100) + .5) / 100;
-		vol = std::floor((vol * 100) + .5) / 100;
-		fade = std::floor((fade * 100) + .5) / 100;
-	
-		_audio.setVolume(vol);
-		_audio.setBalance(bal);
-		_audio.setFader(fade);
-	
-		success= true;
+	if( j.is_object() ){
+		
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_VOL)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_VOL).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_VOL];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setVolume(val);
+			success= true;
+		}
+		
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_BAL)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_BAL).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_BAL];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setBalance(val);
+			success= true;
+		}
+		
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_FADER)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_FADER).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_FADER];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setFader(val);
+			success= true;
+		}
+		
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_BASS)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_BASS).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_BASS];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setBass(val);
+			success= true;
+		}
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_TREBLE)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_TREBLE).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_TREBLE];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setTreble(val);
+			success= true;
+		}
+		if(  j.contains(PROP_LAST_AUDIO_SETTING_MIDRANGE)
+			&&  j.at(PROP_LAST_AUDIO_SETTING_MIDRANGE).is_number()){
+			double  val = j[PROP_LAST_AUDIO_SETTING_MIDRANGE];
+			val = std::floor((val * 100) + .5) / 100;
+			_audio.setMidrange(val);
+			success= true;
+		}
 	}
 	
 	return success;
@@ -2109,8 +2141,7 @@ void PiCarMgr::displayAudioMenu(){
 #if 0
 						_display.showBalanceChange();
 #else
-						static double bass_value = 0;
-						
+	 
 						_display.showSliderScreen("Balance","R","L", 5,
 														  [=](){
 							// getter
@@ -2122,7 +2153,7 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Balance Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							printf("Balance Set %1.1f\n",  _audio.balance());
 							displayAudioMenu();
 						});;
 #endif
@@ -2145,7 +2176,7 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Fader Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							printf("Fader Set %1.1f\n",  _audio.fader());
 							displayAudioMenu();
 
 						});;
@@ -2165,19 +2196,37 @@ void PiCarMgr::displayAudioMenu(){
  						},
 														  [=](bool didSucceed){
 							// completion
-							
-							printf("Bass Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
-							displayAudioMenu();
+							printf("Bass Set %1.1f\n",  _audio.bass());
+	 						displayAudioMenu();
  						});;
 						
 					}
 						break;
-	
+						
+					case 4:
+					{
+	 
+						_display.showSliderScreen("Midrange","+","-", 5,
+														  [=](){
+							// getter
+							return _audio.midrange();},
+														  [=](double val){
+							// setter
+							_audio.setMidrange(val);
+						},
+														  [=](bool didSucceed){
+							// completion
+							
+							printf("Midrange Set %1.1f\n",  _audio.midrange());
+							displayAudioMenu();
+						});;
+						
+					}
+						break;
+
 					case 5:
 					{
-						static double bass_value = 0;
-						
-						_display.showSliderScreen("Treble","+","-", 5,
+	 					_display.showSliderScreen("Treble","+","-", 5,
 														  [=](){
 							// getter
 							return _audio.treble();},
@@ -2190,7 +2239,7 @@ void PiCarMgr::displayAudioMenu(){
 							// completion
 							
 							// set the database here?
-							printf("Treble Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							printf("Treble Set %1.1f\n",  _audio.treble());
 							displayAudioMenu();
 
 						});;
@@ -2198,30 +2247,7 @@ void PiCarMgr::displayAudioMenu(){
 					}
 						break;
 
-					case 4:
-					{
 	 
-						_display.showSliderScreen("Midrange","+","-", 5,
-														  [=](){
-							// getter
-							return _audio.midrange();},
-														  [=](double val){
-							// setter
-							_audio.setMidrange(val);
- 						},
-														  [=](bool didSucceed){
-							// completion
-							
-							printf("Midrange Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
-							displayAudioMenu();
-
-						});;
-						
-					}
-						break;
-
-						
-				
 					default:
 						// fall back to main menu
 						displayMenu();

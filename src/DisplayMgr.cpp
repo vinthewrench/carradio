@@ -1152,7 +1152,8 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		auto title = _menuTitle;
 		
 		if(title.size() > 12){
-			title = truncate(title, 20);
+			std::transform(title.begin(), title.end(),title.begin(), ::toupper);
+ 			title = truncate(title, 20);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor(10,10);
  		}

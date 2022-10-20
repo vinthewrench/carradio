@@ -1995,6 +1995,7 @@ void PiCarMgr::waypointEditMenu(string uuid){
 	
 	if(getWaypointInfo(uuid, wp)){
 		name = wp.name;
+		
 	}
 	 
 	_display.showMenuScreen(menu_items,

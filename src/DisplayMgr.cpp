@@ -1149,11 +1149,17 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	if(transition == TRANS_ENTERING) {
 		_rightKnob.setAntiBounce(antiBounceSlow);
 		_vfd.clearScreen();
-		TRY(_vfd.setFont(VFD::FONT_5x7));
-		TRY(_vfd.setCursor(20,10));
-		
 		auto title = _menuTitle;
-		if (title.empty()) title = "Select";
+		
+		if(title.size() > 12){
+			TRY(_vfd.setFont(VFD::FONT_MINI));
+			TRY(_vfd.setCursor(10,10));
+			title = truncate(title, 20);
+ 		}
+		else {
+			if (title.empty()) title = "Select";
+			TRY(_vfd.setCursor(20,10));
+ 	 		}
 		TRY(_vfd.write(title));
 	}
 	

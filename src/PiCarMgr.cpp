@@ -2234,7 +2234,7 @@ vector<string> PiCarMgr::settingsMenuItems(){
 		"Squelch",
 		dim_entry,
 		"Shutdown Delay",
-		"Info"
+		"Info",
 		"Exit",
 	};
 

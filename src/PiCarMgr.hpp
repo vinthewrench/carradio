@@ -186,7 +186,6 @@ private:
 		MENU_AUDIO,
  		MENU_TIME,
 		MENU_SETTINGS,
-		MENU_INFO,
 		MENU_DTC,
 		MENU_EXIT
 	} menu_mode_t;

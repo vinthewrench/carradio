@@ -161,7 +161,6 @@ PiCarMgr::PiCarMgr(){
 		{MENU_CANBUS,	"Engine Status"},
 		{MENU_DTC,		"Diagnostics"},
  		{MENU_SETTINGS, "Settings"},
-		{MENU_INFO,		"Info"},
 		{MENU_TIME,		"Time"},
 		{MENU_EXIT, 	 "Exit"}
 	};
@@ -1748,10 +1747,6 @@ PiCarMgr::menu_mode_t PiCarMgr::currentMode(){
 			mode = MENU_WAYPOINTS;
 			break;
 
-		case DisplayMgr::MODE_INFO:
-			mode = MENU_INFO;
-			break;
-				
 		case DisplayMgr::MODE_CANBUS:
 			mode = MENU_CANBUS;
 			break;
@@ -1869,11 +1864,7 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 		case MENU_SETTINGS:
 			displaySettingsMenu();
 			break;
-			
-		case MENU_INFO:
-			_display.showInfo();
-			break;
-			
+ 
 		case MENU_DTC:
 			_display.showDTC();
 			break;
@@ -2082,8 +2073,9 @@ void PiCarMgr::displayAudioMenu(){
 						break;
 		 
 					default:
-						setDisplayMode(MENU_AUDIO);
- 						break;
+						// fall back to main menu
+						displayMenu();
+						break;
 				}
 				
 			}
@@ -2242,6 +2234,7 @@ vector<string> PiCarMgr::settingsMenuItems(){
 		"Squelch",
 		dim_entry,
 		"Shutdown Delay",
+		"Info"
 		"Exit",
 	};
 
@@ -2283,7 +2276,11 @@ void PiCarMgr::displaySettingsMenu(){
 					case 2:
 						displayShutdownMenu();
 						break;
-		 
+						
+					case 3:
+						_display.showInfo();
+						break;
+ 
 					default:
 						
 						if(_lastMenuMode != MENU_UNKNOWN){

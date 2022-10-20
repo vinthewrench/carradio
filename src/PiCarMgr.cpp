@@ -2123,6 +2123,7 @@ void PiCarMgr::displayAudioMenu(){
 							// completion
 							
 							printf("Balance Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							displayAudioMenu();
 						});;
 #endif
  
@@ -2133,7 +2134,7 @@ void PiCarMgr::displayAudioMenu(){
 						_display.showFaderChange();
 #else
 	 
-						_display.showSliderScreen("Fader","R","F", 5,
+						_display.showSliderScreen("Fader","F","R", 5,
 														  [=](){
 							// getter
 							return _audio.fader();},
@@ -2145,6 +2146,8 @@ void PiCarMgr::displayAudioMenu(){
 							// completion
 							
 							printf("Fader Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							displayAudioMenu();
+
 						});;
 #endif
 						break;
@@ -2164,12 +2167,13 @@ void PiCarMgr::displayAudioMenu(){
 							// completion
 							
 							printf("Bass Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
-						});;
+							displayAudioMenu();
+ 						});;
 						
 					}
 						break;
 	
-					case 4:
+					case 5:
 					{
 						static double bass_value = 0;
 						
@@ -2187,12 +2191,14 @@ void PiCarMgr::displayAudioMenu(){
 							
 							// set the database here?
 							printf("Treble Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							displayAudioMenu();
+
 						});;
 						
 					}
 						break;
 
-					case 5:
+					case 4:
 					{
 	 
 						_display.showSliderScreen("Midrange","+","-", 5,
@@ -2206,7 +2212,9 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Treble Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							printf("Midrange Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+							displayAudioMenu();
+
 						});;
 						
 					}

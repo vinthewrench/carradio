@@ -3088,8 +3088,12 @@ void DisplayMgr::showSliderScreen(
 	
 	if(getterCB){
 		double val = (getterCB)();
+		
+		printf("get %0.2f\n", val);
 		if(setterCB){
-			(setterCB)(val + .01);
+			val += .1;
+ 			printf("set %0.2f\n", val);
+ 			(setterCB)(val);
 		}
 	}
 	if(doneCB) (doneCB)(true);

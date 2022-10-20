@@ -55,7 +55,7 @@ static  const string moreNext = "\x1b\x98\x04\xfa\x1d";
 static  const string morePrev = "\x1b\x98\x04\x60\x1d";
 
 
- //  MACOS doesnt support pthread_condattr_setclock
+//  MACOS doesnt support pthread_condattr_setclock
 
 #if defined(__APPLE__)
 #define TIMEDWAIT_CLOCK CLOCK_REALTIME
@@ -64,14 +64,14 @@ static  const string morePrev = "\x1b\x98\x04\x60\x1d";
 /*
  looks like there is a bug in Raspberry PI that causes pthread_cond_timedwait to
  never timeout when using CLOCK_MONOTONIC_RAW  - so fuck them use CLOCK_REALTIME
-*/
+ */
 //#define TIMEDWAIT_CLOCK CLOCK_MONOTONIC_RAW
 
 #define TIMEDWAIT_CLOCK CLOCK_REALTIME
- 
+
 #endif
 
- 
+
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -81,16 +81,16 @@ DisplayMgr::DisplayMgr(){
 	_lastAirplayStatusTime = {0,0};
 	_airplayStatus = 0;
 	_menuSliderCBInfo = NULL;
-
+	
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
- 
+	
 	pthread_create(&_ledUpdateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::LEDUpdateThread, (void*)this);
-
+	
 	pthread_create(&_metaReaderTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::MetaDataReaderThread, (void*)this);
-
+	
 	
 }
 
@@ -102,9 +102,9 @@ DisplayMgr::~DisplayMgr(){
 	
 	pthread_cond_signal(&_led_cond);
 	pthread_join(_ledUpdateTID, NULL);
-
+	
 	pthread_join(_metaReaderTID, NULL);
-
+	
 }
 
 
@@ -150,7 +150,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		_leftRing.reset();
 		_rightRing.reset();
-	
+		
 		// Set for normal operation
 		_rightRing.setConfig(0x01);
 		_leftRing.setConfig(0x01);
@@ -166,7 +166,7 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		// clear all values
 		_rightRing.clearAll();
 		_leftRing.clearAll();
-	 
+		
 		_eventQueue = {};
 		_ledEvent = 0;
 		
@@ -196,7 +196,7 @@ void DisplayMgr::stop(){
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
-	 
+		
 		// shut down the display loop
 		_isSetup = false;
 		pthread_cond_signal(&_cond);
@@ -238,7 +238,7 @@ void DisplayMgr::LEDeventStop(){
 void DisplayMgr::LEDeventScannerStep(){
 	ledEventSet(LED_EVENT_SCAN_STEP,0);
 }
- 
+
 void DisplayMgr::LEDeventScannerHold(){
 	ledEventSet(LED_EVENT_SCAN_HOLD,0);
 }
@@ -246,7 +246,7 @@ void DisplayMgr::LEDeventScannerHold(){
 void DisplayMgr::LEDeventScannerStop(){
 	ledEventSet(LED_EVENT_SCAN_STOP,0);
 }
- 
+
 void DisplayMgr::LEDTunerUp (bool pinned){
 	ledEventSet(pinned?LED_EVENT_TUNE_UP_PIN: LED_EVENT_TUNE_UP ,0);
 }
@@ -281,14 +281,14 @@ void DisplayMgr::runLEDEventStartup(){
 		}
 	}
 }
- 
+
 
 void DisplayMgr::runLEDEventMute(){
 	
 	static timespec		lastEvent = {0,0};
 	static bool blinkOn = false;
 	AudioOutput*		audio 	= PiCarMgr::shared()->audio();
-
+	
 	if( _ledEvent & LED_EVENT_MUTE ){
 		lastEvent = {0,0};
 		blinkOn = false;
@@ -334,7 +334,7 @@ void DisplayMgr::runLEDEventVol(){
 	bool setVolume = false;
 	if( _ledEvent & LED_EVENT_VOL ){
 		
- 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
+		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_VOL_RUNNING, LED_EVENT_VOL | LED_EVENT_MUTE_RUNNING );
 		setVolume = true;
 	}
@@ -343,7 +343,7 @@ void DisplayMgr::runLEDEventVol(){
 		
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
-			
+		
 		int64_t diff = timespec_to_ms(timespec_sub(now,startedEvent));
 		if(setVolume){
 			float volume =  audio->volume();
@@ -389,11 +389,11 @@ void DisplayMgr::runLEDEventScanner(){
 		usleep(10000);
 		inScannerMode = true;
 	}
-
+	
 	if( _ledEvent & LED_EVENT_SCAN_STEP ){
 		
-	//	printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
- 
+		//	printf("SCAN STEP: %d %08x\n",ledStep, _ledEvent);
+		
 		// arew we already in a a scan sequence?
 		if( _ledEvent & LED_EVENT_SCAN_RUNNING ){
 		}
@@ -402,19 +402,19 @@ void DisplayMgr::runLEDEventScanner(){
 			_rightRing.clearAll();
 		}
 		
-
+		
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[ledStep] = {255,0,0};
- 		_rightRing.setLEDs(data);
+		_rightRing.setLEDs(data);
 		ledStep = mod(ledStep+1, 24);
- 		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
-		}
+		ledEventSet(LED_EVENT_SCAN_RUNNING, LED_EVENT_SCAN_STEP);
+	}
 	
 	else 	if( _ledEvent & LED_EVENT_SCAN_HOLD ){
 		
-//		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
+		//		printf("SCAN HOLD: %d %08x\n",ledStep, _ledEvent);
 		inScannerMode = true;
-
+		
 		DuppaLEDRing::led_block_t data = {{0,0,0}};
 		data[ledStep] = {0,255,0};
 		_rightRing.setLEDs(data);
@@ -422,13 +422,13 @@ void DisplayMgr::runLEDEventScanner(){
 	}
 	else 	if( _ledEvent & LED_EVENT_SCAN_STOP ){
 		
-//		printf("SCAN STOP:%08x\n", _ledEvent);
+		//		printf("SCAN STOP:%08x\n", _ledEvent);
 		inScannerMode = false;
 		
 		ledEventSet(0, LED_EVENT_SCAN_RUNNING | LED_EVENT_SCAN_STOP | LED_EVENT_SCAN_HOLD );
- 		_rightRing.clearAll();
+		_rightRing.clearAll();
 	}
- }
+}
 
 
 void DisplayMgr::runLEDEventTuner(){
@@ -443,7 +443,7 @@ void DisplayMgr::runLEDEventTuner(){
 	if( _ledEvent & LED_EVENT_TUNE_UP ){
 		offset = mod(++offset, 24);
 		didChange = true;
-//		printf("LED_EVENT_TUNE_UP:  %08x\n" ,_ledEvent);
+		//		printf("LED_EVENT_TUNE_UP:  %08x\n" ,_ledEvent);
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP  );
 	}
@@ -451,16 +451,16 @@ void DisplayMgr::runLEDEventTuner(){
 		offset = mod(--offset, 24);
 		didChange = true;
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-//		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
+		//		printf("LED_EVENT_TUNE_DOWN:  %08x\n" ,_ledEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN  );
 	}
 	else if( _ledEvent & LED_EVENT_TUNE_UP_PIN ){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
-
+		
 		didPin = true;
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_UP_PIN  );
-
+		
 	}
 	else if( _ledEvent & LED_EVENT_TUNE_DOWN_PIN ){
 		
@@ -468,7 +468,7 @@ void DisplayMgr::runLEDEventTuner(){
 		clock_gettime(CLOCK_MONOTONIC, &startedEvent);
 		ledEventSet(LED_EVENT_TUNE_RUNNING, LED_EVENT_TUNE_DOWN_PIN  );
 	}
- 
+	
 	if(didPin) {
 		for (int i = 0 ; i < 24; i++) {
 			if( i == offset){
@@ -479,7 +479,7 @@ void DisplayMgr::runLEDEventTuner(){
 			}
 		}
 	}
- 	else if(didChange){
+	else if(didChange){
 		for (int i = 0 ; i < 24; i++) {
 			uint8_t off1 =  mod(offset-1, 24);
 			uint8_t off2 =  mod(offset+1, 24);
@@ -509,7 +509,7 @@ void DisplayMgr::runLEDEventTuner(){
 		if(diff > 800){
 			ledEventSet(0, LED_EVENT_TUNE_RUNNING);
 			
-//			printf("LED_EVENT_TUNE_OFF  %08x\n" ,_ledEvent);
+			//			printf("LED_EVENT_TUNE_OFF  %08x\n" ,_ledEvent);
 			
 			// scan the LEDS off
 			for (int i = 0; i < 24; i++) {
@@ -520,15 +520,15 @@ void DisplayMgr::runLEDEventTuner(){
 	}
 }
 
- 
-void DisplayMgr::ledEventSet(uint64_t set, uint64_t reset){
 
+void DisplayMgr::ledEventSet(uint64_t set, uint64_t reset){
+	
 	pthread_mutex_lock (&_led_mutex);
 	_ledEvent &= ~reset;
 	_ledEvent |= set;
 	
-// 	printf("ledEventSet %08x %08x = %08x\n",set,reset,_ledEvent);
-
+	// 	printf("ledEventSet %08x %08x = %08x\n",set,reset,_ledEvent);
+	
 	pthread_mutex_unlock (&_led_mutex);
 	// only signal if you are setting a flag
 	if((set & LED_EVENT_MASK) != 0)
@@ -620,7 +620,7 @@ void DisplayMgr::LEDUpdateLoop(){
 			runLEDEventTuner();
 	}
 }
- 
+
 
 void* DisplayMgr::LEDUpdateThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;
@@ -628,7 +628,7 @@ void* DisplayMgr::LEDUpdateThread(void *context){
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::LEDUpdateThreadCleanup ,context);
 	
- 	d->LEDUpdateLoop();
+	d->LEDUpdateLoop();
 	
 	pthread_exit(NULL);
 	
@@ -638,7 +638,7 @@ void* DisplayMgr::LEDUpdateThread(void *context){
 
 
 void DisplayMgr::LEDUpdateThreadCleanup(void *context){
- }
+}
 
 
 // MARK: -  display tools
@@ -646,7 +646,7 @@ void DisplayMgr::LEDUpdateThreadCleanup(void *context){
 
 static uint8_t calculateRingCurrent(uint8_t level) {
 	
- 	level = min(static_cast<int>(level), 7);
+	level = min(static_cast<int>(level), 7);
 	
 	uint8_t table[] = {10, 30, 50, 80, 100, 128, 200, 255};
 	
@@ -664,18 +664,18 @@ bool DisplayMgr::setBrightness(double level) {
 	if(_isSetup){
 		_dimLevel = level;
 		
-	
+		
 		// vfd 0 -7
 		uint8_t vfdLevel =  level * 7.0 ;
 		uint8_t ledCurrent = calculateRingCurrent(vfdLevel);
-	//	printf("setBrightness %f %d\n", level, ledCurrent);
-
+		//	printf("setBrightness %f %d\n", level, ledCurrent);
+		
 		if(vfdLevel == 0) vfdLevel  = 1;
 		success = _vfd.setBrightness(vfdLevel);
-	 	
+		
 		_rightRing.SetScaling(ledCurrent);
 		_leftRing.SetScaling(ledCurrent);
- 
+		
 		_rightKnob.setBrightness(level);
 		_leftKnob.setBrightness(level);
 		
@@ -686,13 +686,13 @@ bool DisplayMgr::setBrightness(double level) {
 
 bool DisplayMgr::setKnobBackLight(bool isOn){
 	_backlightKnobs = isOn;
- 
-//	printf("setKnobBackLight %d\n", isOn);
+	
+	//	printf("setKnobBackLight %d\n", isOn);
 	
 	switch (_current_mode) {
 			
 		default:
-	 
+			
 			if(_backlightKnobs){
 				setKnobColor(KNOB_RIGHT, RGB::Lime);
 				setKnobColor(KNOB_LEFT, RGB::Lime);
@@ -703,7 +703,7 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 			}
 			
 			
- 
+			
 	}
 	return true;
 }
@@ -713,9 +713,9 @@ bool DisplayMgr::setKnobBackLight(bool isOn){
 bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 	bool success = false;
 	
-//	printf("setKnobColor %d  (%3d,%3d,%3d)\n", knob, color.r, color.b, color.g);
+	//	printf("setKnobColor %d  (%3d,%3d,%3d)\n", knob, color.r, color.b, color.g);
 	
-
+	
 	if(_isSetup){
 		
 		// calculate color vs brightness
@@ -761,7 +761,7 @@ void DisplayMgr::showTime(){
 void DisplayMgr::showInfo(){
 	setEvent(EVT_PUSH, MODE_INFO);
 }
- 
+
 void DisplayMgr::showDevStatus(){
 	setEvent(EVT_PUSH, MODE_DEV_STATUS );
 }
@@ -801,7 +801,7 @@ void DisplayMgr::showScannerChange(bool force){
 		setEvent(EVT_NONE, MODE_SCANNER );
 	}
 }
- 
+
 void DisplayMgr::showDTC(){
 	setEvent(EVT_PUSH, MODE_DTC);
 }
@@ -976,7 +976,7 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_SQUELCH:
 			wasHandled = processSelectorKnobActionForSquelch(action);
 			break;
-
+			
 		case MODE_FADER:
 			wasHandled = processSelectorKnobActionForFader(action);
 			break;
@@ -1008,15 +1008,15 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_EDIT_STRING:
 			wasHandled = processSelectorKnobActionForEditString(action);
 			break;
-		
+			
 		case MODE_SCANNER_CHANNELS:
 			wasHandled = processSelectorKnobActionForScannerChannels(action);
 			break;
- 
+			
 		case MODE_CHANNEL_INFO:
 			wasHandled = processSelectorKnobActionForChannelInfo(action);
 			break;
-
+			
 		default:
 			break;
 	}
@@ -1165,15 +1165,15 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		
 		if(title.size() > 16){
 			std::transform(title.begin(), title.end(),title.begin(), ::toupper);
- 			title = truncate(title, 20);
+			title = truncate(title, 20);
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.setCursor(10,10);
- 		}
+		}
 		else {
 			if (title.empty()) title = "Select";
 			_vfd.setFont(VFD::FONT_5x7);
- 			_vfd.setCursor(20,10);
- 	 		}
+			_vfd.setCursor(20,10);
+		}
 		_vfd.write(title);
 	}
 	
@@ -1250,11 +1250,11 @@ bool DisplayMgr::pushMode(mode_state_t newMode){
 }
 
 void  DisplayMgr::popMode(){
- 
+	
 	auto newMode = _saved_mode==MODE_UNKNOWN ? handleRadioEvent():_saved_mode;
 	
-// 	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
- 
+	// 	printf("popMode  / c: %d / s: %d / n: %d \n", _current_mode, _saved_mode,newMode);
+	
 	_current_mode = newMode;
 	_saved_mode = MODE_UNKNOWN;
 }
@@ -1399,7 +1399,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 						if(savedCB) {
 							savedCB(false, {RadioMgr::MODE_UNKNOWN, 0}, KNOB_EXIT);
 						}
- 
+						
 						popMode();
 						shouldRedraw = true;
 						shouldUpdate = true;
@@ -1440,25 +1440,25 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
-					else if(_current_mode == MODE_SLIDER) {
-						
-						menuSliderCBInfo_t * cb = _menuSliderCBInfo;
-						if(cb){
-							// check for {EVT_NONE,MODE_SLIDER}  which is a slider change
-							if(item.mode == MODE_SLIDER) {
-								clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
-								shouldRedraw = false;
-								shouldUpdate = true;
-							}
-							else if(diff.tv_sec >=  cb->timeout){
-								// timeout pop mode?
-								popMode();
-								shouldRedraw = true;
-								shouldUpdate = true;
-							}
+				else if(_current_mode == MODE_SLIDER) {
+					
+					menuSliderCBInfo_t * cb = _menuSliderCBInfo;
+					if(cb){
+						// check for {EVT_NONE,MODE_SLIDER}  which is a slider change
+						if(item.mode == MODE_SLIDER) {
+							clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+							shouldRedraw = false;
+							shouldUpdate = true;
 						}
- 					}
- 	 				else if(_current_mode == MODE_FADER) {
+						else if(diff.tv_sec >=  cb->timeout){
+							// timeout pop mode?
+							popMode();
+							shouldRedraw = true;
+							shouldUpdate = true;
+						}
+					}
+				}
+				else if(_current_mode == MODE_FADER) {
 					
 					// check for {EVT_NONE,MODE_FADER}  which is a fader change
 					if(item.mode == MODE_FADER) {
@@ -1522,7 +1522,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
-
+				
 				else if(_current_mode == MODE_MENU) {
 					
 					// check for {EVT_NONE,MODE_MENU}  which is a menu change
@@ -1640,7 +1640,7 @@ DisplayMgr::mode_state_t DisplayMgr::handleRadioEvent(){
 	}else {
 		newState = MODE_TIME;
 	}
-
+	
 	return newState;
 }
 
@@ -1690,7 +1690,7 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_SLIDER:
 				drawSliderScreen(transition);
 				break;
- 
+				
 			case MODE_DEV_STATUS:
 				drawDeviceStatusScreen(transition);
 				break;
@@ -1714,15 +1714,15 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_SQUELCH:
 				drawSquelchScreen(transition);
 				break;
- 
+				
 			case MODE_RADIO:
 				drawRadioScreen(transition);
 				break;
-
+				
 			case MODE_SCANNER:
 				drawScannerScreen(transition);
 				break;
- 
+				
 			case MODE_MENU:
 				drawMenuScreen(transition);
 				break;
@@ -1738,19 +1738,19 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_GPS_WAYPOINT:
 				drawGPSWaypointScreen(transition);
 				break;
-	 
+				
 			case MODE_MESSAGE:
 				drawMessageScreen(transition);
 				break;
-
+				
 			case MODE_SCANNER_CHANNELS:
 				drawScannerChannels(transition);
 				break;
-
+				
 			case MODE_CHANNEL_INFO:
 				drawChannelInfo(transition);
 				break;
- 
+				
 			case MODE_DTC:
 				drawDTCScreen(transition);
 				break;
@@ -1800,46 +1800,46 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 // for debugging
 static void dumpHex(uint8_t* buffer, size_t length, int offset)
 {
-  char hexDigit[] = "0123456789ABCDEF";
-  size_t			i;
-  size_t						lineStart;
-  size_t						lineLength;
-  short					c;
-  const unsigned char	  *bufferPtr = buffer;
-  
-  char                    lineBuf[1024];
-  char                    *p;
+	char hexDigit[] = "0123456789ABCDEF";
+	size_t			i;
+	size_t						lineStart;
+	size_t						lineLength;
+	short					c;
+	const unsigned char	  *bufferPtr = buffer;
+	
+	char                    lineBuf[1024];
+	char                    *p;
 	
 #define kLineSize	8
-  for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
-  {
+	for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
+	{
 		lineLength = kLineSize;
 		if (lineStart + lineLength > length)
-			 lineLength = length - lineStart;
+			lineLength = length - lineStart;
 		
-	  p += sprintf(p, "%6lu: ", lineStart+offset);
+		p += sprintf(p, "%6lu: ", lineStart+offset);
 		for (i = 0; i < lineLength; i++){
-			 *p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
-			 *p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
-			 if((lineStart+i) &0x01)  *p++ = ' ';  ;
+			*p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
+			*p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
+			if((lineStart+i) &0x01)  *p++ = ' ';  ;
 		}
 		for (; i < kLineSize; i++)
-			 p += sprintf(p, "   ");
+			p += sprintf(p, "   ");
 		
 		p += sprintf(p,"  ");
 		for (i = 0; i < lineLength; i++) {
-			 c = bufferPtr[lineStart + i] & 0xFF;
-			 if (c > ' ' && c < '~')
-				  *p++ = c ;
-			 else {
-				  *p++ = '.';
-			 }
+			c = bufferPtr[lineStart + i] & 0xFF;
+			if (c > ' ' && c < '~')
+				*p++ = c ;
+			else {
+				*p++ = '.';
+			}
 		}
 		*p++ = 0;
 		
- 
-	  printf("%s\n",lineBuf);
-  }
+		
+		printf("%s\n",lineBuf);
+	}
 #undef kLineSize
 }
 
@@ -1847,223 +1847,223 @@ static void dumpHex(uint8_t* buffer, size_t length, int offset)
 // MARK: -  drawRadioScreen
 
 void DisplayMgr::drawRadioScreen(modeTransition_t transition){
-  
-//	printf("drawRadioScreen  %d\n",transition);
-  
-
-  PiCarMgr* mgr	= PiCarMgr::shared();
-  RadioMgr* radio 	= PiCarMgr::shared()->radio();
-
-  int centerX = _vfd.width() /2;
-  int centerY = _vfd.height() /2;
-	  
-  static int  modeStart = 5;
-  
-  static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
-  
-  RadioMgr::radio_mode_t  mode  = radio->radioMode();
-  RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
-  string muxstring = RadioMgr::muxstring(mux);
-
-  bool forceRefresh = false;
-  
-  //	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
-  //			 radio->radioMuxMode(),
-  //			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
-  
-  if(transition == TRANS_LEAVING) {
-	  _rightRing.clearAll();
-	  return;
-  }
-  
-  if(transition == TRANS_ENTERING) {
-	  _vfd.clearScreen();
-	  _rightRing.clearAll();
-			  
-  }
-  
-  if(transition == TRANS_IDLE) {
-	  _rightRing.clearAll();
-  }
-  
-
-  // avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-  if(transition == TRANS_ENTERING || transition == TRANS_REFRESH || forceRefresh) {
-	  
-	  if(! radio->isOn()){
-		  string str = "OFF";
-		  auto textCenter =  centerX - (str.size() * 11);
-		  
-		  TRY(_vfd.setFont(VFD::FONT_10x14));
-		  TRY(_vfd.setCursor( textCenter ,centerY+10));
-		  TRY(_vfd.write(str));
-	  }
-	  else {
-			  uint32_t  freq =  radio->frequency();
-		  // we might need an extra refresh if switching modes
-		  if(lastMode != mode){
-			  _vfd.clearScreen();
-			  _rightRing.clearAll();
-			  lastMode = mode;
-		  }
-		  
-		  if(mode == RadioMgr::AUX){
-			  
-			  string str = "AUX";
-			  auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
-			  
-			  TRY(_vfd.setFont(VFD::FONT_10x14));
-			  TRY(_vfd.setCursor( freqCenter ,centerY+10));
-			  TRY(_vfd.write(str));
-		  }
-		  else if(mode == RadioMgr::AIRPLAY){
-	  
-			  _vfd.setFont(VFD::FONT_5x7);
-
-			  constexpr int maxLen = 21;
-			  string spaces(maxLen, ' ');
+	
+	//	printf("drawRadioScreen  %d\n",transition);
+	
+	
+	PiCarMgr* mgr	= PiCarMgr::shared();
+	RadioMgr* radio 	= PiCarMgr::shared()->radio();
+	
+	int centerX = _vfd.width() /2;
+	int centerY = _vfd.height() /2;
+	
+	static int  modeStart = 5;
+	
+	static RadioMgr::radio_mode_t lastMode = RadioMgr::MODE_UNKNOWN;
+	
+	RadioMgr::radio_mode_t  mode  = radio->radioMode();
+	RadioMgr::radio_mux_t 	mux  =  radio->radioMuxMode();
+	string muxstring = RadioMgr::muxstring(mux);
+	
+	bool forceRefresh = false;
+	
+	//	printf("display RadioScreen %s %s %d |%s| \n",redraw?"REDRAW":"", shouldUpdate?"UPDATE":"" ,
+	//			 radio->radioMuxMode(),
+	//			 	RadioMgr::muxstring(radio->radioMuxMode()).c_str() );
+	
+	if(transition == TRANS_LEAVING) {
+		_rightRing.clearAll();
+		return;
+	}
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		_rightRing.clearAll();
 		
-			  string titleStr = "";
-			  string artistStr = "";
-  
-	 			  uint8_t lastAirplayStatus = 0;
-			  
-			  // get artist and title
-			  pthread_mutex_lock (&_apmetadata_mutex);
-  
-			  lastAirplayStatus = _airplayStatus;
+	}
+	
+	if(transition == TRANS_IDLE) {
+		_rightRing.clearAll();
+	}
+	
+	
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH || forceRefresh) {
 		
-			  if(_airplayMetaData.count("asar")){
-				  artistStr = Utils::trim(_airplayMetaData["asar"]);
-				  }
-			  if(_airplayMetaData.count("minm")){
-				  titleStr = Utils::trim(_airplayMetaData["minm"]);
-				  }
-			  pthread_mutex_unlock(&_apmetadata_mutex);
-
-			  if(lastAirplayStatus == 0){
-				  
-				  uint8_t buff2[] = {
-					  VFD::VFD_CLEAR_AREA,
-					  static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY-16),
-					  static_cast<uint8_t> (128),static_cast<uint8_t> (centerY+4)};
+		if(! radio->isOn()){
+			string str = "OFF";
+			auto textCenter =  centerX - (str.size() * 11);
+			
+			TRY(_vfd.setFont(VFD::FONT_10x14));
+			TRY(_vfd.setCursor( textCenter ,centerY+10));
+			TRY(_vfd.write(str));
+		}
+		else {
+			uint32_t  freq =  radio->frequency();
+			// we might need an extra refresh if switching modes
+			if(lastMode != mode){
+				_vfd.clearScreen();
+				_rightRing.clearAll();
+				lastMode = mode;
+			}
+			
+			if(mode == RadioMgr::AUX){
+				
+				string str = "AUX";
+				auto freqCenter =  centerX  -( (str.size() /2)  * 11) - 7 ;
+				
+				TRY(_vfd.setFont(VFD::FONT_10x14));
+				TRY(_vfd.setCursor( freqCenter ,centerY+10));
+				TRY(_vfd.write(str));
+			}
+			else if(mode == RadioMgr::AIRPLAY){
+				
+				_vfd.setFont(VFD::FONT_5x7);
+				
+				constexpr int maxLen = 21;
+				string spaces(maxLen, ' ');
+				
+				string titleStr = "";
+				string artistStr = "";
+				
+				uint8_t lastAirplayStatus = 0;
+				
+				// get artist and title
+				pthread_mutex_lock (&_apmetadata_mutex);
+				
+				lastAirplayStatus = _airplayStatus;
+				
+				if(_airplayMetaData.count("asar")){
+					artistStr = Utils::trim(_airplayMetaData["asar"]);
+				}
+				if(_airplayMetaData.count("minm")){
+					titleStr = Utils::trim(_airplayMetaData["minm"]);
+				}
+				pthread_mutex_unlock(&_apmetadata_mutex);
+				
+				if(lastAirplayStatus == 0){
+					
+					uint8_t buff2[] = {
+						VFD::VFD_CLEAR_AREA,
+						static_cast<uint8_t>(0),  static_cast<uint8_t> (centerY-16),
+						static_cast<uint8_t> (128),static_cast<uint8_t> (centerY+4)};
 					_vfd.writePacket(buff2, sizeof(buff2));
-				  
-				  string str = "- NOT PLAYING -";
-				  _vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY-7);
-				  _vfd.setFont(VFD::FONT_MINI);
-				  _vfd.printPacket(str.c_str() );
-			  }
-			  else {
-				  // correct UTF8 single comma quotation mark apostrophe
-				 titleStr = Utils:: removeDiacritics(titleStr);
-				 // remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
-				 titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
+					
+					string str = "- NOT PLAYING -";
+					_vfd.setCursor( centerX - ((str.size()*5) /2 ), centerY-7);
+					_vfd.setFont(VFD::FONT_MINI);
+					_vfd.printPacket(str.c_str() );
+				}
+				else {
+					// correct UTF8 single comma quotation mark apostrophe
+					titleStr = Utils:: removeDiacritics(titleStr);
+					// remove parenthetical text  regex (\()(?:[^\)\\]*(?:\\.)?)*\)
+					titleStr = regex_replace(titleStr, regex("(\\()(?:[^\\)\\\\]*(?:\\\\.)?)*\\)"), "");
+					
+					// center it
+					titleStr = truncate(titleStr, maxLen);
+					string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+					titleStr = portionOfSpaces + titleStr;
+					
+					artistStr = Utils:: removeDiacritics(artistStr);
+					
+					artistStr = truncate(artistStr, maxLen);
+					string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
+					artistStr = portionOfSpaces1 + artistStr;
+					
+					_vfd.setFont(VFD::FONT_5x7);
+					
+					_vfd.setCursor(0,centerY-7);
+					_vfd.printPacket("%-21s",titleStr.c_str() );
+					
+					_vfd.setCursor(0,centerY+3);
+					_vfd.printPacket("%-21s",artistStr.c_str() );
+					
+				}
+				
+				drawAirplayLogo(0, centerY+9, radio->hasAirplay()?"":" :OFF");
+			}
+			else {
+				
+				int precision = 0;
+				
+				switch (mode) {
+					case RadioMgr::BROADCAST_AM: precision = 0;break;
+					case RadioMgr::BROADCAST_FM: precision = 1;break;
+					default :
+						precision = 3; break;
+				}
+				
+				string str = 	RadioMgr::hertz_to_string(freq, precision);
+				string hzstr =	RadioMgr::freqSuffixString(freq);
+				string modStr = RadioMgr::modeString(mode);
+				
+				auto freqCenter =  centerX - (str.size() * 11) + 18;
+				if(precision > 1)  freqCenter += 10*2;
+				
+				modeStart = 5;
+				if(precision == 0)
+					modeStart += 15;
+				else if  (precision == 1)
+					modeStart += 5;
+				
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.setCursor(modeStart, centerY+0) ;
+				_vfd.write(modStr);
+				
+				_vfd.setFont(VFD::FONT_10x14);
+				_vfd.setCursor( freqCenter ,centerY+10);
+				_vfd.write(str);
+				
+				_vfd.setFont(VFD::FONT_MINI); _vfd.write( " ");
+				_vfd.setFont(VFD::FONT_5x7); _vfd.write( hzstr);
+				
+				// Draw title centered inb char buffer
+				constexpr int  titleMaxSize = 20;
+				char titlebuff[titleMaxSize + 1];
+				memset(titlebuff,' ', titleMaxSize);
+				titlebuff[titleMaxSize] = '\0';
+				int titleStart =  centerX - ((titleMaxSize * 6)/2);
+				int titleBottom = centerY -10;
+				PiCarMgr::station_info_t info;
+				if(mgr->getStationInfo(mode, freq, info)){
+					string title = truncate(info.title, titleMaxSize);
+					int titleLen = (int)title.size();
+					int offset  = (titleMaxSize /2) - (titleLen/2);
+					memcpy( titlebuff+offset , title.c_str(), titleLen );
+				};
+				TRY(_vfd.setCursor( titleStart ,titleBottom ));
+				TRY(_vfd.write( titlebuff));
+				
+			}
+			_vfd.setCursor(0, 60);
+			if(mgr->isPresetChannel(mode, freq)){
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.printPacket("PRESET");
+			}
+			else {
+				_vfd.printPacket("      ");
+			}
+		}
+	}
+	
+	if(radio->isOn()
+		&& ( mode == RadioMgr::BROADCAST_FM
+			 ||  mode == RadioMgr::VHF
+			 ||  mode == RadioMgr::GMRS	))
+	{
+		_vfd.setFont(VFD::FONT_MINI);
+		_vfd.setCursor(modeStart, centerY+9);
+		_vfd.write(muxstring);
 		
-				 // center it
-				 titleStr = truncate(titleStr, maxLen);
-				 string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
-				 titleStr = portionOfSpaces + titleStr;
-				 
-				 artistStr = Utils:: removeDiacritics(artistStr);
-
-				 artistStr = truncate(artistStr, maxLen);
-				 string portionOfSpaces1 = spaces.substr(0, (maxLen - artistStr.size()) / 2);
-				 artistStr = portionOfSpaces1 + artistStr;
-
-				 _vfd.setFont(VFD::FONT_5x7);
-			 
-				 _vfd.setCursor(0,centerY-7);
-				 _vfd.printPacket("%-21s",titleStr.c_str() );
-
-				 _vfd.setCursor(0,centerY+3);
-				 _vfd.printPacket("%-21s",artistStr.c_str() );
-
-			  }
-		
-			  drawAirplayLogo(0, centerY+9, radio->hasAirplay()?"":" :OFF");
-		  }
-		  else {
-
-			  int precision = 0;
-			  
-			  switch (mode) {
-				  case RadioMgr::BROADCAST_AM: precision = 0;break;
-				  case RadioMgr::BROADCAST_FM: precision = 1;break;
-				  default :
-					  precision = 3; break;
-			  }
-			  
-			  string str = 	RadioMgr::hertz_to_string(freq, precision);
-			  string hzstr =	RadioMgr::freqSuffixString(freq);
-			  string modStr = RadioMgr::modeString(mode);
-  
-			  auto freqCenter =  centerX - (str.size() * 11) + 18;
-			  if(precision > 1)  freqCenter += 10*2;
-			  
-			  modeStart = 5;
-			  if(precision == 0)
-				  modeStart += 15;
-			  else if  (precision == 1)
-				  modeStart += 5;
-			  
-			  _vfd.setFont(VFD::FONT_MINI);
-			  _vfd.setCursor(modeStart, centerY+0) ;
-			  _vfd.write(modStr);
-  
-			  _vfd.setFont(VFD::FONT_10x14);
-			  _vfd.setCursor( freqCenter ,centerY+10);
-			  _vfd.write(str);
-
-			  _vfd.setFont(VFD::FONT_MINI); _vfd.write( " ");
-			  _vfd.setFont(VFD::FONT_5x7); _vfd.write( hzstr);
-		  
-			  // Draw title centered inb char buffer
-			  constexpr int  titleMaxSize = 20;
-			  char titlebuff[titleMaxSize + 1];
-			  memset(titlebuff,' ', titleMaxSize);
-			  titlebuff[titleMaxSize] = '\0';
-			  int titleStart =  centerX - ((titleMaxSize * 6)/2);
-			  int titleBottom = centerY -10;
-			  PiCarMgr::station_info_t info;
-			  if(mgr->getStationInfo(mode, freq, info)){
-				  string title = truncate(info.title, titleMaxSize);
-				  int titleLen = (int)title.size();
-				  int offset  = (titleMaxSize /2) - (titleLen/2);
-				  memcpy( titlebuff+offset , title.c_str(), titleLen );
-			  };
-			  TRY(_vfd.setCursor( titleStart ,titleBottom ));
-			  TRY(_vfd.write( titlebuff));
-			  
-		  }
-		  _vfd.setCursor(0, 60);
-		  if(mgr->isPresetChannel(mode, freq)){
-			  _vfd.setFont(VFD::FONT_MINI);
-			  _vfd.printPacket("PRESET");
-		  }
-		  else {
-			  _vfd.printPacket("      ");
-		  }
-	  }
-  }
-  
-  if(radio->isOn()
-	  && ( mode == RadioMgr::BROADCAST_FM
-			  ||  mode == RadioMgr::VHF
-			  ||  mode == RadioMgr::GMRS	))
-  {
-	  _vfd.setFont(VFD::FONT_MINI);
-	  _vfd.setCursor(modeStart, centerY+9);
-	  _vfd.write(muxstring);
-	  
-	  _vfd.setCursor(10, centerY+19);
-	  _vfd.printPacket("\x1c%3d %-8s", int(radio->get_if_level()),
-							 radio->isSquelched()?"SQLCH":"" );
-  }
-
-  drawEngineCheck();
-  drawTemperature();
-  drawTimeBox();
+		_vfd.setCursor(10, centerY+19);
+		_vfd.printPacket("\x1c%3d %-8s", int(radio->get_if_level()),
+							  radio->isSquelched()?"SQLCH":"" );
+	}
+	
+	drawEngineCheck();
+	drawTemperature();
+	drawTimeBox();
 }
 
 // MARK: -  other draws Screens
@@ -2147,12 +2147,12 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_10x14);
 		_vfd.setCursor( start ,centerY+5);
 		_vfd.write(str);
-	 
+		
 		string verstr = string(PiCarMgr::PiCarMgr_Version);
 		std::transform(verstr.begin(), verstr.end(),verstr.begin(), ::toupper);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%s", verstr.c_str());
- 
+		
 		LEDeventStartup();
 	}
 	
@@ -2166,19 +2166,19 @@ void DisplayMgr::drawStartupScreen(modeTransition_t transition){
 		
 		if(radio->isConnected()){
 			str += "RADIO ";
-  		}
- 
+		}
+		
 		if(mgr->isAirPlayRunning()){
 			str += " AIRPLAY ";
 		}
-
+		
 		if(gps->isConnected()){
 			str += " GPS ";
 		}
 		
 		if(can->isConnected()){
 			str += " CANBUS";
- 		}
+		}
 		
 		_vfd.setCursor( 15, 55);
 		_vfd.setFont(VFD::FONT_MINI);
@@ -2263,15 +2263,15 @@ void DisplayMgr::drawDeviceStatus(){
 
 void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	
-  	int centerY = _vfd.height() /2;
-
+	int centerY = _vfd.height() /2;
+	
 	time_t rawtime;
 	struct tm timeinfo = {0};
-
+	
 	time(&rawtime);
 	localtime_r(&rawtime, &timeinfo); // fills in your structure,
-												 // instead of returning a pointer to a static
-
+	// instead of returning a pointer to a static
+	
 	char buffer[128] = {0};
 	
 	if(transition == TRANS_LEAVING) {
@@ -2283,7 +2283,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	}
 	
 	if(rawtime != -1){
- 		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", &timeinfo);
+		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", &timeinfo);
 		
 		_vfd.setCursor(10,38) ;
 		_vfd.setFont(VFD::FONT_10x14) ;
@@ -2292,7 +2292,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.write( (timeinfo.tm_hour > 12)?" PM":" AM");
 	}
-		
+	
 	if(_airplayStatus)
 		drawAirplayLogo(0, 55);
 	else
@@ -2304,22 +2304,22 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 		
 		_vfd.writePacket(buff2, sizeof(buff2));
 	}
-
+	
 	drawTemperature();
- 	drawEngineCheck();
+	drawEngineCheck();
 }
 
 void DisplayMgr::drawAirplayLogo(uint8_t x,  uint8_t y, string text ){
-
+	
 	const uint8_t airplayLogo[] = {0x1A,0x80, 0x18,0x09, 0x1c,0x62,0x8d,0x93,0xa7,0x93,0x8d,0x62,0x1c};
-
+	
 	_vfd.setCursor( x, y)	;
 	_vfd.writePacket(airplayLogo, sizeof(airplayLogo));
-
+	
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.setCursor(x+11, y+7);
- 	_vfd.printPacket("AIRPLAY %-15s",  text.c_str());
- }
+	_vfd.printPacket("AIRPLAY %-15s",  text.c_str());
+}
 
 
 void  DisplayMgr::drawTemperature(){
@@ -2383,7 +2383,7 @@ void DisplayMgr::drawEngineCheck(){
 	_vfd.setCursor(midX, 60);
 	
 	char buffer[20] = {0};
- 
+	
 	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
 		&& engineCheck) {
 		sprintf(buffer, "CHECK ENGINE");
@@ -2742,11 +2742,11 @@ void DisplayMgr::drawTimeBox(){
 	
 	time_t rawtime;
 	struct tm timeinfo = {0};
-
+	
 	time(&rawtime);
 	localtime_r(&rawtime, &timeinfo); // fills in your structure,
-												 // instead of returning a pointer to a static
-
+	// instead of returning a pointer to a static
+	
 	char timebuffer[16] = {0};
 	std::strftime(timebuffer, sizeof(timebuffer)-1, "%2l:%M%P", &timeinfo);
 	_vfd.setFont(VFD::FONT_5x7);
@@ -2917,17 +2917,17 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 
 
 // MARK: -  Scanner Screen
- 
+
 void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 	
 	PiCarMgr* mgr	= PiCarMgr::shared();
 	RadioMgr* radio 	= PiCarMgr::shared()->radio();
 	
- 
-// 	printf("drawScannerScreen(%d)\n", transition);
-//	int centerX = _vfd.width() /2;
+	
+	// 	printf("drawScannerScreen(%d)\n", transition);
+	//	int centerX = _vfd.width() /2;
 	int centerY = _vfd.height() /2;
- 
+	
 	if(transition == TRANS_ENTERING){
 		_vfd.clearScreen();
 		
@@ -2940,21 +2940,21 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 			_vfd.printPacket("      ");
 		}
 	}
- 
+	
 	
 	if(transition == TRANS_LEAVING) {
-  	 	LEDeventScannerStop();
- 		return;
+		LEDeventScannerStop();
+		return;
 	}
-
+	
 	if(transition ==  TRANS_REFRESH) {
-// 		LEDeventScannerStep();
- 	}
+		// 		LEDeventScannerStep();
+	}
 	
 	if(transition ==  TRANS_IDLE) {
-//   		LEDeventScannerHold();
+		//   		LEDeventScannerHold();
 	}
-
+	
 	RadioMgr::radio_mode_t  mode;
 	uint32_t						freq;
 	
@@ -2970,23 +2970,23 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		PiCarMgr::station_info_t info;
 		if(mgr->getStationInfo(mode, freq, info)){
 			titleStr = truncate(info.title, maxLen);
- 			string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
+			string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 			titleStr = portionOfSpaces + titleStr;
-			}
-	
+		}
+		
 		_vfd.setCursor(0,centerY-5);
 		_vfd.printPacket("%-20s",titleStr.c_str() );
-
+		
 		string channelStr = RadioMgr::modeString(mode) + " "
 		+ RadioMgr::hertz_to_string(freq, 3) + " "
 		+ RadioMgr::freqSuffixString(freq);
- 
+		
 		string portionOfSpaces = spaces.substr(0, (maxLen - channelStr.size()) / 2);
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
 		_vfd.printPacket("%-20s",channelStr.c_str() );
 	}
-	 
+	
 	
 	_vfd.setFont(VFD::FONT_MINI);
 	_vfd.setCursor(10, centerY+19);
@@ -3110,13 +3110,13 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 
 // MARK: -  Slider Screen
 void DisplayMgr::showSliderScreen(
-							 string title,
-							 string right_text,
-							 string left_text,
-							 time_t timeout,
-							 menuSliderGetterCallBack_t getterCB ,
-							 menuSliderSetterCallBack_t setterCB,
-							 boolCallback_t doneCB){
+											 string title,
+											 string right_text,
+											 string left_text,
+											 time_t timeout,
+											 menuSliderGetterCallBack_t getterCB ,
+											 menuSliderSetterCallBack_t setterCB,
+											 boolCallback_t doneCB){
 	
 	if(_menuSliderCBInfo) free(_menuSliderCBInfo);
 	menuSliderCBInfo_t * cbInfo = (menuSliderCBInfo_t *) malloc(sizeof( menuSliderCBInfo_t));
@@ -3129,32 +3129,33 @@ void DisplayMgr::showSliderScreen(
 	cbInfo->getCB = getterCB;
 	cbInfo->setCB = setterCB;
 	cbInfo->doneCB = doneCB;
-  
+	
 	_menuSliderCBInfo = cbInfo;
- 
+	
 	setEvent(EVT_PUSH, MODE_SLIDER );
-
-//
-//	if(getterCB){
-//		double val = (getterCB)();
-//
-// 		if(setterCB){
-//			val += .1;
-//   			(setterCB)(val);
-//		}
-//	}
-//	if(doneCB) (doneCB)(true);
-//
-//	if(_menuSliderCBInfo){
-// 		free(_menuSliderCBInfo);
-//		_menuSliderCBInfo = NULL;
-//	}
-
+	
+	//
+	//	if(getterCB){
+	//		double val = (getterCB)();
+	//
+	// 		if(setterCB){
+	//			val += .1;
+	//   			(setterCB)(val);
+	//		}
+	//	}
+	//	if(doneCB) (doneCB)(true);
+	//
+	//	if(_menuSliderCBInfo){
+	// 		free(_menuSliderCBInfo);
+	//		_menuSliderCBInfo = NULL;
+	//	}
+	
 }
 
 
 void DisplayMgr::drawSliderScreen(modeTransition_t transition){
-
+	
+	printf("drawSliderScreen(%d)\n", transition);
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -3172,7 +3173,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 		_menuSliderCBInfo  = NULL;
 		return;
 	}
-
+	
 	if(!_menuSliderCBInfo)
 		return;
 	
@@ -3195,7 +3196,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 		_vfd.write(_menuSliderCBInfo->right_text);
 	}
 	
-
+	
 }
 
 
@@ -3400,7 +3401,7 @@ bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
 }
 
 
- 
+
 
 // MARK: -  Squelch  Screen
 
@@ -3409,7 +3410,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	int			 maxSquelch = radio->getMaxSquelchRange();
- 
+	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	uint8_t midX = width/2;
@@ -3420,41 +3421,41 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 	uint8_t topbox 	= midY -5 ;
 	uint8_t bottombox = midY + 5 ;
 	
-//	printf("drawSquelchScreen(%d)\n", transition);
-
+	//	printf("drawSquelchScreen(%d)\n", transition);
+	
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
 	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
-			
+		
 		//draw box outline
 		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		}
+	}
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		int squelch = radio->getSquelchLevel();
- 
+		
 		auto boxwidth = (rightbox - leftbox);
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(abs(maxSquelch)) ;
 		uint8_t itemX = (step * squelch) + rightbox;
 		
-	//	printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch), squelch  );
+		//	printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch), squelch  );
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
 		_vfd.setFont(VFD::FONT_5x7);
-
+		
 		// clear inside of box
 		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
 			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
 			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-	//		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			//		VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
 			// draw marker
 			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
 			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0xBB,
@@ -3468,9 +3469,9 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		sprintf(buffer, "Squelch: %-3d",squelch);
 		_vfd.setCursor( midX - ((strlen(buffer)*5) /2 ), topbox - 5);
 		_vfd.printPacket(buffer);
- 	}
+	}
 }
- 
+
 bool DisplayMgr::processSelectorKnobActionForSquelch( knob_action_t action){
 	bool wasHandled = false;
 	
@@ -3712,15 +3713,15 @@ bool DisplayMgr::processSelectorKnobActionForDTC( knob_action_t action){
 			wasHandled = true;
 		}
 		else if(_lineOffset == totalCodes){
-	//		erase  from DB OBD_DTC_STORED/
+			//		erase  from DB OBD_DTC_STORED/
 			frameDB->clearValue("OBD_DTC_STORED");
 			
-		// tell ECU to erase it
+			// tell ECU to erase it
 			can->sendDTCEraseRequest();
 			
 			// redraw
 			setEvent(EVT_NONE,MODE_DTC);
-
+			
 			wasHandled = true;
 		}
 		else {
@@ -3833,7 +3834,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					savedCB(shouldSave, Utils::trim(_editString));
 				}
 				wasHandled = true;
-
+				
 			}
 			// did we click on a string?
 			
@@ -3845,7 +3846,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					if (_editString.back() != ' ') _editString += ' ';
 				}
 				else {
-				// already in edit mode
+					// already in edit mode
 					// did we enter a delete  char
 					if( charChoices[_editChoice] == DELETE_CHAR){
 						_editString.erase(_currentMenuItem,1);
@@ -3863,7 +3864,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					else  if( charChoices[_editChoice] == CLEAR_CHAR){
 						_editString = " ";
 						_currentMenuItem = 0;
-
+						
 					}
 					// are we at the end of a string
 					else  if(_currentMenuItem == _editString.size() -1){
@@ -3871,7 +3872,7 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 						if( charChoices[_editChoice] == ' '){
 							// this means we want to leave edit mode
 							_isEditing = false;
-	
+							
 						}
 						else {
 							// stay in edit mode and move forward
@@ -3886,32 +3887,32 @@ bool DisplayMgr::processSelectorKnobActionForEditString( knob_action_t action){
 					else {
 						// break edit mode and mode
 						_currentMenuItem++;
- //						_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size()));
+						//						_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size()));
 						_isEditing = false;
 					}
 				}
 				
- 				setEvent(EVT_NONE,MODE_EDIT_STRING);
+				setEvent(EVT_NONE,MODE_EDIT_STRING);
 				wasHandled = true;
-
+				
 			}
 		}
 		default: break;
 	}
 	
-//	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
-
+	//	printf("Knob %d  %2d - %s\n", action, _currentMenuItem, _isEditing?"Edit":"no Edit");
+	
 	return wasHandled;
 }
- 
+
 
 void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 	
 	uint8_t height = _vfd.height();
-//	uint8_t width = _vfd.width();
-// 	int centerX = width /2;
+	//	uint8_t width = _vfd.width();
+	// 	int centerX = width /2;
 	int centerY = _vfd.height() /2;
-
+	
 	if(transition == TRANS_ENTERING) {
 		_vfd.clearScreen();
 		
@@ -3923,25 +3924,25 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		_currentMenuItem = 0;
 		_menuCursor = 0;
 		_isEditing = false;
-		}
+	}
 	
 	if(transition == TRANS_LEAVING) {
 		return;
 	}
- 
+	
 	
 	static int lastItem = INT_MAX;
 	static bool lasEditMode = false;
 	static int lastEditChoice = INT_MAX;
-
- 	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 3));
-  	_editChoice  = min(_editChoice ,  static_cast<int>( strlen(charChoices)));
-
-	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
 	
+	_currentMenuItem = min(_currentMenuItem ,  static_cast<int>( _editString.size() + 3));
+	_editChoice  = min(_editChoice ,  static_cast<int>( strlen(charChoices)));
+	
+	if(lastItem  != _currentMenuItem || lasEditMode != _isEditing || _editChoice != lastEditChoice){
+		
 		int startCursor = 30;
 		int strlen = (int) _editString.size();
-
+		
 		if(lasEditMode == false && _isEditing){
 			if(_currentMenuItem < strlen  )
 				for(int i = 0; i < std::strlen(charChoices); i ++){
@@ -3957,7 +3958,7 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 		
 		_vfd.setCursor( startCursor /*centerX - ((_editString.size()*7) /2 )*/, centerY);
 		_vfd.setFont(VFD::FONT_5x7);
-				
+		
 		if(_isEditing && _currentMenuItem < strlen)
 			_editString[_currentMenuItem] = charChoices[_editChoice];
 		
@@ -3971,22 +3972,22 @@ void DisplayMgr::drawEditStringScreen(modeTransition_t transition){
 			}
 			_vfd.printPacket("%-18s", buf1);
 		}
-
-//// debug
-//		_vfd.setCursor(0, centerY + 10);
-//		_vfd.printPacket("%2d", _currentMenuItem);
-//	//
-//		_vfd.setCursor(0, centerY + 10);
-//		_vfd.printPacket("\x1A\x40\x18\x08\x1C\x5C\x48\x3E\x1D\x1D\x14\x36");
-							  
-	 
-	_vfd.setCursor(0,height-10);
-	_vfd.printPacket("%s Cancel", _currentMenuItem == strlen? "\xb9":" ");
+		
+		//// debug
+		//		_vfd.setCursor(0, centerY + 10);
+		//		_vfd.printPacket("%2d", _currentMenuItem);
+		//	//
+		//		_vfd.setCursor(0, centerY + 10);
+		//		_vfd.printPacket("\x1A\x40\x18\x08\x1C\x5C\x48\x3E\x1D\x1D\x14\x36");
+		
+		
+		_vfd.setCursor(0,height-10);
+		_vfd.printPacket("%s Cancel", _currentMenuItem == strlen? "\xb9":" ");
+		
+		_vfd.setCursor(0,height);
+		_vfd.printPacket("%s Save", _currentMenuItem == strlen+1? "\xb9":" ");
+	}
 	
-	_vfd.setCursor(0,height);
-	_vfd.printPacket("%s Save", _currentMenuItem == strlen+1? "\xb9":" ");
- 	}
-	 
 	drawTimeBox();
 }
 
@@ -4111,13 +4112,13 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			
 			if(!success)
 				setEvent(EVT_REDRAW, _current_mode);
-
+			
 			wasHandled = true;
 		}
 			break;
 			
-	 		default: break;
-
+		default: break;
+			
 	}
 	
 	return wasHandled;
@@ -4213,7 +4214,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
-
+		
 		if(lines.size() > displayedLines){
 			
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
@@ -4390,10 +4391,10 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 
 void DisplayMgr::showChannel( RadioMgr::channel_t channel,
 									  showChannelCallBack_t cb) {
- 	if(channel.first != RadioMgr::MODE_UNKNOWN){
- 		_currentChannel = channel;
+	if(channel.first != RadioMgr::MODE_UNKNOWN){
+		_currentChannel = channel;
 		_showChannelCB = cb;
- 		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);
+		setEvent(EVT_PUSH, MODE_CHANNEL_INFO);
 	}
 }
 
@@ -4403,7 +4404,7 @@ bool DisplayMgr::processSelectorKnobActionForChannelInfo( knob_action_t action){
 	
 	
 	string uuid = "";
- 
+	
 	auto savedCB = _showChannelCB;
 	auto savedChannel = _currentChannel;
 	
@@ -4426,12 +4427,12 @@ bool DisplayMgr::processSelectorKnobActionForChannelInfo( knob_action_t action){
 void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
- 
-//	uint8_t width = _vfd.width();
-//	uint8_t height = _vfd.height();
- 
+	
+	//	uint8_t width = _vfd.width();
+	//	uint8_t height = _vfd.height();
+	
 	int centerY = _vfd.height() /2;
-
+	
 	if(transition == TRANS_LEAVING) {
 		_rightKnob.setAntiBounce(antiBounceDefault);
 		_vfd.clearScreen();
@@ -4442,15 +4443,15 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 	RadioMgr::radio_mode_t  mode = _currentChannel.first;
 	uint32_t						freq = _currentChannel.second;
 	
- 
+	
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
-	 	_vfd.clearScreen();
- 
+		_vfd.clearScreen();
+		
 		_vfd.setCursor(0,7);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("CHANNEL INFO");
-	 
+		
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		constexpr int maxLen = 20;
@@ -4462,30 +4463,30 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 			titleStr = truncate(info.title, maxLen);
 			string portionOfSpaces = spaces.substr(0, (maxLen - titleStr.size()) / 2);
 			titleStr = portionOfSpaces + titleStr;
-			}
-
+		}
+		
 		_vfd.setCursor(0,centerY-5);
 		_vfd.printPacket("%-21s",titleStr.c_str() );
-
+		
 		string channelStr = RadioMgr::modeString(mode) + " "
 		+ RadioMgr::hertz_to_string(freq, 3) + " "
 		+ RadioMgr::freqSuffixString(freq);
-
+		
 		string portionOfSpaces = spaces.substr(0, (maxLen - channelStr.size()) / 2);
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
 		_vfd.printPacket("%-21s",channelStr.c_str() );
-  
+		
 		_vfd.setCursor(0, 60);
- 		_vfd.printPacket("           ");
-
+		_vfd.printPacket("           ");
+		
 		bool isPreset = mgr->isPresetChannel(mode, freq);
 		bool isScanner = mgr->isScannerChannel(mode, freq);
 		_vfd.setCursor(0, 60);
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.printPacket("%s %s", isPreset?"PRESET":"", isScanner?"SCANNER":"");
-  	}
- 
+	}
+	
 	drawTimeBox();
 	
 	
@@ -4493,10 +4494,10 @@ void DisplayMgr::drawChannelInfo(modeTransition_t transition){
 
 
 void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
-											 time_t timeout ,
+												 time_t timeout ,
 												 showScannerChannelsCallBack_t cb){
 	_lineOffset = 0;
- 
+	
 	// set _lineOffset to proper entry
 	if (initialChannel.first  != RadioMgr::MODE_UNKNOWN){
 		PiCarMgr*		mgr 	= PiCarMgr::shared();
@@ -4516,11 +4517,11 @@ void DisplayMgr::showScannerChannels( RadioMgr::channel_t initialChannel,
 	setEvent(EVT_PUSH, MODE_SCANNER_CHANNELS);
 }
 
- 
+
 bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t action){
 	bool wasHandled = false;
 	
- 
+	
 	switch(action){
 			
 		case KNOB_EXIT:
@@ -4581,18 +4582,18 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 			break;
 			
 		default: break;
-
+			
 	}
 	
 	if(action ==  KNOB_UP || action == KNOB_DOWN){
 		PiCarMgr*	mgr 	= PiCarMgr::shared();
 		auto channels = mgr->getScannerChannels();
-	 
+		
 		if(_lineOffset < channels.size()) {
 			RadioMgr::channel_t channel = channels[_lineOffset];
- 			if(_scannnerChannelsCB) (_scannnerChannelsCB)(true, channel, KNOB_SELECTING);
+			if(_scannnerChannelsCB) (_scannnerChannelsCB)(true, channel, KNOB_SELECTING);
 		}
-
+		
 	}
 	
 	return wasHandled;
@@ -4602,9 +4603,9 @@ bool DisplayMgr::processSelectorKnobActionForScannerChannels( knob_action_t acti
 void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
- 
+	
 	constexpr int displayedLines = 5;
- 
+	
 	static int lastOffset = 0;
 	static int firstLine = 0;
 	
@@ -4613,17 +4614,17 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 	if(transition == TRANS_LEAVING) {
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
- 		_vfd.clearScreen();
+		_vfd.clearScreen();
 		lastOffset = 0;
 		firstLine = 0;
 		return;
 	}
-
+	
 	auto channels = mgr->getScannerChannels();
 	
 	if(transition == TRANS_ENTERING){
 		_rightKnob.setAntiBounce(antiBounceSlow);
-
+		
 		_vfd.clearScreen();
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.setCursor(0,10);
@@ -4636,7 +4637,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		lastOffset = INT_MAX;
 		firstLine = 0;
 		needsRedraw = true;
-
+		
 	}
 	
 	// check for change in gps offsets ?
@@ -4681,7 +4682,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 					string title = truncate(info.title,  20);
 					channelStr += + " " + title;
 				}
- 
+				
 				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  channelStr;
 			}
@@ -4694,7 +4695,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
-
+		
 		if(lines.size() > displayedLines){
 			
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
@@ -4702,7 +4703,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 			
 			_vfd.drawScrollBar(11, bar_height ,offset);
 		}
-
+		
 	}
 	
 	drawTimeBox();
@@ -4828,12 +4829,12 @@ bool DisplayMgr::normalizeCANvalue(string key, string & valueOut){
 
 // MARK: -  MetaData reader
 inline static const char kPadCharacter = '=';
- 
+
 vector<uint8_t> decode(const std::string& input) {
 	if(input.empty())
 		return {};
 	
- 	if(input.length() % 4)
+	if(input.length() % 4)
 		throw std::runtime_error("Invalid base64 length!");
 	
 	std::size_t padding{};
@@ -4887,20 +4888,20 @@ vector<uint8_t> decode(const std::string& input) {
 	
 	return decoded;
 }
- 
+
 
 void  DisplayMgr::clearAPMetaData() {
 	pthread_mutex_lock (&_apmetadata_mutex);
 	_airplayMetaData.clear();
 	pthread_mutex_unlock(&_apmetadata_mutex);
 	
-//	printf("META cleared\n");
-
+	//	printf("META cleared\n");
+	
 };
 
 void DisplayMgr::airplayStarted(){
 	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
-		
+	
 	if(radio->isOn() && _shouldAutoPlay){
 		if(radio->radioMode() != RadioMgr::AIRPLAY){
 			radio->setFrequencyandMode(RadioMgr::AIRPLAY, 1);
@@ -4912,87 +4913,87 @@ void DisplayMgr::airplayStarted(){
 
 void DisplayMgr::processAirplayMetaData(string type, string code, vector<uint8_t> payload ){
 	
- //	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
+	//	  	printf("processAirplayMetaData( %s %s %lu)\n",type.c_str(),code.c_str(),payload.size());
 	
-//	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
+	//	RadioMgr*	radio 	= PiCarMgr::shared()->radio();
 	
 	static map<string, string>  airplaycache = {};
 	static bool session_started = false;
 	
-//	if(radio->isOn()){
+	//	if(radio->isOn()){
+	
+	if(type == "core"){
 		
-		if(type == "core"){
-			
-			//			  {'core', 'asal'}, // daap.songalbum
-			//			  {'core', 'asar'},	// daap.songartist
-			//			  {'core', 'minm'}, // dmap.itemname
-			//		  //	{'core', 'asgn'}, //  daap.songgenre
-			//		  //	{'core', 'ascp'}, //  daap.daap.songcomposer
-			//		  //	{'core', 'asdk'}, //  daap.daap.songdatakind
-			//			  {'core', 'caps'}, // play status  ( 01/ 02 )
-			
-			static stringvector filter_table = {
-				"asal" , // daap.songalbum
-				"asar",	// daap.songartist
-				"minm"  // dmap.itemname
-			};
-			
-			if(session_started){
-				if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
-					string str =  string(payload.begin(), payload.end());
-					airplaycache[code] = str;
-//					printf("META %s: %s\n",code.c_str(), str.c_str());
-					return;
-				}
-			}
-			
-			if(code ==  "caps" ) {
-				_airplayStatus = payload[0];
-	 			clock_gettime(CLOCK_MONOTONIC, &_lastAirplayStatusTime);
- 
-				// play status
-//				printf("META play status %02x \n", _airplayStatus) ;
-				showAirplayChange();
-			}
-			else  {
-				printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
-			}
-		}
-		else if(type == "ssnc"){
-			//		{'ssnc', 'mden'}, //  Metadata stream processing end
-			//		{'ssnc', 'mdst'}, //  Metadata stream processing start
-			
-			if(code ==  "mdst" ) {
-				airplaycache.clear();
-				session_started = true;
-				}
-			else 	if(code ==  "pbeg" ) {
-				// play stream begin.
-				airplayStarted();
-			}
-			else if(code ==  "pend" || code ==  "aend" ){
-				// airplay disconnected
-				session_started = false;
-				_airplayStatus = 0;
- 				clearAPMetaData();
-				showAirplayChange();
-				
-//	 		printf("META airplay diconnected\n") ;
- 			}
-			else 	if(code ==  "mden" ) {
-				// udate the airplay info.
-				pthread_mutex_lock (&_apmetadata_mutex);
-				_airplayMetaData.clear();
-				_airplayMetaData = airplaycache;
-				pthread_mutex_unlock(&_apmetadata_mutex);
-				
-				showAirplayChange();
-				airplaycache.clear();
-				session_started = false;
+		//			  {'core', 'asal'}, // daap.songalbum
+		//			  {'core', 'asar'},	// daap.songartist
+		//			  {'core', 'minm'}, // dmap.itemname
+		//		  //	{'core', 'asgn'}, //  daap.songgenre
+		//		  //	{'core', 'ascp'}, //  daap.daap.songcomposer
+		//		  //	{'core', 'asdk'}, //  daap.daap.songdatakind
+		//			  {'core', 'caps'}, // play status  ( 01/ 02 )
+		
+		static stringvector filter_table = {
+			"asal" , // daap.songalbum
+			"asar",	// daap.songartist
+			"minm"  // dmap.itemname
+		};
+		
+		if(session_started){
+			if ( std::find(filter_table.begin(), filter_table.end(), code) != filter_table.end() ){
+				string str =  string(payload.begin(), payload.end());
+				airplaycache[code] = str;
+				//					printf("META %s: %s\n",code.c_str(), str.c_str());
+				return;
 			}
 		}
 		
-//	}
+		if(code ==  "caps" ) {
+			_airplayStatus = payload[0];
+			clock_gettime(CLOCK_MONOTONIC, &_lastAirplayStatusTime);
+			
+			// play status
+			//				printf("META play status %02x \n", _airplayStatus) ;
+			showAirplayChange();
+		}
+		else  {
+			printf("META %s,%s %zu  \n",type.c_str(),  code.c_str(), payload.size());
+		}
+	}
+	else if(type == "ssnc"){
+		//		{'ssnc', 'mden'}, //  Metadata stream processing end
+		//		{'ssnc', 'mdst'}, //  Metadata stream processing start
+		
+		if(code ==  "mdst" ) {
+			airplaycache.clear();
+			session_started = true;
+		}
+		else 	if(code ==  "pbeg" ) {
+			// play stream begin.
+			airplayStarted();
+		}
+		else if(code ==  "pend" || code ==  "aend" ){
+			// airplay disconnected
+			session_started = false;
+			_airplayStatus = 0;
+			clearAPMetaData();
+			showAirplayChange();
+			
+			//	 		printf("META airplay diconnected\n") ;
+		}
+		else 	if(code ==  "mden" ) {
+			// udate the airplay info.
+			pthread_mutex_lock (&_apmetadata_mutex);
+			_airplayMetaData.clear();
+			_airplayMetaData = airplaycache;
+			pthread_mutex_unlock(&_apmetadata_mutex);
+			
+			showAirplayChange();
+			airplaycache.clear();
+			session_started = false;
+		}
+	}
+	
+	//	}
 }
 
 typedef struct {
@@ -5058,7 +5059,7 @@ void DisplayMgr::MetaDataReaderLoop(){
 			}
 			
 			string line;
-
+			
 			while ( std::getline(ifs, line) ) {
 				
 				uint32_t type, code;
@@ -5112,21 +5113,21 @@ void DisplayMgr::MetaDataReaderLoop(){
 				ifs.close();
 			}
 		}
- 
+		
 	}
 	
 	if(ifs.is_open()) {
 		ifs.close();
 	}
 };
- 
 
- void* DisplayMgr::MetaDataReaderThread(void *context){
+
+void* DisplayMgr::MetaDataReaderThread(void *context){
 	DisplayMgr* d = (DisplayMgr*)context;
-
+	
 	//   the pthread_cleanup_push needs to be balanced with pthread_cleanup_pop
 	pthread_cleanup_push(   &DisplayMgr::MetaDataReaderThreadCleanup ,context);
- 
+	
 	d->MetaDataReaderLoop();
 	
 	pthread_exit(NULL);
@@ -5135,10 +5136,10 @@ void DisplayMgr::MetaDataReaderLoop(){
 	return((void *)1);
 }
 
- 
+
 void DisplayMgr::MetaDataReaderThreadCleanup(void *context){
 	//GPSmgr* d = (GPSmgr*)context;
- 
+	
 	printf("cleanup GPSReader\n");
 }
- 
+

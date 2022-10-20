@@ -316,6 +316,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			for(auto line:lines)
 				if(line.size() > longestLine ) longestLine = line.size();
 
+		printf("\nlongestLine:%d\n" , longestLine);
 		
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
@@ -340,6 +341,9 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				
+				printf("rightbox: %d leftbox: %d\n" , rightbox,leftbox);
+				printf("%s\n" , str.c_str());
+
 				uint8_t buff2[] = {
 					VFD_CLEAR_AREA,
 					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),

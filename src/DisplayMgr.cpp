@@ -3191,7 +3191,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
 		_vfd.setCursor(leftbox - 10, bottombox -1 );
-		_vfd.write(_menuSliderCBInfo->right_text);
+		_vfd.write(_menuSliderCBInfo->left_text);
 		_vfd.setCursor(rightbox + 5, bottombox -1 );
 		_vfd.write(_menuSliderCBInfo->right_text);
 	}

@@ -1186,7 +1186,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			cursorV += lineHeight;
 		}
 		
-		if(_menuItems.size() >  maxLines) {
+		if(_menuItems.size() >  maxLines+1) {
 			printf("items: %d \n", _menuItems.size());
 			printf("(%d - %d) / %d)  =  %d\n",  height, startV, lineHeight, maxLines );
 			

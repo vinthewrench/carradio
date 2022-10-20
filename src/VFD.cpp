@@ -286,6 +286,34 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	return success;
 }
 
+// for 5x5 font
+static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI){
+	uint8_t nonSpace = 0;
+	uint8_t spaces = 0;
+
+	for(auto c:str){
+		if(std::isspace(c)) spaces++; else nonSpace++;
+	}
+	uint length = 0;
+	switch (font) {
+		case VFD::FONT_MINI:
+			length = (nonSpace*4) + (spaces*2);
+			break;
+
+		case VFD::FONT_5x7:
+			length = (nonSpace*6) + (spaces*6);
+			break;
+
+		case VFD::FONT_10x14:
+			length = (nonSpace*11) + (spaces*11);
+			break;
+
+		default:
+			break;
+	}
+
+	 
+	return length;}
 
 bool VFD:: printLines(uint8_t y, uint8_t step,
 							 stringvector lines,
@@ -309,26 +337,17 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	}
 	else {
 		
-		// this needs to be scrolled
+		// this text needs to be scrolled
 		
 		// quick scan for max line length skip spaces
-			uint8_t longestLine = 0;
+		uint8_t longest_pixel_width  = 0;
 		
 		for(auto line:lines){
-			uint8_t nonSpace = 0;
-			uint8_t spaces = 0;
-
-			for(auto c:line){
-				if(std::isspace(c)) spaces++; else nonSpace++;
-			}
-			uint length = (nonSpace*4) + (spaces*2);
-			
-			printf("\nlength :%d  = nonSpace: %d  spaces: %d\n" , length, nonSpace, spaces);
-
-	 	 	if(length> longestLine )longestLine = length;
+			auto length = string_pixel_Width(line);
+			if(length> longest_pixel_width )longest_pixel_width = length;
  		}
 	
-		printf("longestLine:%d\n" , longestLine);
+		printf("longest_pixel_width:%d\n" , longest_pixel_width);
 		
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
@@ -342,14 +361,14 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			string str = lines[i].c_str();
 			str = truncate(str,  linewidth);
 
-			// do we need to clear the end of line?
-			if((str.size() < longestLine - 4) &&  width > 0){
+			auto pixel_width = string_pixel_Width(str);
+			if(pixel_width < longest_pixel_width && width > 0){
 				
-				// This is a guess at best
 				// what I really need is a way to clear to a givven point
 				// from the cursor position.  but Noritake doesnt have that,
+		 
 				uint8_t  rightbox = width;
-				uint8_t  leftbox = rightbox - longestLine;
+				uint8_t  leftbox = rightbox - (pixel_width -pixel_width);
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				
@@ -361,9 +380,10 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 					static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
 				};
 				writePacket(buff2, sizeof(buff2), 0);
+		 
 			}
+	 
 			printf("%lu |%s|\n" ,str.size(), str.c_str());
-
  
 			success = printPacket("%-*s",linewidth, str.c_str());
 			if(!success) break;

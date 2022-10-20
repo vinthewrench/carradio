@@ -3528,7 +3528,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 			
-			_vfd.printLines(20, 6, lines, firstLine, displayedLines,33);
+			_vfd.printLines(20, 6, lines, firstLine, displayedLines,33, 120);
 			if(lines.size() > displayedLines){
 				
 				float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;

@@ -220,6 +220,7 @@ private:
 	void displayGPS();
 	void displayWaypoints(string intitialUUID = "");
 	void displayWaypoint(string uuid);
+	void waypointEditMenu(string uuid);
 
 	void displayScannerChannels(RadioMgr::channel_t selectedChannel
 										 	= {RadioMgr::MODE_UNKNOWN, 0 });

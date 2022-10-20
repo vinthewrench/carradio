@@ -3075,6 +3075,27 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	return wasHandled;
 }
 
+
+// MARK: -  Slider Screen
+void DisplayMgr::showSliderScreen(
+							 string title,
+							 string right_text,
+							 string left_text,
+							 time_t timeout,
+							 menuSliderGetterCallBack_t getterCB ,
+							 menuSliderSetterCallBack_t setterCB,
+							 boolCallback_t doneCB){
+	
+	if(getterCB){
+		double val = (getterCB)();
+		if(setterCB){
+			(setterCB)(val + .01);
+		}
+	}
+	if(doneCB) (doneCB)(true);
+
+}
+
 // MARK: -  Balance Audio Screen
 
 

@@ -163,6 +163,20 @@ public:
 	void showFaderChange();
 	void showSquelchChange();
 	
+	
+	typedef std::function<void(double)> menuSliderSetterCallBack_t;
+	typedef std::function<double()> menuSliderGetterCallBack_t;
+
+	void showSliderScreen(
+								 string title,
+								 string right_text 	= "R",
+								 string left_text 	= "L",
+								 time_t timeout = 0,
+								 menuSliderGetterCallBack_t getterCB = nullptr,
+								 menuSliderSetterCallBack_t setCB = nullptr,
+ 								 boolCallback_t doneCB  = nullptr);
+	
+	
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 	void showAirplayChange();

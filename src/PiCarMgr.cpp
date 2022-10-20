@@ -2112,7 +2112,24 @@ void PiCarMgr::displayAudioMenu(){
 					case 2:
 						_display.showFaderChange();
 						break;
+	
+					case 3:
+					{
+						static double bass_value = 0;
+				 
+						_display.showSliderScreen("BASS","+","-", 10,
+														  [=](){return bass_value;},
+														  [=](double val){bass_value = val;},
+														  [=](bool didSucceed){
+							
+							printf("Bass Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+						});;
+														  
+					}
+						break;
+	
 						
+				
 					default:
 						// fall back to main menu
 						displayMenu();

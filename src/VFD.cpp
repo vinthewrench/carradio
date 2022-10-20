@@ -291,7 +291,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 							 stringvector lines,
 							 uint8_t firstLine,
 							 uint8_t maxLines,
-							 uint8_t linewidth){
+							 uint8_t linewidth,
+							 uint8_t width ){
 	bool success = false;
 	
 	auto lineCount = lines.size();
@@ -299,7 +300,23 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);			
+			setCursor(0, y);
+			
+			// clear before writing
+			if(width > 0){
+				uint8_t  rightbox = width;
+				uint8_t  leftbox = 0 ;
+				uint8_t  topbox = y - step;
+				uint8_t  bottombox = y;
+				
+				uint8_t buff2[] = {
+					VFD_CLEAR_AREA,
+					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+					static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+				};
+				writePacket(buff2, sizeof(buff2), 0);
+			}
+			
 			success = printPacket("%-*s", lines[i].c_str());
 			if(!success) break;
 			y += step;
@@ -318,6 +335,21 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			string str = lines[i].c_str();
 			str = truncate(str,  linewidth);
 
+			// clear before writing
+			if(width > 0){
+				uint8_t  rightbox = width;
+				uint8_t  leftbox = 0 ;
+				uint8_t  topbox = y - step;
+				uint8_t  bottombox = y;
+				
+				uint8_t buff2[] = {
+					VFD_CLEAR_AREA,
+					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+					static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+				};
+				writePacket(buff2, sizeof(buff2), 0);
+			}
+ 
 			success = printPacket("%-*s",linewidth, str.c_str());
 			if(!success) break;
 			y += step;

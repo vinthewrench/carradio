@@ -1174,7 +1174,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			char buffer[64] = {0};
 //			string moreIndicator =  moreNone;
 			
-			auto lastLine = _menuCursor + maxLines;
+//		auto lastLine = _menuCursor + maxLines;
 			
 //			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
 //			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;

@@ -2105,6 +2105,51 @@ void PiCarMgr::displayWaypoint(string uuid){
 	});
 }
 
+static void dumpHex(uint8_t* buffer, size_t length, int offset)
+{
+	char hexDigit[] = "0123456789ABCDEF";
+	size_t			i;
+	size_t						lineStart;
+	size_t						lineLength;
+	short					c;
+	const unsigned char	  *bufferPtr = buffer;
+	
+	char                    lineBuf[1024];
+	char                    *p;
+	 
+#define kLineSize	8
+	for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
+	{
+		 lineLength = kLineSize;
+		 if (lineStart + lineLength > length)
+			  lineLength = length - lineStart;
+		 
+		p += sprintf(p, "%6lu: ", lineStart+offset);
+		 for (i = 0; i < lineLength; i++){
+			  *p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
+			  *p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
+			  if((lineStart+i) &0x01)  *p++ = ' ';  ;
+		 }
+		 for (; i < kLineSize; i++)
+			  p += sprintf(p, "   ");
+		 
+		 p += sprintf(p,"  ");
+		 for (i = 0; i < lineLength; i++) {
+			  c = bufferPtr[lineStart + i] & 0xFF;
+			  if (c > ' ' && c < '~')
+					*p++ = c ;
+			  else {
+					*p++ = '.';
+			  }
+		 }
+		 *p++ = 0;
+		 
+  
+		printf("%s\n",lineBuf);
+	}
+#undef kLineSize
+}
+
 void PiCarMgr::sendCANValuesToAmplifier(){
 	double  vol = _audio.volume();
 	double  bal = _audio.balance();
@@ -2117,18 +2162,26 @@ void PiCarMgr::sendCANValuesToAmplifier(){
 	 3D9 Radio Settings broadcast
 		 [7]  Vl Bl Fa Ba Mi Tr FF
 			 Vl - Volume  		00-26x   00 - 38
-			 Bl - Balance		0h(-9)  - 0ah (0) - 19h (+9)
+			 Bl - Balance		1 (-9)  - 10 (0) - 19 (+9)
 			 Fa - Fader
 			 Ba - Bass
 			 Mi - Midrange
 			 Tr - Treble
-
-	 
-	 L = 1
-	 M = 10
-	 R = 19
-	 
-	 */
+  	 */
+	
+	uint8_t packet[8] = {
+		static_cast<uint8_t>(vol * 38),
+		static_cast<uint8_t> (bal * 9  + 10),
+		static_cast<uint8_t> (fade * 9  + 10),
+		static_cast<uint8_t> (bass * 9  + 10),
+		static_cast<uint8_t> (midrange * 9  + 10),
+		static_cast<uint8_t> (treble * 9  + 10),
+ 		0
+	};
+	
+	dumpHex(packet, sizeof(packet), 0);
+	
+	
 }
 
 

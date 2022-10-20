@@ -319,13 +319,16 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			uint8_t spaces = 0;
 
 			for(auto c:line){
-				if(std::isspace(c)) spaces ++; else nonSpace++;
+				if(std::isspace(c)) spaces++; else nonSpace++;
 			}
-			uint length = nonSpace*3 + spaces*2;
+			uint length = (nonSpace*3) + (spaces*2);
+			
+			printf("\nlength :%d  = nonSpace: %d  spaces: %d\n" , length, nonSpace, spaces);
+
 	 	 	if(length> longestLine )longestLine = length;
  		}
 	
-		printf("\nlongestLine:%d\n" , longestLine);
+		printf("longestLine:%d\n" , longestLine);
 		
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;

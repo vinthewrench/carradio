@@ -3952,6 +3952,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 			break;
 			
 		case KNOB_CLICK:
+		case KNOB_DOUBLE_CLICK:
 		{
 			PiCarMgr*	mgr 	= PiCarMgr::shared();
 			auto wps 	= mgr->getWaypoints();

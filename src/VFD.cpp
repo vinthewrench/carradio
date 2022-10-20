@@ -342,8 +342,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				uint8_t  bottombox = y;
 				
 				printf("rightbox: %d leftbox: %d\n" , rightbox,leftbox);
-				printf("%lu |%s|\n" ,str.size(), str.c_str());
-
+	
 				uint8_t buff2[] = {
 					VFD_CLEAR_AREA,
 					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
@@ -351,6 +350,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				};
 				writePacket(buff2, sizeof(buff2), 0);
 			}
+			printf("%lu |%s|\n" ,str.size(), str.c_str());
+
  
 			success = printPacket("%-*s",linewidth, str.c_str());
 			if(!success) break;

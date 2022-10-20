@@ -1137,7 +1137,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	
 	uint8_t startV =  24;
 	uint8_t lineHeight = 9;
-	uint8_t maxLines =  (height - startV) / lineHeight ;
+	uint8_t maxLines =  (height - startV) / lineHeight ;  // this starts at 0
 	//	uint8_t maxCol = width / 7;
 	
 	if(transition == TRANS_LEAVING) {
@@ -1167,18 +1167,9 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 			_menuCursor = max(_menuCursor - 1,  0);
 		}
 		
-//		const string moreNone = " ";
-		
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
-//			string moreIndicator =  moreNone;
-			
-//		auto lastLine = _menuCursor + maxLines;
-			
-//			if(i == _menuCursor && _menuCursor != 0) moreIndicator = moreUp;
-//			else if( i == lastLine && lastLine != _menuItems.size() -1)  moreIndicator = moreDown;
-//
 			TRY(_vfd.setCursor(0,cursorV));
 			//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
 			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );
@@ -1187,10 +1178,6 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		}
 		
 		if(_menuItems.size() >  maxLines+1) {
-			printf("items: %d \n", _menuItems.size());
-			printf("(%d - %d) / %d)  =  %d\n",  height, startV, lineHeight, maxLines );
-			
-			
 			uint8_t scrolltop = startV-lineHeight;
 			float bar_height =  (float)(maxLines +1)/ (float)_menuItems.size() ;
 			float offset =  (float)_currentMenuItem / ((float)_menuItems.size() -1) ;
@@ -4089,8 +4076,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		}
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 19);
-	
+		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
+
 		if(lines.size() > displayedLines){
 			
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;

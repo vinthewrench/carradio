@@ -41,6 +41,8 @@
 #include "TimeStamp.hpp"
 #include "timespec_util.h"
 
+#pragma clang diagnostic ignored "-Wc99-designator"
+
 using namespace std;
 using namespace timestamp;
 using namespace nlohmann;

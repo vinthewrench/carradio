@@ -1152,20 +1152,22 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		auto title = _menuTitle;
 		
 		if(title.size() > 12){
-			TRY(_vfd.setFont(VFD::FONT_MINI));
-			TRY(_vfd.setCursor(10,10));
 			title = truncate(title, 20);
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.setCursor(10,10);
  		}
 		else {
 			if (title.empty()) title = "Select";
-			TRY(_vfd.setCursor(20,10));
+			_vfd.setFont(VFD::FONT_5x7);
+ 			_vfd.setCursor(20,10);
  	 		}
-		TRY(_vfd.write(title));
+		_vfd.write(title);
 	}
 	
 	// did something change?
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
+		_vfd.setFont(VFD::FONT_5x7);
 		if( (_currentMenuItem - maxLines) > _menuCursor) {
 			_menuCursor = max(_currentMenuItem - maxLines, 0);
 		}
@@ -1176,10 +1178,10 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		uint8_t cursorV = startV;
 		for(int i = _menuCursor; (i <= _menuCursor + maxLines) && (i < _menuItems.size()) ; i ++){
 			char buffer[64] = {0};
-			TRY(_vfd.setCursor(0,cursorV));
+			_vfd.setCursor(0,cursorV);
 			//			sprintf(buffer, "%c%-18s %s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str(), moreIndicator.c_str());
 			sprintf(buffer, "%c%-18s",  i == _currentMenuItem?'\xb9':' ' , _menuItems[i].c_str() );
-			TRY(_vfd.write(buffer ));
+			_vfd.write(buffer );
 			cursorV += lineHeight;
 		}
 		

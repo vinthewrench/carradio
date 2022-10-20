@@ -314,7 +314,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		// quick scan for max line length
 			uint8_t longestLine = 0;
 			for(auto line:lines)
-				if(line.size() > longestLine ) longestLine = line.size();
+				if(Utils::trimEnd(line).size() > longestLine ) longestLine = line.size();
 
 		printf("\nlongestLine:%d\n" , longestLine);
 		
@@ -337,12 +337,12 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				// what I really need is a way to clear to a givven point
 				// from the cursor position.  but Noritake doesnt have that,
 				uint8_t  rightbox = width;
-				uint8_t  leftbox = width - ((longestLine - str.size()) * 6);
+				uint8_t  leftbox = rightbox - ((longestLine - str.size()) * 6);
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				
 				printf("rightbox: %d leftbox: %d\n" , rightbox,leftbox);
-				printf("%d |%s|\n" ,str.size(), str.c_str());
+				printf("%lu |%s|\n" ,str.size(), str.c_str());
 
 				uint8_t buff2[] = {
 					VFD_CLEAR_AREA,

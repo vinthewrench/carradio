@@ -3230,17 +3230,17 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
  
 bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 	bool wasHandled = false;
- 
+	
 	double val =  0;
 	
 	// guard
 	if(!_menuSliderCBInfo) return false;
 	
-
+	
 	if(_menuSliderCBInfo->getCB)
 		val = _menuSliderCBInfo->getCB();
 	
-	 	// limit the precision
+	// limit the precision
 	val = std::floor((val * 100) + .5) / 100;
 	
 	if(action == KNOB_UP){
@@ -3250,8 +3250,8 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 				(_menuSliderCBInfo->setCB)(val +.1);
 				setEvent(EVT_NONE,MODE_SLIDER);
 			}
- 		}
-			wasHandled = true;
+		}
+		wasHandled = true;
 	}
 	
 	else if(action == KNOB_DOWN){
@@ -3266,14 +3266,18 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
-		if(_menuSliderCBInfo->doneCB){
-			(_menuSliderCBInfo->doneCB)(true);
-		}
+		
+		auto savedCB = _menuSliderCBInfo->doneCB;
+		
 		free(_menuSliderCBInfo);
 		_menuSliderCBInfo = NULL;
 		
 		popMode();
-	}
+	 
+		if(savedCB){
+			(savedCB)(true);
+		}
+ 	}
 	
 	return wasHandled;
 }

@@ -80,7 +80,8 @@ public:
 		MODE_MESSAGE,
 		MODE_EDIT_STRING,
 		MODE_SCANNER_CHANNELS,
-		MODE_CHANNEL_INFO
+		MODE_CHANNEL_INFO,
+		MODE_SLIDER
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -227,6 +228,9 @@ private:
 	void drawDimmerScreen(modeTransition_t transition);
 	void drawBalanceScreen(modeTransition_t transition);
 	void drawFaderScreen(modeTransition_t transition);
+	
+	void drawSliderScreen(modeTransition_t transition);
+
 	bool processSelectorKnobActionForBalance( knob_action_t action);
 	bool processSelectorKnobActionForFader( knob_action_t action);
 	 

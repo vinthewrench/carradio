@@ -880,6 +880,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_DTC:
 		case MODE_DTC_INFO:
 		case MODE_MENU:
+		case MODE_SLIDER:
 			return true;
 			
 		default:
@@ -1439,7 +1440,25 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
-				else if(_current_mode == MODE_FADER) {
+					else if(_current_mode == MODE_SLIDER) {
+						
+						menuSliderCBInfo_t * cb = _menuSliderCBInfo;
+						if(cb){
+							// check for {EVT_NONE,MODE_SLIDER}  which is a slider change
+							if(item.mode == MODE_SLIDER) {
+								clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+								shouldRedraw = false;
+								shouldUpdate = true;
+							}
+							else if(diff.tv_sec >=  cb->timeout){
+								// timeout pop mode?
+								popMode();
+								shouldRedraw = true;
+								shouldUpdate = true;
+							}
+						}
+ 					}
+ 	 				else if(_current_mode == MODE_FADER) {
 					
 					// check for {EVT_NONE,MODE_FADER}  which is a fader change
 					if(item.mode == MODE_FADER) {
@@ -1668,6 +1687,10 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				drawStartupScreen(transition);
 				break;
 				
+			case MODE_SLIDER:
+				drawSliderScreen(transition);
+				break;
+ 
 			case MODE_DEV_STATUS:
 				drawDeviceStatusScreen(transition);
 				break;
@@ -3102,29 +3125,81 @@ void DisplayMgr::showSliderScreen(
 	cbInfo->title = title;
 	cbInfo->right_text = right_text;
 	cbInfo->left_text = left_text;
-	cbInfo->timeout = timeout;
+	cbInfo->timeout = timeout?timeout:5;  // default 5 secs
 	cbInfo->getCB = getterCB;
 	cbInfo->setCB = setterCB;
 	cbInfo->doneCB = doneCB;
   
 	_menuSliderCBInfo = cbInfo;
  
-	if(getterCB){
-		double val = (getterCB)();
-		
- 		if(setterCB){
-			val += .1;
-   			(setterCB)(val);
-		}
-	}
-	if(doneCB) (doneCB)(true);
+	setEvent(EVT_PUSH, MODE_SLIDER );
 
-	if(_menuSliderCBInfo){
- 		free(_menuSliderCBInfo);
-		_menuSliderCBInfo = NULL;
-	}
+//
+//	if(getterCB){
+//		double val = (getterCB)();
+//
+// 		if(setterCB){
+//			val += .1;
+//   			(setterCB)(val);
+//		}
+//	}
+//	if(doneCB) (doneCB)(true);
+//
+//	if(_menuSliderCBInfo){
+// 		free(_menuSliderCBInfo);
+//		_menuSliderCBInfo = NULL;
+//	}
 
 }
+
+
+void DisplayMgr::drawSliderScreen(modeTransition_t transition){
+
+	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+	
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
+	
+	if(transition == TRANS_LEAVING) {
+		
+		if(_menuSliderCBInfo) free(_menuSliderCBInfo);
+		_menuSliderCBInfo  = NULL;
+		return;
+	}
+
+	if(!_menuSliderCBInfo)
+		return;
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = _menuSliderCBInfo->title;
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
+		
+		//draw box outline
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+		
+		_vfd.setCursor(leftbox - 10, bottombox -1 );
+		_vfd.write(_menuSliderCBInfo->right_text);
+		_vfd.setCursor(rightbox + 5, bottombox -1 );
+		_vfd.write(_menuSliderCBInfo->right_text);
+	}
+	
+
+}
+
+
+
 
 // MARK: -  Balance Audio Screen
 

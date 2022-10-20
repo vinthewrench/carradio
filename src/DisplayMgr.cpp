@@ -4086,7 +4086,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 19);
-		
+	
 		if(lines.size() > displayedLines){
 			
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
@@ -4566,8 +4566,8 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		}
 		
 		_vfd.setFont(VFD::FONT_MINI) ;
-		_vfd.printLines(20, 9, lines, firstLine, displayedLines,36);
-		
+		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
+
 		if(lines.size() > displayedLines){
 			
 			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;

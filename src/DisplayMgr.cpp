@@ -2260,7 +2260,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	}
 		
 	if(_airplayStatus)
-		drawAirplayLogo(0, 60);
+		drawAirplayLogo(0, 55);
 	else
 	{
 		uint8_t buff2[] = {

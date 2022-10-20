@@ -296,33 +296,27 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	bool success = false;
 	
 	auto lineCount = lines.size();
-
+	
+	
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);
-			
-			// to remove artifacts we need to clear the back side writing
-			if(width > 0){
-				uint8_t  rightbox = width;
-				uint8_t  leftbox = width - 20 ;
-				uint8_t  topbox = y - step;
-				uint8_t  bottombox = y;
-				
-				uint8_t buff2[] = {
-					VFD_CLEAR_AREA,
-					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-					static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-				};
-				writePacket(buff2, sizeof(buff2), 0);
-			}
-			
-			success = printPacket("%-*s", lines[i].c_str());
+			setCursor(0, y);			
+			success = printPacket("%-40s", lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}
 	}
 	else {
+		
+		// this needs to be scrolled
+		
+		// quick scan for max line length
+			uint8_t longestLine = 0;
+			for(auto line:lines)
+				if(line.size() > longestLine ) longestLine = line.size();
+
+		
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 	 
@@ -335,10 +329,12 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			string str = lines[i].c_str();
 			str = truncate(str,  linewidth);
 
-			// clear before writing
-			if(width > 0){
+			// do we need to clear the end of line?
+			if((str.size() < longestLine - 4) &&  width > 0){
+				
+				// This is a guess at best
 				uint8_t  rightbox = width;
-				uint8_t  leftbox = width - 20 ;
+				uint8_t  leftbox = width - ((longestLine - str.size()) * 6);
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				

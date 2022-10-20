@@ -152,15 +152,15 @@ PiCarMgr::PiCarMgr(){
 	std::set_terminate( CRASH_Handler );
 	
 	_main_menu_map = {
-		{MENU_SELECT_AUDIO_SOURCE,	"Audio Source"},
+		{MENU_SELECT_AUDIO_SOURCE,	"Source"},
+		{MENU_AUDIO,	"Audio"},
 		{MENU_GPS,		"GPS"},
 		{MENU_WAYPOINTS,	"Waypoints"},
-		{MENU_CANBUS,	"Engine"},
+		{MENU_CANBUS,	"Engine Status"},
 		{MENU_DTC,		"Diagnostics"},
-		{MENU_AUDIO,	"Audio"},
- 		{MENU_TIME,		"Time"},
+ 		{MENU_SETTINGS, "Settings"},
 		{MENU_INFO,		"Info"},
-		{MENU_SETTINGS, "Settings"},
+		{MENU_TIME,		"Time"},
 		{MENU_EXIT, 	 "Exit"}
 	};
 	
@@ -1841,11 +1841,11 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_SELECT_AUDIO_SOURCE:
-			 displayAudioMenu();
+			displayRadioMenu();
 			break;
 			
 		case MENU_AUDIO:
-			displayRadioMenu();
+			displayAudioMenu();
 			break;
  
 		case MENU_TIME:

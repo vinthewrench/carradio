@@ -63,8 +63,6 @@ public:
 		MODE_STARTUP,
 		MODE_TIME,
 		MODE_DIMMER,
-		MODE_BALANCE,
-		MODE_FADER,
 		MODE_SQUELCH,
 		MODE_RADIO,
 		MODE_SCANNER,
@@ -226,14 +224,10 @@ private:
 	void drawDeviceStatusScreen(modeTransition_t transition);
 	void drawTimeScreen(modeTransition_t transition);
 	void drawDimmerScreen(modeTransition_t transition);
-	void drawBalanceScreen(modeTransition_t transition);
-	void drawFaderScreen(modeTransition_t transition);
-	
+
 	void drawSliderScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForSlider( knob_action_t action);
 
-	bool processSelectorKnobActionForBalance( knob_action_t action);
-	bool processSelectorKnobActionForFader( knob_action_t action);
 	 
 	void drawSquelchScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForSquelch( knob_action_t action);

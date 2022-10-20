@@ -770,14 +770,6 @@ void DisplayMgr::showDimmerChange(){
 	setEvent(EVT_PUSH, MODE_DIMMER );
 }
 
-void DisplayMgr::showBalanceChange(){
-	setEvent(EVT_PUSH, MODE_BALANCE );
-}
-
-void DisplayMgr::showFaderChange(){
-	setEvent(EVT_PUSH, MODE_FADER );
-}
-
 void DisplayMgr::showSquelchChange(){
 	setEvent(EVT_PUSH, MODE_SQUELCH);
 }
@@ -872,9 +864,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_CHANNEL_INFO:
 		case MODE_GPS_WAYPOINTS:
 		case MODE_SCANNER_CHANNELS:
-		case MODE_BALANCE:
 		case MODE_DIMMER:
-		case MODE_FADER:
 		case MODE_SQUELCH:
 		case MODE_EDIT_STRING:
 		case MODE_DTC:
@@ -969,20 +959,12 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 	bool wasHandled = false;
 	
 	switch (_current_mode) {
-		case MODE_BALANCE:
-			wasHandled = processSelectorKnobActionForBalance(action);
-			break;
-
 		case MODE_SLIDER:
 			wasHandled = processSelectorKnobActionForSlider(action);
 			break;
  
 		case MODE_SQUELCH:
 			wasHandled = processSelectorKnobActionForSquelch(action);
-			break;
-			
-		case MODE_FADER:
-			wasHandled = processSelectorKnobActionForFader(action);
 			break;
 			
 		case MODE_DIMMER:
@@ -1429,21 +1411,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 						}
 					}
 				}
-				else if(_current_mode == MODE_BALANCE) {
-					
-					// check for {EVT_NONE,MODE_BALANCE}  which is a balance change
-					if(item.mode == MODE_BALANCE) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);
-						shouldRedraw = false;
-						shouldUpdate = true;
-					}
-					else if(diff.tv_sec >=  5){
-						// timeout pop mode?
-						popMode();
-						shouldRedraw = true;
-						shouldUpdate = true;
-					}
-				}
 				else if(_current_mode == MODE_SLIDER) {
 					
 					menuSliderCBInfo_t * cb = _menuSliderCBInfo;
@@ -1460,21 +1427,6 @@ void DisplayMgr::DisplayUpdateLoop(){
 							shouldRedraw = true;
 							shouldUpdate = true;
 						}
-					}
-				}
-				else if(_current_mode == MODE_FADER) {
-					
-					// check for {EVT_NONE,MODE_FADER}  which is a fader change
-					if(item.mode == MODE_FADER) {
-						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
-						shouldRedraw = false;
-						shouldUpdate = true;
-					}
-					else if(diff.tv_sec >=  5){
-						// timeout pop mode?
-						popMode();
-						shouldRedraw = true;
-						shouldUpdate = true;
 					}
 				}
 				else if(_current_mode == MODE_SQUELCH) {
@@ -1705,14 +1657,6 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 				
 			case MODE_DIMMER:
 				drawDimmerScreen(transition);
-				break;
-				
-			case MODE_BALANCE:
-				drawBalanceScreen(transition);
-				break;
-				
-			case MODE_FADER:
-				drawFaderScreen(transition);
 				break;
 				
 			case MODE_SQUELCH:
@@ -3276,213 +3220,13 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 	 
 		if(savedCB){
 			(savedCB)(true);
+			wasHandled = true;
 		}
  	}
 	
 	return wasHandled;
 }
-
-
-// MARK: -  Balance Audio Screen
-
-
-void DisplayMgr::drawBalanceScreen(modeTransition_t transition){
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-	uint8_t midX = width/2;
-	uint8_t midY = height/2;
-	
-	uint8_t leftbox 	= 20;
-	uint8_t rightbox 	= width - 20;
-	uint8_t topbox 	= midY -5 ;
-	uint8_t bottombox = midY + 5 ;
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING) {
-		_vfd.clearScreen();
-		
-		// draw centered heading
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Balance";
-		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-		_vfd.write(str);
-		
-		//draw box outline
-		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
-		_vfd.setCursor(leftbox - 10, bottombox -1 );
-		_vfd.write("L");
-		_vfd.setCursor(rightbox + 5, bottombox -1 );
-		_vfd.write("R");
-	}
-	
-	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		
-		double balance = audio->balance();
-		
-		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * balance;
-		itemX &= 0xfE; // to nearest 2
-		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
-		// clear inside of box
-		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
-			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD::VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-			// draw marker
-			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
-		
-		_vfd.writePacket(buff2, sizeof(buff2), 0);
-		
-	}
-}
-
-
-bool DisplayMgr::processSelectorKnobActionForBalance( knob_action_t action){
-	bool wasHandled = false;
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	double balance = audio->balance();
-	// limit the precision
-	balance = std::floor((balance * 100) + .5) / 100;
-	
-	if(action == KNOB_UP){
-		
-		if(balance < 1.0){
-			audio->setBalance(balance +.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	
-	else if(action == KNOB_DOWN){
-		
-		if(balance > -1.0){
-			audio->setBalance(balance -.1);
-			setEvent(EVT_NONE,MODE_BALANCE);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-}
-
-// MARK: -  Fader Audio Screen
-
-
-void DisplayMgr::drawFaderScreen(modeTransition_t transition){
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	uint8_t width = _vfd.width();
-	uint8_t height = _vfd.height();
-	uint8_t midX = width/2;
-	uint8_t midY = height/2;
-	
-	uint8_t leftbox 	= 20;
-	uint8_t rightbox 	= width - 20;
-	uint8_t topbox 	= midY -5 ;
-	uint8_t bottombox = midY + 5 ;
-	
-	if(transition == TRANS_LEAVING) {
-		return;
-	}
-	
-	if(transition == TRANS_ENTERING) {
-		_vfd.clearScreen();
-		
-		// draw centered heading
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = "Fade";
-		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
-		_vfd.write(str);
-		
-		//draw box outline
-		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
-		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
-		_vfd.setCursor(leftbox - 10, bottombox -1 );
-		_vfd.write("F");
-		_vfd.setCursor(rightbox + 5, bottombox -1 );
-		_vfd.write("R");
-	}
-	
-	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-		
-		double fader = audio->fader();
-		
-		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * fader;
-		itemX &= 0xfE; // to nearest 2
-		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
-		// clear inside of box
-		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
-			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-			VFD::VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
-			// draw marker
-			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
-			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
-			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
-		
-		_vfd.writePacket(buff2, sizeof(buff2), 0);
-		
-	}
-}
-
-
-bool DisplayMgr::processSelectorKnobActionForFader( knob_action_t action){
-	bool wasHandled = false;
-	
-	AudioOutput* audio	= PiCarMgr::shared()->audio();
-	
-	double fade = audio->fader();
-	// limit the precision
-	fade = std::floor((fade * 100) + .5) / 100;
-	
-	if(action == KNOB_UP){
-		
-		if(fade < 1.0){
-			audio->setFader(fade +.1);
-			setEvent(EVT_NONE,MODE_FADER);
-		}
-		wasHandled = true;
-	}
-	
-	else if(action == KNOB_DOWN){
-		
-		if(fade > -1.0){
-			audio->setFader(fade -.1);
-			setEvent(EVT_NONE,MODE_FADER);
-		}
-		wasHandled = true;
-	}
-	else if(action == KNOB_CLICK){
-		popMode();
-	}
-	
-	return wasHandled;
-}
-
-
-
+ 
 
 // MARK: -  Squelch  Screen
 

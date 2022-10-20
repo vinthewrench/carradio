@@ -174,6 +174,8 @@ class PiCarMgr {
 
  	vector< waypoint_prop_t> getWaypoints() { return _waypoints;};
 	
+	bool getWaypointInfo(string uuid, waypoint_prop_t &prop);
+	
 private:
 	
 	typedef enum :int {

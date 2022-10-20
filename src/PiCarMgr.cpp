@@ -1183,6 +1183,24 @@ void PiCarMgr::sortWaypoints() {
  }
  
 
+bool PiCarMgr::getWaypointInfo(string uuid, waypoint_prop_t &prop){
+	bool success = false;
+	
+	for( int i = 0; i < _waypoints.size(); i++){
+		auto wp = &_waypoints[i];
+		if(wp->uuid == uuid){
+			
+			prop = *wp;
+			success = true;
+			break;
+		}
+	}
+	
+	
+	return success;
+	
+}
+
 
 // MARK: -  PiCarMgr main loop  thread
 
@@ -1972,9 +1990,16 @@ void PiCarMgr::waypointEditMenu(string uuid){
 	
 	constexpr time_t timeout_secs = 10;
 	
+	string name = "Waypoint";
+	waypoint_prop_t wp;
+	
+	if(getWaypointInfo(uuid, wp)){
+		name = wp.name;
+	}
+	 
 	_display.showMenuScreen(menu_items,
 									0,
-									"Waypoint",
+									name,
 									timeout_secs,
 									[=](bool didSucceed,
 										 uint newSelectedItem,

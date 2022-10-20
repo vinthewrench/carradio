@@ -2117,19 +2117,19 @@ void PiCarMgr::displayAudioMenu(){
 	sprintf(buffer, "%-10s %-3d","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2.1f","Balance:", _audio.balance());
+	sprintf(buffer, "%-10s %2d","Balance:", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2.1f","Fader:", _audio.fader());
+	sprintf(buffer, "%-10s %2d","Fader:", int(_audio.fader() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2.1f","Bass:", _audio.bass());
+	sprintf(buffer, "%-10s %2d","Bass:",int(_audio.bass() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "%-10s %2.1f","Midrange:", _audio.midrange());
+	sprintf(buffer, "%-10s %2d","Midrange:", int(_audio.midrange() * 10));
  	menu_items.push_back(string(buffer));
  
-	sprintf(buffer, "%-10s %2.1f","Treble:", _audio.treble());
+	sprintf(buffer, "%-10s %2d","Treble:", int(_audio.treble() * 10));
  	menu_items.push_back(string(buffer));
 
 	menu_items.push_back("Exit");

@@ -1187,6 +1187,8 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 		}
 		
 		if(_menuItems.size() >  maxLines) {
+			printf("items: %d  maxLines:%d\n", _menuItems.size(),  maxLines);
+			
 			uint8_t scrolltop = startV-lineHeight;
 			float bar_height =  (float)(maxLines +1)/ (float)_menuItems.size() ;
 			float offset =  (float)_currentMenuItem / ((float)_menuItems.size() -1) ;

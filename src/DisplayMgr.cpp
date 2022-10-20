@@ -972,7 +972,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_BALANCE:
 			wasHandled = processSelectorKnobActionForBalance(action);
 			break;
-			
+
+		case MODE_SLIDER:
+			wasHandled = processSelectorKnobActionForSlider(action);
+			break;
+ 
 		case MODE_SQUELCH:
 			wasHandled = processSelectorKnobActionForSquelch(action);
 			break;
@@ -3197,9 +3201,82 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 	}
 	
 	
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+		double val =  0;
+	 
+		if(_menuSliderCBInfo->getCB)
+			val = _menuSliderCBInfo->getCB();
+ 
+		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * val;
+		itemX &= 0xfE; // to nearest 2
+		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+		
+		// clear inside of box
+		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,
+			static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+			static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+			VFD::VFD_SET_CURSOR, midX, static_cast<uint8_t>(bottombox -1),'|',
+			// draw marker
+			VFD::VFD_SET_WRITEMODE, 0x03, 	// XOR
+			VFD::VFD_SET_CURSOR, itemX, static_cast<uint8_t>(bottombox -1), 0x5F,
+			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
+		
+		_vfd.writePacket(buff2, sizeof(buff2), 0);
+		
+	}
 }
+ 
+bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
+	bool wasHandled = false;
+ 
+	double val =  0;
+	
+	// guard
+	if(!_menuSliderCBInfo) return false;
+	
 
-
+	if(_menuSliderCBInfo->getCB)
+		val = _menuSliderCBInfo->getCB();
+	
+	 	// limit the precision
+	val = std::floor((val * 100) + .5) / 100;
+	
+	if(action == KNOB_UP){
+		
+		if(_menuSliderCBInfo->setCB){
+			if(val < 1.0){
+				(_menuSliderCBInfo->setCB)(val +.1);
+				setEvent(EVT_NONE,MODE_SLIDER);
+			}
+ 		}
+			wasHandled = true;
+	}
+	
+	else if(action == KNOB_DOWN){
+		
+		if(_menuSliderCBInfo->setCB){
+			if(val > -1.0){
+				(_menuSliderCBInfo->setCB)(val -.1);
+				setEvent(EVT_NONE,MODE_SLIDER);
+			}
+		}
+		
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		if(_menuSliderCBInfo->doneCB){
+			(_menuSliderCBInfo->doneCB)(true);
+		}
+		free(_menuSliderCBInfo);
+		_menuSliderCBInfo = NULL;
+		
+		popMode();
+	}
+	
+	return wasHandled;
+}
 
 
 // MARK: -  Balance Audio Screen

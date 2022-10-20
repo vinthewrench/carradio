@@ -230,6 +230,7 @@ private:
 	void drawFaderScreen(modeTransition_t transition);
 	
 	void drawSliderScreen(modeTransition_t transition);
+	bool processSelectorKnobActionForSlider( knob_action_t action);
 
 	bool processSelectorKnobActionForBalance( knob_action_t action);
 	bool processSelectorKnobActionForFader( knob_action_t action);

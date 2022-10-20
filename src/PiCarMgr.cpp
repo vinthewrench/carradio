@@ -2079,7 +2079,7 @@ void PiCarMgr::displayAudioMenu(){
 	constexpr time_t timeout_secs = 10;
 	
 	vector<string> menu_items = {
-		"Squelch"
+		"Squelch",
 		"Balance",
 		"Fader",
 		"Bass",

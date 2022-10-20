@@ -2082,16 +2082,8 @@ void PiCarMgr::displayAudioMenu(){
 						break;
 		 
 					default:
-						
-//						if(_lastMenuMode != MENU_UNKNOWN){
-//							// restore old mode thast was set in main menu
-//							setDisplayMode(_lastMenuMode);
-//						}
-//						else	// fallback
-//						{
-//							_display.showTime();
-//						}
-						break;
+						setDisplayMode(MENU_AUDIO);
+ 						break;
 				}
 				
 			}

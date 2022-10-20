@@ -1948,6 +1948,8 @@ void PiCarMgr::displayWaypoints(string intitialUUID){
 										string uuid,
 										DisplayMgr::knob_action_t action ){
 		
+		printf("showWaypoints %d, %d\n", didSucceed   action);
+		
 		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
 			displayWaypoint(uuid);
 		}

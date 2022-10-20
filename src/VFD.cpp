@@ -342,7 +342,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				uint8_t  bottombox = y;
 				
 				printf("rightbox: %d leftbox: %d\n" , rightbox,leftbox);
-				printf("%s\n" , str.c_str());
+				printf("%d |%s|\n" ,str.size(), str.c_str());
 
 				uint8_t buff2[] = {
 					VFD_CLEAR_AREA,

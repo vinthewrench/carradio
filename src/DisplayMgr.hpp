@@ -163,7 +163,6 @@ public:
 	void showFaderChange();
 	void showSquelchChange();
 	
-	
 	typedef std::function<void(double)> menuSliderSetterCallBack_t;
 	typedef std::function<double()> menuSliderGetterCallBack_t;
 
@@ -277,6 +276,18 @@ private:
 	//chanel management stuff
 	void drawScannerChannels(modeTransition_t transition);
 	void drawChannelInfo(modeTransition_t transition);
+ 
+	typedef struct {
+		string title;
+		string right_text;
+		string left_text;
+		time_t timeout;
+		menuSliderGetterCallBack_t getCB;
+		menuSliderSetterCallBack_t setCB;
+		boolCallback_t doneCB;
+	} menuSliderCBInfo_t;
+	
+	menuSliderCBInfo_t * _menuSliderCBInfo = NULL;
  
 	showWaypointsCallBack_t _wayPointCB;
 	showScannerChannelsCallBack_t _scannnerChannelsCB;

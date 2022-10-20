@@ -80,6 +80,7 @@ DisplayMgr::DisplayMgr(){
 	_dimLevel = 1.0;
 	_lastAirplayStatusTime = {0,0};
 	_airplayStatus = 0;
+	_menuSliderCBInfo = NULL;
 
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
@@ -169,6 +170,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_eventQueue = {};
 		_ledEvent = 0;
 		
+		if(_menuSliderCBInfo) free(_menuSliderCBInfo);
+		_menuSliderCBInfo = NULL;
 		resetMenu();
 		showStartup();
 	}
@@ -182,6 +185,14 @@ void DisplayMgr::stop(){
 	if(_isSetup){
 		
 		if(_menuCB) _menuCB(false, 0, KNOB_EXIT);
+		
+		if(_menuSliderCBInfo){
+			if(_menuSliderCBInfo->doneCB)
+				(_menuSliderCBInfo->doneCB)(false);
+			free(_menuSliderCBInfo);
+			_menuSliderCBInfo = NULL;
+		}
+		
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
@@ -2343,7 +2354,6 @@ void DisplayMgr::drawEngineCheck(){
 	uint8_t width = _vfd.width();
 	uint8_t midX = width/2;
 	
-	
 	bool engineCheck = false;
 	bitset<8>  bits = {0};
 	
@@ -3085,6 +3095,20 @@ void DisplayMgr::showSliderScreen(
 							 menuSliderSetterCallBack_t setterCB,
 							 boolCallback_t doneCB){
 	
+	if(_menuSliderCBInfo) free(_menuSliderCBInfo);
+	menuSliderCBInfo_t * cbInfo = (menuSliderCBInfo_t *) malloc(sizeof( menuSliderCBInfo_t));
+	memset(cbInfo, 0, sizeof( menuSliderCBInfo_t));
+	
+	cbInfo->title = title;
+	cbInfo->right_text = right_text;
+	cbInfo->left_text = left_text;
+	cbInfo->timeout = timeout;
+	cbInfo->getCB = getterCB;
+	cbInfo->setCB = setterCB;
+	cbInfo->doneCB = doneCB;
+  
+	_menuSliderCBInfo = cbInfo;
+ 
 	if(getterCB){
 		double val = (getterCB)();
 		
@@ -3094,6 +3118,11 @@ void DisplayMgr::showSliderScreen(
 		}
 	}
 	if(doneCB) (doneCB)(true);
+
+	if(_menuSliderCBInfo){
+ 		free(_menuSliderCBInfo);
+		_menuSliderCBInfo = NULL;
+	}
 
 }
 

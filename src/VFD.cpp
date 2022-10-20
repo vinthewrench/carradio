@@ -338,7 +338,6 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				// from the cursor position.  but Noritake doesnt have that,
 				uint8_t  rightbox = width;
 				uint8_t  leftbox = rightbox - ((longestLine - str.size()) * 6);
-				if(leftbox > rightbox) leftbox = rightbox;
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				

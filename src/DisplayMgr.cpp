@@ -2260,7 +2260,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	}
 		
 	if(_airplayStatus)
-		drawAirplayLogo(0, centerY+12);
+		drawAirplayLogo(0, 60);
 	else
 	{
 		uint8_t buff2[] = {
@@ -2350,8 +2350,7 @@ void DisplayMgr::drawEngineCheck(){
 	_vfd.setCursor(midX, 60);
 	
 	char buffer[20] = {0};
-	
-	
+ 
 	if(fDB->boolForKey("GM_CHECK_ENGINE", engineCheck)
 		&& engineCheck) {
 		sprintf(buffer, "CHECK ENGINE");

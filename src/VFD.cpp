@@ -337,8 +337,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 
 			// clear before writing
 			if(width > 0){
-				uint8_t  rightbox = width - 20;
-				uint8_t  leftbox = 0 ;
+				uint8_t  rightbox = width;
+				uint8_t  leftbox = width - 20 ;
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				

@@ -183,7 +183,8 @@ private:
 		MENU_CANBUS,
 		MENU_GPS,
 		MENU_WAYPOINTS,
-		MENU_TIME,
+		MENU_AUDIO,
+ 		MENU_TIME,
 		MENU_SETTINGS,
 		MENU_INFO,
 		MENU_DTC,
@@ -211,6 +212,7 @@ private:
  
 	void displayMenu();
 	void displayRadioMenu();
+	void displayAudioMenu();
 	void displaySettingsMenu();
 	void displayShutdownMenu();
 	vector<string> settingsMenuItems();

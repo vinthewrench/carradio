@@ -157,7 +157,8 @@ PiCarMgr::PiCarMgr(){
 		{MENU_WAYPOINTS,	"Waypoints"},
 		{MENU_CANBUS,	"Engine"},
 		{MENU_DTC,		"Diagnostics"},
-		{MENU_TIME,		"Time"},
+		{MENU_AUDIO,	"Audio"},
+ 		{MENU_TIME,		"Time"},
 		{MENU_INFO,		"Info"},
 		{MENU_SETTINGS, "Settings"},
 		{MENU_EXIT, 	 "Exit"}
@@ -1840,9 +1841,13 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			break;
 			
 		case MENU_SELECT_AUDIO_SOURCE:
-			displayRadioMenu();
+			 displayAudioMenu();
 			break;
 			
+		case MENU_AUDIO:
+			displayRadioMenu();
+			break;
+ 
 		case MENU_TIME:
 			_display.showTime();
 			break;
@@ -2038,6 +2043,62 @@ void PiCarMgr::displayWaypoint(string uuid){
 	});
 
 }
+
+
+void PiCarMgr::displayAudioMenu(){
+	
+	constexpr time_t timeout_secs = 10;
+	 
+	 vector<string> menu_items = {
+		 "Balance",
+		 "Fader",
+		 "Bass",
+		 "Midrange",
+		 "Treble",
+		 "Exit",
+	 };
+ 
+	_display.showMenuScreen(menu_items,
+									0,
+									"Audio",
+									timeout_secs,
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed) {
+			
+			if(action){
+				switch (newSelectedItem) {
+						
+					case 0:
+						_display.showBalanceChange();
+						break;
+
+					case 1:
+						_display.showFaderChange();
+						break;
+		 
+					default:
+						
+						if(_lastMenuMode != MENU_UNKNOWN){
+							// restore old mode thast was set in main menu
+							setDisplayMode(_lastMenuMode);
+						}
+						else	// fallback
+						{
+							_display.showTime();
+						}
+						break;
+				}
+				
+			}
+			
+		}
+	});
+	
+}
+
 
 void PiCarMgr::displayRadioMenu(){
 	constexpr time_t timeout_secs = 20;

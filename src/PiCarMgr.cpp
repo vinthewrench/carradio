@@ -2106,28 +2106,112 @@ void PiCarMgr::displayAudioMenu(){
 						break;
 						
 					case 1:
+#if 0
 						_display.showBalanceChange();
+#else
+						static double bass_value = 0;
+						
+						_display.showSliderScreen("Balance","R","L", 5,
+														  [=](){
+							// getter
+							return _audio.balance();},
+														  [=](double val){
+							// setter
+							_audio.setBalance(val);
+						},
+														  [=](bool didSucceed){
+							// completion
+							
+							printf("Balance Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+						});;
+#endif
+ 
 						break;
 						
 					case 2:
+#if 0
 						_display.showFaderChange();
+#else
+	 
+						_display.showSliderScreen("Fader","R","F", 5,
+														  [=](){
+							// getter
+							return _audio.fader();},
+														  [=](double val){
+							// setter
+							_audio.setFader(val);
+						},
+														  [=](bool didSucceed){
+							// completion
+							
+							printf("Fader Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+						});;
+#endif
 						break;
 	
 					case 3:
 					{
-						static double bass_value = 0;
-				 
+	 
 						_display.showSliderScreen("Bass","+","-", 5,
-														  [=](){return bass_value;},
-														  [=](double val){bass_value = val;},
+														  [=](){
+							// getter
+							return _audio.bass();},
+														  [=](double val){
+							// setter
+							_audio.setBass(val);
+ 						},
 														  [=](bool didSucceed){
+							// completion
 							
 							printf("Bass Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
 						});;
-														  
+						
 					}
 						break;
 	
+					case 4:
+					{
+						static double bass_value = 0;
+						
+						_display.showSliderScreen("Treble","+","-", 5,
+														  [=](){
+							// getter
+							return _audio.treble();},
+														  [=](double val){
+							// setter
+							_audio.setTreble(val);
+							
+	 					},
+														  [=](bool didSucceed){
+							// completion
+							
+							// set the database here?
+							printf("Treble Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+						});;
+						
+					}
+						break;
+
+					case 5:
+					{
+	 
+						_display.showSliderScreen("Midrange","+","-", 5,
+														  [=](){
+							// getter
+							return _audio.midrange();},
+														  [=](double val){
+							// setter
+							_audio.setMidrange(val);
+ 						},
+														  [=](bool didSucceed){
+							// completion
+							
+							printf("Treble Set %1.1f Sucess = %s\n", bass_value, didSucceed?"TRUE":"FALSE");
+						});;
+						
+					}
+						break;
+
 						
 				
 					default:

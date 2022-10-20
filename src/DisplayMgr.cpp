@@ -3159,7 +3159,7 @@ void DisplayMgr::showSliderScreen(
 
 void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 	
-	printf("drawSliderScreen(%d)\n", transition);
+//	printf("drawSliderScreen(%d)\n", transition);
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();

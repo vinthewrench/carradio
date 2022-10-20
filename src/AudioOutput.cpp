@@ -32,9 +32,13 @@ typedef unsigned long snd_pcm_uframes_t;
 #endif
 
  AudioOutput::AudioOutput(){
-	_isSetup = false;
-	_balance = 0;
-	_fader = 0;
+	 _isSetup = false;
+	 _balance = 0;
+	 _fader = 0;
+	 _bass = 0;
+	 _treble = 0;
+	 _midrange = 0;
+	 
 	_pcm = NULL;
  
 }
@@ -810,3 +814,45 @@ bool AudioOutput::setMute(bool shouldMute){
 	}
 	return success;
 }
+
+
+bool AudioOutput::setBass(double val) {
+
+	val = fmax(-1, fmin(1, val));  // pin balance
+
+	_bass = val;
+	return true;;
+}
+
+
+double AudioOutput::bass() {
+	return _bass;
+}
+
+
+bool AudioOutput::setTreble(double val) {
+
+	val = fmax(-1, fmin(1, val));  // pin balance
+
+	_treble = val;
+	return true;;
+}
+
+
+double AudioOutput::treble() {
+	return _treble;
+}
+
+bool AudioOutput::setMidrange(double val) {
+
+	val = fmax(-1, fmin(1, val));  // pin balance
+
+	_midrange = val;
+	return true;;
+}
+
+
+double AudioOutput::midrange() {
+	return _midrange;
+}
+

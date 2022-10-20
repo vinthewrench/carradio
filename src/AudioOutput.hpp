@@ -58,7 +58,16 @@ public:
 	
 	bool 	setFader(double );		// -1.0  - 1.0
 	double fader();
-	
+
+	bool 	setBass(double );		// -1.0  - 1.0
+	double bass();
+
+	bool 	setTreble(double );		// -1.0  - 1.0
+	double treble();
+
+	bool 	setMidrange(double );		// -1.0  - 1.0
+	double midrange();
+
 	
 	//	bool playSound(string filePath, boolCallback_t cb);
 	
@@ -73,7 +82,11 @@ private:
 	
 	double					_balance;
 	double					_fader;
-	
+
+	double					_bass;
+	double					_treble;
+	double					_midrange;
+
 	double					_savedVolume;
 	bool						_isMuted = false;
 	bool						_isQuiet= false;

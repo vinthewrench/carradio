@@ -291,7 +291,7 @@ private:
 	CompassSensor		_compass;
 #endif
 	
-	ArgononeFan			_fan;
+	ArgononeFan			_fan;	
 	
 	bool					_autoShutdownMode;		 // controlled by canbus
 	uint16_t				_shutdownDelay;		  //   seconds after no CAN activity

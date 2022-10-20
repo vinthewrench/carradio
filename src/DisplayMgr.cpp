@@ -3528,7 +3528,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 			
-			_vfd.printLines(20, 6, lines, firstLine, displayedLines);
+			_vfd.printLines(20, 6, lines, firstLine, displayedLines,36);
 		}
 	}
 	drawTimeBox();

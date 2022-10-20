@@ -56,8 +56,8 @@ public:
 
 	bool printPacket(const char *fmt, ...);
 	
-	bool printLines(uint8_t y, uint8_t step, stringvector lines,  uint8_t firstLine,
-						 uint8_t maxLines, uint8_t linewidth = 21, uint8_t width = 0);
+	bool printLines(uint8_t y, uint8_t step, stringvector lines,  uint8_t firstLine,  uint8_t maxLines,
+						 uint8_t maxchars = 21, VFD::font_t font = VFD::FONT_MINI, uint8_t max_pixels = 0);
 		
 	bool setBrightness(uint8_t);  //  0 == off - 7 == max
 	bool setPowerOn(bool setOn);

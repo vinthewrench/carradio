@@ -319,8 +319,9 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 							 stringvector lines,
 							 uint8_t firstLine,
 							 uint8_t maxLines,
-							 uint8_t linewidth,
-							 uint8_t width ){
+	 						 uint8_t maxchars,
+							 VFD::font_t font,
+							 uint8_t max_pixels) {
 	bool success = false;
 	
 	auto lineCount = lines.size();
@@ -343,12 +344,10 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		uint8_t longest_pixel_width  = 0;
 		
 		for(auto line:lines){
-			auto length = string_pixel_Width(line);
+			auto length = string_pixel_Width(line,font);
 			if(length> longest_pixel_width )longest_pixel_width = length;
  		}
-	
-		printf("longest_pixel_width:%d\n" , longest_pixel_width);
-		
+	 
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 	 
@@ -359,21 +358,19 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			setCursor(0, y);
 			
 			string str = lines[i].c_str();
-			str = truncate(str,  linewidth);
+			str = truncate(str,  maxchars);
 
-			auto pixel_width = string_pixel_Width(str);
-			if(pixel_width < longest_pixel_width && width > 0){
+			auto pixel_width = string_pixel_Width(str,font);
+			if(pixel_width < longest_pixel_width && max_pixels > 0){
 				
 				// what I really need is a way to clear to a givven point
 				// from the cursor position.  but Noritake doesnt have that,
 		 
-				uint8_t  rightbox = width;
+				uint8_t  rightbox = max_pixels;
 				uint8_t  leftbox = rightbox - (longest_pixel_width -pixel_width);
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
-				
-				printf("rightbox: %d leftbox: %d\n" , rightbox,leftbox);
-	
+	 
 				uint8_t buff2[] = {
 					VFD_CLEAR_AREA,
 					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
@@ -382,10 +379,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				writePacket(buff2, sizeof(buff2), 0);
 		 
 			}
-	 
-			printf("%lu |%s|\n" ,str.size(), str.c_str());
  
-			success = printPacket("%-*s",linewidth, str.c_str());
+			success = printPacket("%-*s",maxchars, str.c_str());
 			if(!success) break;
 			y += step;
 		}
@@ -393,25 +388,4 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
  
 	return success;
 }
-
-
-
-
-//
-//			//		size_t max_lines = 5;
-//			size_t totalLines = lines.size();
-//			size_t start_line = _lineOffset;
-//			if(start_line > totalLines - 1)  start_line = totalLines -1;
-//
-//			printf("start_line = %zu\n", start_line);
-//			for(size_t i = start_line; i < totalLines; i++){
-//				printf("%2zu |%s|\n", i, lines[i].c_str());
-//			}
-//
-//
-//			for(size_t i = start_line; i < totalLines; i++){
-//				string str = lines[i];
-//				_vfd.setCursor(10, row);
-//				_vfd.write(str);
-//				row+=7;
-//			}
+ 

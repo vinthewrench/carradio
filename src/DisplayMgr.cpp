@@ -2251,7 +2251,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	if(rawtime != -1){
  		std::strftime(buffer, sizeof(buffer)-1, "%2l:%M:%S", &timeinfo);
 		
-		_vfd.setCursor(10,40) ;
+		_vfd.setCursor(10,38) ;
 		_vfd.setFont(VFD::FONT_10x14) ;
 		_vfd.write(buffer) ;
 		
@@ -2260,7 +2260,7 @@ void DisplayMgr::drawTimeScreen(modeTransition_t transition){
 	}
 		
 	if(_airplayStatus)
-		drawAirplayLogo(0, centerY+14);
+		drawAirplayLogo(0, centerY+12);
 	else
 	{
 		uint8_t buff2[] = {

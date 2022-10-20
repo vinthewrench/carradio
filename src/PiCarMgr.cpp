@@ -2110,15 +2110,40 @@ void PiCarMgr::displayAudioMenu(){
 	
 	constexpr time_t timeout_secs = 10;
 	
-	vector<string> menu_items = {
-		"Squelch",
-		"Balance",
-		"Fader",
-		"Bass",
-		"Midrange",
-		"Treble",
-		"Exit",
-	};
+	vector<string> menu_items = {};
+	
+	char buffer[64] = {0};
+	
+	sprintf(buffer, "%-10s %-3d","Squelch:", _radio.getSquelchLevel());
+	menu_items.push_back(string(buffer));
+
+	sprintf(buffer, "%-10s %1.2f","Balance:", _audio.balance());
+	menu_items.push_back(string(buffer));
+
+	sprintf(buffer, "%-10s %1.2f","Fader:", _audio.fader());
+ 	menu_items.push_back(string(buffer));
+
+	sprintf(buffer, "%-10s %1.2f","Bass:", _audio.bass());
+ 	menu_items.push_back(string(buffer));
+
+	sprintf(buffer, "%-10s %1.2f","Midrange:", _audio.midrange());
+ 	menu_items.push_back(string(buffer));
+ 
+	sprintf(buffer, "%-10s %1.2f","Treble:", _audio.treble());
+ 	menu_items.push_back(string(buffer));
+
+	menu_items.push_back("Exit");
+
+//
+//	vector<string> menu_items = {
+//		"Squelch",
+//		"Balance",
+//		"Fader",
+//		"Bass",
+//		"Midrange",
+//		"Treble",
+//		"Exit",
+//	};
 	
 	static uint last_selected_item = 0;
 	

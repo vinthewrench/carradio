@@ -1135,7 +1135,7 @@ void DisplayMgr::drawMenuScreen(modeTransition_t transition){
 	//	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
 	
-	uint8_t startV =  25;
+	uint8_t startV =  24;
 	uint8_t lineHeight = 9;
 	uint8_t maxLines =  (height - startV) / lineHeight ;
 	//	uint8_t maxCol = width / 7;

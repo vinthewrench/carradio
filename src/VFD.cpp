@@ -311,11 +311,20 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		
 		// this needs to be scrolled
 		
-		// quick scan for max line length
+		// quick scan for max line length skip spaces
 			uint8_t longestLine = 0;
-			for(auto line:lines)
-				if(Utils::trimEnd(line).size() > longestLine ) longestLine = line.size();
+		
+		for(auto line:lines){
+			uint8_t nonSpace = 0;
+			uint8_t spaces = 0;
 
+			for(auto c:line){
+				if(std::isspace(c)) spaces ++; else nonSpace++;
+			}
+			uint length = nonSpace*3 + spaces*2;
+	 	 	if(length> longestLine )longestLine = length;
+ 		}
+	
 		printf("\nlongestLine:%d\n" , longestLine);
 		
 		auto maxFirstLine = lineCount - maxLines;
@@ -337,7 +346,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 				// what I really need is a way to clear to a givven point
 				// from the cursor position.  but Noritake doesnt have that,
 				uint8_t  rightbox = width;
-				uint8_t  leftbox = rightbox - ((longestLine - str.size()) * 6);
+				uint8_t  leftbox = rightbox - longestLine;
 				uint8_t  topbox = y - step;
 				uint8_t  bottombox = y;
 				

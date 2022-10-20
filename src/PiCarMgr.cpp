@@ -2123,6 +2123,11 @@ void PiCarMgr::sendCANValuesToAmplifier(){
 			 Mi - Midrange
 			 Tr - Treble
 
+	 
+	 L = 1
+	 M = 10
+	 R = 19
+	 
 	 */
 }
 
@@ -2154,7 +2159,7 @@ void PiCarMgr::displayAudioMenu(){
  	menu_items.push_back(string(buffer));
 
 	menu_items.push_back("Exit");
- 
+  
 	static uint last_selected_item = 0;
 	
 	_display.showMenuScreen(menu_items,

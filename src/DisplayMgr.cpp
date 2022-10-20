@@ -3190,7 +3190,7 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 	if(action == KNOB_UP){
 		
 		if(_menuSliderCBInfo->setCB){
-			if(val < 1.0){
+			if(val < .9){
 				(_menuSliderCBInfo->setCB)(val +.1);
 				setEvent(EVT_NONE,MODE_SLIDER);
 			}
@@ -3201,7 +3201,7 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 	else if(action == KNOB_DOWN){
 		
 		if(_menuSliderCBInfo->setCB){
-			if(val > -1.0){
+			if(val > -.9){
 				(_menuSliderCBInfo->setCB)(val -.1);
 				setEvent(EVT_NONE,MODE_SLIDER);
 			}

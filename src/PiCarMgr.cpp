@@ -2077,16 +2077,17 @@ void PiCarMgr::displayWaypoint(string uuid){
 void PiCarMgr::displayAudioMenu(){
 	
 	constexpr time_t timeout_secs = 10;
-	 
-	 vector<string> menu_items = {
-		 "Balance",
-		 "Fader",
-		 "Bass",
-		 "Midrange",
-		 "Treble",
-		 "Exit",
-	 };
- 
+	
+	vector<string> menu_items = {
+		"Squelch"
+		"Balance",
+		"Fader",
+		"Bass",
+		"Midrange",
+		"Treble",
+		"Exit",
+	};
+	
 	_display.showMenuScreen(menu_items,
 									0,
 									"Audio",
@@ -2101,13 +2102,17 @@ void PiCarMgr::displayAudioMenu(){
 				switch (newSelectedItem) {
 						
 					case 0:
+						_display.showSquelchChange();
+						break;
+						
+					case 1:
 						_display.showBalanceChange();
 						break;
-
-					case 1:
+						
+					case 2:
 						_display.showFaderChange();
 						break;
-		 
+						
 					default:
 						// fall back to main menu
 						displayMenu();
@@ -2267,7 +2272,6 @@ vector<string> PiCarMgr::settingsMenuItems(){
 	string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";
  
 	vector<string> menu_items = {
-		"Squelch",
 		dim_entry,
 		"Shutdown Delay",
 		"Info",
@@ -2295,10 +2299,6 @@ void PiCarMgr::displaySettingsMenu(){
 				switch (newSelectedItem) {
 						
 					case 0:
-						_display.showSquelchChange();
-						break;
-
-					case 1:
 						if(action == DisplayMgr::KNOB_CLICK){
 							if(!_autoDimmerMode)
 								_display.showDimmerChange();
@@ -2309,11 +2309,11 @@ void PiCarMgr::displaySettingsMenu(){
  						}
 						break;
 
-					case 2:
+					case 1:
 						displayShutdownMenu();
 						break;
 						
-					case 3:
+					case 2:
 						_display.showInfo();
 						break;
  

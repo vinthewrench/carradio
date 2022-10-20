@@ -333,6 +333,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			if((str.size() < longestLine - 4) &&  width > 0){
 				
 				// This is a guess at best
+				// what I really need is a way to clear to a givven point
+				// from the cursor position.  but Noritake doesnt have that,
 				uint8_t  rightbox = width;
 				uint8_t  leftbox = width - ((longestLine - str.size()) * 6);
 				uint8_t  topbox = y - step;

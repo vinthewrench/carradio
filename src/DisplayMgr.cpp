@@ -3529,6 +3529,13 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 			
 			_vfd.printLines(20, 6, lines, firstLine, displayedLines,36);
+			if(lines.size() > displayedLines){
+				
+				float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
+				float offset =  (float)_lineOffset / ((float)lines.size() -1) ;
+				
+				_vfd.drawScrollBar(11, bar_height ,offset);
+			}
 		}
 	}
 	drawTimeBox();

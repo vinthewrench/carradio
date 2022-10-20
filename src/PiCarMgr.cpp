@@ -2106,6 +2106,11 @@ void PiCarMgr::displayWaypoint(string uuid){
 	});
 }
 
+void PiCarMgr::sendCANValuesToAmplifier(){
+	
+}
+
+
 void PiCarMgr::displayAudioMenu(){
 	
 	constexpr time_t timeout_secs = 10;
@@ -2114,10 +2119,10 @@ void PiCarMgr::displayAudioMenu(){
 	
 	char buffer[64] = {0};
 	
-	sprintf(buffer, "/x1c%-9s /x1d%-3d/x1c","Squelch:", _radio.getSquelchLevel());
+	sprintf(buffer, "\x1c%-9s \x1d%-3d\x1c","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "/x1c%-9s /x1d%2d/x1c","Balance:", int(_audio.balance() * 10));
+	sprintf(buffer, "\x1c%-9s \x1d%2d\x1c","Balance:", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
 	sprintf(buffer, "%-9s %2d","Fader:", int(_audio.fader() * 10));
@@ -2173,11 +2178,12 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setBalance(val);
+							sendCANValuesToAmplifier();
 						},
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Balance Set %1.1f\n",  _audio.balance());
+//							printf("Balance Set %1.1f\n",  _audio.balance());
 							displayAudioMenu();
 						});;
  
@@ -2191,11 +2197,12 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setFader(val);
-						},
+							sendCANValuesToAmplifier();
+ 					},
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Fader Set %1.1f\n",  _audio.fader());
+//							printf("Fader Set %1.1f\n",  _audio.fader());
 							displayAudioMenu();
 
 						});;
@@ -2211,10 +2218,11 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setBass(val);
+							sendCANValuesToAmplifier();
  						},
 														  [=](bool didSucceed){
 							// completion
-							printf("Bass Set %1.1f\n",  _audio.bass());
+//							printf("Bass Set %1.1f\n",  _audio.bass());
 	 						displayAudioMenu();
  						});;
 						
@@ -2231,11 +2239,12 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setMidrange(val);
+							sendCANValuesToAmplifier();
 						},
 														  [=](bool didSucceed){
 							// completion
 							
-							printf("Midrange Set %1.1f\n",  _audio.midrange());
+	//						printf("Midrange Set %1.1f\n",  _audio.midrange());
 							displayAudioMenu();
 						});;
 						
@@ -2251,13 +2260,13 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setTreble(val);
-							
+							sendCANValuesToAmplifier();
 	 					},
 														  [=](bool didSucceed){
 							// completion
 							
 							// set the database here?
-							printf("Treble Set %1.1f\n",  _audio.treble());
+//							printf("Treble Set %1.1f\n",  _audio.treble());
 							displayAudioMenu();
 
 						});;

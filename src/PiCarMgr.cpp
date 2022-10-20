@@ -2117,7 +2117,7 @@ void PiCarMgr::displayAudioMenu(){
 					{
 						static double bass_value = 0;
 				 
-						_display.showSliderScreen("BASS","+","-", 10,
+						_display.showSliderScreen("Bass","+","-", 5,
 														  [=](){return bass_value;},
 														  [=](double val){bass_value = val;},
 														  [=](bool didSucceed){

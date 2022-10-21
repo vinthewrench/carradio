@@ -3137,7 +3137,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
  
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * val;
 		itemX-=1;
-		midX-=1;
+		midX-=2;
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-5) );

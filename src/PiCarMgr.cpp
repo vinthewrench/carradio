@@ -270,6 +270,53 @@ bool PiCarMgr::begin(){
 		restoreStationsFromFile();
 		restoreRadioSettings();
  
+		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000, _canPeriodTaskID,
+										 [=] (can_frame_t  &frame){
+			
+			// called periodically to send out CAN messages
+			
+			
+			double  vol = _audio.volume();
+			double  bal = _audio.balance();
+			double  fade = _audio.fader();
+			double  bass = _audio.bass();
+			double  treble = _audio.treble();
+			double  midrange = _audio.midrange();
+ 
+			
+				/*
+			 3D9 Radio Settings broadcast
+				 [7]  Vl Bl Fa Ba Mi Tr FF
+					 Vl - Volume  		00-26x   00 - 38
+					 Bl - Balance		1 (-9)  - 10 (0) - 19 (+9)
+					 Fa - Fader
+					 Ba - Bass
+					 Mi - Midrange
+					 Tr - Treble
+			 */
+		
+			uint8_t packet[7] = {
+				static_cast<uint8_t>(vol * 38),
+				static_cast<uint8_t> (bal * 10  + 10),
+				static_cast<uint8_t> (fade * 10  + 10),
+				static_cast<uint8_t> (bass * 10  + 10),
+				static_cast<uint8_t> (midrange * 10  + 10),
+				static_cast<uint8_t> (treble * 10  + 10),
+				0
+			};
+
+			// copy frame
+			memset(&frame, 0, sizeof frame);
+ 			frame.can_id = 0x3D9;
+			for(int i = 0; i < sizeof(packet);  i++)
+				frame.data[i]  = packet[i];
+			frame.can_dlc = sizeof(packet);
+ 
+	 
+			return true;
+		});
+		
+	
 		_isSetup = true;
 		
 		bool firstRunToday = true;
@@ -321,7 +368,7 @@ void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
 		_isSetup = false;
-		
+		_can.removePeriodicCallback(_canPeriodTaskID);
 		_display.setKnobBackLight(false);
 		_gps.stop();
 		_can.stop();

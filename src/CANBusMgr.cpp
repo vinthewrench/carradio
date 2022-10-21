@@ -440,78 +440,8 @@ bool CANBusMgr::resetPacketCount(string ifName){
 	return false;
 }
 
-// MARK: -  CANReader thread
+// MARK: - periodic tasks
 
- 
-void CANBusMgr::CANReader(){
-	 
-	PRINT_CLASS_TID;
-	
-	struct timespec lastTime;
-	clock_gettime(CLOCK_MONOTONIC, &lastTime);
-
- 	while(_isRunning){
-		
-		// if not setup // check back later
-		if(!_isSetup){
-			sleep(2);
-			continue;
-		}
-		
-		// we use a timeout so we can end this thread when _isSetup is false
-		struct timeval selTimeout;
-		selTimeout.tv_sec = 0;       /* timeout (secs.) */
-		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
-
-		/* back up master */
-		fd_set dup = _master_fds;
-		
-		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
-		if( numReady == -1 ) {
-			perror("select");
-	//		_running = false;
-		}
-		
-		struct timespec now, diff;
-		clock_gettime(CLOCK_MONOTONIC, &now);
-		diff = timespec_sub(now, lastTime);
-		int64_t timestamp_secs = timespec_to_ms(now) /1000;
-		
-		/* check which fd is avail for read */
-		for (auto& [ifName, fd]  : _interfaces) {
-			if ((fd != -1)  && FD_ISSET(fd, &dup)) {
-				
-				struct can_frame frame;
-		 
-				size_t nbytes = read(fd, &frame, sizeof(struct can_frame));
-				
-				if(nbytes == 0){ // shutdown
-					_interfaces[ifName] = -1;
-				}
-				else if(nbytes > 0){					
-					_frameDB.saveFrame(ifName, frame, timestamp_secs);
-					_lastFrameTime[ifName] =  timestamp_secs;
-					_totalPacketCount[ifName]++;
-					_runningPacketCount[ifName]++;
-				}
-			}
-		}
-		
-		// did more than a second go by
-		if(timespec_to_ms(diff) > 1000){
-			lastTime = now;
-	 
-			// calulate avareage
-			for (auto& [ifName, fd]  : _interfaces) {
-				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
-				_runningPacketCount[ifName]  = 0;
-			}
- 		}
- 
-		// process any needed OBD requests 
-		processOBDrequests();
-	}
-}
 
 void CANBusMgr::processOBDrequests() {
 	auto ifNames =  _frameDB.pollableInterfaces();
@@ -573,6 +503,141 @@ void CANBusMgr::processOBDrequests() {
 		clock_gettime(CLOCK_MONOTONIC, &_lastPollTime);
 	}
 }
+
+
+bool CANBusMgr::setPeriodicCallback (string ifName, int64_t delay, periodicCallBackID_t & callBackID, periodicCallBack_t cb  ){
+ 
+	std::uniform_int_distribution<periodicCallBackID_t> distribution(0,UINT32_MAX);
+
+	periodic_task_t newTask;
+	
+	newTask.taskID =  distribution(_rng);
+	newTask.ifName = ifName;
+	newTask.delay = delay;
+	newTask.cb	= cb;
+	newTask.lastRun  = {0,0};
+	_periodic_tasks[newTask.taskID] = newTask;
+	
+	printf("setPeriodicCallback %08x\n", newTask.taskID);
+
+	return true;
+ }
+
+bool CANBusMgr::removePeriodicCallback (periodicCallBackID_t callBackID ){
+	 
+	if( _periodic_tasks.count(callBackID)){
+		
+		printf("removePeriodicCallback %08x\n", callBackID);
+ 		_periodic_tasks.erase(callBackID);
+		return true;
+	}
+	return false;
+}
+
+
+void CANBusMgr::processPeriodicRequests(){
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	
+	for (auto& [key, task]  : _periodic_tasks){
+		
+		bool shouldRun = false;
+		
+ 		struct timespec  diff = timespec_sub(now, task.lastRun);
+		if(timespec_to_ms(diff) >= task.delay){
+			shouldRun = true;
+ 		}
+
+		if(shouldRun){
+			
+			auto cb = task.cb;
+	 		if(cb){
+				can_frame_t frame;
+ 				if( (cb)(frame)){
+					printf("send Frame %03x to %s\n", frame.can_id, task.ifName.c_str());
+				}
+			}
+				 
+			task.lastRun = now;
+		}
+	}
+ }
+
+
+// MARK: -  CANReader thread
+
+ 
+void CANBusMgr::CANReader(){
+	 
+	PRINT_CLASS_TID;
+	
+	struct timespec lastTime;
+	clock_gettime(CLOCK_MONOTONIC, &lastTime);
+
+ 	while(_isRunning){
+ 
+		// if not setup // check back later
+		if(!_isSetup){
+			sleep(2);
+			continue;
+		}
+		
+		// we use a timeout so we can end this thread when _isSetup is false
+		struct timeval selTimeout;
+		selTimeout.tv_sec = 0;       /* timeout (secs.) */
+		selTimeout.tv_usec = 200000;            /* 200000 microseconds */
+
+		/* back up master */
+		fd_set dup = _master_fds;
+		
+		int numReady = select(_max_fds+1, &dup, NULL, NULL, &selTimeout);
+		if( numReady == -1 ) {
+			perror("select");
+	//		_running = false;
+		}
+		
+		struct timespec now, diff;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		diff = timespec_sub(now, lastTime);
+		int64_t timestamp_secs = timespec_to_ms(now) /1000;
+		
+		/* check which fd is avail for read */
+		for (auto& [ifName, fd]  : _interfaces) {
+			if ((fd != -1)  && FD_ISSET(fd, &dup)) {
+				
+				struct can_frame frame;
+		 
+				size_t nbytes = read(fd, &frame, sizeof(struct can_frame));
+				
+				if(nbytes == 0){ // shutdown
+					_interfaces[ifName] = -1;
+				}
+				else if(nbytes > 0){					
+					_frameDB.saveFrame(ifName, frame, timestamp_secs);
+					_lastFrameTime[ifName] =  timestamp_secs;
+					_totalPacketCount[ifName]++;
+					_runningPacketCount[ifName]++;
+				}
+			}
+		}
+		
+		// did more than a second go by
+		if(timespec_to_ms(diff) > 1000){
+			lastTime = now;
+	 
+			// calulate avareage
+			for (auto& [ifName, fd]  : _interfaces) {
+				_avgPacketsPerSecond[ifName] = 	(_runningPacketCount[ifName] + _avgPacketsPerSecond[ifName] ) / 2;
+				_runningPacketCount[ifName]  = 0;
+			}
+ 		}
+ 
+		// process any needed OBD requests 
+		processOBDrequests();
+		processPeriodicRequests();
+	}
+}
+
 
 
 void* CANBusMgr::CANReaderThread(void *context){

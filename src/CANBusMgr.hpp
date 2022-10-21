@@ -70,6 +70,13 @@ public:
 	bool cancel_OBDpolling(string key);
 	bool sendDTCEraseRequest();
 	
+	typedef uint32_t periodicCallBackID_t;
+
+	typedef std::function<bool(can_frame_t  &frame )> periodicCallBack_t;
+	bool setPeriodicCallback (string ifName, int64_t delay,  periodicCallBackID_t & callBackID,  periodicCallBack_t cb);
+	bool removePeriodicCallback (periodicCallBackID_t callBackID );
+ 
+
 private:
 	
 	bool 				_isSetup = false;
@@ -85,6 +92,7 @@ private:
 	
 	int				openSocket(string ifName, int &error);
 	void 				processOBDrequests();
+	void 				processPeriodicRequests();
 
 	map<string, int> 		_interfaces = {};
 	map<string, time_t> 	_lastFrameTime = {};
@@ -93,6 +101,16 @@ private:
 	map<string, size_t> 	_runningPacketCount = {};
 	map<string, time_t> 	_avgPacketsPerSecond = {};
 
+	typedef struct {
+		periodicCallBackID_t taskID;
+		string 					ifName;
+		int64_t				 	delay;
+		struct timespec		lastRun;
+		periodicCallBack_t 	cb;
+	} periodic_task_t;
+
+	map<periodicCallBackID_t, periodic_task_t> 	_periodic_tasks = {};
+	
 	typedef struct {
 		vector<uint8_t> request;
 		bool repeat;

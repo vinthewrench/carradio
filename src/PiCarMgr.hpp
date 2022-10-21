@@ -305,6 +305,8 @@ private:
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
 	time_t 				_clocksync_gps_secs;  // how many seconds of error allowed before sync
 	
+	CANBusMgr::periodicCallBackID_t		_canPeriodTaskID;
+	
 	struct timespec 	_startTime;
 	struct timespec 	_lastActivityTime;
 

@@ -58,7 +58,11 @@ public:
 	bool descriptionForDTCCode(string code, string& description);
 	bool sendDTCEraseRequest();
 
-	
+	bool setPeriodicCallback (pican_bus_t bus, int64_t delay,
+									  CANBusMgr::periodicCallBackID_t & callBackID,
+									  CANBusMgr::periodicCallBack_t cb);;
+	bool removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBackID);
+
 private:
 	bool 				_isSetup = false;
 

@@ -3138,7 +3138,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * val;
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-7) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-8) );
 		
 		// clear inside of box
 		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,

@@ -2179,7 +2179,7 @@ void PiCarMgr::sendCANValuesToAmplifier(){
  		0
 	};
 	
-	//dumpHex(packet, sizeof(packet), 0);
+ dumpHex(packet, sizeof(packet), 0);
 	
 	
 }

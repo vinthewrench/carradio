@@ -3081,23 +3081,6 @@ void DisplayMgr::showSliderScreen(
 	_menuSliderCBInfo = cbInfo;
 	
 	setEvent(EVT_PUSH, MODE_SLIDER );
-	
-	//
-	//	if(getterCB){
-	//		double val = (getterCB)();
-	//
-	// 		if(setterCB){
-	//			val += .1;
-	//   			(setterCB)(val);
-	//		}
-	//	}
-	//	if(doneCB) (doneCB)(true);
-	//
-	//	if(_menuSliderCBInfo){
-	// 		free(_menuSliderCBInfo);
-	//		_menuSliderCBInfo = NULL;
-	//	}
-	
 }
 
 
@@ -3155,7 +3138,7 @@ void DisplayMgr::drawSliderScreen(modeTransition_t transition){
 		uint8_t itemX = midX +  ((rightbox - leftbox)/2) * val;
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
-		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
+		itemX = min(itemX,  static_cast<uint8_t> (rightbox-5) );
 		
 		// clear inside of box
 		uint8_t buff2[] = {VFD::VFD_CLEAR_AREA,

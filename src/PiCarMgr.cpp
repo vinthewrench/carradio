@@ -2169,7 +2169,6 @@ void PiCarMgr::sendCANValuesToAmplifier(){
 			 Tr - Treble
   	 */
 	
-	printf("bal = %0.2f %d\n", bal, static_cast<uint8_t> (bal * 10  + 10));
 	uint8_t packet[8] = {
 		static_cast<uint8_t>(vol * 38),
 		static_cast<uint8_t> (bal * 10  + 10),

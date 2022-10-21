@@ -518,7 +518,7 @@ bool CANBusMgr::setPeriodicCallback (string ifName, int64_t delay, periodicCallB
 	newTask.lastRun  = {0,0};
 	_periodic_tasks[newTask.taskID] = newTask;
 	
-	printf("setPeriodicCallback %08x\n", newTask.taskID);
+//	printf("setPeriodicCallback %08x\n", newTask.taskID);
 
 	return true;
  }
@@ -527,7 +527,7 @@ bool CANBusMgr::removePeriodicCallback (periodicCallBackID_t callBackID ){
 	 
 	if( _periodic_tasks.count(callBackID)){
 		
-		printf("removePeriodicCallback %08x\n", callBackID);
+//		printf("removePeriodicCallback %08x\n", callBackID);
  		_periodic_tasks.erase(callBackID);
 		return true;
 	}
@@ -554,7 +554,8 @@ void CANBusMgr::processPeriodicRequests(){
 	 		if(cb){
 				can_frame_t frame;
  				if( (cb)(frame)){
-					printf("send Frame %03x to %s\n", frame.can_id, task.ifName.c_str());
+					
+		//			printf("send Frame %03x to %s\n", frame.can_id, task.ifName.c_str());
 				}
 			}
 				 

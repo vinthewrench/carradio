@@ -775,11 +775,11 @@ void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displ
 		default:;
 	};
 	
-	_vfd.setCursor( x , y-9)	;
+	_vfd.setCursor( x , y-5)	;
  	_vfd.writePacket(image, sizeof(noBars));
 	
 	_vfd.setFont(VFD::FONT_MINI);
- 	_vfd.setCursor(x+9, y);
+ 	_vfd.setCursor(x+10, y);
 	_vfd.printPacket("%-3d ", int(dBm));
 }
 

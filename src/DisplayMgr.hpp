@@ -265,6 +265,9 @@ private:
 	void drawEngineCheck();
 	void drawTemperature();
 	void drawAirplayLogo(uint8_t x, uint8_t y, string text = "");
+	
+	void drawReceptionBars(uint8_t x,  uint8_t y, double dBm = 0, bool displayNumber = false );
+
 	void drawTimeBox();
 	void drawEditStringScreen(modeTransition_t transition);
 

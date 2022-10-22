@@ -736,6 +736,49 @@ bool DisplayMgr::setKnobColor(knob_id_t knob, RGB color){
 	return success;
 }
 
+ 
+static int dBm_to_bars(double dBm){
+	
+	int bars = 0;
+	
+	if(dBm >= -4) bars = 4;
+	else 	if(dBm > -8) bars = 3;
+	else 	if(dBm > -16) bars = 2;
+	else 	if(dBm > -28) bars = 1;
+
+	return bars;
+}
+
+void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displayNumber )
+{
+	
+	
+	static const uint8_t noBars[] 	= {0x1A,0x40, 0x18,0x08, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+	static const uint8_t oneBars[] 	= {0x1A,0x40, 0x18,0x08, 0x00,0x00,0x00,0x00,0x00,0x00,0xc0,0xc0 };
+	static const uint8_t twoBars[] 	= {0x1A,0x40, 0x18,0x08, 0x00,0x00,0x00,0x00,0x03,0x03,0xf0,0xf0 };
+	static const uint8_t threeBars[] = {0x1A,0x40, 0x18,0x08, 0x00,0x00,0xc0,0xc0,0x03,0x03,0xf0,0xf0  };
+	static const uint8_t fourBars[] 	= {0x1A,0x40, 0x18,0x08, 0x03,0x03,0xc0,0xc0,0x03,0x03,0xf0,0xf0 };
+
+	
+	const uint8_t* image  = noBars;
+	
+	switch (dBm_to_bars(dBm)){
+		case 0: image = noBars; break;
+		case 1: image = oneBars; break;
+		case 2: image = twoBars; break;
+		case 3: image = threeBars; break;
+		case 4: image = fourBars; break;
+		default:;
+	};
+	
+	_vfd.setCursor( x , y-8)	;
+ 	_vfd.writePacket(image, sizeof(noBars));
+	
+	_vfd.setFont(VFD::FONT_MINI);
+ 	_vfd.setCursor(x+10, y);
+	_vfd.printPacket("%3d", int(dBm));
+}
+
 
 // MARK: -  change modes
 
@@ -2004,9 +2047,8 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 		_vfd.setCursor(modeStart, centerY+9);
 		_vfd.write(muxstring);
 		
-		_vfd.setCursor(10, centerY+19);
-		_vfd.printPacket("\x1c%3d %-8s", int(radio->get_if_level()),
-							  radio->isSquelched()?"SQLCH":"" );
+		drawReceptionBars(10, centerY+19, radio->get_if_level());
+		_vfd.printPacket("%-8s", radio->isSquelched()?"SQLCH":"" );
 	}
 	
 	drawEngineCheck();
@@ -2933,16 +2975,10 @@ void DisplayMgr::drawScannerScreen(modeTransition_t transition){
 		channelStr = portionOfSpaces + channelStr;
 		_vfd.setCursor(0,centerY+5);
 		_vfd.printPacket("%-20s",channelStr.c_str() );
+		
+		drawReceptionBars(10, centerY+19, radio->get_if_level());
 	}
 	
-	
-	_vfd.setFont(VFD::FONT_MINI);
-	_vfd.setCursor(10, centerY+19);
-	
-	if(foundSignal)
-		_vfd.printPacket("%3d" , int(radio->get_if_level()));
-	else
-		_vfd.printPacket("      ");
 	
 	drawEngineCheck();
 	drawTemperature();

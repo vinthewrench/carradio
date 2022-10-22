@@ -242,7 +242,6 @@ private:
 	
 	void tunerDoubleClicked();
 	void scannerDoubleClicked();
-	void sendCANValuesToAmplifier();
 
 	void doShutdown();
 	

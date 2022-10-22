@@ -2270,40 +2270,6 @@ static void dumpHex(uint8_t* buffer, size_t length, int offset)
 #undef kLineSize
 }
 
-void PiCarMgr::sendCANValuesToAmplifier(){
-	double  vol = _audio.volume();
-	double  bal = _audio.balance();
-	double  fade = _audio.fader();
-	double  bass = _audio.bass();
-	double  treble = _audio.treble();
-	double  midrange = _audio.midrange();
-
-	/*
-	 3D9 Radio Settings broadcast
-		 [7]  Vl Bl Fa Ba Mi Tr FF
-			 Vl - Volume  		00-26x   00 - 38
-			 Bl - Balance		1 (-9)  - 10 (0) - 19 (+9)
-			 Fa - Fader
-			 Ba - Bass
-			 Mi - Midrange
-			 Tr - Treble
-  	 */
-	
-	uint8_t packet[8] = {
-		static_cast<uint8_t>(vol * 38),
-		static_cast<uint8_t> (bal * 10  + 10),
-		static_cast<uint8_t> (fade * 10  + 10),
-		static_cast<uint8_t> (bass * 10  + 10),
-		static_cast<uint8_t> (midrange * 10  + 10),
-		static_cast<uint8_t> (treble * 10  + 10),
- 		0
-	};
-	
- dumpHex(packet, sizeof(packet), 0);
-	
-	
-}
-
 
 void PiCarMgr::displayAudioMenu(){
 	
@@ -2361,8 +2327,7 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setBalance(val);
-							sendCANValuesToAmplifier();
-						},
+							},
 														  [=](bool didSucceed){
 							// completion
 							
@@ -2380,7 +2345,6 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setFader(val);
-							sendCANValuesToAmplifier();
  					},
 														  [=](bool didSucceed){
 							// completion
@@ -2401,7 +2365,6 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setBass(val);
-							sendCANValuesToAmplifier();
  						},
 														  [=](bool didSucceed){
 							// completion
@@ -2422,7 +2385,6 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setMidrange(val);
-							sendCANValuesToAmplifier();
 						},
 														  [=](bool didSucceed){
 							// completion
@@ -2443,7 +2405,6 @@ void PiCarMgr::displayAudioMenu(){
 														  [=](double val){
 							// setter
 							_audio.setTreble(val);
-							sendCANValuesToAmplifier();
 	 					},
 														  [=](bool didSucceed){
 							// completion

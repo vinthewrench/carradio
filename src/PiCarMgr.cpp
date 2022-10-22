@@ -271,7 +271,7 @@ bool PiCarMgr::begin(){
 		restoreRadioSettings();
  
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000, _canPeriodTaskID,
-										 [=] (can_frame_t  &frame){
+										 [=] (canid_t &can_id, vector<uint8_t> &bytes){
 			
 			// called periodically to send out CAN messages
 			
@@ -282,8 +282,7 @@ bool PiCarMgr::begin(){
 			double  bass = _audio.bass();
 			double  treble = _audio.treble();
 			double  midrange = _audio.midrange();
- 
-			
+  
 				/*
 			 3D9 Radio Settings broadcast
 				 [7]  Vl Bl Fa Ba Mi Tr FF
@@ -295,23 +294,18 @@ bool PiCarMgr::begin(){
 					 Tr - Treble
 			 */
 		
-			uint8_t packet[7] = {
+			vector<uint8_t>  packet = {
 				static_cast<uint8_t>(vol * 38),
 				static_cast<uint8_t> (bal * 10  + 10),
 				static_cast<uint8_t> (fade * 10  + 10),
 				static_cast<uint8_t> (bass * 10  + 10),
 				static_cast<uint8_t> (midrange * 10  + 10),
 				static_cast<uint8_t> (treble * 10  + 10),
-				0
+				0xff
 			};
 
-			// copy frame
-			memset(&frame, 0, sizeof frame);
- 			frame.can_id = 0x3D9;
-			for(int i = 0; i < sizeof(packet);  i++)
-				frame.data[i]  = packet[i];
-			frame.can_dlc = sizeof(packet);
- 
+			can_id = 0x3D9;
+			bytes = packet;
 	 
 			return true;
 		});

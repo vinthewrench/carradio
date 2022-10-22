@@ -552,11 +552,18 @@ void CANBusMgr::processPeriodicRequests(){
 			
 			auto cb = task.cb;
 	 		if(cb){
-				can_frame_t frame;
- 				if( (cb)(frame)){
-					
-		//			printf("send Frame %03x to %s\n", frame.can_id, task.ifName.c_str());
-				}
+				vector<uint8_t>  bytes;
+				canid_t can_id;
+				
+ 				if( (cb)(can_id, bytes)){
+	
+//					printf("send Frame %03x to %s\n", can_id, task.ifName.c_str());
+
+					int error = 0;
+ 					if(!sendFrame(task.ifName, can_id, bytes, &error)){
+						// send failed
+					};
+					}
 			}
 				 
 			task.lastRun = now;

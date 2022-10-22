@@ -775,7 +775,7 @@ void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displ
 		default:;
 	};
 	
-	_vfd.setCursor( x , y-3)	;
+	_vfd.setCursor( x , y)	;
  	_vfd.writePacket(image, sizeof(noBars));
 	
 	_vfd.setFont(VFD::FONT_MINI);

@@ -780,7 +780,7 @@ void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displ
 		sprintf(buffer, "       ");
  	else
 		sprintf(buffer, "%d%-5s", int(dBm), "DB");
-  
+	
 	_vfd.write(buffer );
  }
 

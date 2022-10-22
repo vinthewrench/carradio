@@ -2225,52 +2225,6 @@ void PiCarMgr::displayWaypoint(string uuid){
 	});
 }
 
-static void dumpHex(uint8_t* buffer, size_t length, int offset)
-{
-	char hexDigit[] = "0123456789ABCDEF";
-	size_t			i;
-	size_t						lineStart;
-	size_t						lineLength;
-	short					c;
-	const unsigned char	  *bufferPtr = buffer;
-	
-	char                    lineBuf[1024];
-	char                    *p;
-	 
-#define kLineSize	8
-	for (lineStart = 0, p = lineBuf; lineStart < length; lineStart += lineLength,  p = lineBuf )
-	{
-		 lineLength = kLineSize;
-		 if (lineStart + lineLength > length)
-			  lineLength = length - lineStart;
-		 
-		p += sprintf(p, "%6lu: ", lineStart+offset);
-		 for (i = 0; i < lineLength; i++){
-			  *p++ = hexDigit[ bufferPtr[lineStart+i] >>4];
-			  *p++ = hexDigit[ bufferPtr[lineStart+i] &0xF];
-			  if((lineStart+i) &0x01)  *p++ = ' ';  ;
-		 }
-		 for (; i < kLineSize; i++)
-			  p += sprintf(p, "   ");
-		 
-		 p += sprintf(p,"  ");
-		 for (i = 0; i < lineLength; i++) {
-			  c = bufferPtr[lineStart + i] & 0xFF;
-			  if (c > ' ' && c < '~')
-					*p++ = c ;
-			  else {
-					*p++ = '.';
-			  }
-		 }
-		 *p++ = 0;
-		 
-  
-		printf("%s\n",lineBuf);
-	}
-#undef kLineSize
-}
-
-
 void PiCarMgr::displayAudioMenu(){
 	
 	constexpr time_t timeout_secs = 10;

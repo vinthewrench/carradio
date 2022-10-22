@@ -1310,17 +1310,7 @@ bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 	 */
 	
 	uint8_t mode = 0x1D;
-	
-	vector<uint8_t>  packet = {
-		static_cast<uint8_t> (mode),
-		0x0D,
-		0x05,
-		0x30,
-		0x00,
-		0x00,
-		0x07
- 	};
-
+ 
 	if(_radio.isConnected() && _radio.isOn()){
 		
 		switch(_lastRadioMode){
@@ -1346,6 +1336,17 @@ bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 				break;
 		}
 	};
+	
+	vector<uint8_t>  packet = {
+		static_cast<uint8_t> (mode),
+		0x0D,
+		0x05,
+		0x30,
+		0x00,
+		0x00,
+		0x07
+	};
+
 	can_id = 0x291;
 	bytes = packet;
 

@@ -774,8 +774,7 @@ void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displ
 	
 	_vfd.setFont(VFD::FONT_MINI);
  	_vfd.setCursor(x+11, y);
-	
-	
+		
 	char buffer[10] = {'0'};
   	if(dBm >= 0)
 		sprintf(buffer, "       ");

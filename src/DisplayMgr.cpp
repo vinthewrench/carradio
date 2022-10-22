@@ -749,8 +749,7 @@ static int dBm_to_bars(double dBm){
 	return bars;
 }
 
-void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displayNumber )
-{
+void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displayNumber ){
  
 	static const uint8_t noBars[] 	= {0x1A,0x40, 0x18,0x05, 0x00,0x00,0x00,0x00,0x7c };
 	static const uint8_t oneBars[] 	= {0x1A,0x40, 0x18,0x05, 0x00,0x00,0x00,0x3c,0x7c };
@@ -774,8 +773,8 @@ void DisplayMgr::drawReceptionBars(uint8_t x,  uint8_t y, double dBm, bool displ
  	_vfd.writePacket(image, sizeof(noBars));
 	
 	_vfd.setFont(VFD::FONT_MINI);
- 	_vfd.setCursor(x+10, y);
-	_vfd.printPacket("%3d", int(dBm));
+ 	_vfd.setCursor(x+9, y);
+	_vfd.printPacket("%-3d", int(dBm));
 }
 
 

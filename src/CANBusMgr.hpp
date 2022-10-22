@@ -72,11 +72,13 @@ public:
 	
 	typedef uint32_t periodicCallBackID_t;
 
-	typedef std::function<bool( canid_t &can_id, vector<uint8_t> &bytes)> periodicCallBack_t;
-	bool setPeriodicCallback (string ifName, int64_t delay,  periodicCallBackID_t & callBackID,  periodicCallBack_t cb);
+	typedef std::function<bool(void* context,  canid_t &can_id, vector<uint8_t> &bytes)> periodicCallBack_t;
+	bool setPeriodicCallback (string ifName, int64_t delay,
+									  periodicCallBackID_t & callBackID,
+									  void* context,
+									  periodicCallBack_t cb);
 	bool removePeriodicCallback (periodicCallBackID_t callBackID );
  
-
 private:
 	
 	bool 				_isSetup = false;
@@ -106,6 +108,7 @@ private:
 		string 					ifName;
 		int64_t				 	delay;
 		struct timespec		lastRun;
+		void* 					context; //passed to cb
 		periodicCallBack_t 	cb;
 	} periodic_task_t;
 

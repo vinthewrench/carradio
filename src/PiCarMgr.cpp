@@ -68,8 +68,6 @@ typedef void * (*THREADFUNCPTR)(void *);
 PiCarMgr *PiCarMgr::sharedInstance = NULL;
 
 
-
-
 static void CRASH_Handler()
 {
 	void *trace_elems[20];
@@ -270,48 +268,14 @@ bool PiCarMgr::begin(){
 		restoreStationsFromFile();
 		restoreRadioSettings();
  
-		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000, _canPeriodTaskID,
-										 [=] (canid_t &can_id, vector<uint8_t> &bytes){
-			
-			// called periodically to send out CAN messages
-			
-			
-			double  vol = _audio.volume();
-			double  bal = _audio.balance();
-			double  fade = _audio.fader();
-			double  bass = _audio.bass();
-			double  treble = _audio.treble();
-			double  midrange = _audio.midrange();
-  
-				/*
-			 3D9 Radio Settings broadcast
-				 [7]  Vl Bl Fa Ba Mi Tr FF
-					 Vl - Volume  		00-26x   00 - 38
-					 Bl - Balance		1 (-9)  - 10 (0) - 19 (+9)
-					 Fa - Fader
-					 Ba - Bass
-					 Mi - Midrange
-					 Tr - Treble
-			 */
 		
-			vector<uint8_t>  packet = {
-				static_cast<uint8_t>(vol * 38),
-				static_cast<uint8_t> (bal * 10  + 10),
-				static_cast<uint8_t> (fade * 10  + 10),
-				static_cast<uint8_t> (bass * 10  + 10),
-				static_cast<uint8_t> (midrange * 10  + 10),
-				static_cast<uint8_t> (treble * 10  + 10),
-				0xff
-			};
-
-			can_id = 0x3D9;
-			bytes = packet;
-	 
-			return true;
-		});
+		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
+										 _canPeriodRadioTaskID,  this, periodicCAN_CB_Radio_wrapper);
 		
+		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
+										 _canPeriodAudioTaskID,  this, periodicCAN_CB_Audio_wrapper);
 	
-		_isSetup = true;
+	 		_isSetup = true;
 		
 		bool firstRunToday = true;
 		time_t now = time(NULL);
@@ -351,6 +315,8 @@ bool PiCarMgr::begin(){
 	return _isSetup;
 }
 
+
+
 void PiCarMgr::stop(){
 	
 	
@@ -362,7 +328,9 @@ void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
 		_isSetup = false;
-		_can.removePeriodicCallback(_canPeriodTaskID);
+		_can.removePeriodicCallback(_canPeriodRadioTaskID);
+		_can.removePeriodicCallback(_canPeriodAudioTaskID);
+
 		_display.setKnobBackLight(false);
 		_gps.stop();
 		_can.stop();
@@ -1273,6 +1241,116 @@ bool PiCarMgr::getWaypointInfo(string uuid, waypoint_prop_t &prop){
 	
 }
 
+// MARK: -  CAN BUS PERIODIC CALLBACKS
+
+// these probably exist to tell the amplifier to turn on or set audio
+bool PiCarMgr::periodicCAN_CB_Audio_wrapper(void* context,  canid_t &can_id, vector<uint8_t> &bytes){
+	PiCarMgr* mgr = (PiCarMgr*)context;
+	return mgr->periodicCAN_CB_Audio(can_id, bytes);
+	
+}
+
+bool PiCarMgr::periodicCAN_CB_Radio_wrapper(void* context,  canid_t &can_id, vector<uint8_t> &bytes){
+	PiCarMgr* mgr = (PiCarMgr*)context;
+	return mgr->periodicCAN_CB_Radio(can_id, bytes);
+}
+
+
+bool PiCarMgr::periodicCAN_CB_Audio(canid_t &can_id, vector<uint8_t> &bytes){
+ 
+	/*
+ 3D9 Radio Settings broadcast
+	 [7]  Vl Bl Fa Ba Mi Tr FF
+		 Vl - Volume  		00-26x   00 - 38
+		 Bl - Balance		1 (-9)  - 10 (0) - 19 (+9)
+		 Fa - Fader
+		 Ba - Bass
+		 Mi - Midrange
+		 Tr - Treble
+ */
+
+
+	double  vol = _audio.volume();
+	double  bal = _audio.balance();
+	double  fade = _audio.fader();
+	double  bass = _audio.bass();
+	double  treble = _audio.treble();
+	double  midrange = _audio.midrange();
+
+	vector<uint8_t>  packet = {
+		static_cast<uint8_t>(vol * 38),
+		static_cast<uint8_t> (bal * 10  + 10),
+		static_cast<uint8_t> (fade * 10  + 10),
+		static_cast<uint8_t> (bass * 10  + 10),
+		static_cast<uint8_t> (midrange * 10  + 10),
+		static_cast<uint8_t> (treble * 10  + 10),
+		0xff
+	};
+
+	can_id = 0x3D9;
+	bytes = packet;
+
+	return true;
+	}
+
+bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
+
+	/*
+	 291 Radio Mode
+		 [7]  ss 0D 05 30 tt 00 07
+			  ss = Mode
+				 00 - AM
+				 01 - FM
+				 06 - Aux
+				 09 - SAT
+				 1D - OFF
+			 
+			 tt  10 Tunned
+				  80 Changed
+	 */
+	
+	uint8_t mode = 0x1D;
+	
+	vector<uint8_t>  packet = {
+		static_cast<uint8_t> (mode),
+		0x0D,
+		0x05,
+		0x30,
+		0x00,
+		0x00,
+		0x07
+ 	};
+
+	if(_radio.isConnected() && _radio.isOn()){
+		
+		switch(_lastRadioMode){
+			case  RadioMgr::BROADCAST_AM:
+				mode = 00;
+				break;
+				
+			case  RadioMgr::BROADCAST_FM:
+				mode = 01;
+				break;
+				
+			case RadioMgr::AUX:
+				mode = 0x06;
+				break;
+	 
+				// I dont have a clear st of equivalants  - so treat like AUX
+			case  RadioMgr::VHF:
+			case  RadioMgr::GMRS:
+			case RadioMgr::AIRPLAY:
+			case RadioMgr::SCANNER:
+			default:
+				mode = 0x06;
+				break;
+		}
+	};
+	can_id = 0x291;
+	bytes = packet;
+
+	return true;
+}
 
 // MARK: -  PiCarMgr main loop  thread
 

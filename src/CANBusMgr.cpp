@@ -505,7 +505,10 @@ void CANBusMgr::processOBDrequests() {
 }
 
 
-bool CANBusMgr::setPeriodicCallback (string ifName, int64_t delay, periodicCallBackID_t & callBackID, periodicCallBack_t cb  ){
+bool CANBusMgr::setPeriodicCallback (string ifName, int64_t delay,
+												 periodicCallBackID_t & callBackID,
+												 void* context,
+												 periodicCallBack_t cb  ){
  
 	std::uniform_int_distribution<periodicCallBackID_t> distribution(0,UINT32_MAX);
 
@@ -515,6 +518,7 @@ bool CANBusMgr::setPeriodicCallback (string ifName, int64_t delay, periodicCallB
 	newTask.ifName = ifName;
 	newTask.delay = delay;
 	newTask.cb	= cb;
+	newTask.context = context;
 	newTask.lastRun  = {0,0};
 	_periodic_tasks[newTask.taskID] = newTask;
 	
@@ -555,7 +559,7 @@ void CANBusMgr::processPeriodicRequests(){
 				vector<uint8_t>  bytes;
 				canid_t can_id;
 				
- 				if( (cb)(can_id, bytes)){
+ 				if( (cb)(task.context, can_id, bytes)){
 	
 //					printf("send Frame %03x to %s\n", can_id, task.ifName.c_str());
 

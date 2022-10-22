@@ -150,9 +150,10 @@ bool PiCarCAN::sendDTCEraseRequest(){
 
 bool PiCarCAN::setPeriodicCallback (pican_bus_t bus, int64_t delay,
 												CANBusMgr::periodicCallBackID_t & callBackID,
+												void* context,
 												CANBusMgr::periodicCallBack_t cb ){
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
- 	return _CANbus.setPeriodicCallback(ifName, delay, callBackID, cb);
+ 	return _CANbus.setPeriodicCallback(ifName, delay, callBackID, context, cb);
  }
 
 bool PiCarCAN::removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBackID){

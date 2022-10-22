@@ -229,6 +229,12 @@ private:
 	
 	void scannerChannelMenu(RadioMgr::channel_t selectedChannel);
 	
+	// CAN BUS PERIODIC CALLBACKS
+	static bool periodicCAN_CB_Audio_wrapper(void* context,  canid_t &can_id, vector<uint8_t> &bytes);
+ 	static bool periodicCAN_CB_Radio_wrapper(void* context,  canid_t &can_id, vector<uint8_t> &bytes);
+	bool periodicCAN_CB_Audio(canid_t &can_id, vector<uint8_t> &bytes);
+	bool periodicCAN_CB_Radio( canid_t &can_id, vector<uint8_t> &bytes);
+	
 	bool deleteWaypoint(string uuid);
 	bool updateWaypoint(string uuid);
 	bool createWaypoint(string name, waypoint_prop_t &wp );
@@ -305,8 +311,9 @@ private:
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
 	time_t 				_clocksync_gps_secs;  // how many seconds of error allowed before sync
 	
-	CANBusMgr::periodicCallBackID_t		_canPeriodTaskID;
-	
+	CANBusMgr::periodicCallBackID_t		_canPeriodRadioTaskID;
+	CANBusMgr::periodicCallBackID_t		_canPeriodAudioTaskID;
+
 	struct timespec 	_startTime;
 	struct timespec 	_lastActivityTime;
 

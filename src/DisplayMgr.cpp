@@ -3221,7 +3221,7 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		return;
 	}
 	
-	if(!_menuSliderCBInfo)
+	if(!_menuSelectionSliderCBInfo)
 		return;
 	
 	if(transition == TRANS_ENTERING) {

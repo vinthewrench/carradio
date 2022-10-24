@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <regex>
+#include <limits.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>

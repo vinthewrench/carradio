@@ -106,10 +106,8 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	if(! _sdr.setTunerGain( INT_MIN ))
 		return false;
 	
-	// turn of ACG
-	if(! _sdr.setACGMode(false))
-		return false;
-  
+	auto list =  _sdr.getTunerGains();
+ 
 	_isSetup = true;
  
 	return true;
@@ -449,6 +447,33 @@ int 	RadioMgr::getMaxSquelchRange(){
 	return -45;
 }
  
+
+/** tuner gain settings in units of 0.1 dB. */
+std::vector<int> RadioMgr::getTunerGains(){
+	
+	std::vector<int> gains = {};
+	
+	if(_isSetup)
+		gains = _sdr.getTunerGains();
+ 
+	return gains;
+}
+
+bool RadioMgr::setTunerGain(int val){
+	if(_isSetup)
+		return _sdr.setTunerGain(val );
+	else
+		return false;
+}
+
+int RadioMgr::getTunerGain(){
+	if(_isSetup)
+		return _sdr.getTunerGain();
+	else
+		return INT_MIN;
+}
+ 
+
 
 uint32_t RadioMgr::frequency(){
 	if(_scannerMode){

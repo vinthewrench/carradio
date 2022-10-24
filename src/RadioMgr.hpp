@@ -98,6 +98,11 @@ public:
 	int 	getSquelchLevel(){ return _squelchLevel;};
 	int 	getMaxSquelchRange();
 	void 	setSquelchDwell(uint val){ _squelchLevel = val;};
+	
+	/** tuner gain settings in units of 0.1 dB. */
+	std::vector<int> getTunerGains();
+	bool setTunerGain(int);
+	int getTunerGain();
 	 
 	uint32_t nextFrequency(bool up);
 	

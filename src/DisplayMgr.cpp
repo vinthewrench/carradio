@@ -81,7 +81,8 @@ DisplayMgr::DisplayMgr(){
 	_lastAirplayStatusTime = {0,0};
 	_airplayStatus = 0;
 	_menuSliderCBInfo = NULL;
-	
+	_menuSelectionSliderCBInfo = NULL;
+
 	pthread_create(&_updateTID, NULL,
 						(THREADFUNCPTR) &DisplayMgr::DisplayUpdateThread, (void*)this);
 	
@@ -172,6 +173,10 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		if(_menuSliderCBInfo) free(_menuSliderCBInfo);
 		_menuSliderCBInfo = NULL;
+	
+		if(_menuSelectionSliderCBInfo) free(_menuSelectionSliderCBInfo);
+		_menuSelectionSliderCBInfo = NULL;
+ 
 		resetMenu();
 		showStartup();
 	}
@@ -193,6 +198,13 @@ void DisplayMgr::stop(){
 			_menuSliderCBInfo = NULL;
 		}
 		
+		if(_menuSelectionSliderCBInfo) {
+			if(_menuSelectionSliderCBInfo->doneCB)
+				(_menuSelectionSliderCBInfo->doneCB)(false);
+			free(_menuSelectionSliderCBInfo);
+			_menuSelectionSliderCBInfo = NULL;
+		}
+
 		resetMenu();
 		_eventQueue = {};
 		_ledEvent = 0;
@@ -915,7 +927,8 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_DTC_INFO:
 		case MODE_MENU:
 		case MODE_SLIDER:
-			return true;
+		case MODE_SELECT_SLIDER:
+ 			return true;
 			
 		default:
 			return false;
@@ -1006,7 +1019,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_SLIDER:
 			wasHandled = processSelectorKnobActionForSlider(action);
 			break;
- 
+
+		case MODE_SELECT_SLIDER:
+			wasHandled = processSelectorKnobActionForSelectSlider(action);
+			break;
+
 		case MODE_SQUELCH:
 			wasHandled = processSelectorKnobActionForSquelch(action);
 			break;
@@ -3092,6 +3109,119 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 	return wasHandled;
 }
 
+
+// MARK: - slidrSelect Screen
+void DisplayMgr::showSelectionSilderScreen(
+							 string title,
+							 std::vector<string> choices,
+							 int initialChoice,
+							 time_t timeout,
+							 menuSelectionSilderSetterCallBack_t setterCB ,
+														 boolCallback_t doneCB){
+	if(_menuSelectionSliderCBInfo) free(_menuSelectionSliderCBInfo);
+	menuSelectionSliderCBInfo_t * cbInfo = (menuSelectionSliderCBInfo_t *) malloc(sizeof( menuSelectionSliderCBInfo_t));
+	memset(cbInfo, 0, sizeof( menuSelectionSliderCBInfo_t));
+	
+	cbInfo->title = title;
+	cbInfo->choices = choices;
+	cbInfo->currentChoice = initialChoice;
+ 	cbInfo->timeout = timeout?timeout:5;  // default 5 secs
+ 	cbInfo->setCB = setterCB;
+	cbInfo->doneCB = doneCB;
+	
+	_menuSelectionSliderCBInfo = cbInfo;
+	
+	setEvent(EVT_PUSH, MODE_SELECT_SLIDER );
+
+}
+
+bool DisplayMgr::processSelectorKnobActionForSelectSlider( knob_action_t action){
+	bool wasHandled = false;
+ 
+	// guard
+	if(!_menuSelectionSliderCBInfo) return false;
+	
+	
+  
+	if(action == KNOB_UP){
+		
+		if(_menuSelectionSliderCBInfo->setCB){
+		}
+		wasHandled = true;
+	}
+	
+	else if(action == KNOB_DOWN){
+		
+		if(_menuSelectionSliderCBInfo->setCB){
+		}
+
+		wasHandled = true;
+	}
+	else if(action == KNOB_CLICK){
+		
+		auto savedCB = _menuSelectionSliderCBInfo->doneCB;
+		
+		free(_menuSelectionSliderCBInfo);
+		_menuSelectionSliderCBInfo = NULL;
+		
+		popMode();
+	 
+		if(savedCB){
+			(savedCB)(true);
+			wasHandled = true;
+		}
+	}
+	
+	return wasHandled;
+}
+ 
+
+void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
+	
+//	printf("drawSelectSliderScreen(%d)\n", transition);
+	
+	uint8_t width = _vfd.width();
+	uint8_t height = _vfd.height();
+	uint8_t midX = width/2;
+	uint8_t midY = height/2;
+	
+	uint8_t leftbox 	= 20;
+	uint8_t rightbox 	= width - 20;
+	uint8_t topbox 	= midY -5 ;
+	uint8_t bottombox = midY + 5 ;
+	
+	if(transition == TRANS_LEAVING) {
+		
+		if(_menuSelectionSliderCBInfo) free(_menuSelectionSliderCBInfo);
+		_menuSelectionSliderCBInfo  = NULL;
+		return;
+	}
+	
+	if(!_menuSliderCBInfo)
+		return;
+	
+	if(transition == TRANS_ENTERING) {
+		_vfd.clearScreen();
+		
+		// draw centered heading
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = _menuSelectionSliderCBInfo->title;
+		_vfd.setCursor( midX - ((str.size()*5) /2 ), topbox - 5);
+		_vfd.write(str);
+		
+		//draw box outline
+		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
+		_vfd.writePacket(buff1, sizeof(buff1), 0);
+		
+	 	}
+	
+	
+	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+	 
+	}
+}
+ 
 
 // MARK: -  Slider Screen
 void DisplayMgr::showSliderScreen(

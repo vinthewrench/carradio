@@ -79,7 +79,8 @@ public:
 		MODE_EDIT_STRING,
 		MODE_SCANNER_CHANNELS,
 		MODE_CHANNEL_INFO,
-		MODE_SLIDER
+		MODE_SLIDER,
+		MODE_SELECT_SLIDER
 	}mode_state_t;
 
 	mode_state_t active_mode();
@@ -174,7 +175,18 @@ public:
 								 menuSliderSetterCallBack_t setCB = nullptr,
  								 boolCallback_t doneCB  = nullptr);
 	
+
+	typedef std::function<void(int)>menuSelectionSilderSetterCallBack_t;
 	
+	void showSelectionSilderScreen(
+								 string title,
+								 std::vector<string> choices,
+								 int initialChoice = 0,
+ 								 time_t timeout = 0,
+								 menuSelectionSilderSetterCallBack_t setCB = nullptr,
+								 boolCallback_t doneCB  = nullptr);
+	
+
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 	void showAirplayChange();
@@ -228,7 +240,9 @@ private:
 	void drawSliderScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForSlider( knob_action_t action);
 
-	 
+	void drawSelectSliderScreen(modeTransition_t transition);
+	bool processSelectorKnobActionForSelectSlider( knob_action_t action);
+ 
 	void drawSquelchScreen(modeTransition_t transition);
 	bool processSelectorKnobActionForSquelch( knob_action_t action);
 	bool processSelectorKnobActionForDimmer( knob_action_t action);
@@ -290,7 +304,19 @@ private:
 	} menuSliderCBInfo_t;
 	
 	menuSliderCBInfo_t * _menuSliderCBInfo = NULL;
+  
+	typedef struct {
+		string title;
+ 		time_t timeout;
+		std::vector<string> choices;
+		int currentChoice;
+ 		menuSelectionSilderSetterCallBack_t setCB;
+		boolCallback_t doneCB;
+	} menuSelectionSliderCBInfo_t;
+
+	menuSelectionSliderCBInfo_t * _menuSelectionSliderCBInfo = NULL;
  
+	
 	showWaypointsCallBack_t _wayPointCB;
 	showScannerChannelsCallBack_t _scannnerChannelsCB;
 	knobCallBack_t _knobCB;

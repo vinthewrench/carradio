@@ -530,6 +530,7 @@ void PiCarMgr::saveRadioSettings(){
  
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_SQUELCH_LEVEL, _radio.getSquelchLevel());
+	_db.setProperty(PROP_GAIN_LEVEL, _radio.getTunerGain());
 	_db.setProperty(PROP_LAST_RADIO_MODES, GetRadioModesJSON());
 	_db.setProperty(PROP_LAST_RADIO_MODE, RadioMgr::modeString(_lastRadioMode));
 	_db.setProperty(PROP_LAST_AUDIO_SETTING, GetAudioJSON());
@@ -609,6 +610,13 @@ void PiCarMgr::restoreRadioSettings(){
 		squelch_level = _radio.getMaxSquelchRange();
 	_radio.setSquelchLevel(squelch_level);
  
+	// SET Tuner Gain
+	int tuner_gain = INT_MIN;
+	if(_db.getIntProperty(PROP_GAIN_LEVEL, &tuner_gain)){
+		_radio.setTunerGain(tuner_gain);
+ 	}
+  
+	
 	// SET Preset stations
 	
 	_preset_stations.clear();
@@ -2236,6 +2244,9 @@ void PiCarMgr::displayAudioMenu(){
 	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
+	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Gain:", _radio.getTunerGain());
+	menu_items.push_back(string(buffer));
+
 	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Balance:", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
@@ -2273,7 +2284,27 @@ void PiCarMgr::displayAudioMenu(){
 						_display.showSquelchChange();
 						break;
 						
+						
 					case 1:
+						// tuner gain
+	 						_display.showSelectionSilderScreen("Tuner Gain",
+																	  {"A", "B", "C", "D"},
+																	  0,
+																	  5 ,
+																	  [=](double val){
+							// setter
+							;
+						},
+																	  [=](bool didSucceed){
+							// completion
+							
+							//							printf("Balance Set %1.1f\n",  _audio.balance());
+							displayAudioMenu();
+						});
+							
+  						break;
+ 
+					case 2:
  						_display.showSliderScreen("Balance","R","L", 5,
 														  [=](){
 							// getter
@@ -2291,7 +2322,7 @@ void PiCarMgr::displayAudioMenu(){
  
 						break;
 						
-					case 2:
+					case 3:
  						_display.showSliderScreen("Fader","F","R", 5,
 														  [=](){
 							// getter
@@ -2309,7 +2340,7 @@ void PiCarMgr::displayAudioMenu(){
 						});;
  						break;
 	
-					case 3:
+					case 4:
 					{
 	 
 						_display.showSliderScreen("Bass","+","-", 5,
@@ -2329,7 +2360,7 @@ void PiCarMgr::displayAudioMenu(){
 					}
 						break;
 						
-					case 4:
+					case 5:
 					{
 	 
 						_display.showSliderScreen("Midrange","+","-", 5,
@@ -2350,7 +2381,7 @@ void PiCarMgr::displayAudioMenu(){
 					}
 						break;
 
-					case 5:
+					case 6:
 					{
 	 					_display.showSliderScreen("Treble","+","-", 5,
 														  [=](){

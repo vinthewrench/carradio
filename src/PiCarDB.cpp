@@ -357,8 +357,7 @@ bool PiCarDB::getTimeProperty(string key, time_t * valOut){
  
 bool  PiCarDB::getIntProperty(string key, int * valOut){
 	
-	if( _props.contains(key))
-	{
+	if( _props.contains(key)) {
 		if(_props.at(key).is_number_integer()){
 			auto val = _props.at(key);
 			
@@ -366,15 +365,15 @@ bool  PiCarDB::getIntProperty(string key, int * valOut){
 				*valOut =  val;
 			return true;
 		}
-	}
-	else 	if(_props.at(key).is_string()){
-		string val = _props.at(key);
-		
-		int intValue = atoi(val.c_str());
-		if(valOut)
-			*valOut =  intValue;
-		return true;
-		
+ 		else 	if(_props.at(key).is_string()){
+			string val = _props.at(key);
+			
+			int intValue = atoi(val.c_str());
+			if(valOut)
+				*valOut =  intValue;
+			return true;
+			
+		}
 	}
 	return false;
 }
@@ -382,8 +381,7 @@ bool  PiCarDB::getIntProperty(string key, int * valOut){
 			
 bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 	
-	if( _props.contains(key))
-	{
+	if( _props.contains(key)) {
 		if(_props.at(key).is_number_unsigned()){
 			auto val = _props.at(key);
 			
@@ -410,8 +408,7 @@ bool  PiCarDB::getUint16Property(string key, uint16_t * valOut){
 bool  PiCarDB::getFloatProperty(string key, float * valOut){
 	
 	if( _props.contains(key)
-		&&  _props.at(key).is_number_float())
-	{
+		&&  _props.at(key).is_number_float()) {
 		auto val = _props.at(key);
 		if(valOut)
 				*valOut = (float) val;

@@ -2245,7 +2245,7 @@ void PiCarMgr::displayAudioMenu(){
 	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Squelch:", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Gain:", _radio.getTunerGain());
+	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Gain:", _radio.getTunerGain());
 	menu_items.push_back(string(buffer));
 
 	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Balance:", int(_audio.balance() * 10));

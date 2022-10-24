@@ -1474,7 +1474,7 @@ void DisplayMgr::DisplayUpdateLoop(){
 				}
 				else if(_current_mode == MODE_SLIDER) {
 					
-					menuSliderCBInfo_t * cb = _menuSliderCBInfo;
+					auto * cb = _menuSliderCBInfo;
 					if(cb){
 						// check for {EVT_NONE,MODE_SLIDER}  which is a slider change
 						if(item.mode == MODE_SLIDER) {
@@ -1490,6 +1490,26 @@ void DisplayMgr::DisplayUpdateLoop(){
 						}
 					}
 				}
+
+				else if(_current_mode == MODE_SELECT_SLIDER) {
+					
+					auto * cb = _menuSelectionSliderCBInfo;
+					if(cb){
+						// check for {EVT_NONE,MODE_SLIDER}  which is a slider change
+						if(item.mode == MODE_SELECT_SLIDER) {
+							clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+							shouldRedraw = false;
+							shouldUpdate = true;
+						}
+						else if(diff.tv_sec >=  cb->timeout){
+							// timeout pop mode?
+							popMode();
+							shouldRedraw = true;
+							shouldUpdate = true;
+						}
+					}
+				}
+ 
 				else if(_current_mode == MODE_SQUELCH) {
 					
 					// check for {EVT_NONE,MODE_SQUELCH}  which is a squelch change
@@ -1707,7 +1727,11 @@ void DisplayMgr::drawMode(modeTransition_t transition,
 			case MODE_SLIDER:
 				drawSliderScreen(transition);
 				break;
-				
+
+			case MODE_SELECT_SLIDER:
+				drawSelectSliderScreen(transition);
+				break;
+
 			case MODE_DEV_STATUS:
 				drawDeviceStatusScreen(transition);
 				break;

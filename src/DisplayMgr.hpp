@@ -185,8 +185,7 @@ public:
  								 time_t timeout = 0,
 								 menuSelectionSilderSetterCallBack_t setCB = nullptr,
 								 boolCallback_t doneCB  = nullptr);
-	
-
+ 
 	void showRadioChange();
 	void showScannerChange(bool force = true);
 	void showAirplayChange();

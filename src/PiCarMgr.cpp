@@ -1559,7 +1559,7 @@ void PiCarMgr::PiCarLoop(){
 				
 				if(volMovedCW){
 					if(volume < 1) {						// twist up
-						volume +=.02;
+						volume +=.01;
 						if(volume > 1) volume = 1.0;	// pin volume
 						_audio.setVolume(volume);
 						_db.updateValue(VAL_AUDIO_VOLUME, volume);
@@ -1567,7 +1567,7 @@ void PiCarMgr::PiCarLoop(){
 				}
 				else {
 					if(volume > 0) {							// twist down
-						volume -=.02;
+						volume -=.01;
 						if(volume < 0) volume = 0.0;		// twist down
 						_audio.setVolume(volume);
 						_db.updateValue(VAL_AUDIO_VOLUME, volume);

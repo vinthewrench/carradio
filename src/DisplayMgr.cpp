@@ -3202,7 +3202,7 @@ bool DisplayMgr::processSelectorKnobActionForSelectSlider( knob_action_t action)
 
 void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 	
-//	printf("drawSelectSliderScreen(%d)\n", transition);
+ 	printf("drawSelectSliderScreen(%d)\n", transition);
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();

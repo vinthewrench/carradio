@@ -2292,7 +2292,7 @@ void PiCarMgr::displayAudioMenu(){
 						static stringvector choices = {};
 						int current_choice = 0;
 	
-						static std::vector<int> gains = _radio.getTunerGains();
+						std::vector<int> gains = _radio.getTunerGains();
 						gains.push_back(0);
 		
 							sort(gains.begin(), gains.end(),
@@ -2315,10 +2315,7 @@ void PiCarMgr::displayAudioMenu(){
 							// setter
 							gain =  gains[val];
 	 						_radio.setTunerGain(gain);
-							
-							printf("select %3d\n", gains[val] );
-							;
-						},
+	 						},
 																	  [=](bool didSucceed){
 							
 							if(didSucceed){

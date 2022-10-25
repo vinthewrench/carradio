@@ -3162,23 +3162,27 @@ void DisplayMgr::showSelectionSilderScreen(
 bool DisplayMgr::processSelectorKnobActionForSelectSlider( knob_action_t action){
 	bool wasHandled = false;
  
+	auto info = _menuSelectionSliderCBInfo;
 	// guard
-	if(!_menuSelectionSliderCBInfo) return false;
-	
-	
-  
+	if(!info) return false;
+ 
 	if(action == KNOB_UP){
 		
-		if(_menuSelectionSliderCBInfo->setCB){
+		if(info->currentChoice < info->choices.size() -1) {
+			info->currentChoice++;
+			if(info->setCB)(info->setCB)(info->currentChoice);
+			setEvent(EVT_NONE,MODE_SELECT_SLIDER);
 		}
-		wasHandled = true;
+			wasHandled = true;
 	}
 	
 	else if(action == KNOB_DOWN){
 		
-		if(_menuSelectionSliderCBInfo->setCB){
+		if(info->currentChoice > 0) {
+			info->currentChoice--;
+			if(info->setCB)(info->setCB)(info->currentChoice);
+			setEvent(EVT_NONE,MODE_SELECT_SLIDER);
 		}
-
 		wasHandled = true;
 	}
 	else if(action == KNOB_CLICK){
@@ -3243,6 +3247,11 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 	 
+		_vfd.setFont(VFD::FONT_5x7);
+		string str = _menuSelectionSliderCBInfo->title;
+		_vfd.setCursor( 10, bottombox + 10);
+		
+		_vfd.printPacket("%-5s", _menuSelectionSliderCBInfo->choices[_menuSelectionSliderCBInfo->currentChoice] .c_str());
 	}
 }
  
@@ -3355,7 +3364,6 @@ bool DisplayMgr::processSelectorKnobActionForSlider( knob_action_t action){
 	
 	// guard
 	if(!_menuSliderCBInfo) return false;
-	
 	
 	if(_menuSliderCBInfo->getCB)
 		val = _menuSliderCBInfo->getCB();

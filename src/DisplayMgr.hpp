@@ -175,7 +175,6 @@ public:
 								 menuSliderSetterCallBack_t setCB = nullptr,
  								 boolCallback_t doneCB  = nullptr);
 	
-
 	typedef std::function<void(int)>menuSelectionSilderSetterCallBack_t;
 	
 	void showSelectionSilderScreen(

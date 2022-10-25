@@ -105,9 +105,7 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	// start with auto gain
 	if(! _sdr.setTunerGain( INT_MIN ))
 		return false;
-	
-	auto list =  _sdr.getTunerGains();
- 
+	 
 	_isSetup = true;
  
 	return true;

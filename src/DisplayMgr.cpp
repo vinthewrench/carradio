@@ -3280,12 +3280,12 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
 
 		
-		constexpr int maxLen = 21;
+		constexpr int maxLen = 20;
 		string spaces(maxLen, ' ');
 
 		string valStr =  truncate(_menuSelectionSliderCBInfo->choices[_menuSelectionSliderCBInfo->currentChoice],maxLen);
 		string portionOfSpaces = spaces.substr(0, (maxLen - valStr.size()) / 2);
-		valStr = portionOfSpaces + valStr;
+		valStr = portionOfSpaces + valStr + portionOfSpaces;
 
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor( 0, bottombox + 10);

@@ -3206,7 +3206,7 @@ bool DisplayMgr::processSelectorKnobActionForSelectSlider( knob_action_t action)
 
 void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 	
- 	printf("drawSelectSliderScreen(%d)\n", transition);
+	printf("drawSelectSliderScreen(%d)\n", transition);
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -3241,17 +3241,24 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
 		
-	 	}
+	}
 	
 	
 	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
-	 
-		_vfd.setFont(VFD::FONT_5x7);
-		string str = _menuSelectionSliderCBInfo->title;
-		_vfd.setCursor( 10, bottombox + 10);
 		
-		_vfd.printPacket("%-5s", _menuSelectionSliderCBInfo->choices[_menuSelectionSliderCBInfo->currentChoice] .c_str());
+		
+		constexpr int maxLen = 20;
+		string spaces(maxLen, ' ');
+		
+		string valStr =  truncate(_menuSelectionSliderCBInfo->choices[_menuSelectionSliderCBInfo->currentChoice],maxLen);
+		string portionOfSpaces = spaces.substr(0, (maxLen - valStr.size()) / 2);
+		valStr = portionOfSpaces + valStr;
+		
+		_vfd.setFont(VFD::FONT_5x7);
+		
+		_vfd.setCursor( 0, bottombox + 20);
+		_vfd.write(valStr);
 	}
 }
  

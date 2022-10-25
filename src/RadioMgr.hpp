@@ -115,8 +115,7 @@ private:
 
 
 	bool					_isSetup;
-	
-	
+ 
 	RtlSdr				_sdr;
 	int					_pcmrate;
 	radio_mode_t 		_mode;
@@ -128,6 +127,8 @@ private:
 	double 				_baseband_level;
 	
 	bool					_isOn;
+	
+	bool 					_AGC_active;
 	 
 	// Create source data queue.
 	DataBuffer<IQSample> _source_buffer;

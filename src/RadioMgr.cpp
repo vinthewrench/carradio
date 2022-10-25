@@ -105,6 +105,8 @@ bool RadioMgr::begin(uint32_t deviceIndex, int  pcmrate,  int &error){
 	// start with auto gain
 	if(! _sdr.setTunerGain( INT_MIN ))
 		return false;
+	
+	_AGC_active = true;
 	 
 	_isSetup = true;
  
@@ -459,14 +461,19 @@ std::vector<int> RadioMgr::getTunerGains(){
 
 bool RadioMgr::setTunerGain(int val){
 	if(_isSetup)
+	{
+		_AGC_active = val == 0;
 		return _sdr.setTunerGain(val );
+ 	}
 	else
 		return false;
 }
 
 int RadioMgr::getTunerGain(){
-	if(_isSetup)
-		return _sdr.getTunerGain();
+	if(_isSetup){
+		if(_AGC_active) return 0;
+		else  return _sdr.getTunerGain();
+ 	}
 	else
 		return INT_MIN;
 }

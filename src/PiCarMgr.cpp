@@ -613,11 +613,9 @@ void PiCarMgr::restoreRadioSettings(){
  
 	// SET Tuner Gain
 	int tuner_gain = INT_MIN;
-	if(_db.getIntProperty(PROP_GAIN_LEVEL, &tuner_gain)){
-		_radio.setTunerGain(tuner_gain);
- 	}
-  
-	
+	_db.getIntProperty(PROP_GAIN_LEVEL, &tuner_gain);
+	_radio.setTunerGain(tuner_gain);
+
 	// SET Preset stations
 	
 	_preset_stations.clear();

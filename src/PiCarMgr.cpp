@@ -2310,26 +2310,15 @@ void PiCarMgr::displayAudioMenu(){
 						_display.showSelectionSilderScreen("Tuner Gain",
 																	  choices,
 																	  current_choice,
-																	  10 ,
+																	  5 ,
 																	  [=](double val){
 							// setter
 							gain =  gains[val];
 							_radio.setTunerGain(gain);
-							
-						printf("setTunerGain %d\n",  _radio.getTunerGain());
-
-						},
+	  						},
 																	  [=](bool didSucceed){
-							
-							if(didSucceed){
-								
-							}
-							
 							// completion
-							
-							
-							//							printf("Balance Set %1.1f\n",  _audio.balance());
-							displayAudioMenu();
+	 	 						displayAudioMenu();
 						});
 					}
   						break;

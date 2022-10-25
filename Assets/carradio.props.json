@@ -9,6 +9,7 @@
 	},
 	"dimmer_level" :  0.345,
 	"squelch" : -20,
+	"gain" : 0,
 	"auto_dimmer_mode" : true,
 	"canbus-display": [
 		{

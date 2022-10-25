@@ -3244,15 +3244,15 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 	}
 	
 	
-	// avoid doing a needless refresh.  if this was a timeout event,  then just update the time
-	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+ 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		auto boxwidth = (rightbox - leftbox);
-		auto step =  static_cast<float>(boxwidth) / static_cast<float>(_menuSelectionSliderCBInfo->choices.size()) ;
+		int count = (int) _menuSelectionSliderCBInfo->choices.size();
+		auto step =  static_cast<float>(boxwidth) / static_cast<float>(count) ;
 		uint8_t itemX = (step * _menuSelectionSliderCBInfo->currentChoice) + rightbox;
-		
+		printf("step: %d count: %d boxwidth: %d \n", step, count, boxwidth);
 				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
-						 _menuSelectionSliderCBInfo->choices.size(), _menuSelectionSliderCBInfo->currentChoice  );
+						 count, _menuSelectionSliderCBInfo->currentChoice  );
 
 	 	itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );

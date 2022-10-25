@@ -3258,6 +3258,10 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
+		// there is some kind of bug in the Noritake VFD where id you send
+		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+		if(itemX == 96) itemX = 95;
+	
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		// clear inside of box

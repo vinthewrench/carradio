@@ -2311,7 +2311,7 @@ void PiCarMgr::displayAudioMenu(){
 						_display.showSelectionSilderScreen("Tuner Gain",
 																	  choices,
 																	  current_choice,
-																	  5 ,
+																	  10 ,
 																	  [=](double val){
 							// setter
 							printf("select %5s\n", choices[val].c_str());

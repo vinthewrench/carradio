@@ -3250,9 +3250,9 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		int count = (int) _menuSelectionSliderCBInfo->choices.size();
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(count) ;
 		uint8_t itemX = (step * _menuSelectionSliderCBInfo->currentChoice) + leftbox;
-		printf("step: %f count: %d boxwidth: %d \n", step, count, boxwidth);
-				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
-						 count, _menuSelectionSliderCBInfo->currentChoice  );
+//		printf("step: %f count: %d boxwidth: %d \n", step, count, boxwidth);
+//				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
+//						 count, _menuSelectionSliderCBInfo->currentChoice  );
 
 	 	itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );

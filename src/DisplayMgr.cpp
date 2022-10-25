@@ -3250,7 +3250,6 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		auto boxwidth = (rightbox - leftbox);
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(_menuSelectionSliderCBInfo->choices.size()) ;
 		uint8_t itemX = (step * _menuSelectionSliderCBInfo->currentChoice) + rightbox;
-	
 		
 				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
 						 _menuSelectionSliderCBInfo->choices.size(), _menuSelectionSliderCBInfo->currentChoice  );
@@ -3486,7 +3485,7 @@ void DisplayMgr::drawSquelchScreen(modeTransition_t transition){
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(abs(maxSquelch)) ;
 		uint8_t itemX = (step * squelch) + rightbox;
 		
-		//	printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch), squelch  );
+		printf("itemX: %2d\t maxSquelch: %3d\t squelch: %2d\n", itemX, abs(maxSquelch), squelch  );
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );

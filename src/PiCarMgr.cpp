@@ -2299,7 +2299,7 @@ void PiCarMgr::displayAudioMenu(){
 							  [] (const int & a,
 									const int & b) { return a < b; });
  
-						int gain = _radio.getTunerGain();
+						static int gain = _radio.getTunerGain();
 						
 						for(int i = 0; i < gains.size(); i++){
 	 						choices.push_back(to_string(gains[i]));
@@ -2313,10 +2313,18 @@ void PiCarMgr::displayAudioMenu(){
 																	  10 ,
 																	  [=](double val){
 							// setter
+							gain =  gains[val];
+	 						_radio.setTunerGain(gain);
+							
 							printf("select %3d\n", gains[val] );
 							;
 						},
 																	  [=](bool didSucceed){
+							
+							if(didSucceed){
+								
+							}
+							
 							// completion
 							
 				 

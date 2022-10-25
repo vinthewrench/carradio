@@ -2315,6 +2315,9 @@ void PiCarMgr::displayAudioMenu(){
 							// setter
 							gain =  gains[val];
 							_radio.setTunerGain(gain);
+							
+						printf("setTunerGain %d\n",  _radio.getTunerGain());
+
 						},
 																	  [=](bool didSucceed){
 							

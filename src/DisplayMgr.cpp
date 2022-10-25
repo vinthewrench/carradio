@@ -3206,7 +3206,7 @@ bool DisplayMgr::processSelectorKnobActionForSelectSlider( knob_action_t action)
 
 void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 	
-	printf("drawSelectSliderScreen(%d)\n", transition);
+	//	printf("drawSelectSliderScreen(%d)\n", transition);
 	
 	uint8_t width = _vfd.width();
 	uint8_t height = _vfd.height();
@@ -3240,21 +3240,19 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		//draw box outline
 		uint8_t buff1[] = {VFD::VFD_OUTLINE,leftbox,topbox,rightbox,bottombox };
 		_vfd.writePacket(buff1, sizeof(buff1), 0);
-		
 	}
 	
-	
- 	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
+	if(transition == TRANS_ENTERING || transition == TRANS_REFRESH){
 		
 		auto boxwidth = (rightbox - leftbox);
 		int count = (int) _menuSelectionSliderCBInfo->choices.size();
 		auto step =  static_cast<float>(boxwidth) / static_cast<float>(count) ;
 		uint8_t itemX = (step * _menuSelectionSliderCBInfo->currentChoice) + leftbox;
-//		printf("step: %f count: %d boxwidth: %d \n", step, count, boxwidth);
-//				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
-//						 count, _menuSelectionSliderCBInfo->currentChoice  );
-
-	 	itemX &= 0xfE; // to nearest 2
+		//		printf("step: %f count: %d boxwidth: %d \n", step, count, boxwidth);
+		//				printf("itemX: %2d\t choices: %3d\t choice: %2d\n", itemX,
+		//						 count, _menuSelectionSliderCBInfo->currentChoice  );
+		
+		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
 		
@@ -3264,7 +3262,7 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		// To send character 60H to the display, send 60H twice.
 		
 		if(itemX == 96) itemX = 95;
-	
+		
 		_vfd.setFont(VFD::FONT_5x7);
 		
 		// clear inside of box
@@ -3278,20 +3276,18 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 			VFD::VFD_SET_WRITEMODE, 0x00,};	// Normal
 		
 		_vfd.writePacket(buff2, sizeof(buff2), 0);
-
 		
 		constexpr int maxLen = 20;
 		string spaces(maxLen, ' ');
-
+		
 		string valStr =  truncate(_menuSelectionSliderCBInfo->choices[_menuSelectionSliderCBInfo->currentChoice],maxLen);
 		string portionOfSpaces = spaces.substr(0, (maxLen - valStr.size()) / 2);
 		valStr = portionOfSpaces + valStr + portionOfSpaces;
-
+		
 		_vfd.setFont(VFD::FONT_5x7);
 		_vfd.setCursor( 0, bottombox + 10);
 		_vfd.write(valStr);
-		
- 	 	}
+	}
 }
  
 

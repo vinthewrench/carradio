@@ -321,6 +321,7 @@ cd shairport-sync/
  #build it
 autoreconf -fi
 ./configure  --with-avahi --with-ssl=openssl --with-metadata --with-pipe 
+make 
 
 #copy it to /usr/local/bin/
 sudo cp shairport-sync /usr/local/bin/

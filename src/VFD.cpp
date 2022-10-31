@@ -428,8 +428,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		  uint8_t longest_col2_pixel_width  = 0;
 
 		  for(auto row:columns){
-			  
-			  string str = row[0];
+ 			  string str = row[0];
 			  string col2 = "";
 			
 			  auto length = string_pixel_Width(str,font);
@@ -441,10 +440,10 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  			  }
  		  }
 
-		  for(auto row:columns){
-			  auto length = string_pixel_Width(row.front(),font);
-			  if(length> longest_pixel_width )longest_pixel_width = length;
-		  }
+//		  for(auto row:columns){
+//			  auto length = string_pixel_Width(row.front(),font);
+//			  if(length> longest_pixel_width )longest_pixel_width = length;
+//		  }
 
 		  auto maxFirstLine = lineCount - maxLines;
 		  if(firstLine > maxFirstLine) firstLine = maxFirstLine;

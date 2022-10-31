@@ -483,10 +483,10 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  			  success = printPacket("%-*s",maxchars, str.c_str());
 	 
 			  {
-				  auto pixel_width2 = string_pixel_Width(col2,font) -1;
+				  auto pixel_width2 = string_pixel_Width(col2,font);
  
 				  uint8_t  rightbox = width() - 5;
-				  uint8_t  leftbox = rightbox - (longest_col2_pixel_width - pixel_width2);
+				  uint8_t  leftbox = rightbox - pixel_width2;
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
  

@@ -488,7 +488,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  			  success = printPacket("%-*s",maxchars, str.c_str());
 	
 			  if(success && !col2.empty()){
-				  setCursor(width() - longest_col2_pixel_width -10, y);
+				  setCursor(width() - longest_col2_pixel_width + 10, y);
 				  success = printPacket("%s", col2.c_str());
  			  }
 	 

@@ -440,13 +440,20 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		  for(auto i = firstLine; i < firstLine + count; i ++){
 			  setCursor(0, y);
 	 
-			  string str = columns[i].front();
+			  vector<string> row = columns[i];
+			  
+			  string str = row[0];
+			  string col2 = "";
+			  if(row.size() > 1) col2 = row[1];
+			  
 	 		  str = truncate(str,  maxchars);
 
 			  auto pixel_width = string_pixel_Width(str,font);
+			  auto col2_width = string_pixel_Width(col2,font);
+	
 			  if(pixel_width < longest_pixel_width && max_pixels > 0){
 				  
-				  // what I really need is a way to clear to a givven point
+				  // what I really need is a way to clear to a given point
 				  // from the cursor position.  but Noritake doesnt have that,
 			
 				  uint8_t  rightbox = max_pixels;
@@ -463,7 +470,14 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			
 			  }
 	
-			  success = printPacket("%-*s",maxchars, str.c_str());
+			  setCursor(0, y);
+ 			  success = printPacket("%-*s",maxchars, str.c_str());
+	
+			  if(success && !col2.empty()){
+				  setCursor(width()- col2_width, y);
+				  success = printPacket("%-*s",maxchars, col2.c_str());
+ 			  }
+	 
 			  if(!success) break;
 			  y += step;
 		  }

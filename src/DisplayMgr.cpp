@@ -83,7 +83,7 @@ static string distanceString(double d) {
 	} else  if(d < 20) {
 		sprintf( buffer ,"%.2f mi", d);
 	} else {
-		sprintf( buffer ,"%3d mi", (int)round(d));
+		sprintf( buffer ,"%d mi", (int)round(d));
 	}
 	
 	return string(buffer);

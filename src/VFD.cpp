@@ -436,10 +436,9 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  if(length> longest_pixel_width )longest_pixel_width = length;
 			  
 			  if(row.size() > 1 &&  !row[1].empty()){
-					length = string_pixel_Width(str,font);
-				  if(length> longest_col2_pixel_width )longest_col2_pixel_width = length;
-		
-			  }
+					length = string_pixel_Width(col2,font);
+				  if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
+ 			  }
  		  }
 
 		  for(auto row:columns){

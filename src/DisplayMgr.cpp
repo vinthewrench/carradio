@@ -4288,8 +4288,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			}
 	 
 			row = {line,distance};
-			
-			rows.push_back(row);
+ 			rows.push_back(row);
 		}
 		
 		_vfd.setFont(VFD::FONT_5x7) ;

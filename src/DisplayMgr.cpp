@@ -4281,7 +4281,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				if(here.isValid){
 				  auto r = GPSmgr::dist_bearing(here,wp.location);
 					distance = distanceString(r.first * 0.6213711922);
-				}
+					std::transform(distance.begin(), distance.end(),distance.begin(), ::toupper);
+	 			}
  			}
 			else {
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT" ;

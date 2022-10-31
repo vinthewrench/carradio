@@ -306,7 +306,7 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 	uint length = 0;
 	switch (font) {
 		case VFD::FONT_MINI:
-			length = (nonSpace*4) + (spaces*2);
+			length = (nonSpace*4) + (spaces*2) + 3;
 			break;
 
 		case VFD::FONT_5x7:

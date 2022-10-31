@@ -225,6 +225,14 @@ bool VFD::printPacket(const char *fmt, ...){
 
 #define PACKET_MODE 1
 
+
+#warning FIX Noritake VFD 60H bug
+
+// there is some kind of bug in the Noritake VFD where id you send
+// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
+// To send character 60H to the display, send 60H twice.
+
 bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	bool success = false;
@@ -285,6 +293,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	return success;
 }
+// MARK: -  Print scrollable lines
 
 // for 5x5 font
 static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI){
@@ -357,7 +366,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			setCursor(0, y);
 			
-			string str = lines[i].c_str();
+			string str = lines[i];
 			str = truncate(str,  maxchars);
 
 			auto pixel_width = string_pixel_Width(str,font);
@@ -388,4 +397,77 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
  
 	return success;
 }
+// MARK: -  multi column version
  
+bool VFD:: printColumns(uint8_t y, uint8_t step,
+								vector<vector <string>>  columns,
+ 								uint8_t firstLine,
+								uint8_t maxLines,
+								uint8_t maxchars,
+								VFD::font_t font,
+								uint8_t max_pixels) {
+	  bool success = false;
+	  
+	  auto lineCount = columns.size();
+	  
+	  if(maxLines >= lineCount){
+		  //ignore the offset and draw all.
+		  for(int i = 0; i < lineCount; i ++){
+			  setCursor(0, y);
+//			  success = printPacket("%-40s", lines[i].c_str());
+			  if(!success) break;
+			  y += step;
+		  }
+	  }
+	  else {
+		  
+		  // this text needs to be scrolled
+		  
+		  // quick scan for max line length skip spaces
+		  uint8_t longest_pixel_width  = 0;
+		  
+		  for(auto row:columns){
+			  auto length = string_pixel_Width(row.front(),font);
+			  if(length> longest_pixel_width )longest_pixel_width = length;
+		  }
+		
+		  auto maxFirstLine = lineCount - maxLines;
+		  if(firstLine > maxFirstLine) firstLine = maxFirstLine;
+		
+		  auto count =  lineCount - firstLine;
+		  if( count > maxLines) count = maxLines;
+		  
+		  for(auto i = firstLine; i < firstLine + count; i ++){
+			  setCursor(0, y);
+	 
+			  string str = columns[i].front();
+	 		  str = truncate(str,  maxchars);
+
+			  auto pixel_width = string_pixel_Width(str,font);
+			  if(pixel_width < longest_pixel_width && max_pixels > 0){
+				  
+				  // what I really need is a way to clear to a givven point
+				  // from the cursor position.  but Noritake doesnt have that,
+			
+				  uint8_t  rightbox = max_pixels;
+				  uint8_t  leftbox = rightbox - (longest_pixel_width -pixel_width);
+				  uint8_t  topbox = y - step;
+				  uint8_t  bottombox = y;
+		
+				  uint8_t buff2[] = {
+					  VFD_CLEAR_AREA,
+					  static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+					  static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+				  };
+				  writePacket(buff2, sizeof(buff2), 0);
+			
+			  }
+	
+			  success = printPacket("%-*s",maxchars, str.c_str());
+			  if(!success) break;
+			  y += step;
+		  }
+	  }
+	
+	  return success;
+}

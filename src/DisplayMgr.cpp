@@ -72,6 +72,25 @@ static  const string morePrev = "\x1b\x98\x04\x60\x1d";
 #endif
 
 
+static string distanceString(double d) {
+	
+	char buffer[16] = {0};
+	
+	if(d < .02){ // feet
+		sprintf( buffer ,"%d ft", (int) round(d * 5280));
+	}else if(d < .06){ // yards
+		sprintf( buffer ,"%d yds", (int) round(d * 1760));
+	} else  if(d < 20) {
+		sprintf( buffer ,"%.2f mi", d);
+	} else {
+		sprintf( buffer ,"%3d mi", (int)round(d));
+	}
+	
+	return string(buffer);
+	
+};
+
+
 DisplayMgr::DisplayMgr(){
 	_eventQueue = {};
 	_ledEvent = 0;
@@ -4172,7 +4191,7 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoints( knob_action_t action)
 void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	
 	PiCarMgr*		mgr 	= PiCarMgr::shared();
-	//	GPSmgr*			gps 	= mgr->gps();
+	GPSmgr*			gps 	= mgr->gps();
 	constexpr int displayedLines = 5;
 	//
 	//	uint8_t width = _vfd.width();
@@ -4222,6 +4241,11 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 	if(needsRedraw){
 		needsRedraw = false;
 		
+		GPSLocation_t here;
+		here.isValid = false;
+		here.altitudeIsValid = false;
+		gps->GetLocation(here);
+ 
 		vector<string> lines = {};
 		size_t totalLines = wps.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		
@@ -4246,6 +4270,12 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				auto wp = wps[i];
 				string name = wp.name;
 				
+				if(here.isValid){
+				  auto r = GPSmgr::dist_bearing(here,wp.location);
+					string distance = distanceString(r.first * 0.6213711922);
+ 					name = name + ":"+ distance;
+				}
+	 
 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 			}
@@ -4302,24 +4332,6 @@ bool DisplayMgr::processSelectorKnobActionForGPSWaypoint( knob_action_t action){
 	
 	return wasHandled;
 }
-
-static string distanceString(double d) {
-	
-	char buffer[16] = {0};
-	
-	if(d < .02){ // feet
-		sprintf( buffer ,"%d ft", (int) round(d * 5280));
-	}else if(d < .06){ // yards
-		sprintf( buffer ,"%d yds", (int) round(d * 1760));
-	} else  if(d < 20) {
-		sprintf( buffer ,"%.2f mi", d);
-	} else {
-		sprintf( buffer ,"%3d mi", (int)round(d));
-	}
-	
-	return string(buffer);
-	
-};
 
 void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 	

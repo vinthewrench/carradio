@@ -487,6 +487,23 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  success = printPacket("%s", col2.c_str());
  			  }
 	 
+			  {
+				  auto pixel_width2 = string_pixel_Width(col2,font);
+				  
+				  uint8_t  rightbox = col2_start;
+				  uint8_t  leftbox = rightbox - (longest_col2_pixel_width -pixel_width2);
+				  uint8_t  topbox = y - step;
+				  uint8_t  bottombox = y;
+		
+				  uint8_t buff2[] = {
+					  VFD_CLEAR_AREA,
+					  static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
+					  static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+				  };
+				  writePacket(buff2, sizeof(buff2), 0);
+ 			  }
+		
+	
 			  if(!success) break;
 			  y += step;
 		  }

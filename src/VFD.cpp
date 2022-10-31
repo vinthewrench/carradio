@@ -475,7 +475,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	
 			  if(success && !col2.empty()){
 				  setCursor(width() - col2_width - 20, y);
-				  success = printPacket("|%s|", col2.c_str());
+				  success = printPacket("X%sX", col2.c_str());
  			  }
 	 
 			  if(!success) break;

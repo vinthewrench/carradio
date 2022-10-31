@@ -62,7 +62,7 @@ public:
 						 VFD::font_t font = VFD::FONT_MINI,
 						 uint8_t max_pixels = 0);
 
-	bool printColumns(uint8_t y, uint8_t step, vector<vector <string>> columns,
+	bool printRows(uint8_t y, uint8_t step, vector<vector <string>> columns,
 							uint8_t firstLine,  uint8_t maxLines,
 							uint8_t maxchars = 21,
 							VFD::font_t font = VFD::FONT_MINI,

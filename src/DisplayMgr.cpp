@@ -4246,7 +4246,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		here.altitudeIsValid = false;
 		gps->GetLocation(here);
  
-		vector<string> lines = {};
+ 		vector<vector<string>> rows = {};
+
 		size_t totalLines = wps.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		
 		if(_lineOffset > totalLines -1)
@@ -4263,36 +4264,41 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		// create lines
 		for(auto i = 0 ; i < totalLines; i++){
 			
+			stringvector row = {};
+			
 			string line = "";
+			string distance  = "";
+
 			bool isSelected = i == _lineOffset;
 			
 			if(i < wps.size()) {
 				auto wp = wps[i];
 				string name = wp.name;
+ 
+				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 				
 				if(here.isValid){
 				  auto r = GPSmgr::dist_bearing(here,wp.location);
-					string distance = distanceString(r.first * 0.6213711922);
- 					name = name + ":"+ distance;
+					distance = distanceString(r.first * 0.6213711922);
 				}
-	 
-				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
-				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
-			}
+ 			}
 			else {
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT" ;
 			}
+	 
+			row = {line,distance};
 			
-			lines.push_back(line);
+			rows.push_back(row);
 		}
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
+		_vfd.printRows(20, 9, rows, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
 		
-		if(lines.size() > displayedLines){
+		if(rows.size() > displayedLines){
 			
-			float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
-			float offset =  (float)_lineOffset / ((float)lines.size() -1) ;
+			float bar_height =  (float)(displayedLines +1)/ (float)rows.size() ;
+			float offset =  (float)_lineOffset / ((float)rows.size() -1) ;
 			
 			_vfd.drawScrollBar(11, bar_height ,offset);
 		}

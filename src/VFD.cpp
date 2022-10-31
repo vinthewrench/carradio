@@ -399,7 +399,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 }
 // MARK: -  multi column version
  
-bool VFD:: printColumns(uint8_t y, uint8_t step,
+bool VFD:: printRows(uint8_t y, uint8_t step,
 								vector<vector <string>>  columns,
  								uint8_t firstLine,
 								uint8_t maxLines,

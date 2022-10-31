@@ -306,7 +306,7 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 	uint length = 0;
 	switch (font) {
 		case VFD::FONT_MINI:
-			length = (nonSpace*4) + (spaces*2) + 3;
+			length = (nonSpace*4) + (spaces*2);
 			break;
 
 		case VFD::FONT_5x7:
@@ -486,7 +486,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  auto pixel_width2 = string_pixel_Width(col2,font);
  
 				  uint8_t  rightbox = width() - 5;
-				  uint8_t  leftbox = col2_start + pixel_width2;
+				  uint8_t  leftbox = col2_start;
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
  

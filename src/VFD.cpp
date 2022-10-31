@@ -410,6 +410,24 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  
 	  auto lineCount = columns.size();
 	  
+	// quick scan for max line length skip spaces
+	uint8_t longest_pixel_width  = 0;
+	uint8_t longest_col2_pixel_width  = 0;
+		uint8_t col2_start  = 0;
+
+	for(auto row:columns){
+
+		auto length = string_pixel_Width(row[0],font);
+		if(length> longest_pixel_width )longest_pixel_width = length;
+		
+		if(row.size() > 1 &&  !row[1].empty()){
+			 length = string_pixel_Width(row[1],font);
+			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
+		}
+	}
+	
+		col2_start = width() - longest_col2_pixel_width - 5;
+
 	  if(maxLines >= lineCount){
 		  //ignore the offset and draw all.
 		  for(int i = 0; i < lineCount; i ++){
@@ -422,22 +440,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  else {
 		  
 		  // this text needs to be scrolled
-		  
-		  // quick scan for max line length skip spaces
-		  uint8_t longest_pixel_width  = 0;
-		  uint8_t longest_col2_pixel_width  = 0;
-
-		  for(auto row:columns){
- 	 
-			  auto length = string_pixel_Width(row[0],font);
-			  if(length> longest_pixel_width )longest_pixel_width = length;
 			  
-			  if(row.size() > 1 &&  !row[1].empty()){
-					length = string_pixel_Width(row[1],font);
-				  if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
- 			  }
- 		  }
-  
 		  auto maxFirstLine = lineCount - maxLines;
 		  if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		
@@ -462,7 +465,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  // what I really need is a way to clear to a given point
 				  // from the cursor position.  but Noritake doesnt have that,
 			
-				  uint8_t  rightbox = max_pixels;
+				  uint8_t  rightbox = col2_start;
 				  uint8_t  leftbox = rightbox - (longest_pixel_width -pixel_width);
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
@@ -480,7 +483,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  			  success = printPacket("%-*s",maxchars, str.c_str());
 	
 			  if(success && !col2.empty()){
-				  setCursor(width() - longest_col2_pixel_width - 8, y);
+				  setCursor(col2_start, y);
 				  success = printPacket("%s", col2.c_str());
  			  }
 	 

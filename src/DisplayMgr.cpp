@@ -77,13 +77,13 @@ static string distanceString(double d) {
 	char buffer[16] = {0};
 	
 	if(d < .02){ // feet
-		sprintf( buffer ,"%d ft ", (int) round(d * 5280));
+		sprintf( buffer ,"%d ft", (int) round(d * 5280));
 	}else if(d < .06){ // yards
 		sprintf( buffer ,"%d yds", (int) round(d * 1760));
 	} else  if(d < 20) {
-		sprintf( buffer ,"%.2f mi ", d);
+		sprintf( buffer ,"%.2f mi", d);
 	} else {
-		sprintf( buffer ,"%d mi ", (int)round(d));
+		sprintf( buffer ,"%d mi", (int)round(d));
 	}
 	
 	return string(buffer);

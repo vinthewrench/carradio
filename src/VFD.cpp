@@ -488,10 +488,10 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  			  }
 	 
 			  {
-				  auto pixel_width2 = string_pixel_Width(col2,font);
+				  auto pixel_width2 = string_pixel_Width(col2,font) -1;
 				  
 				  uint8_t  rightbox = width() - 5;
-				  uint8_t  leftbox = rightbox - (longest_col2_pixel_width -pixel_width2);
+				  uint8_t  leftbox = rightbox - (longest_col2_pixel_width - pixel_width2);
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
 		

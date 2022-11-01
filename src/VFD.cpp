@@ -302,9 +302,12 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 		case VFD::FONT_MINI:
 		{
 			for(auto c:str){
-				if(strchr("MN@WQGW", c))
+				if(strchr("MNWW", c))
 					length +=6;
- 				  else if(strchr(" ", c))
+				else if(strchr("@GQ", c))
+					length +=5;
+		
+ 				  else if(strchr(" !", c))
 					  length +=3;
 				else
 					length +=4;
@@ -414,14 +417,14 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  auto lineCount = columns.size();
 	  
 	// quick scan for max line length skip spaces
-	uint8_t longest_pixel_width  = 0;
+//	uint8_t longest_pixel_width  = 0;
 	uint8_t longest_col2_pixel_width  = 0;
 		uint8_t col2_start  = 0;
 
 	for(auto row:columns){
 
-		auto length = string_pixel_Width(row[0],font);
-		if(length> longest_pixel_width )longest_pixel_width = length;
+//		auto length = string_pixel_Width(row[0],font);
+//		if(length> longest_pixel_width )longest_pixel_width = length;
 		
 		if(row.size() > 1 &&  !row[1].empty()){
 			 length = string_pixel_Width(row[1],font);
@@ -463,7 +466,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 
 			  auto pixel_width = string_pixel_Width(str,font);
 		 
-			  if(pixel_width < longest_pixel_width && max_pixels > 0){
+//			  if(pixel_width < longest_pixel_width && max_pixels > 0){
 				  
 				  // what I really need is a way to clear to a given point
 				  // from the cursor position.  but Noritake doesnt have that,
@@ -475,12 +478,12 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		
 				  uint8_t buff2[] = {
 					  VFD_CLEAR_AREA,
-					  static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-					  static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
+					  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+					  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
 				  };
 				  writePacket(buff2, sizeof(buff2), 0);
 			
-			  }
+//			  }
 	
 			  setCursor(0, y);
  			  success = printPacket("%s",str.c_str());

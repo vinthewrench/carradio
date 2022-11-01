@@ -389,8 +389,7 @@ static uint charcount_for_pixel_Width(string str, uint8_t max_width, VFD::font_t
 bool VFD:: printLines(uint8_t y, uint8_t step,
 							 stringvector lines,
 							 uint8_t firstLine,
-							 uint8_t maxLines,
-	 						 uint8_t maxchars,
+							 uint8_t maxLines, 
 							 VFD::font_t font ) {
 	bool success = false;
 	
@@ -462,7 +461,6 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 								vector<vector <string>>  columns,
  								uint8_t firstLine,
 								uint8_t maxLines,
-								uint8_t maxchars,
 								VFD::font_t font ) {
 	  bool success = false;
 	  

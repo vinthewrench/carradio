@@ -35,6 +35,8 @@ public:
 	static constexpr uint8_t VFD_SET_CURSOR = 0x10;
 	static constexpr uint8_t VFD_SET_WRITEMODE = 0x1A;
 
+	static constexpr uint8_t scroll_bar_width = 3;
+
 	typedef enum  {
 		FONT_MINI = 0,
 		FONT_5x7 ,

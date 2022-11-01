@@ -197,8 +197,8 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_menuSelectionSliderCBInfo = NULL;
  
 		resetMenu();
-		showStartup();
-	}
+	 	showStartup();
+ 	}
 	
 	return _isSetup;
 }
@@ -833,7 +833,10 @@ void DisplayMgr::showTime(){
 	setEvent(EVT_PUSH, MODE_TIME);
 }
 
-void DisplayMgr::showInfo(){
+void DisplayMgr::showInfo( time_t timeout){
+	_lineOffset = 0;
+	_menuTimeout = timeout;
+
 	setEvent(EVT_PUSH, MODE_INFO);
 }
 
@@ -947,6 +950,7 @@ bool  DisplayMgr::usesSelectorKnob(){
 		case MODE_MENU:
 		case MODE_SLIDER:
 		case MODE_SELECT_SLIDER:
+		case MODE_INFO:
  			return true;
 			
 		default:
@@ -1078,6 +1082,11 @@ bool DisplayMgr::processSelectorKnobAction( knob_action_t action){
 		case MODE_SCANNER_CHANNELS:
 			wasHandled = processSelectorKnobActionForScannerChannels(action);
 			break;
+			
+		case MODE_INFO:
+			wasHandled = processSelectorKnobActionForInfo(action);
+			break;
+
 			
 		case MODE_CHANNEL_INFO:
 			wasHandled = processSelectorKnobActionForChannelInfo(action);
@@ -1617,7 +1626,23 @@ void DisplayMgr::DisplayUpdateLoop(){
 						shouldUpdate = true;
 					}
 				}
-				else if(_current_mode == MODE_EDIT_STRING) {
+				else if(_current_mode == MODE_INFO) {
+					
+					// check for {EVT_NONE,MODE_INFO}  which is a click
+					if(item.mode == MODE_DTC_INFO) {
+						clock_gettime(CLOCK_MONOTONIC, &_lastEventTime);;
+						shouldRedraw = false;
+						shouldUpdate = true;
+					}
+					// give it 10 seconds
+					else if(_menuTimeout > 0 && diff.tv_sec >= _menuTimeout){
+								// timeout pop mode?
+						popMode();
+						shouldRedraw = true;
+						shouldUpdate = true;
+					}
+				}
+ 				else if(_current_mode == MODE_EDIT_STRING) {
 					
 					// check for {EVT_NONE,MODE_EDIT_STRING}  which is a click
 					if(item.mode == MODE_EDIT_STRING) {
@@ -2806,33 +2831,175 @@ void DisplayMgr::drawTimeBox(){
 	
 }
 
-// MARK: -  Scanner Screen
+// MARK: -  Info Screen
 
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
-	uint8_t col = 0;
-	uint8_t row = 7;
 	string str;
-	static uint8_t lastrow = 0;
-	
-	
-	
+ 
 	PiCarMgr*			mgr 	= PiCarMgr::shared();
-	RadioMgr*			radio 	= mgr->radio();
-	GPSmgr*				gps 		= mgr->gps();
 	PiCarDB*				db 		= mgr->db();
-	PiCarCAN*			can 		= mgr->can();
 #if USE_COMPASS
 	CompassSensor* 	compass	= mgr->compass();
 #endif
 	
+
+	static int lastOffset = 0;
+	static int firstLine = 0;
+	static vector<vector<string>> rows = {};
+	bool needsRedraw = false;
+
+	
 	if(transition == TRANS_LEAVING) {
-		lastrow = 0;
+		
+		_rightKnob.setAntiBounce(antiBounceDefault);
+		_vfd.clearScreen();
+		lastOffset = 0;
+		firstLine = 0;
 		return;
 	}
 	
+	 
 	if(transition == TRANS_ENTERING){
+		_rightKnob.setAntiBounce(antiBounceSlow);
+	 
+	 		_vfd.clearScreen();
+		// top line
+		_vfd.setCursor(0, 7);
+		_vfd.setFont(VFD::FONT_5x7);
+		_vfd.printPacket("PiCar ");
 		
+		str = string(PiCarMgr::PiCarMgr_Version);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str.c_str());
+
+		// safety check
+		if(_lineOffset >=  10)
+			_lineOffset = 0;
+		
+		lastOffset = INT_MAX;
+		firstLine = 0;
+		needsRedraw = true;
+		
+	}
+ 
+	if(transition == TRANS_LEAVING) {
+	 	return;
+	}
+	
+	/* uodate CPU temp*/
+	{
+		float cTemp = 0;
+		int  fanspeed = 0;
+		
+		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
+			
+			_vfd.setCursor(10,16  );
+			
+			_vfd.setFont(VFD::FONT_MINI);
+			_vfd.printPacket("CPU TEMP: ");
+			
+			_vfd.setFont(VFD::FONT_5x7);
+			_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
+			
+			if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
+				
+				_vfd.setFont(VFD::FONT_MINI);
+				_vfd.printPacket("FAN: ");
+				_vfd.setFont(VFD::FONT_5x7);
+				
+				char buffer[10];
+				
+				if(fanspeed == 0){
+					sprintf(buffer, "%-4s", "OFF");
+				}
+				else
+				{
+					sprintf(buffer, "%d%%", fanspeed);
+				}
+				
+				_vfd.printPacket("%-4s ", buffer);
+			}
+		}
+		
+	}
+
+	if(needsRedraw){
+		
+		rows = {};
+		
+		/* Get build Date*/
+		rows.push_back( {"DATE: ", string(__DATE__)  + " " +  string(__TIME__)});
+		
+		/* Get OS version*/
+		{
+			struct utsname utsBuff;
+			uname(&utsBuff);
+			rows.push_back( {"LINUX: ", string(utsBuff.sysname)  + ": " +  string(utsBuff.release)});
+		}
+		/* Get RTL_SDR ID*/
+		{
+			RadioMgr*			radio 	= mgr->radio();
+			RtlSdr::device_info_t rtlInfo;
+			if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) ){
+				rows.push_back( {"RADIO: ", string(rtlInfo.product)});
+			}
+		}
+		
+		/* GPS Status*/
+		GPSmgr*				gps 		= mgr->gps();
+		rows.push_back( {"GPS: ", gps->isConnected()?"OK":"MOT CONNECTED"} );
+		
+		/* CAN BUS*/
+		{
+			PiCarCAN*			can 		= mgr->can();
+			vector<CANBusMgr::can_status_t> canStats;
+			string str = "";
+			
+			if(can->getStatus(canStats)){
+				for(auto e :canStats){
+					str  += " " + e.ifName;
+				}
+			}
+			else
+				str = "NOT CONNECTED" ;
+			rows.push_back( {"CAN: ", str });
+		}
+		
+		/* WIFI */
+		{
+			string str = "";
+			stringvector wifiPorts;
+			mgr->hasWifi(&wifiPorts);
+			
+			if(wifiPorts.size() == 0){
+				str  +=  "OFF";
+			}
+			else {
+				for(auto s :wifiPorts){
+					str  += " " + s;
+				}
+			}
+			rows.push_back( {"WIFI: ", str });
+		}
+		
+		constexpr int displayedLines = 6;
+		
+		constexpr int top = 18;
+		
+		_vfd.setFont(VFD::FONT_5x7) ;
+		_vfd.printRows(10, top+5 , rows, firstLine, displayedLines, VFD::FONT_MINI);
+		
+		if(rows.size() > displayedLines){
+			
+			float bar_height =  (float)(displayedLines +1)/ (float)rows.size() ;
+			float offset =  (float)_lineOffset / ((float)rows.size() -1) ;
+			
+			_vfd.drawScrollBar(top, bar_height ,offset);
+		}
+	}
+		
+/*
 		_vfd.clearScreen();
 		// top line
 		_vfd.setCursor(col, row);
@@ -2928,44 +3095,48 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		_vfd.printPacket("%-30s", str.c_str());
 	}
 	
-	{
-		float cTemp = 0;
-		int  fanspeed = 0;
-		
-		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
-			
-			_vfd.setCursor(col+10, 64 );
-			
-			_vfd.setFont(VFD::FONT_MINI);
-			_vfd.printPacket("CPU TEMP: ");
-			
-			_vfd.setFont(VFD::FONT_5x7);
-			_vfd.printPacket("%d\xa0" "C ", (int) round(cTemp));
-			
-			if(db->getIntValue(VAL_FAN_SPEED, fanspeed)){
-				
-				_vfd.setFont(VFD::FONT_MINI);
-				_vfd.printPacket("FAN: ");
-				_vfd.setFont(VFD::FONT_5x7);
-				
-				char buffer[10];
-				
-				if(fanspeed == 0){
-					sprintf(buffer, "%-4s", "OFF");
-				}
-				else
-				{
-					sprintf(buffer, "%d%%", fanspeed);
-				}
-				
-				_vfd.printPacket("%-4s ", buffer);
-			}
-		}
-		
-	}
+
+
+*/
 	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
+
+bool DisplayMgr::processSelectorKnobActionForInfo( knob_action_t action){
+	bool wasHandled = false;
+	
+	switch(action){
+	 
+		case KNOB_UP:
+			if(_lineOffset < 255){
+				_lineOffset++;
+				setEvent(EVT_NONE,MODE_INFO);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_DOWN:
+			if(_lineOffset != 0) {
+				_lineOffset--;
+				setEvent(EVT_NONE,MODE_INFO);
+			}
+			wasHandled = true;
+			break;
+			
+		case KNOB_EXIT:
+		case KNOB_CLICK:
+		case KNOB_DOUBLE_CLICK:
+			setEvent(EVT_POP, MODE_UNKNOWN);
+			_lineOffset = 0;
+ 			wasHandled = true;
+	 			break;
+			
+		default: break;
+			
+	}
+	
+	return wasHandled;
+}
 
 // MARK: -  Scanner Screen
 
@@ -4292,8 +4463,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
  			rows.push_back(row);
 		}
 		
-		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.printRows(20, 9, rows, firstLine, displayedLines, VFD::FONT_MINI);
+ 		_vfd.printRows(20, 9, rows, firstLine, displayedLines, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
 			

@@ -154,7 +154,7 @@ public:
 						 editStringCallBack_t cb = nullptr);
 
 	void showStartup();
-	void showInfo();
+	void showInfo(time_t timeout = 0);
 	void showDTC();
 	void showDTCInfo(string code);
  
@@ -251,7 +251,8 @@ private:
 	bool processSelectorKnobActionForEditString( knob_action_t action);
 	bool processSelectorKnobActionForScannerChannels( knob_action_t action);
 	bool processSelectorKnobActionForChannelInfo( knob_action_t action);
- 
+	bool processSelectorKnobActionForInfo( knob_action_t action);
+	 
 	void drawRadioScreen(modeTransition_t transition);
 	void drawScannerScreen(modeTransition_t transition);
  

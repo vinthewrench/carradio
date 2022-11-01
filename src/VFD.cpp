@@ -301,18 +301,21 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 	switch (font) {
 		case VFD::FONT_MINI:
 		{
+			bool mode_5x7 = false;
+
 			for(auto c:str){
-				if(strchr("MNWW", c))
+	 			if(c == '\x1d')
+					mode_5x7 = true;
+				else if(c == '\x1c')
+					mode_5x7 = false;
+				else if(mode_5x7)
+					length +=6;
+				else if(strchr("MNWW", c))
 					length +=6;
 				else if(strchr("@GQ", c))
 					length +=5;
-  				  else if(strchr(" !", c))
-					  length +=3;
-				  else if(c == '\x1d' || c == '\x1c')
-					  ;
- 				  else if(c == '\xb9' )
-							 length +=6;
-	
+				else if(strchr(" !", c))
+					length +=3;
 				else
 					length +=4;
 			}

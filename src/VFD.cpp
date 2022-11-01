@@ -166,7 +166,7 @@ bool VFD::clearScreen(){
 
 void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset){
  
-	uint8_t  rightbox = this->width();
+	uint8_t  rightbox = width() -1;
 	uint8_t  leftbox = rightbox - scroll_bar_width;
 	uint8_t  bottombox = 63;
 	uint8_t  scroll_height = bottombox - topbox -2;
@@ -385,7 +385,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			// what I really need is a way to clear to a givven point
 			// from the cursor position.  but Noritake doesnt have that,
 			
-			uint8_t  rightbox = width() - scroll_bar_width;
+			uint8_t  rightbox = width() -1 - scroll_bar_width;
 			uint8_t  leftbox =  0 + pixel_width;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;
@@ -431,7 +431,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		}
 	}
 	
-		col2_start = width() - longest_col2_pixel_width - scroll_bar_width;
+		col2_start = width() - longest_col2_pixel_width - scroll_bar_width -1;
 
 	  if(maxLines >= lineCount){
 		  //ignore the offset and draw all.
@@ -493,7 +493,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  // erase to end of column 2
 			  
 			  auto pixel_width2 = string_pixel_Width(col2,font);
- 			  rightbox = width() - scroll_bar_width;
+ 			  rightbox = width() - scroll_bar_width -1;
 			  leftbox = col2_start + pixel_width2;
 			  
 			  uint8_t buff2[] = {

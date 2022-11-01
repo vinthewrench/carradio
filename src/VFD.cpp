@@ -306,9 +306,13 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 					length +=6;
 				else if(strchr("@GQ", c))
 					length +=5;
-		
- 				  else if(strchr(" !", c))
+  				  else if(strchr(" !", c))
 					  length +=3;
+				  else if(c == '\x1d' || c == '\x1c')
+					  ;
+ 				  else if(c == '\xb9' )
+							 length +=6;
+	
 				else
 					length +=4;
 			}

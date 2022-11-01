@@ -342,18 +342,17 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 							 uint8_t firstLine,
 							 uint8_t maxLines,
 	 						 uint8_t maxchars,
-							 VFD::font_t font,
-							 uint8_t max_pixels) {
+							 VFD::font_t font ) {
 	bool success = false;
 	
 	auto lineCount = lines.size();
 	
-	
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);			
-			success = printPacket("%-40s", lines[i].c_str());
+			setCursor(0, y);
+			setCursor(0, y);
+			success = printPacket("%s",lines[i].c_str());
 			if(!success) break;
 			y += step;
 		}
@@ -363,45 +362,42 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		// this text needs to be scrolled
 		
 		// quick scan for max line length skip spaces
-		uint8_t longest_pixel_width  = 0;
-		
-		for(auto line:lines){
-			auto length = string_pixel_Width(line,font);
-			if(length> longest_pixel_width )longest_pixel_width = length;
- 		}
 	 
+		//
+		//		for(auto line:lines){
+		//			auto length = string_pixel_Width(line,font);
+		//			if(length> longest_pixel_width )longest_pixel_width = length;
+		// 		}
+		
 		auto maxFirstLine = lineCount - maxLines;
 		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
-	 
+		
 		auto count =  lineCount - firstLine;
 		if( count > maxLines) count = maxLines;
 		
 		for(auto i = firstLine; i < firstLine + count; i ++){
-			setCursor(0, y);
 			
 			string str = lines[i];
 			str = truncate(str,  maxchars);
-
+			
 			auto pixel_width = string_pixel_Width(str,font);
-			if(pixel_width < longest_pixel_width && max_pixels > 0){
-				
-				// what I really need is a way to clear to a givven point
-				// from the cursor position.  but Noritake doesnt have that,
-		 
-				uint8_t  rightbox = max_pixels;
-				uint8_t  leftbox = rightbox - (longest_pixel_width -pixel_width);
-				uint8_t  topbox = y - step;
-				uint8_t  bottombox = y;
-	 
-				uint8_t buff2[] = {
-					VFD_CLEAR_AREA,
-					static_cast<uint8_t>(leftbox+1), static_cast<uint8_t> (topbox+1),
-					static_cast<uint8_t>(rightbox-1),static_cast<uint8_t>(bottombox-1),
-				};
-				writePacket(buff2, sizeof(buff2), 0);
-		 
-			}
- 
+			
+			// what I really need is a way to clear to a givven point
+			// from the cursor position.  but Noritake doesnt have that,
+			
+			uint8_t  rightbox = width() - 5;
+			uint8_t  leftbox =  0 + pixel_width;
+			uint8_t  topbox = y - step;
+			uint8_t  bottombox = y;
+			
+			uint8_t buff2[] = {
+				VFD_CLEAR_AREA,
+				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
+			};
+			writePacket(buff2, sizeof(buff2), 0);
+			
+			setCursor(0, y);
 			success = printPacket("%-*s",maxchars, str.c_str());
 			if(!success) break;
 			y += step;
@@ -417,22 +413,18 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  								uint8_t firstLine,
 								uint8_t maxLines,
 								uint8_t maxchars,
-								VFD::font_t font,
-								uint8_t max_pixels) {
+								VFD::font_t font ) {
 	  bool success = false;
 	  
 	  auto lineCount = columns.size();
 	  
 	// quick scan for max line length skip spaces
-//	uint8_t longest_pixel_width  = 0;
-	uint8_t longest_col2_pixel_width  = 0;
+ 	uint8_t longest_col2_pixel_width  = 0;
 		uint8_t col2_start  = 0;
 
 	for(auto row:columns){
 		uint length = 0;
-//		auto length = string_pixel_Width(row[0],font);
-//		if(length> longest_pixel_width )longest_pixel_width = length;
-		
+ 
 		if(row.size() > 1 &&  !row[1].empty()){
 			 length = string_pixel_Width(row[1],font);
 			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
@@ -444,9 +436,19 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  if(maxLines >= lineCount){
 		  //ignore the offset and draw all.
 		  for(int i = 0; i < lineCount; i ++){
+			  
+			  vector<string> row = columns[i];
+			  string str = row[0];
+			  string col2 = "";
+			  if(row.size() > 1) col2 = row[1];
+
 			  setCursor(0, y);
-//			  success = printPacket("%-40s", lines[i].c_str());
+			  success = printPacket("%s",str.c_str());
 			  if(!success) break;
+
+			  setCursor(col2_start, y);
+			  success = printPacket("%s", col2.c_str());
+ 			  if(!success) break;
 			  y += step;
 		  }
 	  }
@@ -461,10 +463,8 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		  if( count > maxLines) count = maxLines;
 		  
 		  for(auto i = firstLine; i < firstLine + count; i ++){
-			  setCursor(0, y);
-			  
+				  
 			  vector<string> row = columns[i];
-			  
 			  string str = row[0];
 			  string col2 = "";
 			  if(row.size() > 1) col2 = row[1];

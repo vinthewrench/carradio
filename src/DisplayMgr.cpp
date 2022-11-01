@@ -3718,7 +3718,7 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 			
-			_vfd.printLines(20, 6, lines, firstLine, displayedLines, 33, VFD::FONT_MINI, 120);
+			_vfd.printLines(20, 6, lines, firstLine, displayedLines, 33, VFD::FONT_MINI);
 			if(lines.size() > displayedLines){
 				
 				float bar_height =  (float)(displayedLines +1)/ (float)lines.size() ;
@@ -4293,7 +4293,7 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 		}
 		
 		_vfd.setFont(VFD::FONT_5x7) ;
-		_vfd.printRows(20, 9, rows, firstLine, displayedLines, 36, VFD::FONT_MINI, _vfd.width()-4);
+		_vfd.printRows(20, 9, rows, firstLine, displayedLines, 36, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
 			
@@ -4756,7 +4756,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 		}
 		
 		_vfd.setFont(VFD::FONT_MINI) ;
-		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI, 120);
+		_vfd.printLines(20, 9, lines, firstLine, displayedLines, 36, VFD::FONT_MINI);
 		
 		if(lines.size() > displayedLines){
 			

@@ -302,9 +302,9 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 		case VFD::FONT_MINI:
 		{
 			for(auto c:str){
-				if(strchr("MN@WQ", c))
+				if(strchr("MN@WQGW", c))
 					length +=6;
-				  else if(strchr(" ", c))
+ 				  else if(strchr(" ", c))
 					  length +=3;
 				else
 					length +=4;

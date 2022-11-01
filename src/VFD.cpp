@@ -470,6 +470,8 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  	uint8_t longest_col2_pixel_width  = 0;
 		uint8_t col2_start  = 0;
 
+	setFont(font) ;
+
 	for(auto row:columns){
 		uint length = 0;
  

@@ -2987,7 +2987,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		constexpr int top = 18;
 		
-		_vfd.setFont(VFD::FONT_5x7) ;
 		_vfd.printRows(10, top+5 , rows, firstLine, displayedLines, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){

@@ -422,7 +422,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		uint8_t col2_start  = 0;
 
 	for(auto row:columns){
-
+		uint length = 0;
 //		auto length = string_pixel_Width(row[0],font);
 //		if(length> longest_pixel_width )longest_pixel_width = length;
 		

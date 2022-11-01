@@ -427,14 +427,15 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		for(auto i = firstLine; i < firstLine + count; i ++){
 			
 			string str = lines[i];
-			str = truncate(str,  maxchars);
-			
-			auto pixel_width = string_pixel_Width(str,font);
-			
+				
 			// what I really need is a way to clear to a givven point
 			// from the cursor position.  but Noritake doesnt have that,
 			
 			uint8_t  rightbox = width() -1 - scroll_bar_width;
+			uint max_chars = charcount_for_pixel_Width(str, rightbox , font);
+			str = truncate(str,  max_chars);
+ 			auto pixel_width = string_pixel_Width(str,font);
+
 			uint8_t  leftbox =  0 + pixel_width;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;
@@ -521,9 +522,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  // erase to end of column
 			  // what I really need is a way to clear to a given point
 			  // from the cursor position.  but Noritake doesnt have that,
-			  
-			  //	  static uint charcount_for_pixel_Width(string str, uint8_t max_width, VFD::font_t font = VFD::FONT_MINI){
-			  
+	 
 			  uint max_chars = charcount_for_pixel_Width(str, col2_start , font);
 			  str = truncate(str,  max_chars);
 			  auto pixel_width = string_pixel_Width(str,font);

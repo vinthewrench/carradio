@@ -385,7 +385,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			// what I really need is a way to clear to a givven point
 			// from the cursor position.  but Noritake doesnt have that,
 			
-			uint8_t  rightbox = width() - 5;
+			uint8_t  rightbox = width() - scroll_bar_width;
 			uint8_t  leftbox =  0 + pixel_width;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;

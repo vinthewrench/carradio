@@ -303,7 +303,7 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 		{
 			for(auto c:str){
 				if(strchr("MN@WQ", c))
-					length +=5;
+					length +=6;
 				  else if(strchr(" ", c))
 					  length +=2;
 				else

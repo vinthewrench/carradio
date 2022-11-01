@@ -475,7 +475,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  str = truncate(str,  maxchars);
 			  auto pixel_width = string_pixel_Width(str,font);
 			  
-			  uint8_t  rightbox = col2_start;
+			  uint8_t  rightbox = col2_start -1;
 			  uint8_t  leftbox =  0 + pixel_width;
 			  uint8_t  topbox = y - step;
 			  uint8_t  bottombox = y;

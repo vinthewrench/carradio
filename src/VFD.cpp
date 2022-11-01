@@ -167,7 +167,7 @@ bool VFD::clearScreen(){
 void VFD::drawScrollBar(uint8_t topbox,  float bar_height, float starting_offset){
  
 	uint8_t  rightbox = width() -1;
-	uint8_t  leftbox = rightbox - scroll_bar_width -1;
+	uint8_t  leftbox = rightbox - scroll_bar_width + 1;
 	uint8_t  bottombox = 63;
 	uint8_t  scroll_height = bottombox - topbox -2;
 	uint8_t  bar_size =  ceil(scroll_height * bar_height);

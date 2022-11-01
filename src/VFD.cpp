@@ -462,54 +462,46 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		  
 		  for(auto i = firstLine; i < firstLine + count; i ++){
 			  setCursor(0, y);
-	 
+			  
 			  vector<string> row = columns[i];
 			  
 			  string str = row[0];
 			  string col2 = "";
 			  if(row.size() > 1) col2 = row[1];
 			  
-	 		  str = truncate(str,  maxchars);
-
+			  // erase to end of column
+			  // what I really need is a way to clear to a given point
+			  // from the cursor position.  but Noritake doesnt have that,
+			  str = truncate(str,  maxchars);
 			  auto pixel_width = string_pixel_Width(str,font);
-		 
-//			  if(pixel_width < longest_pixel_width && max_pixels > 0){
-				  
-				  // what I really need is a way to clear to a given point
-				  // from the cursor position.  but Noritake doesnt have that,
-			
-				  uint8_t  rightbox = col2_start;
-				  uint8_t  leftbox =  0 + pixel_width;
-				  uint8_t  topbox = y - step;
-				  uint8_t  bottombox = y;
-		
-				  uint8_t buff2[] = {
-					  VFD_CLEAR_AREA,
-					  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-					  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
-				  };
-				  writePacket(buff2, sizeof(buff2), 0);
-			
-//			  }
-	
+			  
+			  uint8_t  rightbox = col2_start;
+			  uint8_t  leftbox =  0 + pixel_width;
+			  uint8_t  topbox = y - step;
+			  uint8_t  bottombox = y;
+			  
+			  uint8_t buff1[] = {
+				  VFD_CLEAR_AREA,
+				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
+			  };
+			  writePacket(buff1, sizeof(buff1), 0);
+			  // write string
 			  setCursor(0, y);
- 			  success = printPacket("%s",str.c_str());
-	 
-			  {
-				  auto pixel_width2 = string_pixel_Width(col2,font);
- 
-				  uint8_t  rightbox = width() - 5;
-				  uint8_t  leftbox = col2_start + pixel_width2;
-				  uint8_t  topbox = y - step;
-				  uint8_t  bottombox = y;
- 
-				  uint8_t buff2[] = {
-					  VFD_CLEAR_AREA,
-					  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-					  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
-				  };
-	//			  writePacket(buff2, sizeof(buff2), 0);
-			  }
+			  success = printPacket("%s",str.c_str());
+			  
+			  // erase to end of column 2
+			  
+			  auto pixel_width2 = string_pixel_Width(col2,font);
+ 			  rightbox = width() - 5;
+			  leftbox = col2_start + pixel_width2;
+			  
+			  uint8_t buff2[] = {
+				  VFD_CLEAR_AREA,
+				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
+			  };
+			  writePacket(buff2, sizeof(buff2), 0);
  
 			  if(success && !col2.empty()){
 				  setCursor(col2_start, y);

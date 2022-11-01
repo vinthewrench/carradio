@@ -524,7 +524,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  
 			  //	  static uint charcount_for_pixel_Width(string str, uint8_t max_width, VFD::font_t font = VFD::FONT_MINI){
 			  
-			  uint max_chars = charcount_for_pixel_Width(str, col2_start -5, font);
+			  uint max_chars = charcount_for_pixel_Width(str, col2_start , font);
 			  str = truncate(str,  max_chars);
 			  auto pixel_width = string_pixel_Width(str,font);
 			  

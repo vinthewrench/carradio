@@ -426,7 +426,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		}
 	}
 	
-		col2_start = width() - longest_col2_pixel_width - 4;
+		col2_start = width() - longest_col2_pixel_width - 5;
 
 	  if(maxLines >= lineCount){
 		  //ignore the offset and draw all.

@@ -466,7 +466,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  // from the cursor position.  but Noritake doesnt have that,
 			
 				  uint8_t  rightbox = col2_start;
-				  uint8_t  leftbox = rightbox - (longest_pixel_width - pixel_width);
+				  uint8_t  leftbox =  0 + pixel_width ;
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
 		

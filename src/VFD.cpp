@@ -486,7 +486,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  auto pixel_width2 = string_pixel_Width(col2,font);
  
 				  uint8_t  rightbox = width() - 5;
-				  uint8_t  leftbox = rightbox - 10; //col2_start + pixel_width2;
+				  uint8_t  leftbox = col2_start + pixel_width2;
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
  
@@ -495,7 +495,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 					  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 					  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
 				  };
-				  writePacket(buff2, sizeof(buff2), 0);
+	//			  writePacket(buff2, sizeof(buff2), 0);
 			  }
  
 			  if(success && !col2.empty()){

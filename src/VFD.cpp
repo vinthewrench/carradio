@@ -297,24 +297,27 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 
 // for 5x5 font
 static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI){
-	uint8_t nonSpace = 0;
-	uint8_t spaces = 0;
-
-	for(auto c:str){
-		if(std::isspace(c)) spaces++; else nonSpace++;
-	}
-	uint length = 0;
+  	uint length = 0;
 	switch (font) {
 		case VFD::FONT_MINI:
-			length = (nonSpace*4) + (spaces*2);
-			break;
+		{
+			for(auto c:str){
+				if(strchr("MN@WQ", c))
+					length +=5;
+				  else if(strchr(" ", c))
+					  length +=2;
+				else
+					length +=4;
+			}
+		}
+	 		break;
 
 		case VFD::FONT_5x7:
-			length = (nonSpace*6) + (spaces*6);
-			break;
+			length =  (uint)str.size() * 6;
+ 			break;
 
 		case VFD::FONT_10x14:
-			length = (nonSpace*11) + (spaces*11);
+			length =  (uint)str.size() * 11;
 			break;
 
 		default:
@@ -466,7 +469,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  // from the cursor position.  but Noritake doesnt have that,
 			
 				  uint8_t  rightbox = col2_start;
-				  uint8_t  leftbox =  0 + pixel_width - 2 ;
+				  uint8_t  leftbox =  0 + pixel_width - 5 ;
 				  uint8_t  topbox = y - step;
 				  uint8_t  bottombox = y;
 		

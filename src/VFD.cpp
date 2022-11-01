@@ -447,7 +447,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			writePacket(buff2, sizeof(buff2), 0);
 			
 			setCursor(0, y);
-			success = printPacket("%-*s",maxchars, str.c_str());
+			success = printPacket("%s", str.c_str());
 			if(!success) break;
 			y += step;
 		}

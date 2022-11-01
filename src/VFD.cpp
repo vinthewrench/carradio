@@ -480,7 +480,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  }
 	
 			  setCursor(0, y);
- 			  success = printPacket("%-*s",maxchars, str.c_str());
+ 			  success = printPacket("%s",str.c_str());
 	 
 			  {
 				  auto pixel_width2 = string_pixel_Width(col2,font);

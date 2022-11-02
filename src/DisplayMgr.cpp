@@ -2960,7 +2960,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		/* Get build Date*/
 		str = short_build_date();
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		rows.push_back( {"DATE", str});
+	//	rows.push_back( {"DATE", str});
 		
 		/* Get OS version*/
 		{

@@ -3024,7 +3024,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		/* Amplifier  and Jeep Radio Numbers*/
 		{
 	 		rows.push_back( {"PART ", mgr->partNumber() });
-			rows.push_back( {"SERIALNO", mgr->serialNumber()});
+			rows.push_back( {"SERIAL", mgr->serialNumber()});
  			rows.push_back( {"AMP#", "56046006AL" });
 		}
 

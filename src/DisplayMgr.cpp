@@ -2929,26 +2929,26 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		rows = {};
 		
 		/* Get build Date*/
-		rows.push_back( {"DATE: ", string(__DATE__)  + " " +  string(__TIME__)});
+		rows.push_back( {"DATE", string(__DATE__)  + " " +  string(__TIME__)});
 		
 		/* Get OS version*/
 		{
 			struct utsname utsBuff;
 			uname(&utsBuff);
-			rows.push_back( {"LINUX: ", string(utsBuff.sysname)  + ": " +  string(utsBuff.release)});
+			rows.push_back( {"LINUX", string(utsBuff.sysname)  + ": " +  string(utsBuff.release)});
 		}
 		/* Get RTL_SDR ID*/
 		{
 			RadioMgr*			radio 	= mgr->radio();
 			RtlSdr::device_info_t rtlInfo;
 			if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) ){
-				rows.push_back( {"RADIO: ", string(rtlInfo.product)});
+				rows.push_back( {"RADIO", string(rtlInfo.product)});
 			}
 		}
 		
 		/* GPS Status*/
 		GPSmgr*				gps 		= mgr->gps();
-		rows.push_back( {"GPS: ", gps->isConnected()?"OK":"MOT CONNECTED"} );
+		rows.push_back( {"GPS", gps->isConnected()?"OK":"MOT CONNECTED"} );
 		
 		/* CAN BUS*/
 		{
@@ -2963,7 +2963,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			}
 			else
 				str = "NOT CONNECTED" ;
-			rows.push_back( {"CAN: ", str });
+			rows.push_back( {"CAN", str });
 		}
 		
 		/* WIFI */
@@ -2980,7 +2980,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 					str  += " " + s;
 				}
 			}
-			rows.push_back( {"WIFI: ", str });
+			rows.push_back( {"WIFI", str });
 		}
 		
 		constexpr int displayedLines = 6;

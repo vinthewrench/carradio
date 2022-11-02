@@ -2882,6 +2882,15 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		needsRedraw = true;
 		
 	}
+	
+	// check for change in  offsets ?
+	// if anything changed, needsRedraw = true
+	
+	if( lastOffset != _lineOffset){
+		lastOffset = _lineOffset;
+		needsRedraw = true;
+	}
+
  
 	if(transition == TRANS_LEAVING) {
 	 	return;
@@ -2894,7 +2903,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 			
-			_vfd.setCursor(10,16  );
+			_vfd.setCursor(0,16  );
 			
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket("CPU TEMP: ");
@@ -2992,10 +3001,22 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	 		rows.push_back( {"WIFI", str });
 		}
 		
+		
+		size_t totalLines = rows.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		constexpr int displayedLines = 5;
+	
+		if(_lineOffset > totalLines -1)
+			_lineOffset = totalLines -1;
 		
-		constexpr int top = 16+5 + 2;
-		
+		// framer code
+		if( (_lineOffset - displayedLines + 1) > firstLine) {
+			firstLine = _lineOffset - displayedLines + 1;
+		}
+		else if(_lineOffset < firstLine) {
+			firstLine = max(firstLine - 1,  0);
+		}
+	 
+		constexpr int top = 16+5 + 3;
 		_vfd.printRows(top, 9 , rows, firstLine, displayedLines, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
@@ -3332,7 +3353,7 @@ bool DisplayMgr::processSelectorKnobActionForDimmer( knob_action_t action){
 }
 
 
-// MARK: - slidrSelect Screen
+// MARK: - Selection Silder Screen
 void DisplayMgr::showSelectionSilderScreen(
 							 string title,
 							 std::vector<string> choices,

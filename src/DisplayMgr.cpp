@@ -2833,6 +2833,28 @@ void DisplayMgr::drawTimeBox(){
 
 // MARK: -  Info Screen
 
+static std::string short_build_date() {
+	std::ostringstream oss;
+
+	char mo[4] = {0};
+	int day = 0;
+	int year = 0;
+
+ 
+	int hour = 0;
+	int min = 0;
+ 
+	if( sscanf(__DATE__, "%3s %d %d", (char*)&mo,&day,&year) == 3){
+		oss << to_string(day) << "-" <<  string(mo)  << "-" << to_string(year) << " ";
+	}
+
+	if( sscanf(__TIME__, "%d:%d", &hour,&min) == 2){
+		oss << std::setw(2) <<  std::setfill('0') <<  to_string(hour) << ":" << to_string(min);
+	}
+ 
+	return oss.str();
+}
+
 void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 	string str;
@@ -2936,7 +2958,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		rows = {};
 		
 		/* Get build Date*/
-		str = string(__DATE__)  + " " +  string(__TIME__);
+		str = short_build_date();
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		rows.push_back( {"DATE", str});
 		
@@ -3001,9 +3023,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 		/* Amplifier  and Jeep Radio Numbers*/
 		{
-	 		rows.push_back( {"RADIO#", mgr->partNumber() });
-			rows.push_back( {"SERIAL#", mgr->serialNumber()});
-			
+	 		rows.push_back( {"PART ", mgr->partNumber() });
+			rows.push_back( {"SERIALNO", mgr->serialNumber()});
  			rows.push_back( {"AMP#", "56046006AL" });
 		}
 
@@ -3033,107 +3054,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			_vfd.drawScrollBar(top, bar_height ,offset);
 		}
 	}
-		
-/*
-		_vfd.clearScreen();
-		// top line
-		_vfd.setCursor(col, row);
-		_vfd.setFont(VFD::FONT_5x7);
-		_vfd.printPacket("Car Radio ");
-		
-		struct utsname utsBuff;
-		RtlSdr::device_info_t rtlInfo;
-		
-		str = string(PiCarMgr::PiCarMgr_Version);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.setFont(VFD::FONT_MINI); _vfd.printPacket("%s", str.c_str());
-		
-		row += 7;  _vfd.setCursor(col+10, row );
-		str = "DATE: " + string(__DATE__)  + " " +  string(__TIME__);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-		
-		uname(&utsBuff);
-		row += 7;  _vfd.setCursor(col+10, row );
-		str =   string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-		
-		row += 7;  _vfd.setCursor(col+10, row );
-		if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) )
-			str =   "RADIO: " +  string(rtlInfo.product);
-		else
-			str =   string("RADIO: ") + string("NOT CONNECTED");
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-		
-		row += 7;  _vfd.setCursor(col+10, row );
-		if(gps->isConnected() && radio->getDeviceInfo(rtlInfo) )
-			str =   string("GPS: ") + string("OK");
-		else
-			str =   string("GPS: ") + string("NOT CONNECTED");
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-		
-#if USE_COMPASS
-		row += 7;  _vfd.setCursor(col+10, row );
-		string compassVersion;
-		if(compass->isConnected() && compass->versionString(compassVersion))
-			str =   string("COMPASS: ") + compassVersion;
-		else
-			str =   string("COMPASS: ") + string("NOT CONNECTED");
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%s", str.c_str());
-#endif
-		
-		// save this in static
-		lastrow = row;
-	}
-	
-	row = lastrow;
-	{
-		row = row + 7;
-		_vfd.setCursor(col+10, row );
-		_vfd.setFont(VFD::FONT_MINI);
-		
-		vector<CANBusMgr::can_status_t> canStats;
-		if(can->getStatus(canStats)){
-			str =  string("CAN:");
-			for(auto e :canStats){
-				str  += " " + e.ifName;
-			}
-		}
-		else
-			str =  string("CAN: ") + string("NOT CONNECTED");
-		
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%-30s", str.c_str());
-	}
-	
-	{
-		row = row + 7;
-		_vfd.setCursor(col+10, row );
-		_vfd.setFont(VFD::FONT_MINI);
-		stringvector wifiPorts;
-		mgr->hasWifi(&wifiPorts);
-		str =  string("WIFI: ");
-		
-		if(wifiPorts.size() == 0){
-			str  +=  "OFF";
-		}
-		else {
-			for(auto s :wifiPorts){
-				str  += " " + s;
-			}
-		}
-		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-		_vfd.printPacket("%-30s", str.c_str());
-	}
-	
-
-
-*/
-	//	printf("displayStartupScreen %s\n",redraw?"REDRAW":"");
 }
 
 

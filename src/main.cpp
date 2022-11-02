@@ -30,10 +30,12 @@
 #include "AudioOutput.hpp"
 #include "PiCarDB.hpp"
 #include "PiCarMgr.hpp"
+#include "Utils.hpp"
 
- 
+
 int main(int argc, const char * argv[]) {
 	
+	string datstr = short_build_date();
 	
 	int childpid;
 	if((childpid = fork()) == -1 )

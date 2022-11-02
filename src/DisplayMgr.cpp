@@ -2881,7 +2881,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		lastOffset = INT_MAX;
 		firstLine = 0;
 		needsRedraw = true;
-		
 	}
 	
 	// check for change in  offsets ?
@@ -2931,7 +2930,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				_vfd.printPacket("%-4s ", buffer);
 			}
 		}
-		
 	}
 
 	if(needsRedraw){
@@ -2959,7 +2957,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				
 				str = string(rtlInfo.product);
 				std::transform(str.begin(), str.end(),str.begin(), ::toupper);
- 				rows.push_back( {"RADIO", str});
+				rows.push_back( {"RADIO", str});
 			}
 		}
 		
@@ -2979,9 +2977,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				}
 			}
 			else
-			str = "NOT CONNECTED" ;
+				str = "NOT CONNECTED" ;
 			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
- 			rows.push_back( {"CAN", str });
+			rows.push_back( {"CAN", str });
 		}
 		
 		/* WIFI */
@@ -2998,14 +2996,14 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 					str  += s + " ";
 				}
 			}
-	 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-	 		rows.push_back( {"WIFI", str });
+			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+			rows.push_back( {"WIFI", str });
 		}
 		
 		
 		size_t totalLines = rows.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		constexpr int displayedLines = 5;
-	
+		
 		if(_lineOffset > totalLines -1)
 			_lineOffset = totalLines -1;
 		
@@ -3016,9 +3014,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		else if(_lineOffset < firstLine) {
 			firstLine = max(firstLine - 1,  0);
 		}
-	 
+		
 		constexpr int top = 16+5 + 3;
-		_vfd.printRows(top, 9 , rows, firstLine, col1_start, displayedLines, VFD::FONT_MINI);
+		_vfd.printRows(top, 9 , rows, firstLine, displayedLines, col1_start, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
 			

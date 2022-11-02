@@ -532,6 +532,8 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  uint8_t  topbox = y - step;
 			  uint8_t  bottombox = y;
 			  
+	 			  printf("%s: %s\n", str.c_str(),col2.c_str());
+
 			  uint8_t buff1[] = {
 				  VFD_CLEAR_AREA,
 				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),

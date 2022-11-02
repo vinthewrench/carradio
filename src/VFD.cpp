@@ -461,6 +461,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 								vector<vector <string>>  columns,
  								uint8_t firstLine,
 								uint8_t maxLines,
+								uint8_t col1_start,
 								VFD::font_t font ) {
 	  bool success = false;
 	  
@@ -476,7 +477,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		uint length = 0;
  
 		if(row.size() > 1 &&  !row[1].empty()){
-			 length = string_pixel_Width(row[1],font);
+			length = string_pixel_Width(row[1],font) + col1_start;
 			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
 		}
 	}
@@ -492,9 +493,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  string col2 = "";
 			  if(row.size() > 1) col2 = row[1];
 
-			  printf("%s: %s\n", str.c_str(),col2.c_str());
-
-			  setCursor(0, y);
+ 			  setCursor(col1_start, y);
 			  success = printPacket("%s",str.c_str());
 			  if(!success) break;
 
@@ -507,7 +506,6 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  else {
 		  
 		  // this text needs to be scrolled
-		  
 		  auto maxFirstLine = lineCount - maxLines;
 		  if(firstLine > maxFirstLine) firstLine = maxFirstLine;
 		  
@@ -530,12 +528,10 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  auto pixel_width = string_pixel_Width(str,font);
 			  
 			  uint8_t  rightbox = col2_start -1;
-			  uint8_t  leftbox =  0 + pixel_width;
+			  uint8_t  leftbox =  col1_start + pixel_width;
 			  uint8_t  topbox = y - step;
 			  uint8_t  bottombox = y;
-			  
-	 			  printf("%s: %s\n", str.c_str(),col2.c_str());
-
+		 
 			  uint8_t buff1[] = {
 				  VFD_CLEAR_AREA,
 				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
@@ -543,7 +539,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  };
 			  writePacket(buff1, sizeof(buff1), 0);
 			  // write string
-			  setCursor(0, y);
+			  setCursor(col1_start, y);
 			  success = printPacket("%s",str.c_str());
 			  
 			  // erase to end of column 2
@@ -562,8 +558,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 				  setCursor(col2_start, y);
 				  success = printPacket("%s", col2.c_str());
 			  }
-			  
-			  
+ 
 			  if(!success) break;
 			  y += step;
 		  }

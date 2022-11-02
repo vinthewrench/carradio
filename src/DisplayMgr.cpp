@@ -2849,7 +2849,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	static vector<vector<string>> rows = {};
 	bool needsRedraw = false;
 
-	
+	constexpr uint8_t col1_start  = 10;
+
 	if(transition == TRANS_LEAVING) {
 		
 		_rightKnob.setAntiBounce(antiBounceDefault);
@@ -2903,7 +2904,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		if(db->getFloatValue(VAL_CPU_INFO_TEMP, cTemp)){
 			
-			_vfd.setCursor(0,16  );
+			_vfd.setCursor(col1_start,16  );
 			
 			_vfd.setFont(VFD::FONT_MINI);
 			_vfd.printPacket("CPU TEMP: ");
@@ -3017,7 +3018,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		}
 	 
 		constexpr int top = 16+5 + 3;
-		_vfd.printRows(top, 9 , rows, firstLine, displayedLines, VFD::FONT_MINI);
+		_vfd.printRows(top, 9 , rows, firstLine, col1_start, displayedLines, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
 			

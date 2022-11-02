@@ -468,7 +468,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  
 	// quick scan for max line length skip spaces
  	uint8_t longest_col2_pixel_width  = 0;
-		uint8_t col2_start  = 0;
+	uint8_t col2_start  = 0;
 
 	setFont(font) ;
 
@@ -491,6 +491,8 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			  string str = row[0];
 			  string col2 = "";
 			  if(row.size() > 1) col2 = row[1];
+
+			  printf("%s: %s\n", str.c_str(),col2.c_str());
 
 			  setCursor(0, y);
 			  success = printPacket("%s",str.c_str());

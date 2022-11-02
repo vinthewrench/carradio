@@ -468,21 +468,34 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	  auto lineCount = columns.size();
 	  
 	// quick scan for max line length skip spaces
- 	uint8_t longest_col2_pixel_width  = 0;
+ //	uint8_t longest_col2_pixel_width  = 0;
+	uint8_t longest_col1_pixel_width  = 0;
 	uint8_t col2_start  = 0;
 
 	setFont(font) ;
 
+	
 	for(auto &row:columns){
 		uint length = 0;
- 
-		if(row.size() > 1 &&  !row[1].empty()){
-			length = string_pixel_Width(row[1],font) + col1_start;
-			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
+
+		if(row.size() > 1 &&  !row[0].empty()){
+			length = string_pixel_Width(row[0],font);
+			if(length > longest_col1_pixel_width )longest_col1_pixel_width = length;
 		}
 	}
-	
-		col2_start = width() - longest_col2_pixel_width - scroll_bar_width -1;
+
+	col2_start =  longest_col1_pixel_width + 5;
+
+//	for(auto &row:columns){
+//		uint length = 0;
+//
+//		if(row.size() > 1 &&  !row[1].empty()){
+//			length = string_pixel_Width(row[1],font) + col1_start;
+//			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
+//		}
+//	}
+//
+//		col2_start = width() - longest_col2_pixel_width - scroll_bar_width -1;
 
 	  if(maxLines >= lineCount){
 		  //ignore the offset and draw all.

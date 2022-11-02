@@ -2958,7 +2958,6 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		/* Get build Date*/
 		str = short_build_date();
-		printf("BUILD |%s|\n", str.c_str());
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 		rows.push_back( {"BUILD", str});
 		

@@ -327,9 +327,9 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 				else if(mode_5x7)
 					length +=6;
 				else if(strchr("MNWW", c))
-					length +=6;
+					length +=7;
 				else if(strchr("@GQ", c))
-					length +=5;
+					length +=6;
 				else if(strchr(" !", c))
 					length +=3;
 				else
@@ -549,7 +549,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			str = truncate(str,  max_chars);
 			auto pixel_width = string_pixel_Width(str,font);
 			
-			uint8_t  rightbox = col2_start;
+			uint8_t  rightbox = col2_start -1;
 			uint8_t  leftbox =  col1_start + pixel_width;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;

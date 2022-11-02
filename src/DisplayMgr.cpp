@@ -3050,7 +3050,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			float bar_height =  (float)(displayedLines +1)/ (float)rows.size() ;
 			float offset =  (float)_lineOffset / ((float)rows.size() -1) ;
 			
-		_vfd.drawScrollBar(top - 5, bar_height ,offset);
+		_vfd.drawScrollBar(top - 9, bar_height ,offset);
 		}
 	}
 }
@@ -4391,8 +4391,15 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 			if(i < wps.size()) {
 				auto wp = wps[i];
 				string name = wp.name;
- 
-				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
+				auto nameLen = name.size();
+				
+				 if(nameLen < 10)
+					 name += string(10-nameLen, ' ');
+				
+				if(nameLen> 16)
+					name = truncate(name,  16);		// not too many
+				
+ 				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 				
 				if(here.isValid){

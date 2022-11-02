@@ -498,7 +498,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	for(auto &row:columns){
 		uint length = 0;
 		
-		if(row.size() > 1 &&  !row[0].empty()){
+		if(row.size() > 0 &&  !row[0].empty()){
 			length = string_pixel_Width(row[0],font);
 			if(length > longest_col1_pixel_width )longest_col1_pixel_width = length;
 		}

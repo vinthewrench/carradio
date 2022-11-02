@@ -3083,7 +3083,7 @@ bool DisplayMgr::processSelectorKnobActionForInfo( knob_action_t action){
 		case KNOB_DOUBLE_CLICK:
 			setEvent(EVT_POP, MODE_UNKNOWN);
 			_lineOffset = 0;
- 			wasHandled = true;
+ //			wasHandled = true;
 	 			break;
 			
 		default: break;

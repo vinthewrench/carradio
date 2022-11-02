@@ -2929,7 +2929,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		rows = {};
 		
 		/* Get build Date*/
-		rows.push_back( {"DATE", string(__DATE__)  + " " +  string(__TIME__)});
+		str = string(__DATE__)  + " " +  string(__TIME__);
+		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+		rows.push_back( {"DATE", str});
 		
 		/* Get OS version*/
 		{
@@ -2963,7 +2965,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			
 			if(can->getStatus(canStats)){
 				for(auto e :canStats){
-					str  += " " + e.ifName;
+					str  += e.ifName + " ";
 				}
 			}
 			else
@@ -2990,7 +2992,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	 		rows.push_back( {"WIFI", str });
 		}
 		
-		constexpr int displayedLines = 6;
+		constexpr int displayedLines = 5;
 		
 		constexpr int top = 16+5 + 2;
 		

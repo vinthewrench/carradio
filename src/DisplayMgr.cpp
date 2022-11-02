@@ -3216,7 +3216,7 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		// there is some kind of bug in the Noritake VFD where id you send
 		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
 		uint8_t start = itemX+1;
-		if(start == 96) start = 95;
+	//	if(start == 96) start = 95;
 		
 		uint8_t buff2[] = {
 			VFD::VFD_CLEAR_AREA,
@@ -3406,7 +3406,7 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
 		// To send character 60H to the display, send 60H twice.
 		
-		if(itemX == 96) itemX = 95;
+	//	if(itemX == 96) itemX = 95;
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		

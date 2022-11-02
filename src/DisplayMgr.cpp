@@ -192,15 +192,13 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		
 		if(_menuSliderCBInfo) free(_menuSliderCBInfo);
 		_menuSliderCBInfo = NULL;
-	
+		
 		if(_menuSelectionSliderCBInfo) free(_menuSelectionSliderCBInfo);
 		_menuSelectionSliderCBInfo = NULL;
- 
+		
 		resetMenu();
-	// 	showStartup();
-		showInfo();
-
- 	}
+		showStartup();
+	}
 	
 	return _isSetup;
 }
@@ -2939,7 +2937,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			uname(&utsBuff);
 			str = string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
 			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-			rows.push_back( {"LINUX",str });
+			rows.push_back( {"OS",str });
 		}
 		/* Get RTL_SDR ID*/
 		{
@@ -2955,7 +2953,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		
 		/* GPS Status*/
 		GPSmgr*				gps 		= mgr->gps();
-		rows.push_back( {"GPS", gps->isConnected()?"OK":"MOT CONNECTED"} );
+		rows.push_back( {"GPS", gps->isConnected()?"OK":"NOT CONNECTED"} );
 		
 		/* CAN BUS*/
 		{
@@ -2985,7 +2983,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			}
 			else {
 				for(auto s :wifiPorts){
-					str  += " " + s;
+					str  += s + " ";
 				}
 			}
 	 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);

@@ -472,9 +472,15 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 
 	setFont(font) ;
 
-	for(auto row:columns){
+	for(auto &row:columns){
 		uint length = 0;
  
+		if(font ==  VFD::FONT_MINI){
+			std::transform(row[1].begin(), row[1].end(),row[1].begin(), ::toupper);
+			std::transform(row[2].begin(), row[2].end(),row[2].begin(), ::toupper);
+		}
+		 
+		
 		if(row.size() > 1 &&  !row[1].empty()){
 			 length = string_pixel_Width(row[1],font);
 			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;

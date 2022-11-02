@@ -350,7 +350,7 @@ static uint charcount_for_pixel_Width(string str, uint8_t max_width, VFD::font_t
 					mode_5x7 = false;
 				else if(mode_5x7)
 					length +=6;
-				else if(strchr("MNWW", c))
+				else if(strchr("MNWW#", c))
 					length +=6;
 				else if(strchr("@GQ", c))
 					length +=5;
@@ -484,7 +484,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 		}
 	}
 
-	col2_start =  longest_col1_pixel_width + 5;
+	col2_start =  col1_start + longest_col1_pixel_width + 10;
 
 //	for(auto &row:columns){
 //		uint length = 0;

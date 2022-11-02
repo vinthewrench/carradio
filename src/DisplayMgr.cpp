@@ -3050,7 +3050,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			float bar_height =  (float)(displayedLines +1)/ (float)rows.size() ;
 			float offset =  (float)_lineOffset / ((float)rows.size() -1) ;
 			
-		_vfd.drawScrollBar(top, bar_height ,offset);
+		_vfd.drawScrollBar(top - 5, bar_height ,offset);
 		}
 	}
 }

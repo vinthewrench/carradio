@@ -495,7 +495,6 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 	
 	setFont(font) ;
 	
-	
 	for(auto &row:columns){
 		uint length = 0;
 		

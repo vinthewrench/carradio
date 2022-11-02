@@ -35,9 +35,7 @@
 
 int main(int argc, const char * argv[]) {
 	
-	string datstr = short_build_date();
-	
-	int childpid;
+ 	int childpid;
 	if((childpid = fork()) == -1 )
 	{
 		perror("can't fork");

@@ -4392,13 +4392,13 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				auto wp = wps[i];
 				string name = wp.name;
 				auto nameLen = name.size();
-				
-				 if(nameLen < 16)
-					 name += string(16-nameLen, ' ');
-				
+			
 				if(nameLen> 16)
-					name = truncate(name,  16);		// not too many
-				
+					name = truncate(name,  16) + "  ";		// not too many
+		
+				 if(nameLen < 18)
+					 name += string(18-nameLen, ' ');
+	 
  				std::transform(name.begin(), name.end(),name.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  name;
 				

@@ -4393,8 +4393,8 @@ void DisplayMgr::drawGPSWaypointsScreen(modeTransition_t transition){
 				string name = wp.name;
 				auto nameLen = name.size();
 				
-				 if(nameLen < 10)
-					 name += string(10-nameLen, ' ');
+				 if(nameLen < 16)
+					 name += string(16-nameLen, ' ');
 				
 				if(nameLen> 16)
 					name = truncate(name,  16);		// not too many

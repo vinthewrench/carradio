@@ -222,14 +222,37 @@ bool VFD::printPacket(const char *fmt, ...){
 
 #warning FIX Noritake VFD 60H bug
 
-// there is some kind of bug in the Noritake VFD where id you send
-// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
-// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
-// To send character 60H to the display, send 60H twice.
 
 bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	bool success = false;
+ 
+	// there is some kind of bug in the Noritake VFD where id you send
+	// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
+	// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
+	// To send character 60H to the display, send 60H twice.
+	
+	uint8_t * newBuff = NULL;
+	int count_60H = 0;
+ 	for(int i = 0; i < len ;i++)
+		if(data[i] == 0x60) count_60H++;
+
+	if(count_60H ){
+		newBuff = (uint8_t *) malloc(len + count_60H);
+		
+		uint8_t *p = newBuff;
+		
+		for(int i = 0; i < len ;i++) {
+			uint8_t  ch = data[i];
+			*p++ = ch;
+			if(ch == 0x60) *p++ = 0x60;
+ 		}
+		len = p - newBuff;
+		data = newBuff;
+		
+		printf("made %d  corrections for 60H\n", count_60H);
+ 	}
+ 
 	
 #if PACKET_MODE
 	constexpr size_t blocksize = 32;
@@ -284,6 +307,9 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	// }
 	 usleep(waitusec);
 #endif
+	
+	
+	if(newBuff) free(newBuff);
 	
 	return success;
 }

@@ -234,6 +234,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	uint8_t * newBuff = NULL;
 	int count_60H = 0;
+	// check if we need to correct and count how many additional bytes
  	for(int i = 0; i < len ;i++)
 		if(data[i] == 0x60) count_60H++;
 

@@ -567,7 +567,7 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			
 			// erase to end of column 2
 			auto pixel_width2 = string_pixel_Width(col2,font);
-			rightbox = width() - scroll_bar_width -2;
+			rightbox = width() - scroll_bar_width -1;
 			leftbox = col2_start + pixel_width2 - 2;
 			
 			uint8_t buff2[] = {

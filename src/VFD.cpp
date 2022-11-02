@@ -549,12 +549,13 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
 			str = truncate(str,  max_chars);
 			auto pixel_width = string_pixel_Width(str,font);
 			
-			uint8_t  rightbox = col2_start -1;
+			uint8_t  rightbox = col2_start;
 			uint8_t  leftbox =  col1_start + pixel_width;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;
 			
-			uint8_t buff1[] = {
+			// erase to end of column 1
+ 			uint8_t buff1[] = {
 				VFD_CLEAR_AREA,
 				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
 				static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),

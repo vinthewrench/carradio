@@ -91,3 +91,6 @@ inline static const string  PROP_W1_MAP						= "w1Map";
 inline static const string  PROP_SQUELCH_LEVEL				= "squelch";
 inline static const string  PROP_GAIN_LEVEL					= "gain";
 
+inline static const string  SERIAL_NUM							= "serial_num";
+inline static const string  PART_NUM							= "part_num";
+

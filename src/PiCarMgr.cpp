@@ -544,6 +544,10 @@ void PiCarMgr::restoreRadioSettings(){
 	
 	nlohmann::json j = {};
 	
+	// get jeep radio emulation numbers
+ 	_db.getProperty(SERIAL_NUM, &_serial_number);
+	_db.getProperty(PART_NUM, &_part_number);
+  
 	// SET GPS CLOCK SYNC PREFS
 	{
 		_clocksync_gps = false;
@@ -562,8 +566,7 @@ void PiCarMgr::restoreRadioSettings(){
 	}
    else
 		_shutdownDelay = UINT16_MAX;
-	
-		
+ 
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
 		setDimLevel(1.0);
@@ -645,7 +648,6 @@ void PiCarMgr::restoreRadioSettings(){
 				  [] (const pair<RadioMgr::radio_mode_t,uint32_t>& a,
 						const pair<RadioMgr::radio_mode_t,uint32_t>& b) { return a.second < b.second; });
 		}
-		
 		_preset_stations = presets;
 	}
 	
@@ -719,8 +721,7 @@ void PiCarMgr::restoreRadioSettings(){
 					.dbKey = dbKey,
 					.title = title
 				};
-				
-				_w1Map[deviceid] = entry;
+			_w1Map[deviceid] = entry;
 			}
 		}
 	}

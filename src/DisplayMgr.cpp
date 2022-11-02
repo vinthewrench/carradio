@@ -2842,8 +2842,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 #if USE_COMPASS
 	CompassSensor* 	compass	= mgr->compass();
 #endif
-	
-
+ 
 	static int lastOffset = 0;
 	static int firstLine = 0;
 	static vector<vector<string>> rows = {};
@@ -2957,7 +2956,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				
 				str = string(rtlInfo.product);
 				std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-				rows.push_back( {"RADIO", str});
+				rows.push_back( {"SDR", str});
 			}
 		}
 		
@@ -3000,10 +2999,12 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			rows.push_back( {"WIFI", str });
 		}
 	
-		/* Amplifier */
+		/* Amplifier  and Jeep Radio Numbers*/
 		{
-		 
-			rows.push_back( {"AMP #", "56046006AL" });
+	 		rows.push_back( {"RADIO#", mgr->partNumber() });
+			rows.push_back( {"SERIAL#", mgr->serialNumber()});
+			
+ 			rows.push_back( {"AMP#", "56046006AL" });
 		}
 
 		

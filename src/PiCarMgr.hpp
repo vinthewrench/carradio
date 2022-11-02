@@ -115,6 +115,9 @@ class PiCarMgr {
  
 	bool isAirPlayRunning();
 	
+	string	partNumber() { return _part_number; };
+	string	serialNumber() { return _serial_number; };
+	
 	// MARK: - stations File
 	
 	typedef struct {
@@ -310,6 +313,9 @@ private:
 	bool 					_clocksync_gps;  		//  should sync clock with GPS
 	time_t 				_clocksync_gps_secs;  // how many seconds of error allowed before sync
 	
+	string 				_part_number;		// what we respond  with from JKR_ECU
+	string 				_serial_number;	// what we respond  with from JKR_SERIAL
+
 	CANBusMgr::periodicCallBackID_t		_canPeriodRadioTaskID;
 	CANBusMgr::periodicCallBackID_t		_canPeriodAudioTaskID;
 

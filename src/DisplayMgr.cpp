@@ -2954,13 +2954,12 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	}
 
 	if(needsRedraw){
-		
 		rows = {};
 		
 		/* Get build Date*/
 		str = short_build_date();
 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-	//	rows.push_back( {"DATE", str});
+		rows.push_back( {"BUILD", str});
 		
 		/* Get OS version*/
 		{
@@ -3023,9 +3022,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 	
 		/* Amplifier  and Jeep Radio Numbers*/
 		{
-	 		rows.push_back( {"PART ", mgr->partNumber() });
-			rows.push_back( {"SERIAL", mgr->serialNumber()});
- 			rows.push_back( {"AMP#", "56046006AL" });
+	 		rows.push_back( {"PN ", mgr->partNumber() });
+			rows.push_back( {"SN", mgr->serialNumber()});
+ 			rows.push_back( {"AMP PN", "56046006AL" });
 		}
 
 		
@@ -3043,7 +3042,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			firstLine = max(firstLine - 1,  0);
 		}
 		
-		constexpr int top = 16+5 + 3;
+		constexpr int top = 16+5 + 4;
 		_vfd.printRows(top, 9 , rows, firstLine, displayedLines, col1_start, VFD::FONT_MINI);
 		
 		if(rows.size() > displayedLines){
@@ -3051,7 +3050,7 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			float bar_height =  (float)(displayedLines +1)/ (float)rows.size() ;
 			float offset =  (float)_lineOffset / ((float)rows.size() -1) ;
 			
-//			_vfd.drawScrollBar(top, bar_height ,offset);
+		_vfd.drawScrollBar(top, bar_height ,offset);
 		}
 	}
 }
@@ -3216,7 +3215,6 @@ void DisplayMgr::drawDimmerScreen(modeTransition_t transition){
 		// there is some kind of bug in the Noritake VFD where id you send
 		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
 		uint8_t start = itemX+1;
-	//	if(start == 96) start = 95;
 		
 		uint8_t buff2[] = {
 			VFD::VFD_CLEAR_AREA,
@@ -3400,13 +3398,6 @@ void DisplayMgr::drawSelectSliderScreen(modeTransition_t transition){
 		itemX &= 0xfE; // to nearest 2
 		itemX = max(itemX,  static_cast<uint8_t> (leftbox+2) );
 		itemX = min(itemX,  static_cast<uint8_t> (rightbox-6) );
-		
-		// there is some kind of bug in the Noritake VFD where id you send
-		// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
-		// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
-		// To send character 60H to the display, send 60H twice.
-		
-	//	if(itemX == 96) itemX = 95;
 		
 		_vfd.setFont(VFD::FONT_5x7);
 		

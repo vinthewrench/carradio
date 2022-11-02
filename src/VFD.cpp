@@ -218,16 +218,12 @@ bool VFD::printPacket(const char *fmt, ...){
 
 
 #define PACKET_MODE 1
-
-
-#warning FIX Noritake VFD 60H bug
-
-
+ 
 bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	bool success = false;
  
-	// there is some kind of bug in the Noritake VFD where id you send
+	// I consider this a bug in the Noritake VFD firmware.  if you send a 
 	// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
 	// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
 	// To send character 60H to the display, send 60H twice.
@@ -250,9 +246,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
  		}
 		len = p - newBuff;
 		data = newBuff;
-		
-		printf("made %d  corrections for 60H\n", count_60H);
- 	}
+  	}
  
 	
 #if PACKET_MODE
@@ -489,120 +483,109 @@ bool VFD:: printRows(uint8_t y, uint8_t step,
  								uint8_t firstLine,
 								uint8_t maxLines,
 								uint8_t col1_start,
-								VFD::font_t font ) {
-	  bool success = false;
-	  
-	  auto lineCount = columns.size();
-	  
+							VFD::font_t font ) {
+	bool success = false;
+	
+	auto lineCount = columns.size();
+	
 	// quick scan for max line length skip spaces
- //	uint8_t longest_col2_pixel_width  = 0;
+	//	uint8_t longest_col2_pixel_width  = 0;
 	uint8_t longest_col1_pixel_width  = 0;
 	uint8_t col2_start  = 0;
-
+	
 	setFont(font) ;
-
+	
 	
 	for(auto &row:columns){
 		uint length = 0;
-
+		
 		if(row.size() > 1 &&  !row[0].empty()){
 			length = string_pixel_Width(row[0],font);
 			if(length > longest_col1_pixel_width )longest_col1_pixel_width = length;
 		}
 	}
-
-	col2_start =  col1_start + longest_col1_pixel_width + 10;
-
-//	for(auto &row:columns){
-//		uint length = 0;
-//
-//		if(row.size() > 1 &&  !row[1].empty()){
-//			length = string_pixel_Width(row[1],font) + col1_start;
-//			if(length > longest_col2_pixel_width )longest_col2_pixel_width = length;
-//		}
-//	}
-//
-//		col2_start = width() - longest_col2_pixel_width - scroll_bar_width -1;
-
-	  if(maxLines >= lineCount){
-		  //ignore the offset and draw all.
-		  for(int i = 0; i < lineCount; i ++){
-			  
-			  vector<string> row = columns[i];
-			  string str = row[0];
-			  string col2 = "";
-			  if(row.size() > 1) col2 = row[1];
-
- 			  setCursor(col1_start, y);
-			  success = printPacket("%s",str.c_str());
-			  if(!success) break;
-
-			  setCursor(col2_start, y);
-			  success = printPacket("%s", col2.c_str());
- 			  if(!success) break;
-			  y += step;
-		  }
-	  }
-	  else {
-		  
-		  // this text needs to be scrolled
-		  auto maxFirstLine = lineCount - maxLines;
-		  if(firstLine > maxFirstLine) firstLine = maxFirstLine;
-		  
-		  auto count =  lineCount - firstLine;
-		  if( count > maxLines) count = maxLines;
-		  
-		  for(auto i = firstLine; i < firstLine + count; i ++){
-			  
-			  vector<string> row = columns[i];
-			  string str = row[0];
-			  string col2 = "";
-			  if(row.size() > 1) col2 = row[1];
-			  
-			  // erase to end of column
-			  // what I really need is a way to clear to a given point
-			  // from the cursor position.  but Noritake doesnt have that,
-	 
-			  uint max_chars = charcount_for_pixel_Width(str, col2_start , font);
-			  str = truncate(str,  max_chars);
-			  auto pixel_width = string_pixel_Width(str,font);
-			  
-			  uint8_t  rightbox = col2_start -1;
-			  uint8_t  leftbox =  col1_start + pixel_width;
-			  uint8_t  topbox = y - step;
-			  uint8_t  bottombox = y;
-		 
-			  uint8_t buff1[] = {
-				  VFD_CLEAR_AREA,
-				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-				  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
-			  };
-			  writePacket(buff1, sizeof(buff1), 0);
-			  // write string
-			  setCursor(col1_start, y);
-			  success = printPacket("%s",str.c_str());
-			  
-			  // erase to end of column 2
-			  auto pixel_width2 = string_pixel_Width(col2,font);
-			  rightbox = width() - scroll_bar_width -1;
-			  leftbox = col2_start + pixel_width2;
-			  
-			  uint8_t buff2[] = {
-				  VFD_CLEAR_AREA,
-				  static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
-				  static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
-			  };
-			  writePacket(buff2, sizeof(buff2), 0);
-			  
-			  if(success && !col2.empty()){
-				  setCursor(col2_start, y);
-				  success = printPacket("%s", col2.c_str());
-			  }
- 
-			  if(!success) break;
-			  y += step;
-		  }
-	  }
 	
-	  return success;
+	col2_start =  col1_start + longest_col1_pixel_width + 8;
+	
+	if(maxLines >= lineCount){
+		//ignore the offset and draw all.
+		for(int i = 0; i < lineCount; i ++){
+			
+			vector<string> row = columns[i];
+			string str = row[0];
+			string col2 = "";
+			if(row.size() > 1) col2 = row[1];
+			
+			setCursor(col1_start, y);
+			success = printPacket("%s",str.c_str());
+			if(!success) break;
+			
+			setCursor(col2_start, y);
+			success = printPacket("%s", col2.c_str());
+			if(!success) break;
+			y += step;
+		}
+	}
+	else {
+		
+		// this text needs to be scrolled
+		auto maxFirstLine = lineCount - maxLines;
+		if(firstLine > maxFirstLine) firstLine = maxFirstLine;
+		
+		auto count =  lineCount - firstLine;
+		if( count > maxLines) count = maxLines;
+		
+		for(auto i = firstLine; i < firstLine + count; i ++){
+			
+			vector<string> row = columns[i];
+			string str = row[0];
+			string col2 = "";
+			if(row.size() > 1) col2 = row[1];
+			
+			// erase to end of column
+			// what I really need is a way to clear to a given point
+			// from the cursor position.  but Noritake doesnt have that,
+			
+			uint max_chars = charcount_for_pixel_Width(str, col2_start , font);
+			str = truncate(str,  max_chars);
+			auto pixel_width = string_pixel_Width(str,font);
+			
+			uint8_t  rightbox = col2_start -1;
+			uint8_t  leftbox =  col1_start + pixel_width;
+			uint8_t  topbox = y - step;
+			uint8_t  bottombox = y;
+			
+			uint8_t buff1[] = {
+				VFD_CLEAR_AREA,
+				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
+			};
+			writePacket(buff1, sizeof(buff1), 0);
+			// write string
+			setCursor(col1_start, y);
+			success = printPacket("%s",str.c_str());
+			
+			// erase to end of column 2
+			auto pixel_width2 = string_pixel_Width(col2,font);
+			rightbox = width() - scroll_bar_width -1;
+			leftbox = col2_start + pixel_width2;
+			
+			uint8_t buff2[] = {
+				VFD_CLEAR_AREA,
+				static_cast<uint8_t>(leftbox), static_cast<uint8_t> (topbox+1),
+				static_cast<uint8_t>(rightbox),static_cast<uint8_t>(bottombox-1),
+			};
+			writePacket(buff2, sizeof(buff2), 0);
+			
+			if(success && !col2.empty()){
+				setCursor(col2_start, y);
+				success = printPacket("%s", col2.c_str());
+			}
+			
+			if(!success) break;
+			y += step;
+		}
+	}
+	
+	return success;
 }

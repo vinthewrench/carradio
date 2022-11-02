@@ -2999,7 +2999,13 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 			rows.push_back( {"WIFI", str });
 		}
-		
+	
+		/* Amplifier */
+		{
+		 
+			rows.push_back( {"AMP #", "56046006AL" });
+		}
+
 		
 		size_t totalLines = rows.size() + 1;  // add kEXIT and kNEW_WAYPOINT
 		constexpr int displayedLines = 5;

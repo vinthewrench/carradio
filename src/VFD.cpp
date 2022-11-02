@@ -327,9 +327,9 @@ static uint8_t string_pixel_Width(string str, VFD::font_t font = VFD::FONT_MINI)
 				else if(mode_5x7)
 					length +=6;
 				else if(strchr("MNWW", c))
-					length +=7;
-				else if(strchr("@GQ", c))
 					length +=6;
+				else if(strchr("@GQ", c))
+					length +=5;
 				else if(strchr(" !", c))
 					length +=3;
 				else

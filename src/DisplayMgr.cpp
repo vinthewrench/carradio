@@ -197,7 +197,9 @@ bool DisplayMgr::begin(const char* path, speed_t speed,  int &error){
 		_menuSelectionSliderCBInfo = NULL;
  
 		resetMenu();
-	 	showStartup();
+	// 	showStartup();
+		showInfo();
+
  	}
 	
 	return _isSetup;
@@ -2935,14 +2937,19 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 		{
 			struct utsname utsBuff;
 			uname(&utsBuff);
-			rows.push_back( {"LINUX", string(utsBuff.sysname)  + ": " +  string(utsBuff.release)});
+			str = string(utsBuff.sysname)  + ": " +  string(utsBuff.release);
+			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+			rows.push_back( {"LINUX",str });
 		}
 		/* Get RTL_SDR ID*/
 		{
 			RadioMgr*			radio 	= mgr->radio();
 			RtlSdr::device_info_t rtlInfo;
 			if(radio->isConnected() && radio->getDeviceInfo(rtlInfo) ){
-				rows.push_back( {"RADIO", string(rtlInfo.product)});
+				
+				str = string(rtlInfo.product);
+				std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+ 				rows.push_back( {"RADIO", str});
 			}
 		}
 		
@@ -2962,8 +2969,9 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 				}
 			}
 			else
-				str = "NOT CONNECTED" ;
-			rows.push_back( {"CAN", str });
+			str = "NOT CONNECTED" ;
+			std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+ 			rows.push_back( {"CAN", str });
 		}
 		
 		/* WIFI */
@@ -2980,7 +2988,8 @@ void DisplayMgr::drawInfoScreen(modeTransition_t transition){
 					str  += " " + s;
 				}
 			}
-			rows.push_back( {"WIFI", str });
+	 		std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+	 		rows.push_back( {"WIFI", str });
 		}
 		
 		constexpr int displayedLines = 6;

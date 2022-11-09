@@ -49,6 +49,7 @@
 		2EC77299285501CB0083DA3B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EC77298285501CB0083DA3B /* libsqlite3.tbd */; };
 		2EE8AF9D28EF3296004CC59C /* dbuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EE8AF9B28EF3296004CC59C /* dbuf.cpp */; };
 		2EF8451528F8BAFF003E9547 /* AirplayInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF8451328F8BAFF003E9547 /* AirplayInput.cpp */; };
+		2EF84521291C3F6D003E9547 /* DTCManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF8451F291C3F6D003E9547 /* DTCManager.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -180,6 +181,8 @@
 		2EF8451328F8BAFF003E9547 /* AirplayInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirplayInput.cpp; sourceTree = "<group>"; };
 		2EF8451428F8BAFF003E9547 /* AirplayInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirplayInput.hpp; sourceTree = "<group>"; };
 		2EF845162900ABC7003E9547 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2EF8451F291C3F6D003E9547 /* DTCManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DTCManager.cpp; sourceTree = "<group>"; };
+		2EF84520291C3F6D003E9547 /* DTCManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DTCManager.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +250,8 @@
 				2E9F9EA028285F3C00E12F5D /* PiCarDB.cpp */,
 				2E9F9EA128285F3C00E12F5D /* PiCarDB.hpp */,
 				2E82103528296D95003D074C /* PropValKeys.hpp */,
+				2EF84520291C3F6D003E9547 /* DTCManager.hpp */,
+				2EF8451F291C3F6D003E9547 /* DTCManager.cpp */,
 				2E8210AA2835A3D2003D074C /* Display */,
 				2E8210B12835A4CD003D074C /* Radio */,
 				2EF8451228F8BAD8003E9547 /* Airplay */,
@@ -523,6 +528,7 @@
 				2E9F9E9E282727D200E12F5D /* Filter.cpp in Sources */,
 				2E62A8F22822E16E00F5066B /* RadioMgr.cpp in Sources */,
 				2E8210F3283EAEB2003D074C /* FrameDB.cpp in Sources */,
+				2EF84521291C3F6D003E9547 /* DTCManager.cpp in Sources */,
 				2E0EA47B283EC5880012E406 /* OBD2.cpp in Sources */,
 				2E8210A62835A380003D074C /* GPSmgr.cpp in Sources */,
 				2E9F9EA228285F3C00E12F5D /* PiCarDB.cpp in Sources */,

@@ -52,6 +52,17 @@ public:
 
 	bool resetPacketCount(string ifName);
 	
+	// frame handlers
+ 	typedef std::function<void(void* context,
+										string ifName, canid_t can_id, can_frame_t frame,
+										unsigned long timeStamp)> frameHandlerCB_t;
+
+	bool registerFrameHandler(string ifName, canid_t can_id,  frameHandlerCB_t  cb = NULL, void* context = NULL);
+	void unRegisterFrameHandler(string ifName, canid_t can_id, frameHandlerCB_t cb );
+	vector<pair<frameHandlerCB_t, void*>>	handlerForFrame(string ifName, canid_t can_id);
+	
+	
+
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
 	typedef struct {
@@ -121,6 +132,15 @@ private:
 	
 	map<string, obd_polling_t> 	_obd_polling = {};
 	vector<obd_polling_t> 			_obd_requests = {};
+
+	typedef struct {
+		string 				ifName;
+		canid_t 				can_id;
+		frameHandlerCB_t	cb;
+		void					*context;
+	} frame_handler_t;
+ 
+	vector<frame_handler_t> _frame_handlers= {};
 
 	struct timespec		_lastPollTime;
 	int64_t     			_pollDelay;			// how long to wait before next OBD poll in milliseconds

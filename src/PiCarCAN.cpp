@@ -160,3 +160,19 @@ bool PiCarCAN::removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBack
 	return _CANbus.removePeriodicCallback(callBackID);
 }
 
+
+// frame handler
+bool PiCarCAN::registerFrameHandler(pican_bus_t bus,
+												canid_t can_id,
+												CANBusMgr::frameHandlerCB_t  cb,  void* context){
+	string ifName  = bus == CAN_ALL?"":bus_map[bus];
+	return _CANbus.registerFrameHandler(ifName, can_id, cb, context);
+}
+
+
+
+void PiCarCAN::unRegisterFrameHandler(pican_bus_t bus, canid_t can_id, CANBusMgr::frameHandlerCB_t cb ){
+	
+	string ifName  = bus == CAN_ALL?"":bus_map[bus];
+	return _CANbus.unRegisterFrameHandler(ifName, can_id, cb);
+}

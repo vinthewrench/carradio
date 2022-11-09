@@ -86,6 +86,7 @@ set(SOURCES
 	src/ArgononeFan.cpp
 	src/W1Mgr.cpp
 	src/dbuf.cpp
+	src/DTCManager.cpp
 #	src/MMC5983MA.cpp
 
 # TMP117 Temp sensor

@@ -50,6 +50,10 @@ public:
  
 	FrameDB* frameDB() {return  _CANbus.frameDB();};
 
+	// frame handler
+	bool registerFrameHandler(pican_bus_t bus, canid_t can_id,  CANBusMgr::frameHandlerCB_t  cb = NULL, void* context = NULL);
+	void unRegisterFrameHandler(pican_bus_t bus, canid_t can_id, CANBusMgr::frameHandlerCB_t cb );
+
 	// OBD request need to be polled.. this starts and stops the polling
 	
 	bool request_OBDpolling(string key);

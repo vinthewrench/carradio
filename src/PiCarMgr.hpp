@@ -46,7 +46,8 @@
 #include "PiCarCAN.hpp"
 #include "W1Mgr.hpp"
 #include "PropValKeys.hpp"
-
+#include "DTCManager.hpp"
+ 
 #include "PiCarDB.hpp"
 #include "CPUInfo.hpp"
 #include "ArgononeFan.hpp"
@@ -290,6 +291,7 @@ private:
 	GPSmgr				_gps;
 	PiCarCAN				_can;
 	W1Mgr					_w1;
+	DTCManager			_dtc;
 	
 	CPUInfo				_cpuInfo;
 #if USE_TMP_117

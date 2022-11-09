@@ -276,7 +276,9 @@ bool PiCarMgr::begin(){
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodAudioTaskID,  this, periodicCAN_CB_Audio_wrapper);
 	
-	 		_isSetup = true;
+		_dtc.begin();
+		
+		_isSetup = true;
 		
 		bool firstRunToday = true;
 		time_t now = time(NULL);
@@ -287,6 +289,7 @@ bool PiCarMgr::begin(){
 				firstRunToday = false;
 			}
 		}
+		
 	
 		if(firstRunToday){
 			LOGT_INFO("Hello Moto\n");
@@ -329,9 +332,11 @@ void PiCarMgr::stop(){
 	
 	if(_isSetup  ){
 		_isSetup = false;
+		
+		_dtc.stop();
 		_can.removePeriodicCallback(_canPeriodRadioTaskID);
 		_can.removePeriodicCallback(_canPeriodAudioTaskID);
-
+		
 		_display.setKnobBackLight(false);
 		_gps.stop();
 		_can.stop();

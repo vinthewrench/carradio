@@ -55,6 +55,7 @@ CANBusMgr::CANBusMgr(){
 	_lastFrameTime  = {};
 	_runningPacketCount = {};
 	_avgPacketsPerSecond = {};
+	_frame_handlers.clear();
 
 	_lastPollTime = {0,0};
 	_pollDelay = 500 ; //  500 milliseconds
@@ -126,6 +127,50 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 		success = true;
 	}
 	return success;
+}
+
+// MARK: -  Frame Handlers
+ 
+ bool CANBusMgr::registerFrameHandler(string ifName, canid_t can_id,  frameHandlerCB_t cb, void* context){
+	
+	for( auto item: _frame_handlers){
+		if(item.ifName == ifName
+			&& item.can_id == can_id
+			&& item.context == context)
+			return false;
+	}
+ 
+	 frame_handler_t handler = {
+		.ifName = ifName,
+		.can_id = can_id,
+		.cb = cb,
+		.context = context
+	};
+	
+	 _frame_handlers.push_back(handler);
+	
+	return true;
+}
+
+void CANBusMgr::unRegisterFrameHandler(string ifName, canid_t can_id, frameHandlerCB_t cb ){
+	
+	_frame_handlers.erase(
+		 std::remove_if(_frame_handlers.begin(), _frame_handlers.end(),
+							 [](const frame_handler_t & item) { return false; }),
+								 _frame_handlers.end());
+}
+
+vector<pair<CANBusMgr::frameHandlerCB_t, void*> >	CANBusMgr::handlerForFrame(string ifName, canid_t can_id){
+	vector<pair<CANBusMgr::frameHandlerCB_t, void*>> decoders = {};
+	
+	for( auto item: _frame_handlers){
+		if(item.ifName == ifName
+			&& item.can_id == can_id ){
+			decoders.push_back(make_pair(item.cb, item.context));
+		}
+	}
+	
+	return decoders;
 }
 
 // MARK: -  OBD polling
@@ -629,6 +674,17 @@ void CANBusMgr::CANReader(){
 					_lastFrameTime[ifName] =  timestamp_secs;
 					_totalPacketCount[ifName]++;
 					_runningPacketCount[ifName]++;
+ 
+					// give handlers a crack at the frame
+					canid_t can_id = frame.can_id & CAN_ERR_MASK;
+					auto handlers = handlerForFrame(ifName, can_id );
+					for(auto d : handlers){
+						frameHandlerCB_t	cb = d.first;
+						void* context 			= d.second;
+						
+						if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
+					}
+
 				}
 			}
 		}

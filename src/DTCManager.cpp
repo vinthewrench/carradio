@@ -359,7 +359,7 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 */
 	
 	
-	auto len =  sizeof(bytes);
+	auto len =  bytes.size();
  	printf("send  %03x [%2d] sid:%02x: |", can_id, (int) len + 1, service_id);
 	
  	for(int i = 0; i < len; i++)

@@ -154,7 +154,10 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid, 	uint16_t len, uint8_t* d
 			 */
 			// send reply NO error
 			
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00},  NULL);
+	//		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00},  NULL);
+
+	sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x02, 0x94,0x86,0x60,0x94,0x81,0x60});
+
 }
 
 void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
@@ -304,10 +307,8 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 516#2148313735303930	'!H175090'
 			 516#2232373531313137	'"2751117'
 			 */
-			
-			string serialNumber = mgr->serialNumber();
-			printf("Serial: |%s|\n", serialNumber.c_str());
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
+ 			string serialNumber = mgr->serialNumber();
+ 			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
 		}
  			break;
  

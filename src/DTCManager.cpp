@@ -294,17 +294,21 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			break;
 
 		case 0xE1:   //   Radio Serial Number  (var)
+		{
 			/*
- 			 cansend can0 6B0#0221E10000000000;  sleep 0.1; cansend can0  6B0#3000000000000000
-
+			 cansend can0 6B0#0221E10000000000;  sleep 0.1; cansend can0  6B0#3000000000000000
+			 
 			 6B0#0221E10000000000	'.!......'
 			 516#1010 61E154313141	'..a.T11A'
 			 6B0#3000000000000000	'0.......'
 			 516#2148313735303930	'!H175090'
 			 516#2232373531313137	'"2751117'
 			 */
-	 
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(mgr->serialNumber()));
+			
+			string serialNumber = mgr->serialNumber();
+			printf("Serial: |%s|\n", serialNumber.c_str());
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
+		}
  			break;
  
 		case 0xEA:  //  ????  (5 bytes)
@@ -343,11 +347,24 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 	
 	bool success = false;
 	
+	
+/* debug with
+ 	candump can0,6b0:7ff,516:7ff -a
+ 
+ 
+ cansend can0 6B0#023e010000000000
+ cansend can0 6B0#041800FF00000000
+ cansend can0 6B0#021A870000000000
+ cansend can0 6B0#0221E10000000000
+*/
+	
+	
 	auto len =  sizeof(bytes);
- 	printf("send  %03x [%2d] %02x ", can_id, (int) len + 1, service_id);
+ 	printf("send  %03x [%2d] sid:%02x: |", can_id, (int) len + 1, service_id);
+	
  	for(int i = 0; i < len; i++)
 		printf("%02x ", bytes[i]);
- 	printf("\n");
+ 	printf("|\n");
 	 
 	
 	return success;

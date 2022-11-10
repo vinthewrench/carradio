@@ -143,6 +143,20 @@ inline std::string removeDiacritics(std::string strIn){
 	
 	return std::string(s1.data(),s1.size());
 }
+
+
+inline std::vector<std::uint8_t> getByteVector(std::string const &s)
+{
+	 std::vector<std::uint8_t> bytes;
+	 bytes.reserve(s.size());
+ 
+	 std::transform(std::begin(s), std::end(s), std::back_inserter(bytes), [](char c){
+		  return std::uint8_t(c);
+	 });
+ 
+	 return bytes;
+}
+
  
 inline size_t find_nth(const  std::string& haystack, size_t pos, const  std::string& needle, size_t nth)
 {

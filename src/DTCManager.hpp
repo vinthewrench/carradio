@@ -37,7 +37,16 @@ private:
 
 	void	processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id,
 									uint16_t len, uint8_t* data);
-		
+
+	void	processWanglerRadioPID21(uint8_t pid);
+	void	processWanglerRadioPID1A(uint8_t pid);
+	void	processWanglerRadioPID18(uint8_t pid, uint16_t len, uint8_t* data);
+
+	void	processISOTPFlowControlFrame(time_t when,  canid_t can_id, uint8_t* data);
+ 
+	bool	sendISOTPReply(canid_t can_id, uint8_t service_id, uint8_t pid,  vector<uint8_t> bytes,  int* error = NULL );
+	bool	sendISOTPReply(canid_t can_id, uint8_t service_id,  vector<uint8_t> bytes,  int* error = NULL );
+
 	bool					_isSetup;
  
  };

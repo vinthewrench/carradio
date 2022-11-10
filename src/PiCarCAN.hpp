@@ -55,7 +55,6 @@ public:
 	void unRegisterFrameHandler(pican_bus_t bus, canid_t can_id, CANBusMgr::frameHandlerCB_t cb );
 
 	// OBD request need to be polled.. this starts and stops the polling
-	
 	bool request_OBDpolling(string key);
 	bool cancel_OBDpolling(string key);
 
@@ -69,6 +68,9 @@ public:
 	
 	bool removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBackID);
 
+	bool sendFrame(pican_bus_t bus, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
+	
+	
 private:
 	bool 				_isSetup = false;
 

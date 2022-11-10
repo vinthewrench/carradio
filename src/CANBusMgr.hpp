@@ -61,8 +61,6 @@ public:
 	void unRegisterFrameHandler(string ifName, canid_t can_id, frameHandlerCB_t cb );
 	vector<pair<frameHandlerCB_t, void*>>	handlerForFrame(string ifName, canid_t can_id);
 	
-	
-
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
 	typedef struct {

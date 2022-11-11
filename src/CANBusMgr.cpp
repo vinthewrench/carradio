@@ -195,8 +195,8 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 		
 		if(REQ){
 		
-			vector<uint8_t> bytes(frame.data,frame.data+len);
-	 
+			vector<uint8_t> bytes(frame.data+1,frame.data+len);
+ 		
 			{
 				printf("rcv  %03x [%2d] ", can_id, (int) len );
 				for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);

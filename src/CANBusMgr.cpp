@@ -394,7 +394,8 @@ bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes, 
 					frame.can_id = can_id;
 					for(int i = 0; i < bytes.size();  i++)
 						frame.data[i]  = bytes[i];
-					frame.can_dlc = bytes.size();
+ 
+					frame.can_dlc = 8 ;  // always send 8 bytes  frames.   bytes.size();
 					
 					if( write(fd, &frame, CAN_MTU) == CAN_MTU) return true;
 					

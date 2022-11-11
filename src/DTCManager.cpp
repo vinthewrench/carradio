@@ -32,7 +32,7 @@ bool DTCManager::begin( ){
  
 	// register Wangler Radio Frame Handler
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-	status = can->registerFrameHandler( PiCarCAN::CAN_JEEP, WRANGLER_RADIO_REQ, processWanglerRadioFrameWrapper, this);
+	status = can->registerISOTPHandler( PiCarCAN::CAN_JEEP, WRANGLER_RADIO_REQ, processWanglerRadioRequestsWrapper, this);
  
 	_isSetup = status;
 	return true;
@@ -43,7 +43,7 @@ void DTCManager::stop(){
 	
 	if(_isSetup  ){
 		PiCarCAN*	can 	= PiCarMgr::shared()->can();
-		can->unRegisterFrameHandler(PiCarCAN::CAN_JEEP, WRANGLER_RADIO_REQ, processWanglerRadioFrameWrapper);
+		can->unRegisterISOTPHandler(PiCarCAN::CAN_JEEP, WRANGLER_RADIO_REQ, processWanglerRadioRequestsWrapper);
 	}
 	
 	_isSetup = false;
@@ -63,88 +63,67 @@ bool  DTCManager::isConnected() {
 
 
 
-void DTCManager::processWanglerRadioFrameWrapper(void* context,
+void DTCManager::processWanglerRadioRequestsWrapper(void* context,
 														 string ifName, canid_t can_id,
-														 can_frame_t frame, unsigned long timeStamp){
+															vector<uint8_t> bytes, unsigned long timeStamp){
 	DTCManager* d = (DTCManager*)context;
 	
-	d->processWanglerRadioFrame(ifName, can_id, frame, timeStamp);
+	d->processWanglerRadioRequests(ifName, can_id, bytes, timeStamp);
 }
 
 
-void DTCManager::processWanglerRadioFrame(string ifName, canid_t can_id, can_frame_t frame, unsigned long timeStamp){
+void DTCManager::processWanglerRadioRequests(string ifName, canid_t can_id, vector<uint8_t> bytes, unsigned long timeStamp){
 	
-	uint8_t frame_type = frame.data[0]>> 4;
-
-	switch( frame_type){
-		case 0: // single frame
-		{
-			uint8_t len = frame.data[0] & 0x07;
-			bool REQ = (frame.data[1] & 0x40)  == 0 ;
-			
-			uint8_t service_id = REQ?frame.data[1]: frame.data[1] & 0x3f;
-
-			// only handle requests
-			if(REQ){
-				processPrivateODB(timeStamp, can_id, service_id,  len -1 , &frame.data[2]);
- 			}
-	 
-		}
-			break;
-			
-		case 3:  //  flow control C  frame
-		 
-		  //	guard code only handle Flow control frame (FC)
-			if(frame.len < 3)  return;
- 			processISOTPFlowControlFrame(timeStamp, can_id, frame.data);
- 	 		break;
-			
-		default: ;
-		 // we only handle single frame message requests
+	uint len = (uint)bytes.size();
+	
+	if(len){
+		uint8_t service_id = bytes[0];
+		bytes.erase(bytes.begin());
+		
+		processPrivateODB(timeStamp, can_id, service_id, bytes);
 	}
-
 }
-
-void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id,
-												uint16_t len, uint8_t* data){
+ 
+void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id, vector<uint8_t> bytes){
 	
 	// mode 21 and 3e/01
+	uint len = (uint)bytes.size();
 	
-	switch (service_id) {
-			
-		case 0x3E:		// heartbeat?
-			if( len > 0 && data[0] == 0x01){
-	 			// send reply as raw frame
-				PiCarCAN*	can 	= PiCarMgr::shared()->can();
-				can->sendFrame(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, {0x01, 0x7E, 0x43, 0x00, 0x00, 0x00, 0x00, 0x00}, NULL);
-			}
-			break;
-	
-		case 0x1A:
-			if( len > 0) {
-				processWanglerRadioPID1A(data[0]);
-			}
-			break;
-
-		case 0x21:
-			if( len > 0) {
-				processWanglerRadioPID21(data[0]);
-			}
-			break;
-
-		case 0x18:
-			if( len > 0) {
-				processWanglerRadioPID18(data[0], len -1, data+1);
-			}
-			break;
-
-		default:
-			break;
+	if( len > 0) {
+		
+		uint8_t pid = bytes[0];
+		bytes.erase(bytes.begin());
+		
+		switch (service_id) {
+				
+			case 0x3E:		// heartbeat?
+				if(pid == 0x01){
+					// send reply as raw frame
+					PiCarCAN*	can 	= PiCarMgr::shared()->can();
+					can->sendFrame(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, {0x01, 0x7E, 0x43, 0x00, 0x00, 0x00, 0x00, 0x00}, NULL);
+				}
+				break;
+				
+			case 0x1A:
+				processWanglerRadioPID1A(pid);
+				break;
+				
+			case 0x21:
+				processWanglerRadioPID21(pid);
+				break;
+				
+			case 0x18:
+				processWanglerRadioPID18(pid, bytes);
+				break;
+				
+			default:
+				break;
+		}
+		
 	}
-
 }
 
-void	DTCManager::processWanglerRadioPID18(uint8_t pid, 	uint16_t len, uint8_t* data){
+void	DTCManager::processWanglerRadioPID18(uint8_t pid,  vector<uint8_t> bytes){
 	
  			/*
 			 
@@ -270,8 +249,8 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 		case 0x11:// EQUALIZER ? (6 bytes)
 		{
 			AudioOutput* audio 	= mgr->audio();
-			
-			vector<uint8_t> data = {
+			// note that equalizer (not vol)  should be  1h(-9) - 0ah (0) - 13h (+9)
+ 			vector<uint8_t> data = {
 				static_cast<uint8_t> ( audio->volume() * 38) ,
 				static_cast<uint8_t> ( ( audio->bass() * 10) + 10),
 				static_cast<uint8_t> ( ( audio->treble() * 10) + 10),
@@ -279,7 +258,6 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 				static_cast<uint8_t> ( ( audio->fader() * 10) + 10),
 				static_cast<uint8_t> ( ( audio->midrange() * 10) + 10)
 			};
-			
 			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
 		}
 			break;
@@ -441,86 +419,15 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 											vector<uint8_t> bytes,
 											int* error){
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();
-
-	bool success = false;
 	
 	uint len = (uint)bytes.size();
 
-// debug
-	{
-		printf("send  %03x [%2d] sid:%02x: |", can_id, (int) len + 1, service_id);
-		for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
-		printf("|\n");
-	}
-	
-	if(len < 6){
-		// is it a single frame?
-		vector<uint8_t> data;
-		data.reserve(len + 2);
- 
-		data.push_back(static_cast<uint8_t> ( len & 0x0f));
-		data.push_back(static_cast<uint8_t> ( service_id & 0x40));
-	 	data.insert(data.end(), bytes.begin(), bytes.end());
-		can->sendFrame(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, data);
- 
-	}
-	else {
-		// multi frame
-	}
-	
-/* debug with
- 	candump can0,6b0:7ff,516:7ff -a
- 
- 
- cansend can0 6B0#023e010000000000
- cansend can0 6B0#041800FF00000000
- cansend can0 6B0#021A870000000000
- cansend can0 6B0#0221E10000000000
-*/
-	
-	return success;
- }
+	// is it a single frame?
+	vector<uint8_t> data;
+	data.reserve(len + 2);
 
- 
-void	DTCManager::processISOTPFlowControlFrame(time_t when,  canid_t can_id,  uint8_t* data){
- 
-	uint8_t fc_flag =  data[0] & 0x4;
-//  0 = Continue To Send,
-//	 1 = Wait,
-//	 2 = Overflow/abort
-	
-	uint8_t block_size =  data[1];
- 	uint8_t ST =  data[2];
-
-#warning write code to process multi frame 
-	/*
-	 The initial byte contains the type (type = 3) in the first four bits,
-	 and a flag in the next four bits indicating if the transfer is allowed
-	 (0 = Clear To Send,
-	 1 = Wait,
-	 2 = Overflow/abort).
-	 The next byte is the block size, the count of frames that may be sent before waiting for the next flow control frame.
-	 A value of zero allows the remaining frames to be sent without flow control or delay.
-	 
-	 The third byte is the Separation Time (ST), the minimum delay time between frames.
-	 ST values up to 127 (0x7F) specify the minimum number of milliseconds to delay between frames,
-	 while values in the range 241 (0xF1) to 249 (0xF9) specify delays increasing from 100 to 900 microseconds.
-	 
-	 Note that the Separation Time is defined as the minimum time between the end of one frame to the beginning of the next.
-	 Robust implementations should be prepared to accept frames from a sender that misinterprets this as the
-	 frame repetition rate i.e. from start-of-frame to start-of-frame.
-	 Even careful implementations may fail to account for the minor effect of bit-stuffing in the physical layer.
-
-	The sender transmits the rest of the message using Consecutive Frames.
-	 Each Consecutive Frame has a one byte PCI, with a four bit type (type = 2) followed by a 4-bit sequence number.
-	 The sequence number starts at 1 and increments with each frame sent (1, 2,..., 15, 0, 1,...),
-	 with which lost or discarded frames can be detected.
-	 
-	 Each consecutive frame starts at 0, initially for the first set of data in the first frame will be considered as 0th data.
-	 So the first set of CF(Consecutive frames) start from "1".
-	 There afterwards when it reaches "15", will be started from "0".
-	 The 12 bit length field (in the FF) allows up to 4095 bytes of user data in a segmented message,
-	 but in practice the typical application-specific limit is considerably lower because of receive buffer or hardware limitations.
-	 */
-	
-}
+	data.push_back(static_cast<uint8_t> ( len & 0x0f));
+	data.push_back(static_cast<uint8_t> ( service_id & 0x40));
+	data.insert(data.end(), bytes.begin(), bytes.end());
+	return can->sendFrame(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, data);
+  }

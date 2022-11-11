@@ -129,9 +129,9 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 	return success;
 }
 
-// MARK: -  Frame Handlers
+// MARK: -  ISOTP Handlers
  
- bool CANBusMgr::registerFrameHandler(string ifName, canid_t can_id,  frameHandlerCB_t cb, void* context){
+ bool CANBusMgr::registerISOTPHandler(string ifName, canid_t can_id,  ISOTPHandlerCB_t cb, void* context){
 	
 	for( auto item: _frame_handlers){
 		if(item.ifName == ifName
@@ -152,7 +152,7 @@ bool CANBusMgr::registerProtocol(string ifName,  CanProtocol *protocol){
 	return true;
 }
 
-void CANBusMgr::unRegisterFrameHandler(string ifName, canid_t can_id, frameHandlerCB_t cb ){
+void CANBusMgr::unRegisterISOTPHandler(string ifName, canid_t can_id, ISOTPHandlerCB_t cb ){
 	
 	_frame_handlers.erase(
 		 std::remove_if(_frame_handlers.begin(), _frame_handlers.end(),
@@ -160,8 +160,8 @@ void CANBusMgr::unRegisterFrameHandler(string ifName, canid_t can_id, frameHandl
 								 _frame_handlers.end());
 }
 
-vector<pair<CANBusMgr::frameHandlerCB_t, void*> >	CANBusMgr::handlerForFrame(string ifName, canid_t can_id){
-	vector<pair<CANBusMgr::frameHandlerCB_t, void*>> decoders = {};
+vector<pair<CANBusMgr::ISOTPHandlerCB_t, void*> >	CANBusMgr::handlerForCanID(string ifName, canid_t can_id){
+	vector<pair<CANBusMgr::ISOTPHandlerCB_t, void*>> decoders = {};
 	
 	for( auto item: _frame_handlers){
 		if(item.ifName == ifName
@@ -173,6 +173,234 @@ vector<pair<CANBusMgr::frameHandlerCB_t, void*> >	CANBusMgr::handlerForFrame(str
 	return decoders;
 }
 
+template<typename T, size_t N>
+vector<T> convert_array_to_vector(const T (&source_array)[N]) {
+	 return vector<T>(source_array, source_array+N);
+}
+
+void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned long  timeStamp){
+	
+// are there any handlers for this canID
+	canid_t can_id = frame.can_id & CAN_ERR_MASK;
+	auto handlers = handlerForCanID(ifName, can_id );
+	if(handlers.size() == 0) return;
+	
+	uint8_t frame_type = frame.data[0]>> 4;
+	
+	// is it a single frame request
+	if(frame_type == 0){
+		
+		uint8_t len = frame.data[0] & 0x07;
+		bool REQ = (frame.data[1] & 0x40)  == 0 ;
+		
+		if(REQ){
+		
+			vector<uint8_t> bytes(frame.data,frame.data+len);
+	 
+			for(auto d : handlers){
+				
+				ISOTPHandlerCB_t	cb = d.first;
+				void* context 			= d.second;
+
+				if(cb) (cb)(context,ifName, can_id, bytes, timeStamp);
+			}
+		}
+		else if(frame_type == 3){
+			//  flow control C  frame
+			
+		}
+	}
+}
+
+
+//
+//	for(auto d : handlers){
+//
+//		ISOTPHandlerCB_t	cb = d.first;
+//		void* context 			= d.second;
+		
+		
+//		if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
+//	}
+
+	/*
+	 canid_t can_id = frame.can_id & CAN_ERR_MASK;
+	 auto handlers = handlerForCanID(ifName, can_id );
+	 for(auto d : handlers){
+		 ISOTPHandlerCB_t	cb = d.first;
+		 void* context 			= d.second;
+		 
+		 
+		 if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
+	 }
+
+	
+	 
+ //	uint8_t frame_type = frame.data[0]>> 4;
+ //
+ //	switch( frame_type){
+ //		case 0: // single frame
+ //		{
+ //			uint8_t len = frame.data[0] & 0x07;
+ //			bool REQ = (frame.data[1] & 0x40)  == 0 ;
+ //
+ //			uint8_t service_id = REQ?frame.data[1]: frame.data[1] & 0x3f;
+ //
+ //			// only handle requests
+ //			if(REQ){
+ //				processPrivateODB(timeStamp, can_id, service_id,  len -1 , &frame.data[2]);
+ // 			}
+ //
+ //		}
+ //			break;
+ //
+ //		case 3:  //  flow control C  frame
+ //
+ //		  //	guard code only handle Flow control frame (FC)
+ //			if(frame.len < 3)  return;
+ // 			processISOTPFlowControlFrame(timeStamp, can_id, frame.data);
+ // 	 		break;
+ //
+ //		default: ;
+ //		 // we only handle single frame message requests
+ //	}
+*/
+	
+	
+	//
+ //void	DTCManager::processISOTPFlowControlFrame(time_t when,  canid_t can_id,  uint8_t* data){
+ //
+ //	uint8_t fc_flag =  data[0] & 0x4;
+ ////  0 = Continue To Send,
+ ////	 1 = Wait,
+ ////	 2 = Overflow/abort
+ //
+ //	uint8_t block_size =  data[1];
+ // 	uint8_t ST =  data[2];
+ //
+ //#warning write code to process multi frame
+ //	/*
+ //	 The initial byte contains the type (type = 3) in the first four bits,
+ //	 and a flag in the next four bits indicating if the transfer is allowed
+ //	 (0 = Clear To Send,
+ //	 1 = Wait,
+ //	 2 = Overflow/abort).
+ //	 The next byte is the block size, the count of frames that may be sent before waiting for the next flow control frame.
+ //	 A value of zero allows the remaining frames to be sent without flow control or delay.
+ //
+ //	 The third byte is the Separation Time (ST), the minimum delay time between frames.
+ //	 ST values up to 127 (0x7F) specify the minimum number of milliseconds to delay between frames,
+ //	 while values in the range 241 (0xF1) to 249 (0xF9) specify delays increasing from 100 to 900 microseconds.
+ //
+ //	 Note that the Separation Time is defined as the minimum time between the end of one frame to the beginning of the next.
+ //	 Robust implementations should be prepared to accept frames from a sender that misinterprets this as the
+ //	 frame repetition rate i.e. from start-of-frame to start-of-frame.
+ //	 Even careful implementations may fail to account for the minor effect of bit-stuffing in the physical layer.
+ //
+ //	The sender transmits the rest of the message using Consecutive Frames.
+ //	 Each Consecutive Frame has a one byte PCI, with a four bit type (type = 2) followed by a 4-bit sequence number.
+ //	 The sequence number starts at 1 and increments with each frame sent (1, 2,..., 15, 0, 1,...),
+ //	 with which lost or discarded frames can be detected.
+ //
+ //	 Each consecutive frame starts at 0, initially for the first set of data in the first frame will be considered as 0th data.
+ //	 So the first set of CF(Consecutive frames) start from "1".
+ //	 There afterwards when it reaches "15", will be started from "0".
+ //	 The 12 bit length field (in the FF) allows up to 4095 bytes of user data in a segmented message,
+ //	 but in practice the typical application-specific limit is considerably lower because of receive buffer or hardware limitations.
+ //	 */
+ //
+ //}
+ 
+ 
+bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,  int* error){
+	bool success = false;
+	
+	uint len = (uint)bytes.size();
+
+// debug
+	{
+		printf("send  %03x [%2d] ", can_id, (int) len );
+		for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
+		printf("|\n");
+	}
+	
+	if(len < 9){
+		sendFrame(ifName,can_id, bytes);
+ 	}
+	else {
+		// multi frame
+/*
+		auto it = _multi_frame.find(can_id);
+		if(it != _multi_frame.end()){
+		
+		// similar to ODB but private
+		typedef struct {
+			canid_t			can_id;
+			uint8_t			service_id;
+			uint8_t			pid;
+			uint8_t			separation_delay;
+			uint8_t			rollingcnt; 	// next expected cnt
+			uint16_t			total_len;
+			uint16_t			current_len;
+
+			uint8_t			buffer[4096];
+			} isotp_state_t;
+
+
+		*/
+	
+/* debug with
+	candump can0,6b0:7ff,516:7ff -a
+ 
+ 
+ cansend can0 6B0#023e010000000000
+ cansend can0 6B0#041800FF00000000
+ cansend can0 6B0#021A870000000000
+ cansend can0 6B0#0221E10000000000
+*/
+	
+	}
+	return success;
+}
+
+
+bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *errorOut){
+
+	int error = EBADF;
+	 
+	if (bytes.size() < 1 || bytes.size() > 8) {
+		error = EMSGSIZE;
+	}
+//	else if (can_id > 0 )  {
+//		error = EBADF;
+//	}
+	else if(!ifName.empty()){
+		for (auto& [key, fd]  : _interfaces){
+			if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
+				if(fd != -1){
+						// create packet
+	 
+					struct can_frame frame;
+					memset(&frame, 0, sizeof frame);
+					
+					frame.can_id = can_id;
+					for(int i = 0; i < bytes.size();  i++)
+						frame.data[i]  = bytes[i];
+					frame.can_dlc = bytes.size();
+					
+					if( write(fd, &frame, CAN_MTU) == CAN_MTU) return true;
+					
+					error  = errno;
+				}
+				break;
+			}
+		}
+	}
+	
+	if(errorOut) *errorOut = error;
+	return false;
+}
+ 
 // MARK: -  OBD polling
 
 
@@ -353,43 +581,6 @@ bool CANBusMgr::stop(string ifName, int &error){
 }
 
 
-bool CANBusMgr::sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *errorOut){
-
-	int error = EBADF;
-	 
-	if (bytes.size() < 1 || bytes.size() > 8) {
-		error = EMSGSIZE;
- 	}
-//	else if (can_id > 0 )  {
-//		error = EBADF;
-//	}
-	else if(!ifName.empty()){
-		for (auto& [key, fd]  : _interfaces){
-			if (strcasecmp(key.c_str(), ifName.c_str()) == 0){
-				if(fd != -1){
-						// create packet
-	 
-					struct can_frame frame;
-					memset(&frame, 0, sizeof frame);
-					
-					frame.can_id = can_id;
-					for(int i = 0; i < bytes.size();  i++)
-						frame.data[i]  = bytes[i];
-					frame.can_dlc = bytes.size();
-					
-					if( write(fd, &frame, CAN_MTU) == CAN_MTU) return true;
-					
-					error  = errno;
-				}
-				break;
-			}
-		}
-	}
-	
-	if(errorOut) *errorOut = error;
-	return false;
-}
- 
 
 
 bool CANBusMgr::lastFrameTime(string ifName, time_t &timeOut){
@@ -676,15 +867,7 @@ void CANBusMgr::CANReader(){
 					_runningPacketCount[ifName]++;
  
 					// give handlers a crack at the frame
-					canid_t can_id = frame.can_id & CAN_ERR_MASK;
-					auto handlers = handlerForFrame(ifName, can_id );
-					for(auto d : handlers){
-						frameHandlerCB_t	cb = d.first;
-						void* context 			= d.second;
-						
-						if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
-					}
-
+					processISOTPFrame(ifName, frame, timestamp_secs);
 				}
 			}
 		}

@@ -162,19 +162,19 @@ bool PiCarCAN::removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBack
 
 
 // frame handler
-bool PiCarCAN::registerFrameHandler(pican_bus_t bus,
+bool PiCarCAN::registerISOTPHandler(pican_bus_t bus,
 												canid_t can_id,
-												CANBusMgr::frameHandlerCB_t  cb,  void* context){
+												CANBusMgr::ISOTPHandlerCB_t  cb,  void* context){
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
-	return _CANbus.registerFrameHandler(ifName, can_id, cb, context);
+	return _CANbus.registerISOTPHandler(ifName, can_id, cb, context);
 }
 
 
 
-void PiCarCAN::unRegisterFrameHandler(pican_bus_t bus, canid_t can_id, CANBusMgr::frameHandlerCB_t cb ){
+void PiCarCAN::unRegisterISOTPHandler(pican_bus_t bus, canid_t can_id, CANBusMgr::ISOTPHandlerCB_t cb ){
 	
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
-	return _CANbus.unRegisterFrameHandler(ifName, can_id, cb);
+	return _CANbus.unRegisterISOTPHandler(ifName, can_id, cb);
 }
 
 
@@ -182,3 +182,9 @@ bool PiCarCAN::sendFrame(pican_bus_t bus, canid_t can_id, vector<uint8_t> bytes,
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
 	return _CANbus.sendFrame(ifName, can_id, bytes, error);
 }
+
+bool PiCarCAN::sendISOTP(pican_bus_t bus, canid_t can_id,  vector<uint8_t> bytes,  int* error ){
+	string ifName  = bus == CAN_ALL?"":bus_map[bus];
+	return _CANbus.sendISOTP(ifName, can_id, bytes, error);
+}
+

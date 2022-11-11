@@ -52,15 +52,19 @@ public:
 
 	bool resetPacketCount(string ifName);
 	
-	// frame handlers
+	// ISOTP  handlers
  	typedef std::function<void(void* context,
-										string ifName, canid_t can_id, can_frame_t frame,
-										unsigned long timeStamp)> frameHandlerCB_t;
+										string ifName, canid_t can_id, vector<uint8_t> bytes,
+										unsigned long timeStamp)> ISOTPHandlerCB_t;
 
-	bool registerFrameHandler(string ifName, canid_t can_id,  frameHandlerCB_t  cb = NULL, void* context = NULL);
-	void unRegisterFrameHandler(string ifName, canid_t can_id, frameHandlerCB_t cb );
-	vector<pair<frameHandlerCB_t, void*>>	handlerForFrame(string ifName, canid_t can_id);
+	bool registerISOTPHandler(string ifName, canid_t can_id,  ISOTPHandlerCB_t  cb = NULL, void* context = NULL);
 	
+	void unRegisterISOTPHandler(string ifName, canid_t can_id, ISOTPHandlerCB_t cb );
+	
+	vector<pair<ISOTPHandlerCB_t, void*>>	handlerForCanID(string ifName, canid_t can_id);
+	
+	bool sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,  int* error = NULL );
+
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
 	typedef struct {
@@ -105,6 +109,8 @@ private:
 	void 				processOBDrequests();
 	void 				processPeriodicRequests();
 
+	void				processISOTPFrame(string ifName, can_frame_t frame, unsigned long  timeStamp);
+ 
 	map<string, int> 		_interfaces = {};
 	map<string, time_t> 	_lastFrameTime = {};
 	map<string, size_t> 	_totalPacketCount = {};
@@ -134,7 +140,7 @@ private:
 	typedef struct {
 		string 				ifName;
 		canid_t 				can_id;
-		frameHandlerCB_t	cb;
+		ISOTPHandlerCB_t	cb;
 		void					*context;
 	} frame_handler_t;
  

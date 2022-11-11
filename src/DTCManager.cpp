@@ -273,11 +273,11 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			
 			vector<uint8_t> data = {
 				static_cast<uint8_t> ( audio->volume() * 38) ,
-				static_cast<uint8_t> ( ( audio->bass() * 10) + 9),
-				static_cast<uint8_t> ( ( audio->treble() * 10) + 9),
-				static_cast<uint8_t> ( ( audio->balance() * 10) + 9),
-				static_cast<uint8_t> ( ( audio->fader() * 10) + 9),
-				static_cast<uint8_t> ( ( audio->midrange() * 10) + 9)
+				static_cast<uint8_t> ( ( audio->bass() * 10) + 10),
+				static_cast<uint8_t> ( ( audio->treble() * 10) + 10),
+				static_cast<uint8_t> ( ( audio->balance() * 10) + 10),
+				static_cast<uint8_t> ( ( audio->fader() * 10) + 10),
+				static_cast<uint8_t> ( ( audio->midrange() * 10) + 10)
 			};
 			
 			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
@@ -492,6 +492,7 @@ void	DTCManager::processISOTPFlowControlFrame(time_t when,  canid_t can_id,  uin
 	uint8_t block_size =  data[1];
  	uint8_t ST =  data[2];
 
+#warning write code to process multi frame 
 	/*
 	 The initial byte contains the type (type = 3) in the first four bits,
 	 and a flag in the next four bits indicating if the transfer is allowed

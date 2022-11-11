@@ -442,7 +442,7 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 	vector<uint8_t> data;
 	data.reserve(len + 1);
 
-	data.push_back(static_cast<uint8_t> ( service_id & 0x40));
+	data.push_back(static_cast<uint8_t> ( service_id | 0x40));
 	data.insert(data.end(), bytes.begin(), bytes.end());
 	
 	return can->sendISOTP(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, data);

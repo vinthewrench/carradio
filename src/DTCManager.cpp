@@ -86,18 +86,14 @@ void DTCManager::processWanglerRadioRequests(string ifName, canid_t can_id, vect
  
 void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id, vector<uint8_t> bytes){
 	
-	// mode 21 and 3e/01
+	
+	//		{
+	//			printf("rcv  %03x %02x [%2d] ", can_id, service_id, (int) bytes.size() );
+	//			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
+	//			printf("|\n");
+	//		}
+	
 	uint len = (uint)bytes.size();
-	
-	
-		{
-			printf("rcv  %03x %02x [%2d] ", can_id, service_id, (int) bytes.size() );
-			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
-			printf("|\n");
-		}
-
-
-	
 	if( len > 0) {
 		
 		uint8_t pid = bytes[0];
@@ -148,7 +144,17 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid,  vector<uint8_t> bytes){
 			// send reply NO error
 			
 //		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00});  // no error
- 		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x02, 0x94,0x86,0x60,0x94,0x81,0x60});
+	sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x09,
+		0x94,0x80,0x60,
+		0x94,0x81,0x60,
+		0x94,0x82,0x60 ,
+		0x94,0x83,0x60,
+		0x94,0x84,0x60,
+		0x94,0x85,0x60 ,
+		0x94,0x86,0x60,
+		0x94,0x87,0x60,
+		0x94,0x88,0x60,
+ 	});
 
 }
 

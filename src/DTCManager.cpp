@@ -8,13 +8,15 @@
 #include "DTCManager.hpp"
 #include "PiCarMgr.hpp"
 #include "PiCarCAN.hpp"
- 
+#include "RadioMgr.hpp"
+#include "AudioOutput.hpp"
+
 constexpr canid_t WRANGLER_RADIO_REQ = 0x6B0;
 constexpr canid_t WRANGLER_RADIO_REPLY = 0x516;
 
 DTCManager::DTCManager(){
 	_isSetup = false;
-
+	_multi_frame.clear();
 }
 
 DTCManager::~DTCManager(){
@@ -91,7 +93,10 @@ void DTCManager::processWanglerRadioFrame(string ifName, canid_t can_id, can_fra
 			break;
 			
 		case 3:  //  flow control C  frame
-			processISOTPFlowControlFrame(timeStamp, can_id, frame.data);
+		 
+		  //	guard code only handle Flow control frame (FC)
+			if(frame.len < 3)  return;
+ 			processISOTPFlowControlFrame(timeStamp, can_id, frame.data);
  	 		break;
 			
 		default: ;
@@ -154,9 +159,8 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid, 	uint16_t len, uint8_t* d
 			 */
 			// send reply NO error
 			
-	//		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00},  NULL);
-
-	sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x02, 0x94,0x86,0x60,0x94,0x81,0x60});
+//		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00});  // no error
+ 		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x02, 0x94,0x86,0x60,0x94,0x81,0x60});
 
 }
 
@@ -205,13 +209,22 @@ void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 	
 	PiCarMgr*	mgr 	= PiCarMgr::shared();
-
+	RadioMgr*					radio 	= mgr->radio();
+	
 	switch (pid) {
 			
-		case 0x09:  //Antenna Detect ( 2 Bytes)
+		case 0x09:  //Antenna Detect ( 1 Bytes)
+			//			19	  Audio detect true
+			//			11    Audio detect false
+			//			11    antenna present
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x19});
 			break;
 			
-		case 0x0E: // Signal strength  ( 2 Bytes)
+		case 0x0E: // Signal strength  ( 1 byte)
+		{
+			uint8_t signal_strenth = 100; //  AM FM signal strength 	0-120
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {signal_strenth});
+		}
 			break;
 			
 		case 0x10: // Mode (6 bytes)
@@ -221,21 +234,95 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [6] 0f 00 07 00 01 0f  == SAT
 			 [6] 0f 00 07 00 02 0f  == AUX
 			 */
+		{
+			RadioMgr::radio_mode_t  mode  = radio->radioMode();
+			vector<uint8_t> data = {0x0f, 0x00, 0x07};
+			
+			switch(mode){
+				case RadioMgr::BROADCAST_AM:
+					data.push_back(0x02);
+					data.push_back(0x00);
+					break;
+					
+				case RadioMgr::BROADCAST_FM:
+				case RadioMgr::VHF:
+				case RadioMgr::GMRS:
+					data.push_back(0x04);
+					data.push_back(0x00);
+					break;
+					
+				case RadioMgr::AUX:
+				case RadioMgr::AIRPLAY:
+					data.push_back(0x00);
+					data.push_back(0x01);
+					break;
+					
+				default:
+					data.push_back(0x00);
+					data.push_back(0x00);
+					break;
+			}
+			data.push_back(0x0F);
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+		}
 			break;
 			
 		case 0x11:// EQUALIZER ? (6 bytes)
+		{
+			AudioOutput* audio 	= mgr->audio();
+			
+			vector<uint8_t> data = {
+				static_cast<uint8_t> ( audio->volume() * 38) ,
+				static_cast<uint8_t> ( ( audio->bass() * 10) + 9),
+				static_cast<uint8_t> ( ( audio->treble() * 10) + 9),
+				static_cast<uint8_t> ( ( audio->balance() * 10) + 9),
+				static_cast<uint8_t> ( ( audio->fader() * 10) + 9),
+				static_cast<uint8_t> ( ( audio->midrange() * 10) + 9)
+			};
+			
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+		}
 			break;
 			
-		case 0x12: // FM Frequency	(6 Bytes)
+		case 0x12: //  Frequency	(6 Bytes)
+		{
+			RadioMgr::radio_mode_t  mode  = radio->radioMode();
+			//			00	00	yy	yy	xx xx
+			//				yyyy = FM Freq (04 37= 107.9, 03 6d =87.7)
+			//				xxxx =  AM Freq (005a0 = 1440)
+			
+			if(mode == RadioMgr::BROADCAST_FM){
+				uint16_t  freq =  radio->frequency() /1.0e5;
+				vector<uint8_t> data = { 0x00, 0x00,  0x00, 0x00,
+					static_cast<uint8_t> (freq >> 8),
+					static_cast<uint8_t> (freq & 0xFF) };
+				sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+			}
+			else {
+				sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, { 0x00, 0x00,  0x00, 0x00, 0x00, 0x00});
+				
+			}
+		}
 			break;
 			
 		case 0x16: // Model code	(10 bytes)
+		{
+			//  |....RES...|  ???
+			vector<uint8_t> data = { 0x00, 0x00, 0x00, 0x00, 0x52, 0x45, 0x53, 0x20, 0x10, 0x00 };
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+		}
 			break;
 			
-		case 0x18: //Market (2 bytes)
+		case 0x18: //Market (1 bytes)
+			// USA market
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00});
 			break;
 			
 		case 0x25:  // Sirius ID (var)
+		{
+			string SiriusID = "044056306622";
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(SiriusID));
+		}
 			break;
 			
 		case 0x30:  // key position (6 bytes)
@@ -247,27 +334,32 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [6] 41 01 00 48 2a 00 		= OFF radio off
 			 [6] 40 01 00 48 20 00 		= OFF radio off
 			 */
+#warning  FINISH key position
 			break;
 			
-		case 0x34: // ????  (6 bytes)
+		case 0x34: // ????  (5 bytes)
 			/*
-			 [6] 00 00 00 00 04 CC
+			 [5] 00 00 00 00 04
 			 */
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00, 0x00, 0x00, 0x00, 0x04});
 			break;
 			
 		case 0x35: // Language pref english??  (6 bytes)
 			/*
-			 [6] 01 01 FF 00 00 CC
+			 [5]  01 01 FF 00 00
 			 */
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x01, 0x01, 0xFF, 0x00, 0x00});
 			break;
 			
 		case 0x36: // ????  (6 bytes)
 			/*
-			 [6] 03 00 00 00 00 CC
+			 [5] 03 00 00 00 00
 			 */
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x03, 0x00, 0x00, 0x00, 0x00});
 			break;
 			
 		case 0x44://  VIN REQUEST  (Var)   [ 7 bytes ] [ SEQ #, 0,1,2]
+#warning  FINISH VIN REQUEST
 			/*
 			 44	12	31	39	41	4C	32	32	30	01	2D	39	A7	01	01	FF	FF	00	00	00	|19AL220.-9........|
 			 44	12	31	4A	34	42	41	36	48	00	2D	39	A7	01	01	FF	FF	00	00	00	|1J4BA6H.-9........|
@@ -280,22 +372,26 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [5] 00 FF 00 00 30
 			 [5] 00 FF 00 00 00
 			 [5] 00 FF 00 00 A7
-			 */
-			break;
+ 			 */
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00, 0xFF, 0x00, 0x00, 0x00});
+ 			break;
 			
 		case 0x50: // ????  (6 bytes)
 			/*
 			 [6] 50 06 00 10 00 0A 0A 00
-			 [6] 50 06 00 00 00 0A 0A 00
+			 [6]
 			 */
-			break;
-	
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x50, 0x06, 0x00, 0x00, 0x00, 0x0A, 0x0A, 0x00});
+ 			break;
+			
 		case 0x52: // ????  (13 bytes)
 			/*
-			 00	00	0A	07	01	0A	00	FF	00	00	00	00	02			|.............|
- 			 */
-			break;
-
+			 00 00 0A 07 01 0A 00 FF 00 00 00 00 02
+			 */
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid,
+				{0x00 ,0x00, 0x0A, 0x07, 0x01, 0x0A, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x02});
+  			break;
+			
 		case 0xE1:   //   Radio Serial Number  (var)
 		{
 			/*
@@ -307,23 +403,22 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 516#2148313735303930	'!H175090'
 			 516#2232373531313137	'"2751117'
 			 */
- 			string serialNumber = mgr->serialNumber();
- 			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
+			string serialNumber = mgr->serialNumber();
+			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
 		}
- 			break;
- 
+			break;
+			
 		case 0xEA:  //  ????  (5 bytes)
 			/*
 			 can0  6B0   [8]  02 21 EA 00 00 00 00 00   '.!......'
 			 can0  516   [8]  06 61 EA 05 58 98 80 00   '.a..X...'
-
+			 
 			 [5] 05 58 98 80 00
- 			 */
+			 */
 			
 			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid,  {0x05, 0x58, 0x98, 0x80} );
-
 			break;
-
+			
 		default:
 			break;
 	}
@@ -345,9 +440,33 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id, uint8_t pid,
 bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 											vector<uint8_t> bytes,
 											int* error){
-	
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+
 	bool success = false;
 	
+	uint len = (uint)bytes.size();
+
+// debug
+	{
+		printf("send  %03x [%2d] sid:%02x: |", can_id, (int) len + 1, service_id);
+		for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
+		printf("|\n");
+	}
+	
+	if(len < 6){
+		// is it a single frame?
+		vector<uint8_t> data;
+		data.reserve(len + 2);
+ 
+		data.push_back(static_cast<uint8_t> ( len & 0x0f));
+		data.push_back(static_cast<uint8_t> ( service_id & 0x40));
+	 	data.insert(data.end(), bytes.begin(), bytes.end());
+		can->sendFrame(PiCarCAN::CAN_JEEP,  WRANGLER_RADIO_REPLY, data);
+ 
+	}
+	else {
+		// multi frame
+	}
 	
 /* debug with
  	candump can0,6b0:7ff,516:7ff -a
@@ -359,19 +478,48 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
  cansend can0 6B0#0221E10000000000
 */
 	
-	
-	auto len =  bytes.size();
- 	printf("send  %03x [%2d] sid:%02x: |", can_id, (int) len + 1, service_id);
-	
- 	for(int i = 0; i < len; i++)
-		printf("%02x ", bytes[i]);
- 	printf("|\n");
-	 
-	
 	return success;
  }
 
  
 void	DTCManager::processISOTPFlowControlFrame(time_t when,  canid_t can_id,  uint8_t* data){
-  
+ 
+	uint8_t fc_flag =  data[0] & 0x4;
+//  0 = Continue To Send,
+//	 1 = Wait,
+//	 2 = Overflow/abort
+	
+	uint8_t block_size =  data[1];
+ 	uint8_t ST =  data[2];
+
+	/*
+	 The initial byte contains the type (type = 3) in the first four bits,
+	 and a flag in the next four bits indicating if the transfer is allowed
+	 (0 = Clear To Send,
+	 1 = Wait,
+	 2 = Overflow/abort).
+	 The next byte is the block size, the count of frames that may be sent before waiting for the next flow control frame.
+	 A value of zero allows the remaining frames to be sent without flow control or delay.
+	 
+	 The third byte is the Separation Time (ST), the minimum delay time between frames.
+	 ST values up to 127 (0x7F) specify the minimum number of milliseconds to delay between frames,
+	 while values in the range 241 (0xF1) to 249 (0xF9) specify delays increasing from 100 to 900 microseconds.
+	 
+	 Note that the Separation Time is defined as the minimum time between the end of one frame to the beginning of the next.
+	 Robust implementations should be prepared to accept frames from a sender that misinterprets this as the
+	 frame repetition rate i.e. from start-of-frame to start-of-frame.
+	 Even careful implementations may fail to account for the minor effect of bit-stuffing in the physical layer.
+
+	The sender transmits the rest of the message using Consecutive Frames.
+	 Each Consecutive Frame has a one byte PCI, with a four bit type (type = 2) followed by a 4-bit sequence number.
+	 The sequence number starts at 1 and increments with each frame sent (1, 2,..., 15, 0, 1,...),
+	 with which lost or discarded frames can be detected.
+	 
+	 Each consecutive frame starts at 0, initially for the first set of data in the first frame will be considered as 0th data.
+	 So the first set of CF(Consecutive frames) start from "1".
+	 There afterwards when it reaches "15", will be started from "0".
+	 The 12 bit length field (in the FF) allows up to 4095 bytes of user data in a segmented message,
+	 but in practice the typical application-specific limit is considerably lower because of receive buffer or hardware limitations.
+	 */
+	
 }

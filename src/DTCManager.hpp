@@ -49,4 +49,20 @@ private:
 
 	bool					_isSetup;
  
+	
+	// similar to ODB but private
+	typedef struct {
+		canid_t			can_id;
+		uint8_t			service_id;
+		uint8_t			pid;
+		uint8_t			separation_delay;
+		uint8_t			rollingcnt; 	// next expected cnt
+		uint16_t			total_len;
+		uint16_t			current_len;
+
+		uint8_t			buffer[4096];
+		} isotp_state_t;
+	
+	map<canid_t,isotp_state_t> _multi_frame ={};
+	
  };

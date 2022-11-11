@@ -180,7 +180,7 @@ vector<T> convert_array_to_vector(const T (&source_array)[N]) {
 
 void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned long  timeStamp){
 	
-// are there any handlers for this canID
+	// are there any handlers for this canID
 	canid_t can_id = frame.can_id & CAN_ERR_MASK;
 	auto handlers = handlerForCanID(ifName, can_id );
 	if(handlers.size() == 0) return;
@@ -191,32 +191,34 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 	if(frame_type == 0){
 		
 		uint8_t len = frame.data[0] & 0x07;
-		bool REQ = (frame.data[1] & 0x40)  == 0 ;
+		uint8_t* data = &frame.data[1];
+		//		bool REQ = (data[0] & 0x40)  == 0 ;
+		//
+		//		if(REQ ){
+		vector<uint8_t> bytes;
+		bytes.reserve(len);
+		std::copy(data, data + len, std::back_inserter(bytes));
 		
-		if(REQ){
-		
-			vector<uint8_t> bytes(frame.data+1,frame.data+len);
- 		
-			{
-				printf("rcv  %03x [%2d] ", can_id, (int) len );
-				for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
-				printf("|\n");
-			}
-
-			
-			for(auto d : handlers){
-				
-				ISOTPHandlerCB_t	cb = d.first;
-				void* context 			= d.second;
-
-				if(cb) (cb)(context,ifName, can_id, bytes, timeStamp);
-			}
+		{
+			printf("rcv  %03x [%2d] ", can_id, (int) bytes.size() );
+			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
+			printf("|\n");
 		}
-		else if(frame_type == 3){
-			//  flow control C  frame
+		
+		
+		for(auto d : handlers){
 			
+			ISOTPHandlerCB_t	cb = d.first;
+			void* context 			= d.second;
+			
+			if(cb) (cb)(context,ifName, can_id, bytes, timeStamp);
 		}
 	}
+	else if(frame_type == 3){
+		//  flow control C  frame
+		
+	}
+	
 }
 
 

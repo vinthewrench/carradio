@@ -198,14 +198,13 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 		vector<uint8_t> bytes;
 		bytes.reserve(len);
 		std::copy(data, data + len, std::back_inserter(bytes));
-		
-		{
-			printf("rcv  %03x [%2d] ", can_id, (int) bytes.size() );
-			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
-			printf("|\n");
-		}
-		
-		
+//		
+//		{
+//			printf("rcv  %03x [%2d] ", can_id, (int) bytes.size() );
+//			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
+//			printf("|\n");
+//		}
+//		
 		for(auto d : handlers){
 			
 			ISOTPHandlerCB_t	cb = d.first;

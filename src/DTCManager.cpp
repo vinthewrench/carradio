@@ -89,6 +89,15 @@ void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service
 	// mode 21 and 3e/01
 	uint len = (uint)bytes.size();
 	
+	
+		{
+			printf("rcv  %03x %02x [%2d] ", can_id, service_id, (int) bytes.size() );
+			for(int i = 0; i < bytes.size(); i++) printf("%02x ", bytes[i]);
+			printf("|\n");
+		}
+
+
+	
 	if( len > 0) {
 		
 		uint8_t pid = bytes[0];

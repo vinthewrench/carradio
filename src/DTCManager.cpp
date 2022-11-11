@@ -16,7 +16,6 @@ constexpr canid_t WRANGLER_RADIO_REPLY = 0x516;
 
 DTCManager::DTCManager(){
 	_isSetup = false;
-	_multi_frame.clear();
 }
 
 DTCManager::~DTCManager(){
@@ -77,15 +76,17 @@ void DTCManager::processWanglerRadioRequests(string ifName, canid_t can_id, vect
 	uint len = (uint)bytes.size();
 	
 	if(len){
-		uint8_t service_id = bytes[0];
-		bytes.erase(bytes.begin());
-		
-		processPrivateODB(timeStamp, can_id, service_id, bytes);
+		bool isRequest = (bytes[0] & 0x40)  == 0 ;
+		uint8_t service_id = bytes[0] & 0x3f;
+ 		bytes.erase(bytes.begin());
+		processPrivateODB(timeStamp, can_id, service_id, isRequest, bytes);
 	}
 }
  
-void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id, vector<uint8_t> bytes){
-	
+void	DTCManager::processPrivateODB(time_t when,  canid_t can_id, uint8_t service_id, bool isRequest, vector<uint8_t> bytes){
+ 
+	// only process requests
+	if(!isRequest) return;
 	
 	//		{
 	//			printf("rcv  %03x %02x [%2d] ", can_id, service_id, (int) bytes.size() );
@@ -439,9 +440,8 @@ bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
 
 	// is it a single frame?
 	vector<uint8_t> data;
-	data.reserve(len + 2);
+	data.reserve(len + 1);
 
-	data.push_back(static_cast<uint8_t> ( len & 0x0f));
 	data.push_back(static_cast<uint8_t> ( service_id & 0x40));
 	data.insert(data.end(), bytes.begin(), bytes.end());
 	

@@ -332,8 +332,14 @@ bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,
 		printf("|\n");
 	}
 	
-	if(len < 9){
-		sendFrame(ifName,can_id, bytes);
+	if(len < 8){
+		
+		// add length in front and create single frame.
+		vector<uint8_t> data;
+		data.reserve(bytes.size() + 1);
+ 		data.push_back(static_cast<uint8_t> ( len & 0x0f));
+		data.insert(data.end(), bytes.begin(), bytes.end());
+ 		sendFrame(ifName,can_id, data);
  	}
 	else {
 		// multi frame

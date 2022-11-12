@@ -143,9 +143,11 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid,  vector<uint8_t> bytes){
 			 
 			 */
 			// send reply NO error
-			
-//		sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x00});  // no error
-	sendISOTPReply( WRANGLER_RADIO_REPLY, 0x18, {0x09,
+	
+	//  cansend can0 6B0#041800FF00000000   ; sleep 0.5; cansend can0  6B0#3000000000000000
+
+//		sendISOTPReply( 0x18, {0x00});  // no error
+	sendISOTPReply( 0x18, {0x09,
 		0x94,0x80,0x60,
 		0x94,0x81,0x60,
 		0x94,0x82,0x60 ,
@@ -173,7 +175,7 @@ void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 				can0  53E   [8]  23 41 4C 00 00 00 00 00   '#AL.....'
 			 */
 			
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x1A,  pid,
+			sendISOTPReply( 0x1A,  pid,
 									  {0x02, 0x84, 0x02,			// could be variant 02 AMP NTG4 [02,78,02]
 										0x05,							// diag 05
 										0xFF,							// supplier FF  Harmon Becker
@@ -211,13 +213,13 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			//			19	  Audio detect true
 			//			11    Audio detect false
 			//			11    antenna present
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x19});
+			sendISOTPReply( 0x21,  pid, {0x19});
 			break;
 			
 		case 0x0E: // Signal strength  ( 1 byte)
 		{
 			uint8_t signal_strenth = 100; //  AM FM signal strength 	0-120
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {signal_strenth});
+			sendISOTPReply( 0x21,  pid, {signal_strenth});
 		}
 			break;
 			
@@ -257,7 +259,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 					break;
 			}
 			data.push_back(0x0F);
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+			sendISOTPReply( 0x21,  pid, data);
 		}
 			break;
 			
@@ -273,7 +275,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 				static_cast<uint8_t> ( ( audio->fader() * 10) + 10),
 				static_cast<uint8_t> ( ( audio->midrange() * 10) + 10)
 			};
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+			sendISOTPReply( 0x21,  pid, data);
 		}
 			break;
 			
@@ -289,10 +291,10 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 				vector<uint8_t> data = { 0x00, 0x00,  0x00, 0x00,
 					static_cast<uint8_t> (freq >> 8),
 					static_cast<uint8_t> (freq & 0xFF) };
-				sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+				sendISOTPReply( 0x21,  pid, data);
 			}
 			else {
-				sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, { 0x00, 0x00,  0x00, 0x00, 0x00, 0x00});
+				sendISOTPReply( 0x21,  pid, { 0x00, 0x00,  0x00, 0x00, 0x00, 0x00});
 				
 			}
 		}
@@ -302,19 +304,19 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 		{
 			//  |....RES...|  ???
 			vector<uint8_t> data = { 0x00, 0x00, 0x00, 0x00, 0x52, 0x45, 0x53, 0x20, 0x10, 0x00 };
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, data);
+			sendISOTPReply( 0x21,  pid, data);
 		}
 			break;
 			
 		case 0x18: //Market (1 bytes)
 			// USA market
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00});
+			sendISOTPReply( 0x21,  pid, {0x00});
 			break;
 			
 		case 0x25:  // Sirius ID (var)
 		{
 			string SiriusID = "044056306622";
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(SiriusID));
+			sendISOTPReply( 0x21,  pid, Utils::getByteVector(SiriusID));
 		}
 			break;
 			
@@ -334,21 +336,21 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			/*
 			 [5] 00 00 00 00 04
 			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00, 0x00, 0x00, 0x00, 0x04});
+			sendISOTPReply( 0x21,  pid, {0x00, 0x00, 0x00, 0x00, 0x04});
 			break;
 			
 		case 0x35: // Language pref english??  (6 bytes)
 			/*
 			 [5]  01 01 FF 00 00
 			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x01, 0x01, 0xFF, 0x00, 0x00});
+			sendISOTPReply( 0x21,  pid, {0x01, 0x01, 0xFF, 0x00, 0x00});
 			break;
 			
 		case 0x36: // ????  (6 bytes)
 			/*
 			 [5] 03 00 00 00 00
 			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x03, 0x00, 0x00, 0x00, 0x00});
+			sendISOTPReply( 0x21,  pid, {0x03, 0x00, 0x00, 0x00, 0x00});
 			break;
 			
 		case 0x44://  VIN REQUEST  (Var)   [ 7 bytes ] [ SEQ #, 0,1,2]
@@ -366,7 +368,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [5] 00 FF 00 00 00
 			 [5] 00 FF 00 00 A7
  			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x00, 0xFF, 0x00, 0x00, 0x00});
+			sendISOTPReply( 0x21,  pid, {0x00, 0xFF, 0x00, 0x00, 0x00});
  			break;
 			
 		case 0x50: // ????  (6 bytes)
@@ -374,14 +376,14 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [6] 50 06 00 10 00 0A 0A 00
 			 [6]
 			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, {0x50, 0x06, 0x00, 0x00, 0x00, 0x0A, 0x0A, 0x00});
+			sendISOTPReply( 0x21,  pid, {0x50, 0x06, 0x00, 0x00, 0x00, 0x0A, 0x0A, 0x00});
  			break;
 			
 		case 0x52: // ????  (13 bytes)
 			/*
 			 00 00 0A 07 01 0A 00 FF 00 00 00 00 02
 			 */
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid,
+			sendISOTPReply( 0x21,  pid,
 				{0x00 ,0x00, 0x0A, 0x07, 0x01, 0x0A, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x02});
   			break;
 			
@@ -397,7 +399,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 516#2232373531313137	'"2751117'
 			 */
 			string serialNumber = mgr->serialNumber();
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid, Utils::getByteVector(serialNumber));
+			sendISOTPReply( 0x21,  pid, Utils::getByteVector(serialNumber));
 		}
 			break;
 			
@@ -409,7 +411,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 [5] 05 58 98 80 00
 			 */
 			
-			sendISOTPReply( WRANGLER_RADIO_REPLY, 0x21,  pid,  {0x05, 0x58, 0x98, 0x80} );
+			sendISOTPReply( 0x21,  pid,  {0x05, 0x58, 0x98, 0x80} );
 			break;
 			
 		default:
@@ -422,15 +424,15 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 
 // handler frames larger than 8 bytes
 
-bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id, uint8_t pid,
+bool	DTCManager::sendISOTPReply(uint8_t service_id, uint8_t pid,
 											vector<uint8_t> bytes,
 											int* error){
 	
  	bytes.insert(bytes.begin(), pid);
-  	return sendISOTPReply(can_id, service_id, bytes, error);
+  	return sendISOTPReply(service_id, bytes, error);
  }
 
-bool	DTCManager::sendISOTPReply(canid_t can_id, uint8_t service_id,
+bool	DTCManager::sendISOTPReply(uint8_t service_id,
 											vector<uint8_t> bytes,
 											int* error){
 	PiCarCAN*	can 	= PiCarMgr::shared()->can();

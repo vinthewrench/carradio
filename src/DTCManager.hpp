@@ -44,8 +44,8 @@ private:
 
 //	void	processISOTPFlowControlFrame(time_t when,  canid_t can_id, uint8_t* data);
  
-	bool	sendISOTPReply(canid_t can_id, uint8_t service_id, uint8_t pid,  vector<uint8_t> bytes,  int* error = NULL );
-	bool	sendISOTPReply(canid_t can_id, uint8_t service_id,  vector<uint8_t> bytes,  int* error = NULL );
+	bool	sendISOTPReply(uint8_t service_id, uint8_t pid,  vector<uint8_t> bytes,  int* error = NULL );
+	bool	sendISOTPReply(uint8_t service_id,  vector<uint8_t> bytes,  int* error = NULL );
 
 	bool					_isSetup;
   };

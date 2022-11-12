@@ -225,32 +225,47 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 		//  flow control C  frame
 		printf("frame_type == 3\n");
  	
+		uint8_t frame_flag 		= frame.data[0] & 0x0f;
+		uint8_t block_size 		= frame.data[1];
+		uint8_t separation_delay = frame.data[2];
+
 		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
 		
 		if(_waiting_isotp_packets.count(hash)){
-			auto s = _waiting_isotp_packets[hash];
+			auto &s = _waiting_isotp_packets[hash];
 			
 			 // hash sanity check
 			if(! (s.reply_id == can_id && s.ifName == ifName))
 				return;
 			
-			// force all output for now
 			
-			printf("bytes left = %d\n", (int) s.bytes.size() - s.bytes_sent);
+			// update the separation_delay
+			s.separation_delay = separation_delay;
+			clock_gettime(CLOCK_MONOTONIC, &s.lastSentTime);
+		
+			
+	#warning -- handle separation_delay
 
-	 		uint8_t cnt = 0;
-			for( uint16_t offset = s.bytes_sent; offset < s.bytes.size(); offset+= 7){
-			
-				vector<uint8_t> data;
-				data.reserve(8);
-				data.push_back(static_cast<uint8_t> ( 0x20 | ( cnt++ & 0x0f)));
+			if(frame_flag == 0) {
+				// force all output for now
 				
-				for(auto i = 0; i < 7; i++){
-					if((offset + i) >  s.bytes.size()) break;
-					data.push_back(s.bytes[offset + i]);
+				printf("bytes left = %d\n", (int) s.bytes.size() - s.bytes_sent);
+
+				uint8_t cnt = 0;
+				for( uint16_t offset = s.bytes_sent; offset < s.bytes.size(); offset+= 7){
+				
+					vector<uint8_t> data;
+					data.reserve(8);
+					data.push_back(static_cast<uint8_t> ( 0x20 | ( cnt++ & 0x0f)));
+					
+					for(auto i = 0; i < 7; i++){
+						if((offset + i) >  s.bytes.size()) break;
+						data.push_back(s.bytes[offset + i]);
+					}
+					sendFrame(s.ifName,s.can_id, data);
 				}
-				sendFrame(s.ifName,s.can_id, data);
- 			}
+			
+			}
 			
 		}
  
@@ -259,71 +274,7 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 }
 
 
-//
-//	for(auto d : handlers){
-//
-//		ISOTPHandlerCB_t	cb = d.first;
-//		void* context 			= d.second;
-		
-		
-//		if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
-//	}
-
-	/*
-	 canid_t can_id = frame.can_id & CAN_ERR_MASK;
-	 auto handlers = handlerForCanID(ifName, can_id );
-	 for(auto d : handlers){
-		 ISOTPHandlerCB_t	cb = d.first;
-		 void* context 			= d.second;
-		 
-		 
-		 if(cb) (cb)(context,ifName, can_id, frame, timestamp_secs);
-	 }
-
-	
-	 
- //	uint8_t frame_type = frame.data[0]>> 4;
- //
- //	switch( frame_type){
- //		case 0: // single frame
- //		{
- //			uint8_t len = frame.data[0] & 0x07;
- //			bool REQ = (frame.data[1] & 0x40)  == 0 ;
- //
- //			uint8_t service_id = REQ?frame.data[1]: frame.data[1] & 0x3f;
- //
- //			// only handle requests
- //			if(REQ){
- //				processPrivateODB(timeStamp, can_id, service_id,  len -1 , &frame.data[2]);
- // 			}
- //
- //		}
- //			break;
- //
- //		case 3:  //  flow control C  frame
- //
- //		  //	guard code only handle Flow control frame (FC)
- //			if(frame.len < 3)  return;
- // 			processISOTPFlowControlFrame(timeStamp, can_id, frame.data);
- // 	 		break;
- //
- //		default: ;
- //		 // we only handle single frame message requests
- //	}
-*/
-	
-	
-	//
- //void	DTCManager::processISOTPFlowControlFrame(time_t when,  canid_t can_id,  uint8_t* data){
- //
- //	uint8_t fc_flag =  data[0] & 0x4;
- ////  0 = Continue To Send,
- ////	 1 = Wait,
- ////	 2 = Overflow/abort
- //
- //	uint8_t block_size =  data[1];
- // 	uint8_t ST =  data[2];
- //
+   //
  //#warning write code to process multi frame
  //	/*
  //	 The initial byte contains the type (type = 3) in the first four bits,

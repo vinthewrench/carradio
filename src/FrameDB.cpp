@@ -427,6 +427,8 @@ void FrameDB::updateValue(string_view key, string value, time_t when){
 
 	bool shouldUpdate = true;
 	
+	value = Utils::trim(value);
+ 
 	// filter out noise.
 	if(_values.count(key)){
 		auto lastValue = _values[key];

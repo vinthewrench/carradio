@@ -216,7 +216,8 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 	}
 	else if(frame_type == 3){
 		//  flow control C  frame
-		
+		printf("frame_type == 3\n");
+
 		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
 		
 		if(_waiting_isotp_packets.count(hash)){
@@ -224,6 +225,8 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 			
 			// force all output for now
 			
+			printf("bytes left = %d\n", (int) s.bytes.size() - s.bytes_sent);
+
 	 		uint8_t cnt = 0;
 			for( uint16_t offset = s.bytes_sent; offset < s.bytes.size(); offset+= 7){
 			

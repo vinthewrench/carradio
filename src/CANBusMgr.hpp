@@ -146,6 +146,21 @@ private:
  
 	vector<frame_handler_t> _frame_handlers= {};
 
+	// for sending larger ISOTP data
+	typedef struct {
+ 		string 				ifName;
+		canid_t				can_id;
+		
+		vector<uint8_t> 	bytes;				// message bytes
+		uint16_t			 	bytes_sent;;		// offset into next
+		uint8_t				separation_delay;
+		struct timespec	lastSentTime;
+	} isotp_state_t;
+
+	//collection of packets waiting to go.  Note that adding a new one for same hash causes us to reset
+	map <uint32_t, isotp_state_t> _waiting_isotp_packets = {};
+	mutable std::mutex _isotp_mutex;
+
 	struct timespec		_lastPollTime;
 	int64_t     			_pollDelay;			// how long to wait before next OBD poll in milliseconds
 	vector<string> 		_keysToPoll = {};

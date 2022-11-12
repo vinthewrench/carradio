@@ -16,7 +16,7 @@
 #include <array>
 #include <climits>
 #include "timespec_util.h"
-
+#include "XXHash32.h"
 
 using namespace std;
 
@@ -62,6 +62,7 @@ CANBusMgr::CANBusMgr(){
  
 	_obd_requests = {};
 	_obd_polling = {};
+	_waiting_isotp_packets = {};
 	
 	// create RNG engine
 	constexpr std::size_t SEED_LENGTH = 8;
@@ -319,11 +320,15 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
  //
  //}
  
- 
+
+
 bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,  int* error){
 	bool success = false;
 	
 	uint len = (uint)bytes.size();
+
+	if (len > 4096)
+		throw Exception("sendISOTP packet too long");
 
 // debug
 	{
@@ -343,26 +348,35 @@ bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,
  	}
 	else {
 		// multi frame
-/*
-		auto it = _multi_frame.find(can_id);
-		if(it != _multi_frame.end()){
+		std::lock_guard<std::mutex> lock(_isotp_mutex);
+
+		// create a new state
+		isotp_state_t s;
 		
-		// similar to ODB but private
-		typedef struct {
-			canid_t			can_id;
-			uint8_t			service_id;
-			uint8_t			pid;
-			uint8_t			separation_delay;
-			uint8_t			rollingcnt; 	// next expected cnt
-			uint16_t			total_len;
-			uint16_t			current_len;
+		s.ifName = ifName;
+		s.can_id	= can_id;
+		s.bytes = bytes;
+		s.bytes_sent = 6;
+		s.separation_delay = 0;
+ 		clock_gettime(CLOCK_MONOTONIC, &s.lastSentTime);
+ 		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
+		
+ 		_waiting_isotp_packets[hash] = s;
+	 
+		// send first packet
+		vector<uint8_t> data;
+		data.reserve(8);
 
-			uint8_t			buffer[4096];
-			} isotp_state_t;
+		// create first packet   | 0001 | Len11 - Len8 | Len7 - Len0 |
+		data.push_back(static_cast<uint8_t> ( 0x10 | ((len >> 8) & 0x0f)));
+		data.push_back(static_cast<uint8_t> ( len & 0xff));
+		// send first 6 bytes
+		for(int i = 0; i < 6; i++){
+			data.push_back(bytes[i]);
+		}
 
-
-		*/
-	
+		sendFrame(ifName,can_id, data);
+ 
 /* debug with
 	candump can0,6b0:7ff,516:7ff -a
  

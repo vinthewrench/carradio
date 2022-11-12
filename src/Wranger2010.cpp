@@ -335,6 +335,7 @@ void Wranger2010::processFrame(FrameDB* db,string ifName, can_frame_t frame, tim
 				case 2:
 					if(b0 == 2){
 						_VIN.append((char *)&frame.data[1], 7);
+						_VIN = Utils::trimCNTRL(_VIN);   // remove noise
 						db->updateValue(schemaKeyForValueKey(VIN), _VIN, when);
 						stage++;
 				}

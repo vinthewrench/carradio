@@ -207,7 +207,7 @@ inline  std::string trimCNTRL(std::string source) {
 	 */
 	inline  std::string trimEnd(std::string source) {
 		  source.erase(std::find_if(source.rbegin(), source.rend(), [](char c) {
-				return !(std::isspace(static_cast<unsigned char>(c) || static_cast<unsigned char>(c) == 0));
+				return !std::isspace(static_cast<unsigned char>(c));
 		  }).base(), source.end());
 		  return source;
 	 }
@@ -220,7 +220,7 @@ inline  std::string trimCNTRL(std::string source) {
 	 */
 	inline  std::string trimStart(std::string source) {
 		  source.erase(source.begin(), std::find_if(source.begin(), source.end(), [](char c) {
-				return !(std::isspace(static_cast<unsigned char>(c) || static_cast<unsigned char>(c) == 0));
+				return !std::isspace(static_cast<unsigned char>(c));
 		  }));
 		  return source;
 	 }

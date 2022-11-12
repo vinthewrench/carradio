@@ -223,8 +223,7 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 	}
 	else if(frame_type == 3){
 		//  flow control C  frame
-		printf("frame_type == 3\n");
- 	
+	 
 		uint8_t frame_flag 		= frame.data[0] & 0x0f;
 		uint8_t block_size 		= frame.data[1];
 		uint8_t separation_delay = frame.data[2];
@@ -249,8 +248,6 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 			if(frame_flag == 0) {
 				// force all output for now
 				
-				printf("bytes left = %d\n", (int) s.bytes.size() - s.bytes_sent);
-
 				uint8_t cnt = 0;
 				for( uint16_t offset = s.bytes_sent; offset < s.bytes.size(); offset+= 7){
 				

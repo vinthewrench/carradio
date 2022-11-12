@@ -317,11 +317,11 @@ bool CANBusMgr::sendISOTP(string ifName, canid_t can_id, canid_t reply_id,  vect
 		throw Exception("sendISOTP packet too long");
 
 // debug
-	{
-		printf("send  %03x [%2d] ", can_id, (int) len );
-		for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
-		printf("|\n");
-	}
+//	{
+//		printf("send  %03x [%2d] ", can_id, (int) len );
+//		for(int i = 0; i < len; i++) printf("%02x ", bytes[i]);
+//		printf("|\n");
+//	}
 	
 	if(len < 8){
 		

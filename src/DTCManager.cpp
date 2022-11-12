@@ -193,6 +193,9 @@ void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 		{
 			string VIN = "XXXXXXXXXXXXXXXXX";
 			frameDB->valueWithKey("JK_VIN", &VIN);
+			
+			printf("VIN: [%d, %d] |%s|\n",(int)VIN.size(), Utils::getByteVector(VIN).size(), VIN.c_str());
+			
 			sendISOTPReply( 0x1A,  pid, Utils::getByteVector(VIN));
 		}
 			/*

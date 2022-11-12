@@ -162,9 +162,8 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid,  vector<uint8_t> bytes){
 void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 	
 	switch (pid) {
-			
 		case 0x87: // ECU part VAR
-	
+		
 			/*
 				can0  7F0   [8]  02 1A 87 00 00 00 00 00   '........'
 				can0  53E   [8]  10 16 5A 87 02 84 02 05   '..Z.....'
@@ -392,7 +391,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			 cansend can0 6B0#0221E10000000000;  sleep 0.1; cansend can0  6B0#3000000000000000
 			 
 			 6B0#0221E10000000000	'.!......'
-			 516#1010 61E154313141	'..a.T11A'
+			 516#101061E154313141	'..a.T11A'
 			 6B0#3000000000000000	'0.......'
 			 516#2148313735303930	'!H175090'
 			 516#2232373531313137	'"2751117'

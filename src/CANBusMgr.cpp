@@ -217,6 +217,29 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 	else if(frame_type == 3){
 		//  flow control C  frame
 		
+		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
+		
+		if(_waiting_isotp_packets.count(hash)){
+			auto s = _waiting_isotp_packets[hash];
+			
+			// force all output for now
+			
+	 		uint8_t cnt = 0;
+			for( uint16_t offset = s.bytes_sent; offset < s.bytes.size(); offset+= 7){
+			
+				vector<uint8_t> data;
+				data.reserve(8);
+				data.push_back(static_cast<uint8_t> ( 0x20 | ( cnt++ & 0x0f)));
+				
+				for(auto i = 0; i < 7; i++){
+					if((offset + i) >  s.bytes.size()) break;
+					data.push_back(s.bytes[offset + i]);
+				}
+				sendFrame(s.ifName,s.can_id, data);
+ 			}
+			
+		}
+ 
 	}
 	
 }

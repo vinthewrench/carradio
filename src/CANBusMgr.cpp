@@ -262,6 +262,7 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 					sendFrame(s.ifName,s.can_id, data);
 				}
 			
+ 				_waiting_isotp_packets.erase(hash);
 			}
 			
 		}

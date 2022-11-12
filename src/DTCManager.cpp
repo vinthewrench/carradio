@@ -163,41 +163,45 @@ void	DTCManager::processWanglerRadioPID18(uint8_t pid,  vector<uint8_t> bytes){
 
 void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 	
+	PiCarCAN*	can 	= PiCarMgr::shared()->can();
+	FrameDB*		frameDB 	= can->frameDB();
+	
 	switch (pid) {
 		case 0x87: // ECU part VAR
-		
+			
 			/*
-				can0  7F0   [8]  02 1A 87 00 00 00 00 00   '........'
-				can0  53E   [8]  10 16 5A 87 02 84 02 05   '..Z.....'
-				can0  7F0   [8]  30 00 00 00 00 00 00 00   '0.......'
-				can0  53E   [8]  21 FF 00 03 08 03 11 35   '!......5'
-				can0  53E   [8]  22 36 30 34 36 30 30 36   '"6046006'
-				can0  53E   [8]  23 41 4C 00 00 00 00 00   '#AL.....'
+			 can0  7F0   [8]  02 1A 87 00 00 00 00 00   '........'
+			 can0  53E   [8]  10 16 5A 87 02 84 02 05   '..Z.....'
+			 can0  7F0   [8]  30 00 00 00 00 00 00 00   '0.......'
+			 can0  53E   [8]  21 FF 00 03 08 03 11 35   '!......5'
+			 can0  53E   [8]  22 36 30 34 36 30 30 36   '"6046006'
+			 can0  53E   [8]  23 41 4C 00 00 00 00 00   '#AL.....'
 			 */
 			
 			sendISOTPReply( 0x1A,  pid,
-									  {0x02, 0x84, 0x02,			// could be variant 02 AMP NTG4 [02,78,02]
-										0x05,							// diag 05
-										0xFF,							// supplier FF  Harmon Becker
-										0x00, 0x03,					//HW:(00,03)
-										0x08, 0x03, 0x11,			// SW:(08,03,11)
-										0x35, 0x36, 0x30, 0x34, 0x36, 0x30, 0x30, 0x36, 0x41, 0x4C //Part:56046006AL
- 									},  NULL);
- 			break;
+								{0x02, 0x84, 0x02,			// could be variant 02 AMP NTG4 [02,78,02]
+				0x05,							// diag 05
+				0xFF,							// supplier FF  Harmon Becker
+				0x00, 0x03,					//HW:(00,03)
+				0x08, 0x03, 0x11,			// SW:(08,03,11)
+				0x35, 0x36, 0x30, 0x34, 0x36, 0x30, 0x30, 0x36, 0x41, 0x4C //Part:56046006AL
+			},  NULL);
+			break;
 			
 		case 0x88: // VIN Number  (original) (Var)
-			/*
- 			 */
-			break;
-
 		case 0x90: // VIN Number  (current) (Var)
+		{
+			string VIN = "XXXXXXXXXXXXXXXXX";
+			frameDB->valueWithKey("JK_VIN", &VIN);
+			sendISOTPReply( 0x1A,  pid, Utils::getByteVector(VIN));
+		}
 			/*
- 			 */
+			 */
 			break;
-
+			
 		default:
 			break;
-
+			
 	}
 }
 			

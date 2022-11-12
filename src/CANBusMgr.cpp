@@ -161,36 +161,41 @@ void CANBusMgr::unRegisterISOTPHandler(string ifName, canid_t can_id, ISOTPHandl
 								 _frame_handlers.end());
 }
 
-vector<pair<CANBusMgr::ISOTPHandlerCB_t, void*> >	CANBusMgr::handlerForCanID(string ifName, canid_t can_id){
-	vector<pair<CANBusMgr::ISOTPHandlerCB_t, void*>> decoders = {};
+bool CANBusMgr::shouldProcessIOSTPforCanID(string ifName, canid_t can_id){
 	
-	for( auto item: _frame_handlers){
+	bool hasHandler = false;
+	
+	for( auto item: _frame_handlers)
 		if(item.ifName == ifName
 			&& item.can_id == can_id ){
-			decoders.push_back(make_pair(item.cb, item.context));
+			
+			hasHandler = true;
+			break;
 		}
-	}
 	
-	return decoders;
+	
+	if(!hasHandler){
+		for( auto & [key,val]: _waiting_isotp_packets)
+			if(val.reply_id == can_id){
+				hasHandler = true;
+				break;
+			}
+ 	}
+ 
+	return hasHandler;
 }
-
-template<typename T, size_t N>
-vector<T> convert_array_to_vector(const T (&source_array)[N]) {
-	 return vector<T>(source_array, source_array+N);
-}
-
+ 
 void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned long  timeStamp){
 	
 	// are there any handlers for this canID
 	canid_t can_id = frame.can_id & CAN_ERR_MASK;
-	auto handlers = handlerForCanID(ifName, can_id );
-	if(handlers.size() == 0) return;
+	if(! shouldProcessIOSTPforCanID(ifName, can_id ))  return;
 	
-	uint8_t frame_type = frame.data[0]>> 4;
+ 	uint8_t frame_type = frame.data[0]>> 4;
 	
 	// is it a single frame request
 	if(frame_type == 0){
-		
+ 
 		uint8_t len = frame.data[0] & 0x07;
 		uint8_t* data = &frame.data[1];
 		//		bool REQ = (data[0] & 0x40)  == 0 ;
@@ -206,10 +211,12 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 //			printf("|\n");
 //		}
 //		
-		for(auto d : handlers){
+		for(auto d : _frame_handlers)
+			if(d.ifName == ifName
+				&& d.can_id == can_id ){
 			
-			ISOTPHandlerCB_t	cb = d.first;
-			void* context 			= d.second;
+			ISOTPHandlerCB_t	cb = d.cb;
+			void* context 			= d.context;
 			
 			if(cb) (cb)(context,ifName, can_id, bytes, timeStamp);
 		}
@@ -217,11 +224,15 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
 	else if(frame_type == 3){
 		//  flow control C  frame
 		printf("frame_type == 3\n");
-
+ 	
 		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
 		
 		if(_waiting_isotp_packets.count(hash)){
 			auto s = _waiting_isotp_packets[hash];
+			
+			 // hash sanity check
+			if(! (s.reply_id == can_id && s.ifName == ifName))
+				return;
 			
 			// force all output for now
 			
@@ -348,7 +359,7 @@ void CANBusMgr::processISOTPFrame(string ifName, can_frame_t frame, unsigned lon
  
 
 
-bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,  int* error){
+bool CANBusMgr::sendISOTP(string ifName, canid_t can_id, canid_t reply_id,  vector<uint8_t> bytes,  int* error){
 	bool success = false;
 	
 	uint len = (uint)bytes.size();
@@ -381,11 +392,12 @@ bool CANBusMgr::sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,
 		
 		s.ifName = ifName;
 		s.can_id	= can_id;
+		s.reply_id = reply_id;
 		s.bytes = bytes;
 		s.bytes_sent = 6;
 		s.separation_delay = 0;
  		clock_gettime(CLOCK_MONOTONIC, &s.lastSentTime);
- 		uint32_t hash = XXHash32::hash(ifName + to_hex(can_id, true));
+ 		uint32_t hash = XXHash32::hash(ifName +  to_hex(reply_id, true)  );
 		
  		_waiting_isotp_packets[hash] = s;
 	 

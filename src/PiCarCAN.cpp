@@ -183,8 +183,8 @@ bool PiCarCAN::sendFrame(pican_bus_t bus, canid_t can_id, vector<uint8_t> bytes,
 	return _CANbus.sendFrame(ifName, can_id, bytes, error);
 }
 
-bool PiCarCAN::sendISOTP(pican_bus_t bus, canid_t can_id,  vector<uint8_t> bytes,  int* error ){
+bool PiCarCAN::sendISOTP(pican_bus_t bus, canid_t can_id, canid_t reply_id,   vector<uint8_t> bytes,  int* error ){
 	string ifName  = bus == CAN_ALL?"":bus_map[bus];
-	return _CANbus.sendISOTP(ifName, can_id, bytes, error);
+	return _CANbus.sendISOTP(ifName, can_id, reply_id, bytes, error);
 }
 

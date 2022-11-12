@@ -69,7 +69,7 @@ public:
 	bool removePeriodicCallback (CANBusMgr::periodicCallBackID_t  callBackID);
 
 	bool sendFrame(pican_bus_t bus, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
-   bool sendISOTP(pican_bus_t bus, canid_t can_id,  vector<uint8_t> bytes,  int* error = NULL );
+   bool sendISOTP(pican_bus_t bus, canid_t can_id, canid_t reply_id,   vector<uint8_t> bytes,  int* error = NULL );
 	
 private:
 	bool 				_isSetup = false;

@@ -61,9 +61,7 @@ public:
 	
 	void unRegisterISOTPHandler(string ifName, canid_t can_id, ISOTPHandlerCB_t cb );
 	
-	vector<pair<ISOTPHandlerCB_t, void*>>	handlerForCanID(string ifName, canid_t can_id);
-	
-	bool sendISOTP(string ifName, canid_t can_id,  vector<uint8_t> bytes,  int* error = NULL );
+	bool sendISOTP(string ifName, canid_t can_id,  canid_t reply_id,  vector<uint8_t> bytes,  int* error = NULL );
 
 	bool sendFrame(string ifName, canid_t can_id, vector<uint8_t> bytes,  int *error = NULL);
 	
@@ -111,6 +109,8 @@ private:
 
 	void				processISOTPFrame(string ifName, can_frame_t frame, unsigned long  timeStamp);
  
+	bool 				shouldProcessIOSTPforCanID(string ifName, canid_t can_id);
+ 
 	map<string, int> 		_interfaces = {};
 	map<string, time_t> 	_lastFrameTime = {};
 	map<string, size_t> 	_totalPacketCount = {};
@@ -150,7 +150,8 @@ private:
 	typedef struct {
  		string 				ifName;
 		canid_t				can_id;
-		
+		canid_t				reply_id;
+
 		vector<uint8_t> 	bytes;				// message bytes
 		uint16_t			 	bytes_sent;;		// offset into next
 		uint8_t				separation_delay;

@@ -207,7 +207,7 @@ void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 	
 	PiCarMgr*	mgr 	= PiCarMgr::shared();
-	RadioMgr*					radio 	= mgr->radio();
+	RadioMgr*	radio 	= mgr->radio();
 	
 	switch (pid) {
 			
@@ -323,16 +323,25 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			break;
 			
 		case 0x30:  // key position (6 bytes)
-			/*
+		{
+	 		/*
 			 [6] 41 01 00 48 0a 00 		= ACC/RUN  - radio on
 			 [6] 41 01 00 48 0a 00 		= RUN radio on
 			 [6] 41 01 00 48 2a 00		= RUN radio off
 			 [6] 41 01 00 48 2a 00 		= ACC Radio off
 			 [6] 41 01 00 48 2a 00 		= OFF radio off
 			 [6] 40 01 00 48 20 00 		= OFF radio off
+			 
+			 00x0 1100  x = power OFF
 			 */
-#warning  FINISH key position
+
+			sendISOTPReply( 0x21,  pid, {0x41, 0x01, 0x00, 0x48,
+													static_cast<uint8_t> (radio->isOn()?0x0a:0x2A) ,
+													0x00});
 			break;
+
+		}
+	 			break;
 			
 		case 0x34: // ????  (5 bytes)
 			/*

@@ -385,9 +385,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			
 			vector<std::uint8_t>  v1 = Utils::getByteVector(VIN);
 			
-			printf("VIN [%d] |%s|\n", (int)v1.size(), VIN.c_str());
-			
-			if(v1.size() < 17) return;
+				if(v1.size() < 17) return;
 			
 			vector<uint8_t> msg = {0x12,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 													0x2D, 0x39, 0xA7, 0x01, 0x01, 0xFF, 0xFF, 0x00,
@@ -410,6 +408,10 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 					break;
 			}
 		 
+			printf("VIN [%d] |%s| ", (int)v1.size(), VIN.c_str());
+			for(int i = 0; i < msg.size(); i++) printf("%02x ", msg[i]);
+			printf("\n");
+			
 			sendISOTPReply( 0x21,  pid, msg  );
  		}
  			break;

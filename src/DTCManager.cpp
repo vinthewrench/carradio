@@ -206,9 +206,10 @@ void	DTCManager::processWanglerRadioPID1A(uint8_t pid){
 
 void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 	
-	PiCarMgr*	mgr 	= PiCarMgr::shared();
+	PiCarMgr*	mgr 		= PiCarMgr::shared();
 	RadioMgr*	radio 	= mgr->radio();
- 	FrameDB*		frameDB 	= can->frameDB();
+	PiCarCAN*	can 		= PiCarMgr::shared()->can();
+	FrameDB*		frameDB 	= can->frameDB();
 
 	switch (pid) {
 			

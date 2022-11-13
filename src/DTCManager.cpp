@@ -384,6 +384,9 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			frameDB->valueWithKey("JK_VIN", &VIN);
 			
 			vector<std::uint8_t>  v1 = Utils::getByteVector(VIN);
+			
+			printf("VIN [%d] |%s|\n", (int)v1.size(), VIN.c_str());
+			
 			if(v1.size() < 17) return;
 			
 			vector<uint8_t> msg = {0x12,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

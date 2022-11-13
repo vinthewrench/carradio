@@ -393,7 +393,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 													0x2D, 0x39, 0xA7, 0x01, 0x01, 0xFF, 0xFF, 0x00,
 													0x00, 0x00};
 				
-	 		switch (seq++ % 2) {
+	 		switch (seq++ % 3) {
 				case 0:
 					for(auto i = 0; i < 7; i++) msg[i+1] = v1[i];
 					msg[8] = 0;

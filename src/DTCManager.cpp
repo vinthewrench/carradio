@@ -208,7 +208,8 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 	
 	PiCarMgr*	mgr 	= PiCarMgr::shared();
 	RadioMgr*	radio 	= mgr->radio();
-	
+ 	FrameDB*		frameDB 	= can->frameDB();
+
 	switch (pid) {
 			
 		case 0x09:  //Antenna Detect ( 1 Bytes)
@@ -365,13 +366,49 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 			break;
 			
 		case 0x44://  VIN REQUEST  (Var)   [ 7 bytes ] [ SEQ #, 0,1,2]
-#warning  FINISH VIN REQUEST
+		{
 			/*
-			 44	12	31	39	41	4C	32	32	30	01	2D	39	A7	01	01	FF	FF	00	00	00	|19AL220.-9........|
-			 44	12	31	4A	34	42	41	36	48	00	2D	39	A7	01	01	FF	FF	00	00	00	|1J4BA6H.-9........|
-			 44	12	30	36	30	00	00	00	00	02	2D	39	A7	01	01	FF	FF	00	00	00	|060.....-9........|
-			 */
-			break;
+		 WTF were they thinking
+		 
+		 The VIN cycles with multiple calls.  0z12 [ 7 bytes ] [ SEQ #, 0,1,2]
+	 
+		  44	12	31	39	41	4C	32	32	30	01	2D	39	A7	01	01	FF	FF	00	00	00	|19AL220.-9........|
+		  44	12	31	4A	34	42	41	36	48	00	2D	39	A7	01	01	FF	FF	00	00	00	|1J4BA6H.-9........|
+		  44	12	30	36	30	00	00	00	00	02	2D	39	A7	01	01	FF	FF	00	00	00	|060.....-9........|
+		  */
+
+			static int seq = 0;
+ 
+			string VIN = "XXXXXXXXXXXXXXXXXX";
+			frameDB->valueWithKey("JK_VIN", &VIN);
+			
+			vector<std::uint8_t>  v1 = Utils::getByteVector(VIN);
+			if(v1.size() < 17) return;
+			
+			vector<uint8_t> msg = {0x12,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+													0x2D, 0x39, 0xA7, 0x01, 0x01, 0xFF, 0xFF, 0x00,
+													0x00, 0x00};
+				
+	 		switch (seq++ % 2) {
+				case 0:
+					for(auto i = 0; i < 7; i++) msg[i+1] = v1[i];
+					msg[8] = 0;
+					break;
+
+				case 1:
+					for(auto i = 0; i < 7; i++) msg[i+1] = v1[i+7];
+					msg[8] = 1;
+				break;
+
+				case 2:
+					for(auto i = 0; i < 3; i++) msg[i+1] = v1[i+14];
+					msg[8] = 2;
+					break;
+			}
+		 
+			sendISOTPReply( 0x21,  pid, msg  );
+ 		}
+ 			break;
 			
 		case 0x49:  // Rear camera false  (5 bytes)
 			/*

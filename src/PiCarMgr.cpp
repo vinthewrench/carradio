@@ -2589,8 +2589,8 @@ vector<string> PiCarMgr::settingsMenuItems(){
 	vector<string> menu_items = {
 		dim_entry,
 		"Shutdown Delay",
+		"Set ECU Time",
 		"Info",
-		"Sync Time",
 		"Exit",
 	};
 
@@ -2630,10 +2630,6 @@ void PiCarMgr::displaySettingsMenu(){
 						break;
 						
 					case 2:
-						_display.showInfo();
-						break;
- 
-					case 3:
 					{
 						struct timespec  gpsTime;
 						
@@ -2647,7 +2643,12 @@ void PiCarMgr::displaySettingsMenu(){
 						
 					}
 						break;
+
+					case 3:
+						_display.showInfo();
+						break;
  
+			 
 					default:
 						displayMenu();
 						break;
@@ -3289,10 +3290,8 @@ bool PiCarMgr::setRTC(struct timespec gpsTime ){
 	bool success = false;
 	int r = clock_settime(CLOCK_REALTIME, &gpsTime);
 	if(r == 0){
-		
-		struct tm *tm = localtime(&gpsTime.tv_sec);
-
-		LOGT_INFO("Clock synced to GPS %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
+ 		struct tm *tm = localtime(&gpsTime.tv_sec);
+ 		LOGT_INFO("Clock synced to GPS %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
 		success = true;
 	}
 	else {
@@ -3307,7 +3306,7 @@ bool PiCarMgr::setECUtime(  struct timespec ts){
 	bool success = false;
  	struct tm *tm = localtime(&ts.tv_sec);
  
-	LOGT_INFO("SET ECU CLOCK  %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
+	LOGT_INFO("Set ECU Clock %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
 
 	success = _can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
 		static_cast<uint8_t>(tm->tm_hour),

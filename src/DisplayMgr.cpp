@@ -3819,14 +3819,14 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				
 			}
 			else if(_lineOffset == totalCodes){
+				firstLine = lines.size()-1;
 				lines.push_back("[ ERASE ALL CODES? ]");
 				lines.push_back("  EXIT  ");
-				firstLine = lines.size()-1;
 			}
 			else {
+				firstLine = lines.size()-1;
 				lines.push_back("  ERASE ALL CODES? ");
 				lines.push_back(" [EXIT]  ");
-				firstLine = lines.size()-1;
 				_lineOffset = totalCodes + 1;
 			}
 			

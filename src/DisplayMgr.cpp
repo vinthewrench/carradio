@@ -3830,7 +3830,12 @@ void DisplayMgr::drawDTCScreen(modeTransition_t transition){
 				_lineOffset = totalCodes + 1;
 			}
 			
-			_vfd.setFont(VFD::FONT_MINI) ;
+		printf("\nfirst: %d, displayedLines: %d\n",(int) firstLine, (int)displayedLines);
+		for(auto line:lines){
+			printf("%s\n", line.c_str());
+		}
+
+	//		_vfd.setFont(VFD::FONT_MINI) ;
 			
 			int  maxFirstLine  = (int) (lines.size() - displayedLines);
 			if(firstLine > maxFirstLine) firstLine = maxFirstLine;

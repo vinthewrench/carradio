@@ -3289,7 +3289,10 @@ bool PiCarMgr::setRTC(struct timespec gpsTime ){
 	bool success = false;
 	int r = clock_settime(CLOCK_REALTIME, &gpsTime);
 	if(r == 0){
-		LOGT_INFO("Clock synced to GPS\n");
+		
+		struct tm *tm = localtime(&gpsTime.tv_sec);
+
+		LOGT_INFO("Clock synced to GPS %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
 		success = true;
 	}
 	else {

@@ -468,7 +468,7 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			str = truncate(str,  max_chars);
  			auto pixel_width = string_pixel_Width(str,font);
 
-			uint8_t  leftbox =  0 + pixel_width - 3;
+			uint8_t  leftbox =  0 + pixel_width - 4;
 			uint8_t  topbox = y - step;
 			uint8_t  bottombox = y;
 			

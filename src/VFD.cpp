@@ -277,8 +277,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 			
 			if(!success){
 				printf("write failed %d  err %d %s\n", (int)cnt, errno, strerror(errno));
-				
-			}
+				}
 //			success = (::write(_fd,&buffer[i] , 1) == 1);
 			
  			if(!success) return false;
@@ -313,7 +312,9 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	
 	if(newBuff) free(newBuff);
-	
+
+	printf("writePacket returned %s\n", success?"TRUE":"FALSE");
+
 	return success;
 }
 // MARK: -  Print scrollable lines

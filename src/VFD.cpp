@@ -437,7 +437,8 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			setCursor(0, y);
 			
 			printf("%2d |%s|\n", y, lines[i].c_str());
-			printPacket("%s",lines[i].c_str());
+			success = printPacket("%s",lines[i].c_str());
+			if(!success) break;
 			y += step;
 		}
 	}

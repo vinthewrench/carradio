@@ -151,8 +151,7 @@ class PiCarMgr {
 	
 	bool 	shouldSyncClockToGPS(time_t &deviation);
 	
-	bool clockNeedsSync(time_t deviation,  struct timespec gpsTime );
- 
+	bool setRTC(struct timespec gpsTime );
 	bool setECUtime(struct timespec time);
 	
 	bool setRelay1(bool state);

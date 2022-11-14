@@ -249,11 +249,12 @@ bool PiCarMgr::begin(){
 			 
 			 if(!_gps.begin(path_gps, B38400, error))
 				 throw Exception("failed to setup GPS.  error: %d", error);
-	
-	
+		
 		_gps.setTimeSyncCallback([=](time_t deviation, struct timespec gpsTime){
-			clockNeedsSync(deviation, gpsTime);
-			setECUtime(gpsTime);
+			if(shouldSyncClockToGPS(deviation)){
+				setRTC(gpsTime);
+				setECUtime(gpsTime);
+			}
 		} );
 	
 //		_display.showStartup();  // show startup
@@ -3284,20 +3285,16 @@ bool 	PiCarMgr::shouldSyncClockToGPS(time_t &deviation){
 	return false;
 }
  
-bool PiCarMgr::clockNeedsSync(time_t deviation,  struct timespec gpsTime ){
+bool PiCarMgr::setRTC(struct timespec gpsTime ){
 	
 	bool success = false;
-	 
-	if(_clocksync_gps  &&  deviation >= _clocksync_gps_secs ){
-		
-		int r = clock_settime(CLOCK_REALTIME, &gpsTime);
-		if(r == 0){
-			LOGT_INFO("Clock synced to GPS\n");
-			success = true;
-		}
-		else {
-			ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "clock sync failed");
-		}
+	int r = clock_settime(CLOCK_REALTIME, &gpsTime);
+	if(r == 0){
+		LOGT_INFO("Clock synced to GPS\n");
+		success = true;
+	}
+	else {
+		ELOG_ERROR(ErrorMgr::FAC_GPS, 0, errno, "clock sync failed");
 	}
  
 	return success;

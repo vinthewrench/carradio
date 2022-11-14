@@ -4862,7 +4862,7 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 				PiCarMgr::station_info_t info;
 				if(mgr->getStationInfo(mode, freq, info)){
 					string title = truncate(info.title,  20);
-					channelStr += + " " + title + "  ";
+					channelStr += + " " + title ;
 				}
 				
 				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);

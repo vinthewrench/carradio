@@ -423,10 +423,12 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 		printf("%s\n", line.c_str());
 	}
  
-	if(maxLines >  lineCount){
+	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
 			setCursor(0, y);
+			
+			printf("%2d |%s|\n", y, lines[i].c_str());
 			success = printPacket("%s",lines[i].c_str());
 			if(!success) break;
 			y += step;

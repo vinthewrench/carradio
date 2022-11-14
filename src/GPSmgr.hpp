@@ -122,6 +122,8 @@ public:
 	bool GetLocation(GPSLocation_t& location);
 	static string UTMString(GPSLocation_t location);
  
+	bool GetTime(struct timespec &gpsTime );
+
 	bool GetVelocity(GPSVelocity_t & velocity);
 	
 	static pair<double,double> dist_bearing(GPSLocation_t p1, GPSLocation_t p2);

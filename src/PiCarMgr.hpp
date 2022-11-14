@@ -153,6 +153,8 @@ class PiCarMgr {
 	
 	bool clockNeedsSync(time_t deviation,  struct timespec gpsTime );
  
+	bool setECUtime(struct timespec time);
+	
 	bool setRelay1(bool state);
 	
 	// MARK: - scanner Channels

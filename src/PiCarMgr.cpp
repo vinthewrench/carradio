@@ -253,6 +253,7 @@ bool PiCarMgr::begin(){
 	
 		_gps.setTimeSyncCallback([=](time_t deviation, struct timespec gpsTime){
 			clockNeedsSync(deviation, gpsTime);
+			setECUtime(gpsTime);
 		} );
 	
 //		_display.showStartup();  // show startup
@@ -2589,6 +2590,7 @@ vector<string> PiCarMgr::settingsMenuItems(){
 		dim_entry,
 		"Shutdown Delay",
 		"Info",
+		"Sync Time",
 		"Exit",
 	};
 
@@ -2629,6 +2631,21 @@ void PiCarMgr::displaySettingsMenu(){
 						
 					case 2:
 						_display.showInfo();
+						break;
+ 
+					case 3:
+					{
+						struct timespec  gpsTime;
+						
+						bool success = false;
+						if( _gps.GetTime(gpsTime)) {
+							success = setECUtime(gpsTime);
+						}
+						_display.showMessage( success?"Set Time Succeeed":"Set Time Failed" , 2,[=](){
+							displayMenu();
+						});
+						
+					}
 						break;
  
 					default:
@@ -3286,3 +3303,17 @@ bool PiCarMgr::clockNeedsSync(time_t deviation,  struct timespec gpsTime ){
 	return success;
 }
  
+
+bool PiCarMgr::setECUtime(  struct timespec ts){
+	bool success = false;
+	
+	struct tm *tm = localtime(&ts.tv_sec);
+	 
+	_can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
+		static_cast<uint8_t>(tm->tm_hour),
+		static_cast<uint8_t>(tm->tm_min),
+		static_cast<uint8_t>(tm->tm_sec)});
+ 
+	return success;
+
+}

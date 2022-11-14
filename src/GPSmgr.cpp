@@ -16,6 +16,8 @@
 #include "ErrorMgr.hpp"
 #include "utm.hpp"
 #include <cmath>
+#include "timespec_util.h"
+
 typedef void * (*THREADFUNCPTR)(void *);
 
 #ifndef PI
@@ -275,7 +277,28 @@ bool GPSmgr::GetVelocity(GPSVelocity_t& velocity){
 	return success;
 }
 
+bool GPSmgr::GetTime(struct timespec& gpsTime ){
+	
+	bool success = false;
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now );
 
+	pthread_mutex_lock (&_mutex);
+	
+	if(_lastGPSTime.isValid ){
+		int64_t diff = timespec_to_ms(timespec_sub(now,_lastGPSTime.timestamp));
+	 
+		if( abs(diff) < 1000){
+			gpsTime = _lastGPSTime.gpsTime;
+			success = true;
+
+		}
+ 	}
+	
+	pthread_mutex_unlock (&_mutex);
+	return success;
+}
+ 
 // MARK: -  Utilities
  
 

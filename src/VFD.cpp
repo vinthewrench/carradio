@@ -221,9 +221,11 @@ bool VFD::printPacket(const char *fmt, ...){
  
 bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
+ 	if(len == 0) return true;
+
 	bool success = false;
- 
-	// I consider this a bug in the Noritake VFD firmware.  if you send a 
+
+	// I consider this a bug in the Noritake VFD firmware.  if you send a
 	// VFD_CLEAR_AREA  followed by a 0x60, it screws up the display
 	// To send commands as hexadecimal, prefix the 2 bytes using character 60H.
 	// To send character 60H to the display, send 60H twice.
@@ -435,11 +437,14 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);
 			
-			printf("%2d |%s|\n", y, lines[i].c_str());
-			success = printPacket("%s",lines[i].c_str());
-			if(!success) break;
+			string str = lines[i].c_str();
+			if(!str.empty()){
+				setCursor(0, y);
+				printf("%2d |%s|\n", y, lines[i].c_str());
+				success = printPacket("%s",lines[i].c_str());
+				if(!success) break;
+			}
 			y += step;
 		}
 	}

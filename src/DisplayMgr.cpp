@@ -4862,14 +4862,14 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 				PiCarMgr::station_info_t info;
 				if(mgr->getStationInfo(mode, freq, info)){
 					string title = truncate(info.title,  20);
-					channelStr += + " " + title;
+					channelStr += + " " + title + "  ";
 				}
 				
 				std::transform(channelStr.begin(), channelStr.end(),channelStr.begin(), ::toupper);
 				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") +  channelStr;
 			}
 			else {
-				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT" ;
+				line = string("\x1d") + (isSelected?"\xb9":" ") + string("\x1c ") + " EXIT   " ;
 			}
 			
 			lines.push_back(line);

@@ -272,8 +272,16 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 		
 #if 1
 		for(int i = 0; i < len +4; i++){
-			success = (::write(_fd,&buffer[i] , 1) == 1);
-			if(!success) return false;
+			ssize_t cnt = ::write(_fd,&buffer[i] , 1);
+			success = cnt == 1;
+			
+			if(!success){
+				printf("write failed %d  err %d %s\n", (int)cnt, errno, strerror(errno));
+				
+			}
+//			success = (::write(_fd,&buffer[i] , 1) == 1);
+			
+ 			if(!success) return false;
 			usleep(10);
 		}
 		

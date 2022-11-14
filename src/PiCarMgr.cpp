@@ -288,9 +288,6 @@ bool PiCarMgr::begin(){
 		if(firstRunToday){
 			LOGT_INFO("Hello Moto\n");
 			 
-			_display.showMessage("Hello Moto", 1,[=](){
-	 		});
-
 			//	//		_audio.playSound("BTL.wav", [=](bool success){
 			//
 			//				printf("playSound() = %d\n", success);
@@ -3308,7 +3305,7 @@ bool PiCarMgr::setECUtime(  struct timespec ts){
 	
 	struct tm *tm = localtime(&ts.tv_sec);
 	 
-	_can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
+	success = _can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
 		static_cast<uint8_t>(tm->tm_hour),
 		static_cast<uint8_t>(tm->tm_min),
 		static_cast<uint8_t>(tm->tm_sec)});

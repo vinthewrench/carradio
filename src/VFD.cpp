@@ -415,11 +415,13 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	bool success = false;
 	
 	auto lineCount = lines.size();
+
 	
+	setFont(font) ;
+
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
-			setCursor(0, y);
 			setCursor(0, y);
 			success = printPacket("%s",lines[i].c_str());
 			if(!success) break;

@@ -3943,8 +3943,7 @@ void DisplayMgr::drawDTCInfoScreen(modeTransition_t transition, string code){
 		
 		stringvector lines = Utils::split(description, 30);
 		
-		_vfd.setFont(VFD::FONT_MINI) ;
-		_vfd.printLines(32, 7, lines, 1, 4);
+ 		_vfd.printLines(32, 7, lines, 1, 4, VFD::FONT_MINI);
 	}
 	
 	drawTimeBox();
@@ -4883,7 +4882,6 @@ void DisplayMgr::drawScannerChannels(modeTransition_t transition){
 			lines.push_back(line);
 		}
 		
-		_vfd.setFont(VFD::FONT_MINI) ;
 		_vfd.printLines(20, 9, lines, firstLine, displayedLines, VFD::FONT_MINI);
 		
 		if(lines.size() > displayedLines){

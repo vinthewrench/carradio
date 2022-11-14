@@ -3291,7 +3291,7 @@ bool PiCarMgr::setRTC(struct timespec gpsTime ){
 	int r = clock_settime(CLOCK_REALTIME, &gpsTime);
 	if(r == 0){
  		struct tm *tm = localtime(&gpsTime.tv_sec);
- 		LOGT_INFO("Clock synced to GPS %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
+ 		LOGT_INFO("System Clock synced to GPS %d:%d:%d",tm->tm_hour, tm->tm_min, tm->tm_sec );
 		success = true;
 	}
 	else {
@@ -3306,7 +3306,7 @@ bool PiCarMgr::setECUtime(  struct timespec ts){
 	bool success = false;
  	struct tm *tm = localtime(&ts.tv_sec);
  
-	LOGT_INFO("Set ECU Clock %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
+	LOGT_INFO("Set ECU Clock %d:%d:%d",tm->tm_hour, tm->tm_min, tm->tm_sec );
 
 	success = _can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
 		static_cast<uint8_t>(tm->tm_hour),

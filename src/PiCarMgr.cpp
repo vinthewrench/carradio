@@ -187,10 +187,10 @@ bool PiCarMgr::begin(){
  
 	try {
 		int error = 0;
-	 
+		
 		clock_gettime(CLOCK_MONOTONIC, &_startTime);
 		_lastActivityTime = _startTime;
-
+		
 		_lastRadioMode = RadioMgr::MODE_UNKNOWN;
 		_lastFreqForMode.clear();
 		_tuner_mode = TUNE_ALL;
@@ -203,7 +203,7 @@ bool PiCarMgr::begin(){
 		// clear DB
 		_db.clearValues();
 		_waypoints.clear();
-	 
+		
 		// read in any properties
 		_db.restorePropertiesFromFile();
 		
@@ -222,43 +222,36 @@ bool PiCarMgr::begin(){
 #endif
 		startControls();
 		
-
+		
 		// setup display device
 		if(!_display.begin(path_display,B38400))
 			throw Exception("failed to setup Display ");
 		
 		// set initial brightness?
- 		_display.setKnobBackLight(false);
+		_display.setKnobBackLight(false);
 		_display.setBrightness(_dimLevel);
-
+		
 		// SETUP CANBUS
 		_can.begin();
- 
+		
 		// find first RTS device
 		auto devices = RtlSdr::get_devices();
 		if(devices.size() > 0) {
 			if(!_radio.begin(devices[0].index, pcmrate))
 				throw Exception("failed to setup Radio ");
 		}
-
- 	 #if defined(__APPLE__)
-			 const char* path_gps  = "/dev/cu.usbmodem14101";
-	 #else
-			 const char* path_gps  = "/dev/ttyAMA1";
-	 #endif
-			 
-			 if(!_gps.begin(path_gps, B38400, error))
-				 throw Exception("failed to setup GPS.  error: %d", error);
 		
-		_gps.setTimeSyncCallback([=](time_t deviation, struct timespec gpsTime){
-			if(shouldSyncClockToGPS(deviation)){
-				setRTC(gpsTime);
-				setECUtime(gpsTime);
-			}
-		} );
-	
-//		_display.showStartup();  // show startup
-
+#if defined(__APPLE__)
+		const char* path_gps  = "/dev/cu.usbmodem14101";
+#else
+		const char* path_gps  = "/dev/ttyAMA1";
+#endif
+		
+		if(!_gps.begin(path_gps, B38400, error))
+			throw Exception("failed to setup GPS.  error: %d", error);
+		
+		//		_display.showStartup();  // show startup
+		
 		// setup audio out
 		if(!_audio.begin(pcmrate, true ))
 			throw Exception("failed to setup Audio ");
@@ -267,17 +260,17 @@ bool PiCarMgr::begin(){
 		if(!_audio.setVolume(0)
 			|| ! _audio.setBalance(0))
 			throw Exception("failed to setup Audio levels ");
- 
+		
 		restoreStationsFromFile();
 		restoreRadioSettings();
- 
+		
 		
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodRadioTaskID,  this, periodicCAN_CB_Radio_wrapper);
 		
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodAudioTaskID,  this, periodicCAN_CB_Audio_wrapper);
-	
+		
 		_dtc.begin();
 		
 		_isSetup = true;
@@ -291,11 +284,13 @@ bool PiCarMgr::begin(){
 				firstRunToday = false;
 			}
 		}
-		
-	
+	 
 		if(firstRunToday){
 			LOGT_INFO("Hello Moto\n");
-	 
+			 
+			_display.showMessage("Hello Moto", 1,[=](){
+	 		});
+
 			//	//		_audio.playSound("BTL.wav", [=](bool success){
 			//
 			//				printf("playSound() = %d\n", success);
@@ -303,6 +298,13 @@ bool PiCarMgr::begin(){
 			
 		}
  
+		_gps.setTimeSyncCallback([=](time_t deviation, struct timespec gpsTime){
+			if(shouldSyncClockToGPS(deviation)){
+				setRTC(gpsTime);
+				setECUtime(gpsTime);
+			}
+		} );
+	 
 	}
 	catch ( const Exception& e)  {
 		

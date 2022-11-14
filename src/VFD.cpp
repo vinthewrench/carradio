@@ -274,15 +274,8 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 		
 #if 1
 		for(int i = 0; i < len +4; i++){
-			ssize_t cnt = ::write(_fd,&buffer[i] , 1);
-			success = cnt == 1;
-			
-			if(!success){
-				printf("write failed %d  err %d %s\n", (int)cnt, errno, strerror(errno));
-				}
-//			success = (::write(_fd,&buffer[i] , 1) == 1);
-			
- 			if(!success) return false;
+			success = (::write(_fd,&buffer[i] , 1) == 1);
+			if(!success) return false;
 			usleep(10);
 		}
 		
@@ -314,9 +307,7 @@ bool VFD:: writePacket(const uint8_t * data, size_t len, useconds_t waitusec){
 	
 	
 	if(newBuff) free(newBuff);
-
-	printf("writePacket returned %s\n", success?"TRUE":"FALSE");
-
+	
 	return success;
 }
 // MARK: -  Print scrollable lines
@@ -429,11 +420,6 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 	
 	setFont(font) ;
 
-	printf("\nfirst: %d,  lines: %d maxLines: %d\n",(int) firstLine, (int) lineCount, (int)maxLines);
-	for(auto line:lines){
-		printf("%s\n", line.c_str());
-	}
- 
 	if(maxLines >= lineCount){
 		//ignore the offset and draw all.
 		for(int i = 0; i < lineCount; i ++){
@@ -441,7 +427,6 @@ bool VFD:: printLines(uint8_t y, uint8_t step,
 			string str = lines[i].c_str();
 			if(!str.empty()){
 				setCursor(0, y);
-				printf("%2d |%s|\n", y, lines[i].c_str());
 				success = printPacket("%s",lines[i].c_str());
 				if(!success) break;
 			}

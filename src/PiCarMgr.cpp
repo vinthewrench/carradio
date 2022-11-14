@@ -3306,8 +3306,11 @@ bool PiCarMgr::setRTC(struct timespec gpsTime ){
 bool PiCarMgr::setECUtime(  struct timespec ts){
 	bool success = false;
 	
+	
 	struct tm *tm = localtime(&ts.tv_sec);
-	 
+ 
+	LOGT_INFO("SET ECU CLOCK  %d:%d:%d\n",tm->tm_hour, tm->tm_min, tm->tm_sec );
+
 	success = _can.sendFrame(PiCarCAN::CAN_JEEP, 0x2e9, {0x03,
 		static_cast<uint8_t>(tm->tm_hour),
 		static_cast<uint8_t>(tm->tm_min),

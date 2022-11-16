@@ -246,7 +246,7 @@ void	DTCManager::processWanglerRadioPID21(uint8_t pid){
 					
 				case RadioMgr::BROADCAST_FM:
 				case RadioMgr::VHF:
-				case RadioMgr::GMRS:
+				case RadioMgr::UHF:
 					data.push_back(0x04);
 					data.push_back(0x00);
 					break;

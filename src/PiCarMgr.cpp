@@ -1351,7 +1351,7 @@ bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 	 
 				// I dont have a clear st of equivalants  - so treat like AUX
 			case  RadioMgr::VHF:
-			case  RadioMgr::GMRS:
+			case  RadioMgr::UHF:
 			case RadioMgr::AIRPLAY:
 			case RadioMgr::SCANNER:
 			default:
@@ -2498,7 +2498,7 @@ void PiCarMgr::displayRadioMenu(){
 		"AM",
 		"FM",
 		"VHF",
-		"GMRS",
+		"UHF",
 		"AUX",
 		"AirPlay",
 		"Scanner",
@@ -2519,7 +2519,7 @@ void PiCarMgr::displayRadioMenu(){
 			selectedItem = 2;
 			break;
 			
-		case  RadioMgr::GMRS:
+		case  RadioMgr::UHF:
 			selectedItem = 3;
 			break;
 			
@@ -2568,8 +2568,8 @@ void PiCarMgr::displayRadioMenu(){
 					radioMode  = RadioMgr::VHF;
 					break;
 					
-				case 3: // GMRS
-					radioMode  = RadioMgr::GMRS;
+				case 3: // UHF
+					radioMode  = RadioMgr::UHF;
 					break;
 					
 				case 4: // AUX
@@ -2948,7 +2948,7 @@ void PiCarMgr::tunerDoubleClicked(){
 				"Clear all presets"
 			};
 			
-			if(mode == RadioMgr::VHF || mode == RadioMgr::GMRS){
+			if(mode == RadioMgr::VHF || mode == RadioMgr::UHF){
 				menu_items.push_back("-");
 	 			menu_items.push_back( isScannerChannel(mode, freq)?"Remove Scanner":"Add Scanner");
 			};

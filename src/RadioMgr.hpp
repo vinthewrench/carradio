@@ -37,7 +37,7 @@ public:
 		BROADCAST_AM,
 		BROADCAST_FM,
 		VHF,
-		GMRS,
+		UHF,
 		SCANNER,
 		AUX,
 		AIRPLAY

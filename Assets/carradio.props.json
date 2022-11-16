@@ -99,7 +99,7 @@
 		},
 		{
 			"freq": 462600000,
-			"mode": "GMRS"
+			"mode": "UHF"
 		}
 	],
 	"last_write": 1654807694,
@@ -154,7 +154,7 @@
 		},
   		{
 			"freq": 462600000,
-			"mode": "GMRS"
+			"mode": "UHF"
 		}
 	],
 	"scanner_freqs": [
@@ -201,7 +201,7 @@
 		},
 		{
 			"freq": 462600000,
-			"mode": "GMRS"
+			"mode": "UHF"
 		}
 	],
 	"w1Map": [

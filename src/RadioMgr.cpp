@@ -318,7 +318,7 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			_shouldReadAux = false;
 			_shouldReadAirplay = true;
 		}
-		else if(_mode == VHF || _mode == GMRS) {
+		else if(_mode == VHF || _mode == UHF) {
 	
 			_sdr.resetBuffer();
 			_output_buffer.flush();
@@ -504,8 +504,8 @@ string RadioMgr::modeString(radio_mode_t mode){
 			str = "VHF";
 			break;
  
-		case GMRS:
-			str = "GMRS";
+		case UHF:
+			str = "UHF";
 			break;
 			
 		case AUX:
@@ -534,7 +534,7 @@ string RadioMgr::modeString(radio_mode_t mode){
 	 if(str == "AM") mode = BROADCAST_AM;
 	 else  if(str == "FM") mode = BROADCAST_FM;
 	 else if(str == "VHF") mode = VHF;
-	 else if(str == "GMRS") mode = GMRS;
+	 else if(str == "UHF") mode = UHF;
 	 else if(str == "AUX") mode = AUX;
 	 else if(str == "AIRPLAY") mode = AIRPLAY;
 	 else if(str == "SCANNER") mode = SCANNER;
@@ -590,19 +590,19 @@ bool RadioMgr::freqRangeOfMode(radio_mode_t mode, uint32_t & minFreq,  uint32_t 
 			maxFreq = 107.9e6;
 			success = true;
 			break;
-
-		case GMRS:
-			minFreq = 462550000;
-			maxFreq = 467725000;
-			success = true;
-			break;
-			
+ 
 		case VHF:
 			minFreq = 30000000;
 			maxFreq = 300000000;
 			success = true;
 			break;
 
+		case UHF:
+			minFreq = 300000000;
+			maxFreq = 3500000000;
+			success = true;
+			break;
+			
 		case AUX:
 			minFreq = 0;
 			maxFreq = 0;
@@ -1036,7 +1036,7 @@ void RadioMgr::SDRProcessor(){
 		if (iqsamples.empty())
 			continue;
 		
-		if(_mode == VHF ||  _mode == GMRS || _mode == BROADCAST_FM){
+		if(_mode == VHF ||  _mode == UHF || _mode == BROADCAST_FM){
 			
 			/// this block is critical.  dont change frequencies in the middle of a process.
 			std::lock_guard<std::mutex> lock(_mutex);

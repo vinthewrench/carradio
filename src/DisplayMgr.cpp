@@ -2127,7 +2127,7 @@ void DisplayMgr::drawRadioScreen(modeTransition_t transition){
 	if(radio->isOn()
 		&& ( mode == RadioMgr::BROADCAST_FM
 			 ||  mode == RadioMgr::VHF
-			 ||  mode == RadioMgr::GMRS	))
+			 ||  mode == RadioMgr::UHF	))
 	{
 		_vfd.setFont(VFD::FONT_MINI);
 		_vfd.setCursor(modeStart, centerY+9);

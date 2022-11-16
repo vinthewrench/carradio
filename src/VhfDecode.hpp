@@ -112,7 +112,7 @@ public:
 		m_squelch_dwell = count;
 	}
 
-	
+	static bool isNarrowBand(double frequency);
 
 private:
  

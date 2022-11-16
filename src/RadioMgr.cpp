@@ -347,11 +347,15 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 			double bandwidth_pcm = min(FmDecoder::default_bandwidth_pcm,
 												0.45 * _pcmrate);
 			
+			double ifBandwdth = VhfDecoder::isNarrowBand(newFreq)
+								? 12500
+								: 25000;
+			
 			_sdrDecoder = new VhfDecoder(RtlSdr::default_sampleRate,
 												newFreq - tuner_freq,
 												_pcmrate,
 												  VhfDecoder::default_deemphasis,     // deemphasis,
-												  VhfDecoder::default_bandwidth_if,   // bandwidth_if
+												  ifBandwdth,  							 // bandwidth_if
 												  VhfDecoder::default_freq_dev,       // freq_dev
 												bandwidth_pcm,
 												downsample,

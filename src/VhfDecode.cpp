@@ -206,3 +206,19 @@ void VhfDecoder::mono_to_left_right(const SampleVector& samples_mono,
 	 }
 }
 
+
+
+bool VhfDecoder::isNarrowBand(double frequency){
+	
+ 	/*
+	 
+	 https://www.fcc.gov/narrowbanding-overview
+	 As of January 1, 2013, all public safety and industrial/business land mobile radio systems operating in the 150-174 MHz and 421-470 MHz bands were required to cease using 25 kHz efficiency technology and begin using at least 12.5 kHz efficiency technology.
+	 */
+	bool isNarrow = false;
+	
+	isNarrow = (( frequency >= 150e6 && frequency <= 174e6)
+					|| ( frequency >= 421e6 && frequency <= 4704e6));
+						 
+	return isNarrow;
+}

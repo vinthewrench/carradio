@@ -266,6 +266,10 @@ bool PiCarMgr::begin(){
 		
 		
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
+										 _canPeriodRadio293TaskID,  this, periodicCAN_CB_Radio293_wrapper);
+		
+	
+		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodRadioTaskID,  this, periodicCAN_CB_Radio_wrapper);
 		
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
@@ -1269,6 +1273,11 @@ bool PiCarMgr::periodicCAN_CB_Radio_wrapper(void* context,  canid_t &can_id, vec
 	return mgr->periodicCAN_CB_Radio(can_id, bytes);
 }
 
+bool PiCarMgr::periodicCAN_CB_Radio293_wrapper(void* context,  canid_t &can_id, vector<uint8_t> &bytes){
+	PiCarMgr* mgr = (PiCarMgr*)context;
+	return mgr->periodicCAN_CB_Radio293(can_id, bytes);
+}
+ 
 
 bool PiCarMgr::periodicCAN_CB_Audio(canid_t &can_id, vector<uint8_t> &bytes){
  
@@ -1365,6 +1374,45 @@ bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 	bytes = packet;
 
 	return true;
+}
+
+
+bool PiCarMgr::periodicCAN_CB_Radio293(canid_t &can_id, vector<uint8_t> &bytes){
+
+	/*
+	 293 Radio Station
+		 [8] 00 cc cc pp 00 FF FF FF
+			 cc = Channel / Station
+			 pp = is preselect button ID
+	 */
+	
+	 
+	if(_radio.isConnected() && _radio.isOn()){
+		RadioMgr::radio_mode_t  mode  = _radio.radioMode();
+		
+		if(mode == RadioMgr::BROADCAST_FM){
+			uint16_t  freq =  _radio.frequency() /1.0e5;
+ 
+			vector<uint8_t>  packet = {
+				static_cast<uint8_t> (mode),
+				0x01,
+				static_cast<uint8_t> (freq >> 8),
+				static_cast<uint8_t> (freq & 0xFF) ,
+				0x00,
+				0xFF,
+				0xFF,
+				0xFF
+			};
+
+			can_id = 0x293;
+			bytes = packet;
+
+			return true;
+		}
+		
+	};
+	
+ 	return false;
 }
 
 // MARK: -  PiCarMgr main loop  thread
@@ -3246,7 +3294,6 @@ bool  PiCarMgr::hasWifi(stringvector *ifnames){
 				family = ifa->ifa_addr->sa_family;
 				
 				if (family == AF_INET || family == AF_INET6) {
-					
 					
 					if (std::find(names.begin(), names.end(),name) == names.end()){
 						names.push_back(string(ifa->ifa_name));

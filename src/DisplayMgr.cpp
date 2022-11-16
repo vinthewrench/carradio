@@ -2422,7 +2422,9 @@ void  DisplayMgr::drawTemperature(){
 	}
 	
 	if(hasInside){
-		p+=  sprintf(p, "%d\xa0%s", (int) round(fInside) ,  (hasOutside?"":"F") );
+		
+		bool isFrozen= (fInside <= 32.0);
+ 			p+=  sprintf(p, "%c%d\xa0%s",isFrozen?'*':' ', (int) round(fInside) ,  (hasOutside?"":"F") );
 	}
 	
 	if(hasOutside){

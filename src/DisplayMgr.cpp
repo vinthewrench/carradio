@@ -4523,7 +4523,7 @@ void DisplayMgr::drawGPSWaypointScreen(modeTransition_t transition){
 			
 			_vfd.setCursor(col+10, topRow+10 );
 			
-			_vfd.printPacket("%-6s",  distanceString(r.first * 0.6213711922).c_str());
+			_vfd.printPacket("%-9s",  distanceString(r.first * 0.6213711922).c_str());
 			//		_vfd.printPacket("%6.2fmi", r.first * 0.6213711922);
 			
 			int bearing = int(r.second);

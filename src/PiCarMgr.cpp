@@ -2673,13 +2673,14 @@ void PiCarMgr::displayDebugMenu(){
 					
 				case 0:
 					_shouldSendRadioCAN = !_shouldSendRadioCAN;
+					displayDebugMenu();
 					break;
 					
 				default:
-					break;
+					// fall back to main menu
+					displayMenu();
+ 					break;
 			}
-			// fall back to main menu
-			displayMenu();
 		}
 	});
 	

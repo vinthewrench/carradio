@@ -2651,10 +2651,10 @@ void PiCarMgr::displayDebugMenu(){
 	
 	sprintf(buffer, "\x1d%-9s \x1c%s\x1d","Radio CAN",  _shouldSendRadioCAN?"YES":"NO");
 	menu_items.push_back(string(buffer));
-
 	
-	menu_items.push_back("Exit");
-  
+	
+	menu_items.push_back("Exit          ");
+	
 	static uint last_selected_item = 0;
 	
 	_display.showMenuScreen(menu_items,
@@ -2669,20 +2669,20 @@ void PiCarMgr::displayDebugMenu(){
 			
 			last_selected_item = newSelectedItem;
 			
-				switch (newSelectedItem) {
-						
-					case 0:
-						_shouldSendRadioCAN = !_shouldSendRadioCAN;
-						break;
-	 
-					default:
-						// fall back to main menu
-						displayMenu();
-						break;
-				}
- 			}
+			switch (newSelectedItem) {
+					
+				case 0:
+					_shouldSendRadioCAN = !_shouldSendRadioCAN;
+					break;
+					
+				default:
+					break;
+			}
+			// fall back to main menu
+			displayMenu();
+		}
 	});
-
+	
 }
 
 vector<string> PiCarMgr::settingsMenuItems(){

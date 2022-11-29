@@ -160,6 +160,7 @@ PiCarMgr::PiCarMgr(){
 		{MENU_CANBUS,	"Engine Status"},
 		{MENU_DTC,		"Diagnostics"},
  		{MENU_SETTINGS, "Settings"},
+		{MENU_DEBUG, 	"Debug"},
 		{MENU_TIME,		"Time"},
 		{MENU_EXIT, 	 "Exit"}
 	};
@@ -2081,6 +2082,10 @@ void PiCarMgr::setDisplayMode(menu_mode_t menuMode){
 			displayAudioMenu();
 			break;
  
+		case MENU_DEBUG:
+			displayDebugMenu();
+			break;
+  
 		case MENU_TIME:
 			_display.showTime();
 			break;
@@ -2300,25 +2305,25 @@ void PiCarMgr::displayAudioMenu(){
 	
 	char buffer[64] = {0};
 	
-	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Squelch:", _radio.getSquelchLevel());
+	sprintf(buffer, "\x1d%-9s \x1c%-3d\x1d","Squelch", _radio.getSquelchLevel());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Gain:", _radio.getTunerGain());
+	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Gain", _radio.getTunerGain());
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Balance:", int(_audio.balance() * 10));
+	sprintf(buffer, "\x1d%-9s \x1c%3d\x1d","Balance", int(_audio.balance() * 10));
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Fader:", int(_audio.fader() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Fader", int(_audio.fader() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Bass:",int(_audio.bass() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Bass",int(_audio.bass() * 10));
  	menu_items.push_back(string(buffer));
 
-	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Midrange:", int(_audio.midrange() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Midrange", int(_audio.midrange() * 10));
  	menu_items.push_back(string(buffer));
  
-	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Treble:", int(_audio.treble() * 10));
+	sprintf(buffer,"\x1d%-9s \x1c%3d\x1d","Treble", int(_audio.treble() * 10));
  	menu_items.push_back(string(buffer));
 
 	menu_items.push_back("Exit");
@@ -2635,6 +2640,50 @@ void PiCarMgr::displayRadioMenu(){
 		}
 	});
 };
+
+void PiCarMgr::displayDebugMenu(){
+	
+	constexpr time_t timeout_secs = 10;
+	
+	vector<string> menu_items = {};
+	
+	char buffer[64] = {0};
+	
+	sprintf(buffer, "\x1d%-9s \x1c%s\x1d","Radio CAN",  _shouldSendRadioCAN?"YES":"NO");
+	menu_items.push_back(string(buffer));
+
+	
+	menu_items.push_back("Exit");
+  
+	static uint last_selected_item = 0;
+	
+	_display.showMenuScreen(menu_items,
+									last_selected_item,
+									"Debug Values",
+									timeout_secs,
+									[=](bool didSucceed,
+										 uint newSelectedItem,
+										 DisplayMgr::knob_action_t action ){
+		
+		if(didSucceed && action == DisplayMgr::KNOB_CLICK) {
+			
+			last_selected_item = newSelectedItem;
+			
+				switch (newSelectedItem) {
+						
+					case 0:
+						_shouldSendRadioCAN = !_shouldSendRadioCAN;
+						break;
+	 
+					default:
+						// fall back to main menu
+						displayMenu();
+						break;
+				}
+ 			}
+	});
+
+}
 
 vector<string> PiCarMgr::settingsMenuItems(){
 	string dim_entry = _autoDimmerMode ? "Dim Screen (auto)": "Dim Screen";

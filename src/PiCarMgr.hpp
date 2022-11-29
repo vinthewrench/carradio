@@ -324,6 +324,7 @@ private:
 	CANBusMgr::periodicCallBackID_t		_canPeriodRadioTaskID;
 	CANBusMgr::periodicCallBackID_t		_canPeriodRadio293TaskID;
 	CANBusMgr::periodicCallBackID_t		_canPeriodAudioTaskID;
+ 	bool											_shouldSendRadioCAN = false;
 
 	struct timespec 	_startTime;
 	struct timespec 	_lastActivityTime;

@@ -267,7 +267,6 @@ bool PiCarMgr::begin(){
 		
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodRadio293TaskID,  this, periodicCAN_CB_Radio293_wrapper);
-		
 	
 		_can.setPeriodicCallback(PiCarCAN::CAN_JEEP, 1000,
 										 _canPeriodRadioTaskID,  this, periodicCAN_CB_Radio_wrapper);
@@ -1281,6 +1280,8 @@ bool PiCarMgr::periodicCAN_CB_Radio293_wrapper(void* context,  canid_t &can_id, 
 
 bool PiCarMgr::periodicCAN_CB_Audio(canid_t &can_id, vector<uint8_t> &bytes){
  
+	if(!_shouldSendRadioCAN) return false;
+
 	/*
  3D9 Radio Settings broadcast
 	 [7]  Vl Bl Fa Ba Mi Tr FF
@@ -1318,6 +1319,8 @@ bool PiCarMgr::periodicCAN_CB_Audio(canid_t &can_id, vector<uint8_t> &bytes){
 
 bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 
+	if(!_shouldSendRadioCAN) return false;
+	
 	/*
 	 291 Radio Mode
 		 [7]  ss 0D 05 30 tt 00 07
@@ -1378,6 +1381,8 @@ bool PiCarMgr::periodicCAN_CB_Radio(canid_t &can_id, vector<uint8_t> &bytes){
 
 
 bool PiCarMgr::periodicCAN_CB_Radio293(canid_t &can_id, vector<uint8_t> &bytes){
+
+	if(!_shouldSendRadioCAN) return false;
 
 	/*
 	 293 Radio Station

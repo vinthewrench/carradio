@@ -2653,16 +2653,16 @@ void PiCarMgr::displayDebugMenu(){
 	
 	char buffer[64] = {0};
 	
-	sprintf(buffer, "\x1d%-9s \x1c%14s\x1d","Radio CAN",  _shouldSendRadioCAN?"YES":"NO");
+	sprintf(buffer, "\x1d%-14s \x1c%s\x1d","Radio CAN",  _shouldSendRadioCAN?"YES":"NO");
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1d%-9s \x1c%14s\x1d","Auto Dimmer",  _autoDimmerMode?"YES":"NO");
+	sprintf(buffer, "\x1d%-14s \x1c%s\x1d","Auto Dimmer",  _autoDimmerMode?"YES":"NO");
 	menu_items.push_back(string(buffer));
 
-	sprintf(buffer, "\x1d%-9s \x1c%14s\x1d","ClockSync GPS",  _clocksync_gps?"YES":"NO");
+	sprintf(buffer, "\x1d%-14s \x1c%s\x1d","ClockSync GPS",  _clocksync_gps?"YES":"NO");
 	menu_items.push_back(string(buffer));
  
-	menu_items.push_back("Exit");
+	menu_items.push_back("Exit ");
 	
 	static uint last_selected_item = 0;
 	

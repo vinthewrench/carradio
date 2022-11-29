@@ -538,6 +538,7 @@ void PiCarMgr::saveRadioSettings(){
 		_db.removeProperty(PROP_SHUTDOWN_DELAY);
 	
 	_db.setProperty(PROP_AUTO_SHUTDOWN_MODE, _autoShutdownMode);
+ 	_db.setProperty(PROP_SEND_RADIO_CAN, _shouldSendRadioCAN);
  
 	_db.setProperty(PROP_TUNER_MODE, _tuner_mode);
 	_db.setProperty(PROP_SQUELCH_LEVEL, _radio.getSquelchLevel());
@@ -576,6 +577,9 @@ void PiCarMgr::restoreRadioSettings(){
 	}
    else
 		_shutdownDelay = UINT16_MAX;
+ 
+	// Send radio CAN messages
+	_db.getBoolProperty(PROP_SEND_RADIO_CAN,&_shouldSendRadioCAN) ;
  
 	// SET Dimmer
 	if(_db.getBoolProperty(PROP_AUTO_DIMMER_MODE,&_autoDimmerMode) && _autoDimmerMode){
@@ -2651,8 +2655,13 @@ void PiCarMgr::displayDebugMenu(){
 	
 	sprintf(buffer, "\x1d%-9s \x1c%s\x1d","Radio CAN",  _shouldSendRadioCAN?"YES":"NO");
 	menu_items.push_back(string(buffer));
-	
-	
+
+	sprintf(buffer, "\x1d%-9s \x1c%s\x1d","Auto Dimmer",  _autoDimmerMode?"YES":"NO");
+	menu_items.push_back(string(buffer));
+
+	sprintf(buffer, "\x1d%-9s \x1c%s\x1d","ClockSync GPS",  _clocksync_gps?"YES":"NO");
+	menu_items.push_back(string(buffer));
+ 
 	menu_items.push_back("Exit          ");
 	
 	static uint last_selected_item = 0;
@@ -2669,17 +2678,34 @@ void PiCarMgr::displayDebugMenu(){
 			
 			last_selected_item = newSelectedItem;
 			
+			bool didChangeStuff = true;
+			
 			switch (newSelectedItem) {
 					
 				case 0:
 					_shouldSendRadioCAN = !_shouldSendRadioCAN;
-					displayDebugMenu();
+						break;
+
+				case 1:
+					_autoDimmerMode = !_autoDimmerMode;
+	 				break;
+
+				case 2:
+					_clocksync_gps = !_clocksync_gps;
 					break;
-					
+	 
 				default:
+					didChangeStuff = false;
 					// fall back to main menu
-					displayMenu();
  					break;
+			}
+			if(didChangeStuff){
+				saveRadioSettings();
+				displayDebugMenu();
+ 			}
+			else {
+				displayMenu();
+				
 			}
 		}
 	});

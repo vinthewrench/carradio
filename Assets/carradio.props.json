@@ -13,6 +13,7 @@
 	"squelch" : -20,
 	"gain" : 0,
 	"auto_dimmer_mode" : true,
+	"send_radio_can" : false,
 	"canbus-display": [
 		{
 			"key": "GM_COOLANT_TEMP",

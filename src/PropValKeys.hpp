@@ -62,6 +62,8 @@ inline static const string PROP_DIMMER_LEVEL						= "dimmer_level";
 
 inline static const string PROP_AUTO_SHUTDOWN_MODE				= "auto_shutdown_mode";
 inline static const string PROP_SHUTDOWN_DELAY					= "shutdown_delay";
+inline static const string PROP_SEND_RADIO_CAN					= "send_radio_can";
+ 
 
 inline static const string  PROP_CANBUS_DISPLAY				= "canbus-display";
 inline static const string  PROP_LINE							= "line";
@@ -90,6 +92,7 @@ inline static const string  PROP_SYNC_CLOCK_TO_GPS			= "clocksync_gps_secs";
 inline static const string  PROP_W1_MAP						= "w1Map";
 inline static const string  PROP_SQUELCH_LEVEL				= "squelch";
 inline static const string  PROP_GAIN_LEVEL					= "gain";
+
 
 inline static const string  SERIAL_NUM							= "serial_num";
 inline static const string  PART_NUM							= "part_num";

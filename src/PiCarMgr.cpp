@@ -1487,8 +1487,8 @@ void PiCarMgr::PiCarLoop(){
 					if(newstatus != tunerKnobStatus) status_changed = true;
 					tunerKnobStatus = newstatus;
 	
-					// if no change, break
-					if(! status_changed) break;
+					// if changed, break
+					if(status_changed) break;
  				}
 //				volKnob->updateStatus(volKnobStatus);
 //				tunerKnob->updateStatus(tunerKnobStatus);

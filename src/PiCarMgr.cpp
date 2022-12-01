@@ -1441,7 +1441,7 @@ void PiCarMgr::PiCarLoop(){
 	try{
 		
 		struct timespec	lastTunerPressed = {0,0};
-		
+
 		while(_isRunning){
 			
 			// if not setup // check back shortly -  we are starting up
@@ -1476,7 +1476,8 @@ void PiCarMgr::PiCarLoop(){
 			bool tunerWasDoubleClicked 	= false;
 			bool tunerIsPressed = false;
 			bool tunerWasMoved 	= false;
-			
+			bool tunerLongPress 	= false;
+
 			// loop until status changes
 			for(;;) {
 				
@@ -1490,20 +1491,20 @@ void PiCarMgr::PiCarLoop(){
 					volKnob->updateStatus(newstatus);
 					if(newstatus != volKnobStatus) status_changed = true;
 					volKnobStatus = newstatus;
-					
+	
 					tunerKnob->updateStatus(newstatus);
 					if(newstatus != tunerKnobStatus) status_changed = true;
 					tunerKnobStatus = newstatus;
-					
+	
 					// if changed, break
 					if(status_changed) break;
-				}
-				//				volKnob->updateStatus(volKnobStatus);
-				//				tunerKnob->updateStatus(tunerKnobStatus);
-				//
-				//				// if any status bit are set process them
-				//				if( (volKnobStatus | tunerKnobStatus) != 0) break;
-				//
+ 				}
+//				volKnob->updateStatus(volKnobStatus);
+//				tunerKnob->updateStatus(tunerKnobStatus);
+//
+//				// if any status bit are set process them
+//				if( (volKnobStatus | tunerKnobStatus) != 0) break;
+//
 				// or take a nap
 				
 #if USE_GPIO_INTERRUPT
@@ -1551,13 +1552,37 @@ void PiCarMgr::PiCarLoop(){
 			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
 			tunerWasMoved 				= tunerKnob->wasMoved(tunerMovedCW);
 			tunerIsPressed				= tunerKnob->isPressed();
+			tunerLongPress				= false;
 			
+			// MARK:   Tuner button long  press
+			if(tunerWasClicked){
+				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
+			}
+			else if(!tunerIsPressed) {
+				lastTunerPressed = {0,0};
+			}
+			else if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
+				
+				//	tunerIsPressed  == TRUE
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				
+				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
+				
+				if(ms > _long_press_ms)  {
+					
+					tunerLongPress = true;
+						lastTunerPressed = {0,0};
+				}
+			}
+
+	
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
 				|| tunerWasClicked  || tunerWasDoubleClicked || tunerWasMoved ){
 				clock_gettime(CLOCK_MONOTONIC, &_lastActivityTime);
-			}
-			
+ 			}
+	 
 			// MARK:   Volume button Clicked
 			if(volWasDoubleClicked){
 				// toggle mute
@@ -1674,7 +1699,7 @@ void PiCarMgr::PiCarLoop(){
 				
 				// if the radio was not displayed, set it there now
 				auto dMode =  _display.active_mode();
-				if(_radio.isScannerMode()){
+ 				if(_radio.isScannerMode()){
 					if(dMode != DisplayMgr::MODE_SCANNER)
 						_display.showScannerChange();
 				}
@@ -1700,7 +1725,7 @@ void PiCarMgr::PiCarLoop(){
 								 || _display.active_mode() == DisplayMgr::MODE_SCANNER)){
 					
 					auto nextFreq = _radio.frequency();
-					
+		 
 					auto mode 	   = _radio.radioMode();
 					bool isScanning = _radio.isScannerMode();
 					switch(_tuner_mode){
@@ -1711,7 +1736,7 @@ void PiCarMgr::PiCarLoop(){
 							else if(mode == RadioMgr::AIRPLAY || mode == RadioMgr::AUX){
 								break;
 							}
-							else {
+		 					else {
 								auto newFreq = _radio.nextFrequency(tunerMovedCW);
 								if(newFreq == nextFreq)
 									tunnerPinned = true;
@@ -1736,12 +1761,12 @@ void PiCarMgr::PiCarLoop(){
 									
 									if(info.frequency == nextFreq && info.band == mode)
 										tunnerPinned = true;
-									
+		
 									nextFreq = info.frequency;
 								}
 								else
 									tunnerPinned = true;
-								
+									
 								didChangeChannel = true;
 							}
 						}
@@ -1754,13 +1779,13 @@ void PiCarMgr::PiCarLoop(){
 								
 								if(info.frequency == nextFreq && info.band == mode)
 									tunnerPinned = true;
-								
+	
 								nextFreq = info.frequency;
 								mode = info.band;
 								isScanning =( mode == RadioMgr::SCANNER);
 							}
 							else tunnerPinned = true;
-							didChangeChannel = true;
+ 							didChangeChannel = true;
 							
 							break;
 					}
@@ -1778,7 +1803,7 @@ void PiCarMgr::PiCarLoop(){
 								_display.LEDTunerUp(tunnerPinned);
 							else
 								_display.LEDTunerDown(tunnerPinned);
-							
+
 						}
 					}
 				}
@@ -1795,76 +1820,32 @@ void PiCarMgr::PiCarLoop(){
 				else{
 					tunerDoubleClicked();
 				}
-				continue;
+ 				continue;
 			}
-			
-			//			// MARK:   Tuner button long  press
-			//			if(tunerWasClicked){
-			//				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
-			//			}
-			//			else if(!tunerIsPressed) {
-			//				lastTunerPressed = {0,0};
-			//			}
-			//			else if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
-			//
-			//				//	tunerIsPressed  == TRUE
-			//				struct timespec now;
-			//				clock_gettime(CLOCK_MONOTONIC, &now);
-			//
-			//				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
-			//
-			//				if(ms > _long_press_ms)  {
-			//					printf("long press\n");
-			//					lastTunerPressed = {0,0};
-			//				}
-			//			}
-			
+	 
+			// MARK:   Tuner long press
+			if( tunerLongPress) {
+				printf("long press\n");
+				continue;;
+			}
+ 
 			// MARK:   Tuner button click
 			if(tunerWasClicked){
-				
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing
 				}
 				else {
-					
-					// record the click time.
-					clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
-				
-				}
-			}
-			
-			// is there a recorded down press
-			if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
-	
-				struct timespec now;
-				clock_gettime(CLOCK_MONOTONIC, &now);
-				
-				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
 
-				if(!tunerIsPressed){
-					// took finger off it before long press
-					lastTunerPressed = {0,0};
+					// special case ,, we are scanning and click tuner knob
+					// go right to squelch
+					if(_radio.isOn() &&	_radio.isScannerMode()
+						&& ( _tuner_mode == TUNE_PRESETS)) {
+						_display.showSquelchChange();
+						continue;
+					}
+					
 					displayMenu();
-				}
-				else {
-					bool long_press = false;
-	 
-					if(ms > _long_press_ms)  {
-						long_press = true;
-						lastTunerPressed = {0,0};
-					}
-					
-					if(long_press){
-						printf("long press\n");
-						// special case ,, we are scanning and click tuner knob
-						// go right to squelch
-						if(_radio.isOn() &&	_radio.isScannerMode()
-							&& ( _tuner_mode == TUNE_PRESETS)) {
-							_display.showSquelchChange();
-						}
-					}
-					
 				}
 			}
 		}

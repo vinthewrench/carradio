@@ -537,6 +537,8 @@ void PiCarMgr::saveRadioSettings(){
 	else
 		_db.removeProperty(PROP_SHUTDOWN_DELAY);
 	
+ 
+	_db.setProperty(PROP_LONG_PRESS_MS, _long_press_ms);
 	_db.setProperty(PROP_AUTO_SHUTDOWN_MODE, _autoShutdownMode);
  	_db.setProperty(PROP_SEND_RADIO_CAN, _shouldSendRadioCAN);
  
@@ -577,6 +579,9 @@ void PiCarMgr::restoreRadioSettings(){
 	}
    else
 		_shutdownDelay = UINT16_MAX;
+ 
+	if(!_db.getUint16Property(PROP_LONG_PRESS_MS,&_long_press_ms))
+		_long_press_ms = 750;  //default
  
 	// Send radio CAN messages
 	_db.getBoolProperty(PROP_SEND_RADIO_CAN,&_shouldSendRadioCAN) ;
@@ -1780,7 +1785,7 @@ void PiCarMgr::PiCarLoop(){
 			}
 			
 			
-			// MARK:   Tuner button clicked
+			// MARK:   Tuner button double clicked
 			if(tunerWasDoubleClicked){
 				
 				if(_display.usesSelectorKnob()
@@ -1793,6 +1798,7 @@ void PiCarMgr::PiCarLoop(){
  				continue;
 			}
 			
+			// MARK:   Tuner button long  press
 			if(tunerWasClicked){
 				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
 			}
@@ -1807,14 +1813,13 @@ void PiCarMgr::PiCarLoop(){
 				
 				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
 				
-				if(ms > 1000)  {
+				if(ms > _long_press_ms)  {
 					printf("long press\n");
 					lastTunerPressed = {0,0};
 				}
-				
 			}
 			
-			
+			// MARK:   Tuner button click
 			if(tunerWasClicked){
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){

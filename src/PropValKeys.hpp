@@ -63,8 +63,8 @@ inline static const string PROP_DIMMER_LEVEL						= "dimmer_level";
 inline static const string PROP_AUTO_SHUTDOWN_MODE				= "auto_shutdown_mode";
 inline static const string PROP_SHUTDOWN_DELAY					= "shutdown_delay";
 inline static const string PROP_SEND_RADIO_CAN					= "send_radio_can";
+inline static const string PROP_LONG_PRESS_MS					= "long_press_ms";
  
-
 inline static const string  PROP_CANBUS_DISPLAY				= "canbus-display";
 inline static const string  PROP_LINE							= "line";
 inline static const string  PROP_TITLE							= "title";

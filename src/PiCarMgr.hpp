@@ -311,7 +311,8 @@ private:
 	
 	bool					_autoShutdownMode;		 // controlled by canbus
 	uint16_t				_shutdownDelay;		  //   seconds after no CAN activity
-
+	uint16_t 			_long_press_ms 	= 1000;	// how long is a button long press
+	
 	bool					_autoDimmerMode;		 // controlled by canbus
 	double				_dimLevel;		  //   0.0 - 1.0 fraction of bright
 

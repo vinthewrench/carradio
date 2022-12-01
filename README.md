@@ -39,12 +39,8 @@ A few articles about talking to te CAN bus and Hacking your Car Network
 * [Part 5](https://vinthewrench.substack.com/p/hacking-your-car-network-huh) - ODB and older cars
 
 ## Demo
- <iframe width="560" height="315"
-src="https://www.youtube.com/watch?v=jUyjC5QgD2Y" 
-frameborder="0" 
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-allowfullscreen></iframe>
- 
+ https://www.youtube.com/watch?v=jUyjC5QgD2Y 
+  
 
 ## Status
 PiCar is up and running on my workshop desk, I have tested it a few time in the vehicle but as of yet it hasn't been installed.

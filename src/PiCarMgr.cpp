@@ -1821,45 +1821,35 @@ void PiCarMgr::PiCarLoop(){
 			
 			// MARK:   Tuner button click
 			if(tunerWasClicked){
+				
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing
 				}
 				else {
 					
-					// record the time
+					// record the click time.
 					clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
-					//
-					//					// special case ,, we are scanning and click tuner knob
-					//					// go right to squelch
-					//					if(_radio.isOn() &&	_radio.isScannerMode()
-					//						&& ( _tuner_mode == TUNE_PRESETS)) {
-					//						_display.showSquelchChange();
-					//						continue;
-					//					}
-					//
-					//					displayMenu();
+				
 				}
 			}
-			//			else if(!tunerIsPressed) {
-			//				lastTunerPressed = {0,0};
-			//			}
-			else if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
+			
+			// is there a recorded down press
+			if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
+	
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
 				
+				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
+
 				if(!tunerIsPressed){
-					// took finger off it
+					// took finger off it before long press
 					lastTunerPressed = {0,0};
 					displayMenu();
 				}
 				else {
-					//	tunerIsPressed  == TRUE
 					bool long_press = false;
-					
-					struct timespec now;
-					clock_gettime(CLOCK_MONOTONIC, &now);
-					
-					long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
-					
+	 
 					if(ms > _long_press_ms)  {
 						long_press = true;
 						lastTunerPressed = {0,0};
@@ -1874,6 +1864,7 @@ void PiCarMgr::PiCarLoop(){
 							_display.showSquelchChange();
 						}
 					}
+					
 				}
 			}
 		}

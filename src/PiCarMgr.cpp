@@ -1555,9 +1555,9 @@ void PiCarMgr::PiCarLoop(){
 			tunerLongPress				= false;
 				
 			// MARK:   Tuner button long  press
-			if(tunerIsPressed)		// button is down
-			{
-	 			// was just pressed now?
+			if(tunerIsPressed)	{	// button is down
+	 
+				// was just pressed now?
 				if (lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0) {
 					clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
 				}
@@ -1576,8 +1576,7 @@ void PiCarMgr::PiCarLoop(){
 			}
 	 		else if(tunerWasClicked) { // button is up
 				lastTunerPressed = {0,0};
-			}
-		 
+ 			}
 	
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
@@ -1828,7 +1827,7 @@ void PiCarMgr::PiCarLoop(){
 			// MARK:   Tuner long press
 			if( tunerLongPress) {
 				printf("long press\n");
-				continue;;
+	 				continue;;
 			}
  
 			// MARK:   Tuner button click

@@ -1435,6 +1435,8 @@ void PiCarMgr::PiCarLoop(){
 	
 	try{
 		
+		struct timespec	lastTunerPressed = {0,0};
+
 		while(_isRunning){
 			
 			// if not setup // check back shortly -  we are starting up
@@ -1467,6 +1469,7 @@ void PiCarMgr::PiCarLoop(){
 			bool tunerMovedCW 	= false;
 			bool tunerWasClicked = false;
 			bool tunerWasDoubleClicked 	= false;
+			bool tunerIsPressed = false;
 			bool tunerWasMoved 	= false;
 			
 			// loop until status changes
@@ -1542,6 +1545,7 @@ void PiCarMgr::PiCarLoop(){
 			tunerWasClicked 			= tunerKnob->wasClicked();
 			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
 			tunerWasMoved 				= tunerKnob->wasMoved(tunerMovedCW);
+			tunerIsPressed				= tunerKnob->isPressed();
 			
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
@@ -1790,12 +1794,34 @@ void PiCarMgr::PiCarLoop(){
 			}
 			
 			if(tunerWasClicked){
+				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
+			}
+			else if(!tunerIsPressed) {
+				lastTunerPressed = {0,0};
+			}
+			else if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
+				
+				//	tunerIsPressed  == TRUE
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				
+				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
+				
+				if(ms > 1000)  {
+					printf("long press\n");
+					lastTunerPressed = {0,0};
+				}
+				
+			}
+			
+			
+			if(tunerWasClicked){
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing
 				}
 				else {
-					
+
 					// special case ,, we are scanning and click tuner knob
 					// go right to squelch
 					if(_radio.isOn() &&	_radio.isScannerMode()

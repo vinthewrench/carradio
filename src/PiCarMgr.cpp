@@ -2738,6 +2738,7 @@ void PiCarMgr::displayDebugMenu(){
 
 				case 2:
 					_clocksync_gps = !_clocksync_gps;
+					if(_clocksync_gps && _clocksync_gps_secs == 0) _clocksync_gps_secs = 5;
 					break;
 	 
 				default:

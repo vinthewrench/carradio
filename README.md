@@ -39,13 +39,17 @@ A few articles about talking to te CAN bus and Hacking your Car Network
 * [Part 5](https://vinthewrench.substack.com/p/hacking-your-car-network-huh) - ODB and older cars
 
 ## Demo
-https://www.youtube.com/watch?v=jUyjC5QgD2Y
+ <iframe width="560" height="315"
+src="https://www.youtube.com/watch?v=jUyjC5QgD2Y" 
+frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
  
 
 ## Status
 PiCar is up and running on my workshop desk, I have tested it a few time in the vehicle but as of yet it hasn't been installed.
 
-#Current build notes
+##Current build notes
 I started out with a fresh of Raspberry Pi OS Lite (Buster) on a SD card. Here is a [blog post](https://vinthewrench.substack.com/p/vinnies-raspberry-pi-setup) on how I typically set up these devices.  As of recent I have taken to using the Raspberry Pi imager to setup te user account and Wifi as SSH key.
 
 ##### Always run the upgrade

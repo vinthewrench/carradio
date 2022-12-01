@@ -1553,29 +1553,31 @@ void PiCarMgr::PiCarLoop(){
 			tunerWasMoved 				= tunerKnob->wasMoved(tunerMovedCW);
 			tunerIsPressed				= tunerKnob->isPressed();
 			tunerLongPress				= false;
-			
+				
 			// MARK:   Tuner button long  press
-			if(tunerWasClicked && tunerIsPressed){
-				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
+			if(tunerIsPressed)		// button is down
+			{
+	 			// was just pressed now?
+				if (lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0) {
+					clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
+				}
+				else 	// was been pressed for a while
+				{
+					struct timespec now;
+					clock_gettime(CLOCK_MONOTONIC, &now);
+					
+					long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
+					
+					if(ms > _long_press_ms)  {
+						tunerLongPress = true;
+//						lastTunerPressed = {0,0};
+					}
+ 				}
 			}
-			else if(!tunerIsPressed) {
+	 		else if(tunerWasClicked) { // button is up
 				lastTunerPressed = {0,0};
 			}
-			else if(!(lastTunerPressed.tv_sec == 0 && lastTunerPressed.tv_sec == 0)) {
-				
-				//	tunerIsPressed  == TRUE
-				struct timespec now;
-				clock_gettime(CLOCK_MONOTONIC, &now);
-				
-				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
-				
-				if(ms > _long_press_ms)  {
-					
-					tunerLongPress = true;
-						lastTunerPressed = {0,0};
-				}
-			}
-
+		 
 	
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved

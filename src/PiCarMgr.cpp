@@ -1555,7 +1555,7 @@ void PiCarMgr::PiCarLoop(){
 			tunerLongPress				= false;
 			
 			// MARK:   Tuner button long  press
-			if(tunerWasClicked){
+			if(tunerWasClicked && tunerIsPressed){
 				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
 			}
 			else if(!tunerIsPressed) {
@@ -1579,7 +1579,7 @@ void PiCarMgr::PiCarLoop(){
 	
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
-				|| tunerWasClicked  || tunerWasDoubleClicked || tunerWasMoved ){
+				|| tunerWasClicked  || tunerWasDoubleClicked || tunerWasMoved  || tunerIsPressed){
 				clock_gettime(CLOCK_MONOTONIC, &_lastActivityTime);
  			}
 	 
@@ -1830,7 +1830,7 @@ void PiCarMgr::PiCarLoop(){
 			}
  
 			// MARK:   Tuner button click
-			if(tunerWasClicked){
+			if(tunerWasClicked  && tunerIsPressed){
 				if(_display.usesSelectorKnob()
 					&& _display.selectorKnobAction(DisplayMgr::KNOB_CLICK)){
 					// was handled - do nothing

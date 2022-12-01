@@ -169,7 +169,7 @@ bool DuppaEncoder::wasClicked() {
 	return  (_lastStatus & PUSHR) != 0;
 }
 
-bool DuppaEncoder::wasPressed() {
+bool DuppaEncoder::isPressed() {
 	return  (_lastStatus & PUSHP) != 0;
 }
 

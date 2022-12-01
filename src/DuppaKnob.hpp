@@ -29,6 +29,7 @@ public:
 	bool wasClicked();
 	bool wasDoubleClicked();
 	bool wasMoved( bool &cw);
+	bool isPressed();	// still down
 
 	bool updateStatus();
 	bool updateStatus(uint8_t &regOut);

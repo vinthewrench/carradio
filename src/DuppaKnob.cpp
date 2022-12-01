@@ -66,20 +66,16 @@ void DuppaKnob::stop(){
 bool  DuppaKnob::isConnected() {
 	return _isSetup;
 }
-
-
-
+ 
 bool DuppaKnob::updateStatus(){
 	uint8_t status;
 	return updateStatus(status);
 }
-
  
 bool DuppaKnob::updateStatus(uint8_t &statusOut) {
 	return _isSetup && _duppa.updateStatus(statusOut);
 }
-
-	
+ 
 bool DuppaKnob::wasClicked(){
  	return _isSetup && _duppa.wasClicked();
 }
@@ -91,9 +87,11 @@ bool DuppaKnob::wasDoubleClicked(){
 bool DuppaKnob::wasMoved( bool &cw){
 	return _isSetup && _duppa.wasMoved(cw);
 }
-
-
-
+ 
+bool DuppaKnob::isPressed(){
+	return _isSetup && _duppa.isPressed();
+}
+ 
 
 bool DuppaKnob::setBrightness(double level){
 	

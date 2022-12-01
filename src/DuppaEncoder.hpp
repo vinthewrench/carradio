@@ -71,7 +71,7 @@ public:
 	
 	bool wasClicked();	// pressed and let go
 	bool wasDoubleClicked();
-	bool wasPressed();	// still down
+	bool isPressed();	// still down
 	bool wasMoved(bool &cw);
 	
 	uint8_t	getDevAddr();

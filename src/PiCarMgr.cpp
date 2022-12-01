@@ -1474,13 +1474,28 @@ void PiCarMgr::PiCarLoop(){
 				
 				if(!_isSetup) break;
 				
-				// get status from knobs
-				volKnob->updateStatus(volKnobStatus);
-				tunerKnob->updateStatus(tunerKnobStatus);
-				
-				// if any status bit are set process them
-				if( (volKnobStatus | tunerKnobStatus) != 0) break;
-				
+				// check if knobs changed
+				{
+					bool status_changed = false;
+					
+					uint8_t newstatus = 0;
+					volKnob->updateStatus(newstatus);
+					if(newstatus != volKnobStatus) status_changed = true;
+					volKnobStatus = newstatus;
+	
+					tunerKnob->updateStatus(newstatus);
+					if(newstatus != tunerKnobStatus) status_changed = true;
+					tunerKnobStatus = newstatus;
+	
+					// if no change, break
+					if(! status_changed) break;
+ 				}
+//				volKnob->updateStatus(volKnobStatus);
+//				tunerKnob->updateStatus(tunerKnobStatus);
+//
+//				// if any status bit are set process them
+//				if( (volKnobStatus | tunerKnobStatus) != 0) break;
+//
 				// or take a nap
 				
 #if USE_GPIO_INTERRUPT
@@ -1524,9 +1539,9 @@ void PiCarMgr::PiCarLoop(){
 			volWasDoubleClicked = volKnob->wasDoubleClicked();
 			volWasMoved 		= volKnob->wasMoved(volMovedCW);
 			
-			tunerWasClicked 	= tunerKnob->wasClicked();
+			tunerWasClicked 			= tunerKnob->wasClicked();
 			tunerWasDoubleClicked  = tunerKnob->wasDoubleClicked();
-			tunerWasMoved 		= tunerKnob->wasMoved(tunerMovedCW);
+			tunerWasMoved 				= tunerKnob->wasMoved(tunerMovedCW);
 			
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved

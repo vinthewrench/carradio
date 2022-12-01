@@ -1554,6 +1554,7 @@ void PiCarMgr::PiCarLoop(){
 			tunerIsPressed				= tunerKnob->isPressed();
 			tunerLongPress				= false;
 				
+			
 			// MARK:   Tuner button long  press
 			if(tunerIsPressed)	{	// button is down
 	 
@@ -1577,6 +1578,8 @@ void PiCarMgr::PiCarLoop(){
 	 		else if(tunerWasClicked) { // button is up
 				lastTunerPressed = {0,0};
  			}
+	
+			printf(" clicked: %d, pressed: %d, longpress: %d \n",tunerWasClicked, tunerIsPressed, tunerLongPress);
 	
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved

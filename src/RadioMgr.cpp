@@ -438,7 +438,7 @@ bool  RadioMgr::canSquelch(){
 	
 	printf("canSquelch  mode = %s\n", modeString(_mode).c_str());
 	
-	if(_mode == SCANNER)
+	if(_scannerMode)
 		return true;
 
 	if(_sdrDecoder)  

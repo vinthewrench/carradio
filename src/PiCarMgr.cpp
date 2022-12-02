@@ -1436,12 +1436,12 @@ void PiCarMgr::PiCarLoop(){
 	
 	PRINT_CLASS_TID;
 	
- 	bool firstRun = false;
-	
+ 	bool 	firstRun = false;
+	bool	waitingForTunerLongPress 	= false;
+	struct timespec	lastTunerPressed = {0,0};
+
 	try{
 		
-		struct timespec	lastTunerPressed = {0,0};
-		bool waitingForTunerLongPress 	= false;
 
 		while(_isRunning){
 			
@@ -1477,7 +1477,6 @@ void PiCarMgr::PiCarLoop(){
 			bool tunerWasDoubleClicked 	= false;
 			bool tunerIsPressed = false;
 			bool tunerWasMoved 	= false;
-			
 	
 			bool tunerLongPress 	= false;
 
@@ -1571,7 +1570,7 @@ void PiCarMgr::PiCarLoop(){
 			} else  if(tunerWasClicked && !tunerIsPressed){ //button let go
  				// ignore this cycle
 				printf("up\n");
-			waitingForTunerLongPress = false;
+				waitingForTunerLongPress = false;
 				continue;
 			}
 			

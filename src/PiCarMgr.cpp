@@ -1441,6 +1441,7 @@ void PiCarMgr::PiCarLoop(){
 	try{
 		
 		struct timespec	lastTunerPressed = {0,0};
+		bool waitingForTunerLongPress 	= false;
 
 		while(_isRunning){
 			
@@ -1477,8 +1478,7 @@ void PiCarMgr::PiCarLoop(){
 			bool tunerIsPressed = false;
 			bool tunerWasMoved 	= false;
 			
-			bool waitingForTunerLongPress 	= false;
-
+	
 			bool tunerLongPress 	= false;
 
 			// loop until status changes
@@ -1538,7 +1538,7 @@ void PiCarMgr::PiCarLoop(){
 					//  call idle when nothing else is going on
 					idle();
 					
-					printf("   waiting: %d \n",waitingForTunerLongPress);
+					printf("   waiting: %d \n",tunerWasClicked, tunerIsPressed, waitingForTunerLongPress);
 
 					if(waitingForTunerLongPress) break;
 				}

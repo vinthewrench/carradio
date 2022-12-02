@@ -14,7 +14,7 @@
 	"gain" : 0,
 	"auto_dimmer_mode" : true,
 	"send_radio_can" : false,
-	"long_press_ms" : 2000,
+	"long_press_ms" : 1000,
 	"canbus-display": [
 		{
 			"key": "GM_COOLANT_TEMP",

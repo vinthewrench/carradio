@@ -1573,7 +1573,6 @@ void PiCarMgr::PiCarLoop(){
 				if(ms > _long_press_ms)  {
 					waitingForTunerLongPress = false;
 					tunerLongPress = true;
-					printf("tunerLongPress\n");
 				}
 			}
 
@@ -1826,9 +1825,7 @@ void PiCarMgr::PiCarLoop(){
 	 
 			// MARK:   Tuner long press
 			if( tunerLongPress) {
-				
-				printf("Tuner long press 1\n");
-	 			// special case ,, we are scanning and long press tuner knob
+				// special case ,, we are scanning and long press tuner knob
 				// go right to squelch
 					if(_radio.isOn() && _radio.canSquelch()){
 	 				_display.showSquelchChange();

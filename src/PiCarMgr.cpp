@@ -1827,11 +1827,10 @@ void PiCarMgr::PiCarLoop(){
 			if( tunerLongPress) {
 	 			// special case ,, we are scanning and long press tuner knob
 				// go right to squelch
-				
+				printf("tunerLongPress\n");
+	
 				if(_radio.isOn() && _radio.canSquelch()){
-					
-					printf("showSquelchChange\n");
-					_display.showSquelchChange();
+	 				_display.showSquelchChange();
  				}
 				continue;;
 			}

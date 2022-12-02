@@ -207,6 +207,8 @@ public:
 	void 	set_squelch_dwell(uint count) {};
 
 	bool isSquelched() const  { return false; };
+
+	bool canSquelch() const  { return false; };
  
 	 /** Return PPS events from the most recently processed block. */
 	 std::vector<PilotPhaseLock::PpsEvent> get_pps_events() const

@@ -99,6 +99,8 @@ public:
 		  return m_baseband_level;
 	 }
 
+	bool canSquelch() const  { return true; };
+ 
 	void set_squelch_level(int level) 
 	{
 		m_squelch_level = level;

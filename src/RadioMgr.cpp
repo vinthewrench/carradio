@@ -434,6 +434,13 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
 	return true;
 }
  
+bool  RadioMgr::canSquelch(){
+	
+	if(_sdrDecoder)
+		return _sdrDecoder->canSquelch();
+	else
+		return false;
+}
 
 void 	 RadioMgr::setSquelchLevel(int level){
 	

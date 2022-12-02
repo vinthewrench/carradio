@@ -94,6 +94,8 @@ public:
 	double get_baseband_level() {return _baseband_level;};
 	bool  isSquelched();
  
+	bool canSquelch();
+ 
 	void 	setSquelchLevel(int level);
 	int 	getSquelchLevel(){ return _squelchLevel;};
 	int 	getMaxSquelchRange();

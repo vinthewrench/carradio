@@ -1573,6 +1573,8 @@ void PiCarMgr::PiCarLoop(){
 				if(ms > _long_press_ms)  {
 					waitingForTunerLongPress = false;
 					tunerLongPress = true;
+					printf("tunerLongPress\n");
+
 				}
 			}
 

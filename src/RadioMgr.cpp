@@ -436,12 +436,12 @@ bool RadioMgr::setFrequencyandModeInternal( radio_mode_t newMode, uint32_t newFr
  
 bool  RadioMgr::canSquelch(){
 	
-	if(_sdrDecoder) {
-		if(_mode == SCANNER)
-			return true;
+	if(_mode == SCANNER)
+		return true;
+
+	if(_sdrDecoder)  
 		return _sdrDecoder->canSquelch();
- 	}
-	else
+ 	else
 		return false;
 }
 

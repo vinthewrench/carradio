@@ -1829,6 +1829,8 @@ void PiCarMgr::PiCarLoop(){
 				// go right to squelch
 				
 				if(_radio.isOn() && _radio.canSquelch()){
+					
+					printf("showSquelchChange\n");
 					_display.showSquelchChange();
  				}
 				continue;;

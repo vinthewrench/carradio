@@ -1537,7 +1537,7 @@ void PiCarMgr::PiCarLoop(){
 					//  call idle when nothing else is going on
 					idle();
 					
-					printf("   waiting: %d \n",tunerWasClicked, tunerIsPressed, waitingForTunerLongPress);
+					printf("   waiting: %d \n",waitingForTunerLongPress);
 
 					if(waitingForTunerLongPress) break;
 				}

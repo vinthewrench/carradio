@@ -1500,12 +1500,7 @@ void PiCarMgr::PiCarLoop(){
 					// if changed, break
 					if(status_changed) break;
  				}
-//				volKnob->updateStatus(volKnobStatus);
-//				tunerKnob->updateStatus(tunerKnobStatus);
-//
-//				// if any status bit are set process them
-//				if( (volKnobStatus | tunerKnobStatus) != 0) break;
-//
+ 
 				// or take a nap
 				
 #if USE_GPIO_INTERRUPT
@@ -1580,8 +1575,7 @@ void PiCarMgr::PiCarLoop(){
 					tunerLongPress = true;
 				}
 			}
-	 
-		
+
 			// mark the last time any user activity
 			if(volWasClicked ||  volWasDoubleClicked || volWasMoved
 				|| tunerWasClicked  || tunerWasDoubleClicked
@@ -1831,20 +1825,12 @@ void PiCarMgr::PiCarLoop(){
 	 
 			// MARK:   Tuner long press
 			if( tunerLongPress) {
-				printf("long press\n");
-				
-				// special case ,, we are scanning and long press tuner knob
+	 			// special case ,, we are scanning and long press tuner knob
 				// go right to squelch
 				
 				if(_radio.isOn() && _radio.canSquelch()){
 					_display.showSquelchChange();
  				}
-				
-//				if(_radio.isOn() &&	_radio.isScannerMode()
-//					&& ( _tuner_mode == TUNE_PRESETS)) {
-//					_display.showSquelchChange();
-//	 			}
-
 				continue;;
 			}
  
@@ -1855,16 +1841,7 @@ void PiCarMgr::PiCarLoop(){
 					// was handled - do nothing
 				}
 				else {
-
-//					// special case ,, we are scanning and click tuner knob
-//					// go right to squelch
-//					if(_radio.isOn() &&	_radio.isScannerMode()
-//						&& ( _tuner_mode == TUNE_PRESETS)) {
-//						_display.showSquelchChange();
-//						continue;
-//					}
-//
-					displayMenu();
+				displayMenu();
 				}
 			}
 		}

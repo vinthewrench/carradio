@@ -849,8 +849,7 @@ void DisplayMgr::showDimmerChange(){
 }
 
 void DisplayMgr::showSquelchChange(){
-	printf("showSquelchChange\n");
-	setEvent(EVT_PUSH, MODE_SQUELCH);
+setEvent(EVT_PUSH, MODE_SQUELCH);
 }
 
 void DisplayMgr::showRadioChange(){

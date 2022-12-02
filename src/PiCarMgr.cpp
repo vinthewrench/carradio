@@ -1832,6 +1832,14 @@ void PiCarMgr::PiCarLoop(){
 			// MARK:   Tuner long press
 			if( tunerLongPress) {
 				printf("long press\n");
+				
+				// special case ,, we are scanning and long press tuner knob
+				// go right to squelch
+				if(_radio.isOn() &&	_radio.isScannerMode()
+					&& ( _tuner_mode == TUNE_PRESETS)) {
+					_display.showSquelchChange();
+	 			}
+
 				continue;;
 			}
  
@@ -1843,14 +1851,14 @@ void PiCarMgr::PiCarLoop(){
 				}
 				else {
 
-					// special case ,, we are scanning and click tuner knob
-					// go right to squelch
-					if(_radio.isOn() &&	_radio.isScannerMode()
-						&& ( _tuner_mode == TUNE_PRESETS)) {
-						_display.showSquelchChange();
-						continue;
-					}
-					
+//					// special case ,, we are scanning and click tuner knob
+//					// go right to squelch
+//					if(_radio.isOn() &&	_radio.isScannerMode()
+//						&& ( _tuner_mode == TUNE_PRESETS)) {
+//						_display.showSquelchChange();
+//						continue;
+//					}
+//
 					displayMenu();
 				}
 			}

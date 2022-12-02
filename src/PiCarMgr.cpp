@@ -1537,6 +1537,9 @@ void PiCarMgr::PiCarLoop(){
 					// timeout occured ..
 					//  call idle when nothing else is going on
 					idle();
+					
+					printf("   waiting: %d \n",waitingForTunerLongPress);
+
 					if(waitingForTunerLongPress) break;
 				}
 #else

@@ -1477,8 +1477,7 @@ void PiCarMgr::PiCarLoop(){
 			bool tunerWasDoubleClicked 	= false;
 			bool tunerIsPressed = false;
 			bool tunerWasMoved 	= false;
-	
-			bool tunerLongPress 	= false;
+	 		bool tunerLongPress 	= false;
 
 			// loop until status changes
 			for(;;) {
@@ -1515,7 +1514,7 @@ void PiCarMgr::PiCarLoop(){
 				struct timespec timeout;
 				// Timeout in polltime seconds
 				timeout.tv_sec =  0;
-				timeout.tv_nsec = 5e8;  // .5 sec
+				timeout.tv_nsec = waitingForTunerLongPress?1e8:5e8;  //  .1 while waiting else.5 sec
 				gpiod_line_event evt;
 				
 				// gpiod_line_event_wait return 0 if wait timed out,
@@ -1536,9 +1535,6 @@ void PiCarMgr::PiCarLoop(){
 					// timeout occured ..
 					//  call idle when nothing else is going on
 					idle();
-					
-					printf("   waiting: %d \n",waitingForTunerLongPress);
-
 					if(waitingForTunerLongPress) break;
 				}
 #else
@@ -1559,23 +1555,37 @@ void PiCarMgr::PiCarLoop(){
 			tunerWasMoved 				= tunerKnob->wasMoved(tunerMovedCW);
 			tunerIsPressed				= tunerKnob->isPressed();
 			tunerLongPress				= false;
- 
-			
+  
 			// MARK:   Tuner button long  press
 	
 			if(!tunerWasClicked && tunerIsPressed){ //button hold down
 				printf("down\n");
+	 
+				// record the time we pressed
+				clock_gettime(CLOCK_MONOTONIC, &lastTunerPressed);
 				waitingForTunerLongPress = true;
-				
-			} else  if(tunerWasClicked && !tunerIsPressed){ //button let go
+	
+ 			} else  if(tunerWasClicked && !tunerIsPressed){ //button let go
  				// ignore this cycle
 				printf("up\n");
 				waitingForTunerLongPress = false;
+				lastTunerPressed = {0,0};
 				continue;
 			}
+			else if(waitingForTunerLongPress) {
+				struct timespec now;
+				clock_gettime(CLOCK_MONOTONIC, &now);
+				
+				long ms =  timespec_to_ms(timespec_sub(now, lastTunerPressed)) ;
+				
+				if(ms > _long_press_ms)  {
+					waitingForTunerLongPress = false;
+					tunerLongPress = true;
+				}
+			}
+	 
 			
-			
-		printf(" clicked: %d, pressed: %d, waiting: %d \n",tunerWasClicked, tunerIsPressed, waitingForTunerLongPress);
+//		printf(" clicked: %d, pressed: %d, waiting: %d \n",tunerWasClicked, tunerIsPressed, waitingForTunerLongPress);
 
 //
 //			if(tunerIsPressed)	{	// button is down
@@ -1851,7 +1861,7 @@ void PiCarMgr::PiCarLoop(){
 			// MARK:   Tuner long press
 			if( tunerLongPress) {
 				printf("long press\n");
-//	 				continue;;
+				continue;;
 			}
  
 			// MARK:   Tuner button click
